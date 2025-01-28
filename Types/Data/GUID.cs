@@ -1,33 +1,34 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace CwLibNet.Types.Data;
-
-public readonly struct GUID(uint value)
+namespace CwLibNet.Types.Data
 {
-    public readonly uint Value = value;
-
-    public override string ToString()
+    public readonly struct GUID(uint value)
     {
-        return "g" + this.Value;
-    }
+        public readonly uint Value = value;
 
-    public override bool Equals([NotNullWhen(true)] object? obj)
-    {
-        return Value.Equals(obj);
-    }
+        public override string ToString()
+        {
+            return "g" + this.Value;
+        }
 
-    public override int GetHashCode()
-    {
-        return Value.GetHashCode();
-    }
+        public override bool Equals([NotNullWhen(true)] object? obj)
+        {
+            return Value.Equals(obj);
+        }
 
-    public static bool operator ==(GUID a, GUID b)
-    {
-        return a.Equals(b);
-    }
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
+        }
 
-    public static bool operator !=(GUID a, GUID b)
-    {
-        return !(a == b);
+        public static bool operator ==(GUID a, GUID b)
+        {
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(GUID a, GUID b)
+        {
+            return !(a == b);
+        }
     }
 }
