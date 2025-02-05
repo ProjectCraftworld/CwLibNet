@@ -27,7 +27,7 @@ namespace Cwlib.Structs.Dlc
             inGameCommerceID = serializer.Str(inGameCommerceID);
             if (revision.GetVersion() >= 0x264)
                 categoryID = serializer.Str(categoryID);
-            flags = serializer.I32(flags);
+            flags = serializer.Serialize(flags);
             if (revision.GetSubVersion() > 0x20c)
             {
                 if (serializer.IsWriting())
@@ -76,7 +76,7 @@ namespace Cwlib.Structs.Dlc
             }
 
             if (revision.Has(Branch.DOUBLE11, 0x85))
-                typeMask = serializer.I32(typeMask);
+                typeMask = serializer.Serialize(typeMask);
         }
 
         public int GetAllocatedSize()

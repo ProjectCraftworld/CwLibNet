@@ -13,7 +13,7 @@ namespace Cwlib.Structs.Dlc
         public virtual void Serialize(Serializer serializer)
         {
             guid = serializer.Guid(guid);
-            flags = serializer.I32(flags);
+            flags = serializer.Serialize(flags);
         }
 
         public virtual int GetAllocatedSize()
