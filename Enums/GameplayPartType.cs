@@ -2,7 +2,7 @@ using CwLibNet.IO;
 
 namespace CwLibNet.Enums
 {
-    public enum GameplayPartType
+    public enum GameplayPartType : int
     {
         // UNDEFINED(0)
         UNDEFINED,
@@ -22,23 +22,32 @@ namespace CwLibNet.Enums
         OBJECT_SAVER,
         // RUMBLER(8)
         RUMBLER 
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // GameplayPartType(int value) {
-        //     this.value = value;
-        // }
-        // public Integer getValue() {
-        //     return this.value;
-        // }
-        // public static GameplayPartType fromValue(int value) {
-        //     for (GameplayPartType part : GameplayPartType.values()) {
-        //         if (part.value == value)
-        //             return part;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+    public sealed class GameplayBody
+    {
+        private readonly GameplayPartType value;
+
+        public GameplayBody
+        (int value)
+        {
+            this.value = (GameplayPartType)value;
+        }
+
+        public GameplayPartType getType()
+        {
+            return this.value;
+        }
+
+        public static GameplayBody
+         fromValue(int value)
+        {
+            if (Enum.IsDefined(typeof(GameplayPartType), value))
+        {
+            return new GameplayBody
+            (value);
+        }
+            return default(GameplayBody);
+        }
     }
 }

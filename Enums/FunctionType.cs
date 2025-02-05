@@ -2,7 +2,7 @@ using CwLibNet.IO;
 
 namespace CwLibNet.Enums
 {
-    public enum FunctionType
+    public enum FunctionType : int
     {
         // NORMAL(0)
         NORMAL,
@@ -10,23 +10,27 @@ namespace CwLibNet.Enums
         GETTER,
         // SETTER(2)
         SETTER 
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final byte value;
-        // FunctionType(int value) {
-        //     this.value = (byte) value;
-        // }
-        // public Byte getValue() {
-        //     return this.value;
-        // }
-        // public static FunctionType fromValue(int value) {
-        //     for (FunctionType type : FunctionType.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+    public sealed class FunctionBody
+    {
+        private readonly FunctionType value;
+
+        FunctionBody(int value)
+        {
+            this.value = (FunctionType)(value & 0xFF);
+        }
+
+        public FunctionType getValue()
+        {
+            return this.value;
+        }
+
+        public static FunctionBody fromValue(int value)
+        {
+            if (Enum.IsDefined(typeof(FunctionType), value))
+                return new FunctionBody(value);
+            return default(FunctionBody);
+        }
     }
 }

@@ -2,7 +2,7 @@ using CwLibNet.IO;
 
 namespace CwLibNet.Enums
 {
-    public enum FlipType
+    public enum FlipType : int
     {
         // /**
         //  * X.pos, X.rot
@@ -39,23 +39,27 @@ namespace CwLibNet.Enums
         //  */
         // COPY(6)
         COPY 
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final byte value;
-        // FlipType(int value) {
-        //     this.value = (byte) (value & 0xFF);
-        // }
-        // public Byte getValue() {
-        //     return this.value;
-        // }
-        // public static FlipType fromValue(int value) {
-        //     for (FlipType type : FlipType.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+    public sealed class FlipBody
+    {
+        private readonly FlipType value;
+
+        FlipBody(int value)
+        {
+            this.value = (FlipType)(value & 0xFF);
+        }
+
+        public FlipType getValue()
+        {
+            return this.value;
+        }
+
+        public static FlipBody fromValue(int value)
+        {
+            if (Enum.IsDefined(typeof(FlipType), value))
+                return new FlipBody(value);
+            return default(FlipBody);
+        }
     }
 }

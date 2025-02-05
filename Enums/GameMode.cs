@@ -2,7 +2,7 @@ using CwLibNet.IO;
 
 namespace CwLibNet.Enums
 {
-    public enum GameMode
+    public enum GameMode : int
     {
         // NORMAL(0)
         NORMAL,
@@ -15,35 +15,35 @@ namespace CwLibNet.Enums
         // SOCIAL(4)
         SOCIAL,
         // TEAMS(5)
-        TEAMS 
+        TEAMS
+    }
 
-        // --------------------
-        // TODO enum body members
-        // // old enum
-        // // normal 0
-        // // competitive 1
-        // // teams 2
-        // // social 3
-        // private final int value;
-        // GameMode(int value) {
-        //     this.value = value;
-        // }
-        // public Integer getValue() {
-        //     return this.value;
-        // }
-        // /**
-        //  * Attempts to get a GameMode from value.
-        //  *
-        //  * @param value Game mode value
-        //  * @return GameMode
-        //  */
-        // public static GameMode fromValue(int value) {
-        //     for (GameMode mode : GameMode.values()) {
-        //         if (mode.value == value)
-        //             return mode;
-        //     }
-        //     return GameMode.NORMAL;
-        // }
-        // --------------------
+    public sealed class GameModeBody
+    {
+        private readonly GameMode value;
+
+        public GameModeBody(int value)
+        {
+            this.value = (GameMode)value;
+        }
+
+        public GameMode getType()
+        {
+            return this.value;
+        }
+
+        /// <summary>
+        /// Attempts to get a GameMode from value.
+        /// </summary>
+        /// <param name="value">Game mode value</param>
+        /// <returns>GameModeBody</returns>
+        public static GameModeBody fromValue(int value)
+        {
+            if (Enum.IsDefined(typeof(GameMode), value))
+        {
+            return new GameModeBody(value);
+        }
+            return new GameModeBody((int)GameMode.NORMAL);
+        }
     }
 }

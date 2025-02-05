@@ -2,7 +2,7 @@ using CwLibNet.IO;
 
 namespace CwLibNet.Enums
 {
-    public enum GameProgressionStatus
+    public enum GameProgressionStatus : int
     {
         // NEW_GAME(0)
         NEW_GAME,
@@ -15,30 +15,34 @@ namespace CwLibNet.Enums
         // GAME_PROGRESSION_COMPLETED(4)
         GAME_PROGRESSION_COMPLETED,
         // FIRST_GROUP_COMPLETED(4)
-        FIRST_GROUP_COMPLETED 
-
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // GameProgressionStatus(int value) {
-        //     this.value = value;
-        // }
-        // public Integer getValue() {
-        //     return this.value;
-        // }
-        // /**
-        //  * Attempts to get GameProgressionStatus from value.
-        //  *
-        //  * @param value Game progression status value
-        //  * @return GameProgressionStatus
-        //  */
-        // public static GameProgressionStatus fromValue(int value) {
-        //     for (GameProgressionStatus status : GameProgressionStatus.values()) {
-        //         if (status.value == value)
-        //             return status;
-        //     }
-        //     return GameProgressionStatus.NEW_GAME;
-        // }
-        // --------------------
+        FIRST_GROUP_COMPLETED
     }
+    public sealed class GameProgressionBody
+    {
+        private readonly GameProgressionStatus value;
+
+        public GameProgressionBody(int value)
+        {
+            this.value = (GameProgressionStatus)value;
+        }
+
+        public GameProgressionStatus getType()
+        {
+            return this.value;
+        }
+        /// <summary>
+        /// Attempts to get GameProgressionStatus from value.
+        /// </summary>
+        /// <param name="value">Game progression status value</param>
+        /// <returns>f-GameProgressionStatus</returns>
+        public static GameProgressionBody fromValue(int value)
+        {
+            if (Enum.IsDefined(typeof(GameProgressionStatus), value))
+            {
+                return new GameProgressionBody(value);
+            }
+            return default(GameProgressionBody);
+        }
+    }
+
 }
