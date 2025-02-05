@@ -10,7 +10,7 @@ namespace CwLibNet.Resources
 
     public class RPalette : Resource
     {
-        public const int BASE_ALLOCATION_SIZE = 0x20;
+        public readonly int BASE_ALLOCATION_SIZE = 0x20;
 
         public List<ResourceDescriptor> planList = new List<ResourceDescriptor>();
         public int location, description;
