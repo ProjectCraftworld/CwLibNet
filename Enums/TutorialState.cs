@@ -2,7 +2,7 @@ using CwLibNet.IO;
 
 namespace CwLibNet.Enums
 {
-    public enum TutorialState
+    public enum TutorialState : int
     {
         // UNPLAYED(0x0)
         UNPLAYED,

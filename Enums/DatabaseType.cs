@@ -1,6 +1,8 @@
+using static CwLibNet.IO.ValueEnum<int>;
+
 namespace CwLibNet.Enums
 {
-    public enum DatabaseType
+    public enum DatabaseType : int
     {
         // NONE(null, null, false, false)
         NONE,
@@ -12,35 +14,41 @@ namespace CwLibNet.Enums
         SAVE,
         // MOD("Mod", "mod", true, true)
         MOD 
+    }
 
-        // --------------------
-        // TODO enum body members
-        // /**
-        //  * Whether or not this database type has entries
-        //  * with GUIDs
-        //  */
-        // private final boolean hasGUIDs;
-        // private final boolean containsData;
-        // private final String name;
-        // private final String extension;
-        // DatabaseType(String name, String extension, boolean hasKeys, boolean hasData) {
-        //     this.name = name;
-        //     this.extension = extension;
-        //     this.hasGUIDs = hasKeys;
-        //     this.containsData = hasData;
-        // }
-        // public String getName() {
-        //     return this.name;
-        // }
-        // public String getExtension() {
-        //     return this.extension;
-        // }
-        // public boolean hasGUIDs() {
-        //     return this.hasGUIDs;
-        // }
-        // public boolean containsData() {
-        //     return this.containsData;
-        // }
-        // --------------------
+    public sealed class DatabaseBody
+    {
+        private readonly bool hasGUIDs;
+        private readonly bool containsData;
+        private readonly DatabaseType name;
+        private readonly DatabaseType extension;
+
+        DatabaseBody(String name, String extension, bool hasKeys, bool hasData)
+        {
+            this.name = (DatabaseType)Enum.Parse(typeof(DatabaseType), name);
+            this.extension = (DatabaseType)Enum.Parse(typeof(DatabaseType), name);
+            this.hasGUIDs = hasKeys;
+            this.containsData = hasData;
+        }
+
+        public String getName()
+        {
+            return this.name.ToString();
+        }
+
+        public String getExtension()
+        {
+            return this.extension.ToString();
+        }
+
+        public DatabaseType HasGUIDs
+        {
+            get {return this.HasGUIDs;}
+        }
+
+        public DatabaseType ContainsData
+        {
+            get {return this.ContainsData;}
+        }
     }
 }

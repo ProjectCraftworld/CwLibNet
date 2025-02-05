@@ -10,6 +10,7 @@ namespace CwLibNet.Enums
         public static readonly int CONSTANT2 = 5;
         public static readonly int CONSTANT3 = 6;
         public static readonly int CONSTANT4 = 7;
+        // 8 is not used in any shader
         public static readonly int MULTIPLY_ADD = 9;
         public static readonly int MULTIPLY = 10;
         public static readonly int ADD = 11;
@@ -18,6 +19,8 @@ namespace CwLibNet.Enums
         public static readonly int MAKE_FLOAT3 = 14;
         public static readonly int MAKE_FLOAT4 = 15;
         public static readonly int BLEND = 16;
+        // 17, something with fur
+        // 18 ???
         public static readonly int EXPONENT = 19;
     }
 }

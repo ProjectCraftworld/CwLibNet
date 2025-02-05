@@ -9,6 +9,8 @@ namespace CwLibNet.Enums
         public static readonly int GLOW = 4;
         public static readonly int REFLECTION = 6;
         public static readonly int UNKNOWN = 7;
+
+        //169
         public static readonly int ANISO = 170;
         public static readonly int TRANS = 171;
         public static readonly int COLOR_CORRECTION = 172;

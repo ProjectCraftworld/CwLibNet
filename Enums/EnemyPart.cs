@@ -1,8 +1,8 @@
-using CwLibNet.IO;
+using static CwLibNet.IO.ValueEnum<int>;
 
 namespace CwLibNet.Enums
 {
-    public enum EnemyPart
+    public enum EnemyPart : int
     {
         // LEG(0)
         LEG,
@@ -16,23 +16,27 @@ namespace CwLibNet.Enums
         ROCKET,
         // PAINT(5)
         PAINT 
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // EnemyPart(int value) {
-        //     this.value = value;
-        // }
-        // public Integer getValue() {
-        //     return this.value;
-        // }
-        // public static EnemyPart fromValue(int value) {
-        //     for (EnemyPart part : EnemyPart.values()) {
-        //         if (part.value == value)
-        //             return part;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+    public sealed class EnemyBody
+    {
+        private readonly EnemyPart value;
+
+        EnemyBody(int value)
+        {
+            this.value = (EnemyPart)value;
+        }
+
+        public EnemyPart getValue()
+        {
+            return value;
+        }
+
+        public static EnemyBody fromValue(int value)
+        {
+            if (Enum.IsDefined(typeof(EnemyPart), value))
+                return new EnemyBody(value);
+            return default(EnemyBody);
+        }
     }
 }

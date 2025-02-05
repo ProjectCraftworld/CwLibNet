@@ -15,32 +15,29 @@ namespace CwLibNet.Enums
         COSTUME,
         // ADVENTURE(5, CommonMeshes.ADVENTURE_BADGE_GUID)
         ADVENTURE 
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // /**
-        //  * The default associated mesh associated
-        //  * with this content type.
-        //  */
-        // private final GUID badgeMeshGUID;
-        // ContentsType(int value, GUID mesh) {
-        //     this.value = value;
-        //     this.badgeMeshGUID = mesh;
-        // }
-        // public Integer getValue() {
-        //     return this.value;
-        // }
-        // public ResourceDescriptor getBadgeMesh() {
-        //     return new ResourceDescriptor(this.badgeMeshGUID, ResourceType.MESH);
-        // }
-        // public static ContentsType fromValue(int value) {
-        //     for (ContentsType type : ContentsType.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return ContentsType.GROUP;
-        // }
-        // --------------------
+        public sealed class ContentsBodyMembers
+    {
+        private readonly ContentsType type;
+
+        public ContentsBodyMembers(int type)
+        {
+            this.type = (ContentsType)type;
+        }
+
+        public ContentsType getType()
+        {
+            return this.type;
+        }
+
+        public static ContentsBodyMembers fromValue(int type)
+        {
+            if (Enum.IsDefined(typeof(BuiltinType), type))
+        {
+            return new ContentsBodyMembers(type);
+        }
+            return default(ContentsBodyMembers);
+        }
     }
 }

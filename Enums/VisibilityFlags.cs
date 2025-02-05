@@ -1,9 +1,10 @@
 namespace CwLibNet.Enums
 {
-    public sealed class VisibilityFlags
+    public enum VisibilityFlags : byte
     {
-        public static readonly byte NONE = 0x0;
-        public static readonly byte PLAY_MODE = 0x1;
-        public static readonly byte EDIT_MODE = 0x2;
+        NONE = 0x0,
+        PLAY_MODE = 0x1,
+        EDIT_MODE = 0x2
     }
+
 }

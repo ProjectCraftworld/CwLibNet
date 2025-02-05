@@ -5,10 +5,15 @@ namespace Cwlib.Enums
     public sealed class CompressionFlags
     {
         public static readonly byte USE_NO_COMPRESSION = 0;
+        // no compression
         public static readonly byte USE_COMPRESSED_INTEGERS = 1;
+        // 32/64bit integer data compression
         public static readonly byte USE_COMPRESSED_VECTORS = 2;
+        // arrays are serialized
         public static readonly byte USE_COMPRESSED_MATRICES = 4;
+        // 4x4 matrices will have a short flag for src
         public static readonly byte USE_ALL_COMPRESSION = 7;
+        // all of the above will take effect
         public static string ToString(int flags)
         {
             List<string> components = new List<string>(3);

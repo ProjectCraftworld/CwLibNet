@@ -20,29 +20,33 @@ namespace CwLibNet.Enums
         SAW,
         // MAX(7)
         MAX 
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // CurveType(int value) {
-        //     this.value = value;
-        // }
-        // public Integer getValue() {
-        //     return this.value;
-        // }
-        // /**
-        //  * Attempts to get a f-curve type from value.
-        //  *
-        //  * @param value curve type value
-        //  * @return f-curve type
-        //  */
-        // public static CurveType fromValue(int value) {
-        //     for (CurveType type : CurveType.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+    public sealed class CurveBodyMembers
+    {
+        private readonly CurveType value;
+
+        public CurveBodyMembers(int value)
+        {
+            this.value = (CurveType)value;
+        }
+
+        public CurveType getType()
+        {
+            return this.value;
+        }
+        /// <summary>
+        /// Attempts to get a f-curve type from value.
+        /// </summary>
+        /// <param name="value">curve type value</param>
+        /// <returns>f-curve type</returns>
+        public static CurveBodyMembers fromValue(int value)
+        {
+            if (Enum.IsDefined(typeof(CurveType), value))
+            {
+                return new CurveBodyMembers(value);
+            }
+            return default(CurveBodyMembers);
+        }
     }
 }

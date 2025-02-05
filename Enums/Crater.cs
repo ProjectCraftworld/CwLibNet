@@ -1,6 +1,9 @@
+using System.Numerics;
+using static CwLibNet.IO.ValueEnum<int>;
+
 namespace CwLibNet.Enums
 {
-    public enum Crater
+    public enum Crater : int
     {
         // SLOT_0_LBP1(0.31077105f, -0.83225715f, -0.45909613f)
         SLOT_0_LBP1,
@@ -342,5 +345,30 @@ namespace CwLibNet.Enums
         //     return new Vector4f(this.value);
         // }
         // --------------------
+        // --------------------
+        // TODO enum body members
+        // private final Vector4f value;
+        // Crater(float x, float y, float z) {
+        //     this.value = new Vector4f(x, y, z, 0);
+        // }
+        // public Vector4f getValue() {
+        //     // In case something tries to edit the value contained
+        //     return new Vector4f(this.value);
+        // }
+        // --------------------
+    }
+    public sealed class CraterBodyMembers 
+    {
+        private readonly Vector4 value;
+
+        public CraterBodyMembers(float x, float y, float z)
+        {
+            this.value = new Vector4(x, y, z, 0);
+        }
+
+        public Vector4 GetValue()
+        {
+            return new Vector4(this.value.X, this.value.Y, this.value.Z, this.value.W);
+        }
     }
 }

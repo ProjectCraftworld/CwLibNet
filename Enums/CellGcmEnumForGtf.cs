@@ -1,6 +1,8 @@
-namespace CwLibNet.Enums
+using static CwLibNet.IO.ValueEnum<int>;
+
+namespace CwLibNet.Enums.ValueEnum
 {
-    public enum CellGcmEnumForGtf
+    public enum CellGcmEnumForGtf : int
     {
         // B8(0x81)
         B8,
@@ -25,55 +27,31 @@ namespace CwLibNet.Enums
 
         // --------------------
         // TODO enum body members
-        // private final int value;
-        // CellGcmEnumForGtf(int value) {
-        //     this.value = value;
-        // }
-        // public int getValue() {
-        //     return this.value;
-        // }
-        // public boolean isDXT() {
-        //     return this == DXT1 || this == DXT3 || this == DXT5;
-        // }
-        // public int getDepth() {
-        //     switch(this) {
-        //         case B8:
-        //             return 1;
-        //         case A1R5G5B5:
-        //         case A4R4G4B4:
-        //         case R5G6B5:
-        //         case G8B8:
-        //             return 2;
-        //         case DXT1:
-        //             return 8;
-        //         case DXT3:
-        //         case DXT5:
-        //             return 16;
-        //         default:
-        //             return 4;
-        //     }
-        // }
-        // public int getImageSize(int width, int height) {
-        //     int pitch = getPitch(width);
-        //     if (this.isDXT())
-        //         return pitch * ((height + 3) / 4);
-        //     return pitch * height;
-        // }
-        // public int getPitch(int width) {
-        //     if (this == DXT1)
-        //         return ((width + 3) / 4) * 8;
-        //     else if (this == DXT3 || this == DXT5)
-        //         return ((width + 3) / 4) * 16;
-        //     return width * getDepth();
-        // }
-        // public static CellGcmEnumForGtf fromValue(int value) {
-        //     value &= ~(CellGcm.LN | CellGcm.UN);
-        //     for (CellGcmEnumForGtf type : CellGcmEnumForGtf.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+    }
+    public sealed class CellGcmBodyMembers
+    {
+
+        private readonly CellGcmEnumForGtf value;
+        CellGcmBodyMembers(int value)
+        {
+            this.value = (CellGcmEnumForGtf)value;
+        }
+
+        public int getValue()
+        {
+            return (int)this.value;
+        }
+
+
+
+
+        public static CellGcmBodyMembers fromValue(int value)
+        {
+            if (Enum.IsDefined(typeof(CellGcmEnumForGtf), value))
+            {
+                return new CellGcmBodyMembers(value);
+            }
+            return default(CellGcmBodyMembers);
+        }
     }
 }

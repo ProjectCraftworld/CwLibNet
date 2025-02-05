@@ -1,8 +1,8 @@
-using CwLibNet.IO;
+using static CwLibNet.IO.ValueEnum<int>;
 
 namespace CwLibNet.Enums
 {
-    public enum DecalType
+    public enum DecalType : int
     {
         // STICKER(0)
         STICKER,
@@ -10,23 +10,27 @@ namespace CwLibNet.Enums
         PAINT,
         // EYETOY(2)
         EYETOY 
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final byte value;
-        // DecalType(int value) {
-        //     this.value = (byte) (value & 0xFF);
-        // }
-        // public Byte getValue() {
-        //     return this.value;
-        // }
-        // public static DecalType fromValue(byte value) {
-        //     for (DecalType type : DecalType.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+    public sealed class DecalBody
+    {
+        private readonly int value;
+
+        DecalBody(int value)
+        {
+            this.value = value & 0xFF;
+        }
+
+        public DecalType getValue()
+        {
+            return (DecalType)this.value;
+        }
+
+        public static DecalBody fromValue(byte value)
+        {
+            if (Enum.IsDefined(typeof(DecalType), value))
+                return new DecalBody(value);
+            return default(DecalBody);
+        }
     }
 }

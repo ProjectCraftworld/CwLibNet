@@ -1,57 +1,56 @@
 namespace CwLibNet.Enums
 {
-    public enum Branch
+    public class Branch
     {
-        // /**
-        //  * Dummy branch.
-        //  */
-        // NONE(0x0, 0x0, 0x0)
-        NONE,
-        // /**
-        //  * Branched revision for Leerdammer update in LittleBigPlanet 1.
-        //  * Tag: LD
-        //  */
-        // LEERDAMMER(Revisions.LD_HEAD, 0x4c44, Revisions.LD_MAX)
-        LEERDAMMER,
-        // /**
-        //  * LittleBigPlanet Vita branched revision, Vita is weird,
-        //  * the final branch revision is 0x3e2, but it can go as early
-        //  * as 0x3c1 in earlier branch revisions.
-        //  * Tag: D1
-        //  */
-        // DOUBLE11(Revisions.D1_HEAD, 0x4431, Revisions.D1_MAX)
-        DOUBLE11,
-        // /**
-        //  * Custom branched revision for Toolkit custom resources.
-        //  * Tag: MZ
-        //  */
-        // MIZUKI(Revisions.MZ_HEAD, 0x4d5a, Revisions.MZ_MAX)
-        MIZUKI 
+        public static readonly Branch NONE = new Branch(0x0, 0x0, 0x0);
+        // dummy branch
+        public static readonly Branch LEERDAMMER = new Branch(Revisions.LD_HEAD, 0x4c44, Revisions.LD_MAX);
+        // branched revision for Leerdammer update in LBP1
+        // Tag: LD
+        public static readonly Branch DOUBLE11 = new Branch(Revisions.D1_HEAD, 0x4431, Revisions.D1_MAX);
+        // Vita branched revision; final branch revision is 0x3e2, but it can go
+        // as early as 0x3c1 in earlier branch revisions
+        // Tag: D1
+        public static readonly Branch MIZUKI = new Branch(Revisions.MZ_HEAD, 0x4d5a, Revisions.MZ_MAX);
+        // Custom branched revision for Toolkit custom resources
+        // Tag: MZ
 
-        // --------------------
-        // TODO enum body members
-        // private final int head;
-        // private final short id;
-        // private final short revision;
-        // Branch(int head, int id, int revision) {
-        //     this.head = head;
-        //     this.id = (short) id;
-        //     this.revision = (short) revision;
-        // }
-        // public int getHead() {
-        //     return this.head;
-        // }
-        // public short getID() {
-        //     return this.id;
-        // }
-        // public short getRevision() {
-        //     return this.revision;
-        // }
-        // public static Branch fromID(short ID) {
-        //     for (Branch branch : Branch.values()) if (branch.getID() == ID)
-        //         return branch;
-        //     return null;
-        // }
-        // --------------------
+        public int Head {get;}
+        public short Id {get;}
+        public short Revision {get;}
+
+        private Branch(int head, int id, int revision)
+        {
+            Head = head;
+            Id = (short)id;
+            Revision = (short)revision;
+        }
+
+        public int getHead()
+        {
+            return Head;
+        }
+
+        public short getID()
+        {
+            return Id;
+        }
+
+        public short getRevision()
+        {
+            return Revision;
+        }
+
+        public static Branch FromID(short id)
+        {
+            foreach (var branch in new[] {NONE, LEERDAMMER, DOUBLE11, MIZUKI})
+            {
+                if (branch.Id == id)
+                {
+                    return branch;
+                }
+            }
+            return null;
+        }
     }
 }

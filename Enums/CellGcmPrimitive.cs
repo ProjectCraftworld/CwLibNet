@@ -24,23 +24,32 @@ namespace CwLibNet.Enums
         QUAD_STRIP,
         // POLYGON(10)
         POLYGON 
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final byte value;
-        // CellGcmPrimitive(int value) {
-        //     this.value = (byte) (value & 0xFF);
-        // }
-        // public Byte getValue() {
-        //     return this.value;
-        // }
-        // public static CellGcmPrimitive fromValue(int value) {
-        //     for (CellGcmPrimitive type : CellGcmPrimitive.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+    public sealed class CellPrimitiveBodyMembers
+    {
+
+        private readonly CellGcmPrimitive value;
+        CellPrimitiveBodyMembers(int value)
+        {
+            this.value = (CellGcmPrimitive)value;
+        }
+
+        public int getValue()
+        {
+            return (int)this.value;
+        }
+
+
+
+
+        public static CellPrimitiveBodyMembers fromValue(int value)
+        {
+            if (Enum.IsDefined(typeof(CellGcmPrimitive), value))
+            {
+                return new CellPrimitiveBodyMembers(value);
+            }
+            return default(CellPrimitiveBodyMembers);
+        }
     }
 }

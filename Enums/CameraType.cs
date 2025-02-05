@@ -1,8 +1,8 @@
-using CwLibNet.IO;
+using static CwLibNet.IO.ValueEnum<int>;
 
 namespace CwLibNet.Enums
 {
-    public enum CameraType
+    public enum CameraType : int
     {
         // CAMERA_ZONE(0)
         CAMERA_ZONE,
@@ -11,24 +11,31 @@ namespace CwLibNet.Enums
         // SPEECH_BUBBLE(2)
         SPEECH_BUBBLE,
         // CUTSCENE(3)
-        CUTSCENE 
+        CUTSCENE
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // CameraType(int value) {
-        //     this.value = value;
-        // }
-        // public Integer getValue() {
-        //     return this.value;
-        // }
-        // public static CameraType fromValue(int value) {
-        //     for (CameraType part : CameraType.values()) {
-        //         if (part.value == value)
-        //             return part;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+    public sealed class CameraBodyMembers
+    {
+        private readonly CameraType part;
+
+        public CameraBodyMembers(int part)
+        {
+            this.part = (CameraType)part;
+        }
+
+        public int getPart()
+        {
+            return (int)this.part;
+        }
+
+        public static CameraBodyMembers fromValue(int part)
+        {
+            if(Enum.IsDefined(typeof(CameraType), part))
+            {
+                return new CameraBodyMembers(part);
+            }
+            return default(CameraBodyMembers);
+        }
+        
     }
 }

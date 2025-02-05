@@ -1,10 +1,11 @@
+using System.Numerics;
 using CwLibNet.IO;
+using static CwLibNet.IO.ValueEnum<int>;
 
 namespace CwLibNet.Enums
 {
-    public enum AudioMaterial
+    public enum AudioMaterial : int
     {
-        // NONE(0)
         NONE,
         // STONE(1)
         STONE,
