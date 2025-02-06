@@ -1,6 +1,8 @@
+using CwLibNet.IO;
+
 namespace CwLibNet.Enums
 {
-    public enum InstructionType
+    public enum InstructionType : byte
     {
         // NOP(0x0)
         NOP,
@@ -410,82 +412,7 @@ namespace CwLibNet.Enums
         // BIT_ANDs64(0xc9)
         BIT_ANDs64,
         // BIT_XORs64(0xca)
-        BIT_XORs64 
-
-        // --------------------
-        // TODO enum body members
-        // private static final InstructionClass[] INSTRUCTION_CLASSES;
-        // static {
-        //     ArrayList<InstructionClass> classList = new ArrayList<>();
-        //     classList.add(InstructionClass.NOP);
-        //     classList.addAll(Collections.nCopies(6, InstructionClass.LOAD_CONST));
-        //     classList.addAll(Collections.nCopies(20, InstructionClass.UNARY));
-        //     classList.add(InstructionClass.NOP);
-        //     classList.addAll(Collections.nCopies(4, InstructionClass.UNARY));
-        //     classList.addAll(Collections.nCopies(50, InstructionClass.BINARY));
-        //     classList.add(InstructionClass.NOP);
-        //     classList.add(InstructionClass.NOP);
-        //     classList.addAll(Collections.nCopies(6, InstructionClass.BINARY));
-        //     classList.addAll(Collections.nCopies(31, InstructionClass.GET_BUILTIN_MEMBER));
-        //     classList.addAll(Collections.nCopies(28, InstructionClass.SET_BUILTIN_MEMBER));
-        //     classList.addAll(Collections.nCopies(2, InstructionClass.GET_MEMBER));
-        //     classList.addAll(Collections.nCopies(2, InstructionClass.SET_MEMBER));
-        //     classList.add(InstructionClass.GET_ELEMENT);
-        //     classList.add(InstructionClass.SET_ELEMENT);
-        //     classList.add(InstructionClass.GET_BUILTIN_MEMBER);
-        //     classList.add(InstructionClass.NEW_ARRAY);
-        //     classList.addAll(Collections.nCopies(3, InstructionClass.SET_ELEMENT));
-        //     classList.add(InstructionClass.GET_ELEMENT);
-        //     classList.add(InstructionClass.SET_ELEMENT);
-        //     classList.add(InstructionClass.WRITE);
-        //     classList.add(InstructionClass.ARG);
-        //     classList.add(InstructionClass.CALL);
-        //     classList.add(InstructionClass.RETURN);
-        //     classList.addAll(Collections.nCopies(3, InstructionClass.BRANCH));
-        //     classList.add(InstructionClass.CAST);
-        //     classList.addAll(Collections.nCopies(9, InstructionClass.UNARY));
-        //     classList.add(InstructionClass.GET_MEMBER);
-        //     classList.add(InstructionClass.SET_MEMBER);
-        //     classList.add(InstructionClass.NEW_OBJECT);
-        //     classList.addAll(Collections.nCopies(2, InstructionClass.SET_ELEMENT));
-        //     classList.addAll(Collections.nCopies(2, InstructionClass.LOAD_CONST));
-        //     classList.add(InstructionClass.CAST);
-        //     classList.add(InstructionClass.GET_MEMBER);
-        //     classList.add(InstructionClass.LOAD_CONST);
-        //     classList.addAll(Collections.nCopies(3, InstructionClass.BINARY));
-        //     classList.addAll(Collections.nCopies(2, InstructionClass.CALL));
-        //     classList.add(InstructionClass.WRITE);
-        //     classList.add(InstructionClass.LOAD_CONST);
-        //     classList.add(InstructionClass.UNARY);
-        //     classList.addAll(Collections.nCopies(6, InstructionClass.BINARY));
-        //     INSTRUCTION_CLASSES = classList.toArray(InstructionClass[]::new);
-        // }
-        // private final int value;
-        // InstructionType(int value) {
-        //     this.value = value;
-        // }
-        // public int getValue() {
-        //     return this.value;
-        // }
-        // public static InstructionType fromValue(int value) {
-        //     if (value < 0)
-        //         return null;
-        //     InstructionType[] values = InstructionType.values();
-        //     if (value >= values.length)
-        //         return null;
-        //     return values[value];
-        // }
-        // public InstructionClass getInstructionClass() {
-        //     return INSTRUCTION_CLASSES[this.value];
-        // }
-        // public static void main(String[] args) {
-        //     for (InstructionType type : InstructionType.values()) {
-        //         if (type.getInstructionClass().equals(InstructionClass.NEW_ARRAY)) {
-        //             System.out.println(type);
-        //         }
-        //     }
-        // }
-        // --------------------
+        BIT_XORs64
     }
 
     public sealed class InstructionBody
