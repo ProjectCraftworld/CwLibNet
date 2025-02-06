@@ -1,7 +1,10 @@
-using CwLibNet.Types.Data;
+using System;
+using System.Collections.Generic;
+using CwLibNet.Types;
+using static CwLibNet.IO.ValueEnum<int>;
 namespace CwLibNet.Enums
 {
-    public enum InventoryObjectType
+    public enum InventoryObjectType : int
     {
         // NONE(0)
         NONE,
@@ -99,46 +102,65 @@ namespace CwLibNet.Enums
         // POD_TOOL_LBP2(1 << 18, GameVersion.LBP2)
         POD_TOOL_LBP2,
         // EARTH_TOOL(1 << 31, GameVersion.LBP2)
-        EARTH_TOOL 
+        EARTH_TOOL
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final int value, flags;
-        // InventoryObjectType(int value) {
-        //     this.value = value;
-        //     this.flags = GameVersion.LBP1 | GameVersion.LBP2 | GameVersion.LBP3;
-        // }
-        // InventoryObjectType(int value, int flags) {
-        //     this.value = value;
-        //     this.flags = flags;
-        // }
-        // public static int getFlags(EnumSet<InventoryObjectType> set) {
-        //     int flags = 0;
-        //     for (InventoryObjectType type : set) flags |= type.value;
-        //     return flags;
-        // }
-        // public static EnumSet<InventoryObjectType> fromFlags(int flags, Revision revision) {
-        //     int version = GameVersion.getFlag(revision);
-        //     EnumSet<InventoryObjectType> set = EnumSet.noneOf(InventoryObjectType.class);
-        //     for (InventoryObjectType type : InventoryObjectType.values()) {
-        //         if ((type.flags & version) == 0)
-        //             continue;
-        //         if ((type.value & flags) != 0)
-        //             set.add(type);
-        //     }
-        //     return set;
-        // }
-        // public static boolean has(int flags, InventoryObjectType type) {
-        //     return (flags & type.value) != 0;
-        // }
-        // public boolean has(int flags) {
-        //     return (flags & this.value) != 0;
-        // }
-        // public static String getPrimaryName(EnumSet<InventoryObjectType> set) {
-        //     if (set == null || set.isEmpty())
-        //         return "none";
-        //     return set.iterator().next().name().toLowerCase();
-        // }
-        // --------------------
+    public sealed class InvObjectBody
+    {
+        private readonly InventoryObjectType value;
+        private readonly int flags;
+
+        public InvObjectBody(InventoryObjectType value)
+        {
+            this.value = value;
+            this.flags = (int)(GameVersion.LBP1 | GameVersion.LBP2 | GameVersion.LBP3);
+        }
+
+        public InvObjectBody(InventoryObjectType value, int flags)
+        {
+            this.value = value;
+            this.flags = flags;
+        }
+
+        public static int GetFlags(HashSet<InventoryObjectType> set)
+        {
+            int flags = 0;
+            foreach (InventoryObjectType type in set)
+            {
+                flags |= (int)type;
+            }
+            return flags;
+        }
+
+        public static HashSet<InventoryObjectType> fromFlags(int flags, Revision revision)
+        {
+            int version = GameVersion.GetFlag(revision);
+            HashSet<InventoryObjectType> set = new HashSet<InventoryObjectType>();
+            foreach (InventoryObjectType type in Enum.GetValues(typeof(InventoryObjectType)))
+            {
+                if ((flags & version) == 0)
+                    continue;
+                if ((flags & (int)type) != 0)
+                    set.Add(type);
+            }
+            return set;
+        }
+
+        public static bool Has(int flags, InventoryObjectType type)
+        {
+            return (flags & (int)type) != 0;
+        }
+
+        public bool Has(int flags)
+        {
+            return (flags & (int)this.value) != 0;
+        }
+
+        public static string GetPrimaryName(HashSet<InventoryObjectType> set)
+        {
+            if (set == null || set.Count == 0)
+                return "none";
+            return set.First().ToString().ToLower();
+        }
     }
 }

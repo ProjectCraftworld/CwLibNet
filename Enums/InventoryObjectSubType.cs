@@ -21,11 +21,11 @@ namespace CwLibNet.Enums
         public static readonly int EARTH_DECORATION = 0x10000000;
         public static readonly int MADE_BY_ME = 0x20000000;
         public static readonly int MADE_BY_OTHERS = 0x40000000;
-        public static readonly int FULL_COSTUME = 0x80000000;
+        public static readonly uint FULL_COSTUME = 0x80000000;
         public static readonly int MADE_BY_ANYONE = MADE_BY_ME | MADE_BY_OTHERS;
-        public static string GetTypeString(EnumSet<InventoryObjectType> type, int subType)
+        public static string GetTypeString(HashSet<InventoryObjectType> type, int subType)
         {
-            if (type.IsEmpty())
+            if (type.Count == 0)
                 return "NONE";
             if (type.Contains(InventoryObjectType.PLAYER_COLOUR))
                 return String.Format("PLAYER_COLOUR_%2d", subType);
@@ -35,10 +35,10 @@ namespace CwLibNet.Enums
                     return "OUTFIT";
                 if ((subType & SPECIAL_COSTUME) != 0)
                     return "SPECIAL";
-                CostumePieceCategory[] categories = CostumePieceCategory.Values();
-                for (int i = 0; i < categories.length; ++i)
+                CostumePieceCategory[] categories = (CostumePieceCategory[])Enum.GetValues(typeof(CostumePieceCategory));
+                for (int i = 0; i < categories.Length; ++i)
                     if ((subType & (1 << i)) != 0)
-                        return categories[i].Name();
+                        return categories[i].ToString();
                 return "NONE";
             }
 

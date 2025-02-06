@@ -487,4 +487,79 @@ namespace CwLibNet.Enums
         // }
         // --------------------
     }
+
+    public sealed class InstructionBody
+    {
+        private static readonly InstructionClass[] INSTRUCTION_CLASSES;
+
+        static InstructionBody()
+        {
+            var classList = new List<InstructionClass>();
+            classList.Add(InstructionClass.NOP);
+            classList.AddRange(Enumerable.Repeat(InstructionClass.LOAD_CONST, 6));
+            classList.AddRange(Enumerable.Repeat(InstructionClass.UNARY, 20));
+            classList.Add(InstructionClass.NOP);
+            classList.AddRange(Enumerable.Repeat(InstructionClass.UNARY, 4));
+            classList.AddRange(Enumerable.Repeat(InstructionClass.BINARY, 50));
+            classList.Add(InstructionClass.NOP);
+            classList.Add(InstructionClass.NOP);
+            classList.AddRange(Enumerable.Repeat(InstructionClass.BINARY, 6));
+            classList.AddRange(Enumerable.Repeat(InstructionClass.GET_BUILTIN_MEMBER, 31));
+            classList.AddRange(Enumerable.Repeat(InstructionClass.SET_BUILTIN_MEMBER, 28));
+            classList.AddRange(Enumerable.Repeat(InstructionClass.GET_MEMBER, 2));
+            classList.AddRange(Enumerable.Repeat(InstructionClass.SET_MEMBER, 2));
+            classList.Add(InstructionClass.GET_ELEMENT);
+            classList.Add(InstructionClass.SET_ELEMENT);
+            classList.Add(InstructionClass.GET_BUILTIN_MEMBER);
+            classList.Add(InstructionClass.NEW_ARRAY);
+            classList.AddRange(Enumerable.Repeat(InstructionClass.SET_ELEMENT, 3));
+            classList.Add(InstructionClass.GET_ELEMENT);
+            classList.Add(InstructionClass.SET_ELEMENT);
+            classList.Add(InstructionClass.WRITE);
+            classList.Add(InstructionClass.ARG);
+            classList.Add(InstructionClass.CALL);
+            classList.Add(InstructionClass.RETURN);
+            classList.AddRange(Enumerable.Repeat(InstructionClass.BRANCH, 3));
+            classList.Add(InstructionClass.CAST);
+            classList.AddRange(Enumerable.Repeat(InstructionClass.UNARY, 9));
+            classList.Add(InstructionClass.GET_MEMBER);
+            classList.Add(InstructionClass.SET_MEMBER);
+            classList.Add(InstructionClass.NEW_OBJECT);
+            classList.AddRange(Enumerable.Repeat(InstructionClass.SET_ELEMENT, 2));
+            classList.AddRange(Enumerable.Repeat(InstructionClass.LOAD_CONST, 2));
+            classList.Add(InstructionClass.CAST);
+            classList.Add(InstructionClass.GET_MEMBER);
+            classList.Add(InstructionClass.LOAD_CONST);
+            classList.AddRange(Enumerable.Repeat(InstructionClass.BINARY, 3));
+            classList.AddRange(Enumerable.Repeat(InstructionClass.CALL, 2));
+            classList.Add(InstructionClass.WRITE);
+            classList.Add(InstructionClass.LOAD_CONST);
+            classList.Add(InstructionClass.UNARY);
+            classList.AddRange(Enumerable.Repeat(InstructionClass.BINARY, 6));
+            INSTRUCTION_CLASSES = classList.ToArray();
+        }
+        private readonly InstructionType value;
+
+        public InstructionBody
+        (int value)
+        {
+            this.value = (InstructionType)value;
+        }
+
+        public InstructionType getType()
+        {
+            return this.value;
+        }
+
+        public static InstructionBody
+         fromValue(int value)
+        {
+            if (Enum.IsDefined(typeof(InstructionType), value))
+        {
+            return new InstructionBody
+            (value);
+        }
+            return default(InstructionBody);
+        }        
+    }
 }
