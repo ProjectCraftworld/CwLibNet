@@ -465,26 +465,26 @@ namespace CwLibNet.Enums
             classList.AddRange(Enumerable.Repeat(InstructionClass.BINARY, 6));
             INSTRUCTION_CLASSES = classList.ToArray();
         }
-        private readonly InstructionType value;
+        private readonly InstructionType type;
 
         public InstructionBody
-        (int value)
+        (int type)
         {
-            this.value = (InstructionType)value;
+            this.type = (InstructionType)type;
         }
 
         public InstructionType getType()
         {
-            return this.value;
+            return this.type;
         }
 
         public static InstructionBody
-         fromValue(int value)
+         fromValue(int type)
         {
-            if (Enum.IsDefined(typeof(InstructionType), value))
+            if (Enum.IsDefined(typeof(InstructionType), type))
         {
             return new InstructionBody
-            (value);
+            (type);
         }
             return default(InstructionBody);
         }        

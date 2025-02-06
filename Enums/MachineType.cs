@@ -2,7 +2,7 @@ using CwLibNet.IO;
 
 namespace CwLibNet.Enums
 {
-    public enum MachineType
+    public enum MachineType : int
     {
         // VOID(0x0)
         VOID,
@@ -50,24 +50,29 @@ namespace CwLibNet.Enums
         // S64(0xc)
         S64,
         // F64(0xd)
-        F64 
+        F64
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // MachineType(int value) {
-        //     this.value = value;
-        // }
-        // public Integer getValue() {
-        //     return this.value;
-        // }
-        // public static MachineType fromValue(int value) {
-        //     for (MachineType type : MachineType.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+    public sealed class MachineBody
+    {
+          private readonly MachineType value;
+
+        public MachineBody(int value)
+        {
+            this.value = (MachineType)value;
+        }
+
+        public MachineType getValue()
+        {
+            return this.value;
+        }
+        public static MachineBody fromValue(int value)
+        {
+            if (Enum.IsDefined(typeof(MachineType), value))
+        {
+            return new MachineBody(value);
+        }
+            return default(MachineBody);
+        }
     }
 }

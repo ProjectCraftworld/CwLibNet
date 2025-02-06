@@ -1,6 +1,8 @@
+using static CwLibNet.IO.ValueEnum<int>;
+
 namespace CwLibNet.Enums
 {
-    public enum ModifierType
+    public enum ModifierType : int
     {
         // STATIC(0x0)
         STATIC,
@@ -30,35 +32,51 @@ namespace CwLibNet.Enums
         DIVERGENT,
         // EXPORT(0xd)
         EXPORT 
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // ModifierType(int value) {
-        //     this.value = value;
-        // }
-        // public int getValue() {
-        //     return this.value;
-        // }
-        // public static short getFlags(EnumSet<ModifierType> set) {
-        //     short flags = 0;
-        //     if (set == null)
-        //         return flags;
-        //     for (ModifierType type : set) flags |= (1 << type.value);
-        //     return flags;
-        // }
-        // public static EnumSet<ModifierType> fromValue(int value) {
-        //     EnumSet<ModifierType> bitset = EnumSet.noneOf(ModifierType.class);
-        //     for (ModifierType type : ModifierType.values()) if ((value & (1 << type.value)) != 0)
-        //         bitset.add(type);
-        //     return bitset;
-        // }
-        // public static String toModifierString(EnumSet<ModifierType> set) {
-        //     String[] modifiers = new String[set.size()];
-        //     int i = 0;
-        //     for (ModifierType type : set) modifiers[i++] = type.toString().toLowerCase();
-        //     return String.join(" ", modifiers);
-        // }
-        // --------------------
+    public sealed class ModifierBody
+    {
+        private readonly ModifierType value;
+
+        ModifierBody(int value)
+        {
+            this.value = (ModifierType)value;
+        }
+
+        public ModifierType getValue()
+        {
+            return this.value;
+        }
+
+        public static ModifierType GetFlags(HashSet<ModifierType> set)
+        {
+            int flags = 0;
+            if (set == null) return (ModifierType)flags;
+            foreach (ModifierType value in set)
+                flags |= (1 << (int)value);
+            return (ModifierType)flags;
+        }
+
+        public static HashSet<ModifierType> fromValue(int value)
+        {
+            HashSet<ModifierType> bitset = new HashSet<ModifierType>();
+            foreach (ModifierType type in Enum.GetValues(typeof(ModifierType)))
+            {
+                if ((value & (1 << (int)type)) != 0)
+                {
+                    bitset.Add(type);
+                }
+            }
+            return bitset;
+        }
+
+        public static String ToModifierString(HashSet<ModifierType> set)
+        {
+            String[] modifiers = new String[set.Count];
+            int i = 0;
+            foreach (ModifierType value in set)
+            modifiers[i++] = value.ToString().ToLower();
+            return string.Join(" ", modifiers);
+        }
     }
 }

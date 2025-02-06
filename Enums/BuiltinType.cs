@@ -16,27 +16,27 @@ namespace CwLibNet.Enums
         // CHAR(0x2)
         CHAR,
         // S32(0x3)
-        s32,
+        S32,
         // F32(0x4)
-        f32,
+        F32,
         // /* All the vector types are still vector4's natively */
         // V2(0x5)
-        v2,
+        V2,
         // V3(0x6)
-        v3,
+        V3,
         // V4(0x7)
-        v4,
+        V4,
         // M44(0x8)
-        m44,
+        M44,
         // /**
         //  * Functionally the same as a s32.
         //  */
         // GUID(0x9)
         GUID,
         // S64(0xa)
-        s64,
+        S64,
         // F64(0xb)
-        f64
+        F64
     }
 
     public sealed class BuiltinBodyMembers

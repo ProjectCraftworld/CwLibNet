@@ -1,6 +1,8 @@
+using static CwLibNet.IO.ValueEnum<int>;
+
 namespace CwLibNet.Enums
 {
-    public enum ModCompatibility
+    public enum ModCompatibility : int
     {
         // LBP1(1)
         LBP1,
@@ -20,23 +22,28 @@ namespace CwLibNet.Enums
         PS4,
         // ALL(31)
         ALL 
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // ModCompatibility(int value) {
-        //     this.value = value;
-        // }
-        // public int getValue() {
-        //     return this.value;
-        // }
-        // public static ModCompatibility fromValue(int value) {
-        //     for (ModCompatibility type : ModCompatibility.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return ModCompatibility.ALL;
-        // }
-        // --------------------
+    public sealed class ModCompBody
+    {
+          private readonly ModCompatibility value;
+
+        public ModCompBody(int value)
+        {
+            this.value = (ModCompatibility)value;
+        }
+
+        public ModCompatibility getValue()
+        {
+            return this.value;
+        }
+        public static ModCompBody fromValue(int value)
+        {
+            if (Enum.IsDefined(typeof(ModCompatibility), value))
+            {
+                return new ModCompBody(value);
+            }
+            return new ModCompBody((int)ModCompatibility.ALL);
+        }
     }
 }

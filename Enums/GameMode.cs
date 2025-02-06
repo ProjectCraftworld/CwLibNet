@@ -27,7 +27,7 @@ namespace CwLibNet.Enums
             this.value = (GameMode)value;
         }
 
-        public GameMode getType()
+        public GameMode getValue()
         {
             return this.value;
         }

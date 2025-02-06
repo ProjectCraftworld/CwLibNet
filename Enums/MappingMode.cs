@@ -2,7 +2,7 @@ using CwLibNet.IO;
 
 namespace CwLibNet.Enums
 {
-    public enum MappingMode
+    public enum MappingMode : int
     {
         // HIDDEN(0)
         HIDDEN,
@@ -31,23 +31,29 @@ namespace CwLibNet.Enums
         //  */
         // PLANARXZ(5)
         PLANARXZ 
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final byte value;
-        // MappingMode(int value) {
-        //     this.value = (byte) value;
-        // }
-        // public Byte getValue() {
-        //     return this.value;
-        // }
-        // public static MappingMode fromValue(int value) {
-        //     for (MappingMode mode : MappingMode.values()) {
-        //         if (mode.value == value)
-        //             return mode;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+    public sealed class MappingBody
+    {
+        private readonly MappingMode value;
+
+        public MappingBody(int value)
+        {
+            this.value = (MappingMode)value;
+        }
+
+        public MappingMode getValue()
+        {
+            return this.value;
+        }
+
+        public static MappingBody fromValue(int value)
+        {
+            if (Enum.IsDefined(typeof(MappingMode), value))
+        {
+            return new MappingBody(value);
+        }
+            return default(MappingBody);
+        }
     }
 }

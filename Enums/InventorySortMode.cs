@@ -39,7 +39,7 @@ namespace CwLibNet.Enums
             this.value = (InventorySortMode)value;
         }
 
-        public InventorySortMode getType()
+        public InventorySortMode getValue()
         {
             return this.value;
         }

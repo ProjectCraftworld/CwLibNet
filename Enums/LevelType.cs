@@ -33,7 +33,7 @@ namespace CwLibNet.Enums
             this.value = (LevelType)value;
         }
 
-        public LevelType getType()
+        public LevelType getValue()
         {
             return this.value;
         }

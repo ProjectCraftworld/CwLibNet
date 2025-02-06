@@ -2,7 +2,7 @@ using CwLibNet.IO;
 
 namespace CwLibNet.Enums
 {
-    public enum ParameterSubType
+    public enum ParameterSubType : int
     {
         // NONE(0x0)
         NONE,
@@ -12,23 +12,33 @@ namespace CwLibNet.Enums
         ZW,
         // Z(0x3)
         Z 
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final byte value;
-        // ParameterSubType(int value) {
-        //     this.value = (byte) value;
-        // }
-        // public Byte getValue() {
-        //     return this.value;
-        // }
-        // public static ParameterSubType fromValue(byte value) {
-        //     for (ParameterSubType type : ParameterSubType.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+    public sealed class ParameterSubBody
+
+    {
+        private readonly ParameterSubType value;
+
+        public ParameterSubBody
+        (int value)
+        {
+            this.value = (ParameterSubType)value;
+        }
+
+        public ParameterSubType getValue()
+        {
+            return this.value;
+        }
+
+        public static ParameterSubBody
+         fromValue(int value)
+        {
+            if (Enum.IsDefined(typeof(ParameterSubType), value))
+            {
+                return new ParameterSubBody
+                (value);
+            }
+            return default(ParameterSubBody); 
+        }
     }
 }

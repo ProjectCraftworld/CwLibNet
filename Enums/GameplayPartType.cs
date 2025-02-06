@@ -26,26 +26,26 @@ namespace CwLibNet.Enums
 
     public sealed class GameplayBody
     {
-        private readonly GameplayPartType value;
+        private readonly GameplayPartType type;
 
         public GameplayBody
-        (int value)
+        (int type)
         {
-            this.value = (GameplayPartType)value;
+            this.type = (GameplayPartType)type;
         }
 
         public GameplayPartType getType()
         {
-            return this.value;
+            return this.type;
         }
 
         public static GameplayBody
-         fromValue(int value)
+         fromtype(int type)
         {
-            if (Enum.IsDefined(typeof(GameplayPartType), value))
+            if (Enum.IsDefined(typeof(GameplayPartType), type))
         {
             return new GameplayBody
-            (value);
+            (type);
         }
             return default(GameplayBody);
         }
