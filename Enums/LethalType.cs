@@ -2,7 +2,7 @@ using CwLibNet.IO;
 
 namespace CwLibNet.Enums
 {
-    public enum LethalType
+    public enum LethalType : int
     {
         // NOT(0)
         NOT,
@@ -35,23 +35,28 @@ namespace CwLibNet.Enums
         BULLET,
         // DROWNED(14)
         DROWNED 
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // LethalType(int value) {
-        //     this.value = value;
-        // }
-        // public Integer getValue() {
-        //     return this.value;
-        // }
-        // public static LethalType fromValue(int value) {
-        //     for (LethalType type : LethalType.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+    public sealed class LethalBody
+    {
+        private readonly LethalType type;
+
+        public LethalBody(int type)
+        {
+            this.type = (LethalType)type;
+        }
+
+        public LethalType getType()
+        {
+            return this.type;
+        }
+        public static LethalBody fromValue(int type)
+        {
+            if (Enum.IsDefined(typeof(LethalType), type))
+            {
+                return new LethalBody(type);
+            }
+            return default(LethalBody);
+        }
     }
 }

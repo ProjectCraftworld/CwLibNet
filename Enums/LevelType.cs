@@ -2,7 +2,7 @@ using CwLibNet.IO;
 
 namespace CwLibNet.Enums
 {
-    public enum LevelType
+    public enum LevelType : int
     {
         // MAIN_PATH(0)
         MAIN_PATH,
@@ -22,29 +22,34 @@ namespace CwLibNet.Enums
         CUTSCENE,
         // LBP2_DLC_HUB(8)
         LBP2_DLC_HUB 
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // LevelType(int value) {
-        //     this.value = value;
-        // }
-        // public Integer getValue() {
-        //     return this.value;
-        // }
-        // /**
-        //  * Attempts to get a LevelType from value.
-        //  *
-        //  * @param value Level type value
-        //  * @return LevelType
-        //  */
-        // public static LevelType fromValue(int value) {
-        //     for (LevelType type : LevelType.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return LevelType.MAIN_PATH;
-        // }
-        // --------------------
+    public sealed class LevelBody
+    {
+        private readonly LevelType value;
+
+        public LevelBody(int value)
+        {
+            this.value = (LevelType)value;
+        }
+
+        public LevelType getType()
+        {
+            return this.value;
+        }
+
+        /// <summary>
+        /// Attempts to get a LevelType from value.
+        /// </summary>
+        /// <param name="value">Game mode value</param>
+        /// <returns>LevelType</returns>
+        public static LevelBody fromValue(int value)
+        {
+            if (Enum.IsDefined(typeof(LevelType), value))
+        {
+            return new LevelBody(value);
+        }
+            return new LevelBody((int)LevelType.MAIN_PATH);
+        }
     }
 }

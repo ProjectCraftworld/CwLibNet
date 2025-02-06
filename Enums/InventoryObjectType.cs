@@ -1,7 +1,6 @@
-using System;
-using System.Collections.Generic;
-using CwLibNet.Types;
+using CwLibNet.Types.Data;
 using static CwLibNet.IO.ValueEnum<int>;
+using CwLibNet.Types;
 namespace CwLibNet.Enums
 {
     public enum InventoryObjectType : int
@@ -122,7 +121,7 @@ namespace CwLibNet.Enums
             this.flags = flags;
         }
 
-        public static int GetFlags(HashSet<InventoryObjectType> set)
+        public static int getFlags(HashSet<InventoryObjectType> set)
         {
             int flags = 0;
             foreach (InventoryObjectType type in set)
