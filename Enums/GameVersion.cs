@@ -16,10 +16,5 @@ namespace CwLibNet.Enums
                 return GameVersion.LBP3;
             return GameVersion.LBP2;
         }
-
-        internal static int GetFlag(Revision revision)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
