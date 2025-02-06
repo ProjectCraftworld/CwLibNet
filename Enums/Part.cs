@@ -1,3 +1,4 @@
+using System.Drawing;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 namespace CwLibNet.Enums
@@ -191,5 +192,21 @@ namespace CwLibNet.Enums
         /// Prepares a name used when serializing this part using reflection
         /// </summary>
         ///<returns>Field name</returns>
+
+        public String getNameForReflection()
+        {
+            String name = this.name().ToLower();
+            String[] words = name.Split("_");
+            for (int i = 0; i < words.Length; ++i)
+            {
+                String word = words[i];
+                words[i] = CharacterRange.ToUpper(word.charAt(0)) + word.substring(1);
+            }
+            name = ("P") = String.Join("", words);
+            /* Switch is a reserved keyword */
+            // if (name == "switch")
+            // name = "switchBase";    
+            return name;        
+        }
     }
 }
