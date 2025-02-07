@@ -1,9 +1,10 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+using Cwlib.Io.Serializer;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 namespace CwLibNet.Enums
 {
-    public enum Part
+    public enum Part : int
     {
         // BODY(0x0, PartHistory.BODY, PBody.class)
         BODY,
@@ -139,7 +140,7 @@ namespace CwLibNet.Enums
         // STREAMING_DATA(0x34, PartHistory.STREAMING_DATA, PStreamingData.class)
         STREAMING_DATA,
         // STREAMING_HINT(0x35, PartHistory.STREAMING_HINT, PStreamingHint.class)
-        STREAMING_HINT 
+        STREAMING_HINT
     }
 
     public sealed class PartBody
@@ -182,7 +183,7 @@ namespace CwLibNet.Enums
         {
             return this.version;
         }
-        
+
         public Part getSerializable()
         {
             return this.serializable;
@@ -195,18 +196,154 @@ namespace CwLibNet.Enums
 
         public String getNameForReflection()
         {
-            String name = this.name().ToLower();
-            String[] words = name.Split("_");
+            String name = this.ToString().ToLower();
+            String[] words = name.Split('_');
+
             for (int i = 0; i < words.Length; ++i)
             {
                 String word = words[i];
-                words[i] = CharacterRange.ToUpper(word.charAt(0)) + word.substring(1);
+                words[i] = char.ToUpper(word[0]) + word.Substring(1);
             }
-            name = ("P") = String.Join("", words);
+
+            name = "P" + string.Concat(words);
+
             /* Switch is a reserved keyword */
             // if (name == "switch")
-            // name = "switchBase";    
-            return name;        
+            // name = "switchBase";
+
+            return name;       
         }
+        //lets come back to this later :0(
+
+        /// <summary>
+        /// Head revision of resource
+        /// </summary>
+        /// <param name="head">Part head</param>
+        /// <returns>PartBody</returns>        
+
+        /// <summary>
+        /// Flags determining what parts can be serialized by a Thing
+        /// </summary>
+        /// <param name="flag">Part flag</param>
+        /// <returns>PartBody</returns>   
+
+        /// <summary>
+        /// Parts revision
+        /// </summary>
+        /// <param name="version">Parts version</param>
+        /// <returns>PartBody</returns>
+
+        public static Part[] fromFlags(int head, long flags, int version)
+        {
+            List<Part> parts = new List<Part>(64);
+
+            foreach (Part part in Enum.GetValues(typeof(Part)))
+            {
+                if (part.hasPart(head, flags, version))
+                parts.Add(part);
+            }
+
+            return parts.ToArray();
+        }
+
+        /// <summary>
+        /// Head revision of resource
+        /// </summary>
+        /// <param name="head">Part head</param>
+        /// <returns>PartBody</returns>        
+
+        /// <summary>
+        /// Flags determining what parts can be serialized by a Thing
+        /// </summary>
+        /// <param name="flag">Part flag</param>
+        /// <returns>PartBody</returns>   
+
+        /// <summary>
+        /// Parts revision
+        /// </summary>
+        /// <param name="version">Parts version</param>
+        /// <returns>PartBody</returns>
+
+        public bool hasPart(int head, long flags, int version)
+        {
+            if ((head & 0xFFFF) >= 0x13C && ((int)this.index >= 0x36 && (int)this.index <= 0x3C))
+                return false;
+            if ((head & 0xFFFF) >= 0x18C && this.index == Part.PARTICLE_EMITTER_2)
+                return false;
+            if ((head >> 0x10) >= 0x107 && this.index == Part.CREATOR_ANIM)
+                return false;
+
+            int index = (int)this.index;
+
+            if (version >= PartHistory.CREATOR_ANIM)    
+            {
+                if (this.index == Part.CREATOR_ANIM)
+                    return ((1L << 0x29) & flags) != 0;
+                if ((head >> 0x10) < 0x107 && index > 0x28) 
+                    index++;
+            }
+
+            return version >= (int)this.version && (((1L << index) & flags) != 0);
+        }
+
+        /// <summary>
+        /// Type of part
+        /// </summary>
+        /// <param name="<T>">Part type</param>
+        /// <returns>PartBody</returns>        
+
+        /// <summary>
+        /// Thing that potentially contains this part
+        /// </summary>
+        /// <param name="thing">Part thing</param>
+        /// <returns>PartBody</returns>   
+
+        /// <summary>
+        /// Version determining what parts existed at this point
+        /// </summary>
+        /// <param name="version">Parts version</param>
+        /// <returns>PartBody</returns>
+
+        /// <summary>
+        /// Flags determining what parts can be serialized by a Thing
+        /// </summary>
+        /// <param name="flags">Part flags</param>
+        /// <returns>PartBody</returns>        
+
+        /// <summary>
+        /// Instance of the serializer stream
+        /// </summary>
+        /// <param name="serializer">Part serializer</param>
+        /// <returns>PartBody</returns>
+
+        [SuppressMessage("unchecked", "RedundantCast")]
+        public bool Serialize(SerializableAttribute[] parts, int version, long flags, Serializer serializer)
+        {
+            if (!this.hasPart(serializer.GetRevision().GetHead(), flags, version))
+                return true;
+
+            Part part = (Part)parts[this.index];
+            if (this.serializable == null)
+            {
+                if (serializer.IsWriting())
+                {
+                    if (part != null) return false;
+                    else
+                    {
+                        serializer.Serialize(0);
+                        return true;
+                    }
+                }
+                else if (!serializer.IsWriting())
+                {
+                    return serializer.Serialize(0) == 0;
+                }
+                return false;
+            }
+
+            parts[(int)this.index] = (Part)serializer.Serialize(part, this.serializable);
+            return true;
+        }
+        // i hated working on this one :0(
     }
 }

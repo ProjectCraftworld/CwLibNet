@@ -222,4 +222,33 @@ namespace Cwlib.Enums
         // }
         // --------------------
     }
+
+    public sealed class ResourceBody
+    {
+        private readonly ResourceType header;
+        private readonly ResourceType part;
+        private readonly ResourceType<T> compressable;
+        private readonly ResourceType folder;
+        private readonly String extension;
+        private readonly ResourceType extension;
+        
+        ResourceBody(String magic, int value, Class<? extends Serializable> clazz, String folder, String extension)
+        {
+            this.header = (ResourceType)magic;
+            this.part = (ResourceType)value;
+            this.compressable = clazz == null? null : (ResourceType)value;
+            this.folder = (ResourceType)folder;
+            this.extension = (ResourceType)extension; 
+        }
+
+        public String getHeader()
+        {
+            return this.header;
+        }
+
+        public ResourceType getValue()
+        {
+            return this.value;
+        }
+    }
 }

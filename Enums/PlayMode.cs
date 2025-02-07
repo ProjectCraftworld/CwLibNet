@@ -2,7 +2,7 @@ using CwLibNet.IO;
 
 namespace CwLibNet.Enums
 {
-    public enum PlayMode
+    public enum PlayMode : byte
     {
         // TRIGGER_BY_FALLOFF(0x0)
         TRIGGER_BY_FALLOFF,
@@ -12,23 +12,27 @@ namespace CwLibNet.Enums
         TRIGGER_BY_DESTROY,
         // TRIGGER_BY_SWITCH(0x3)
         TRIGGER_BY_SWITCH 
+    }
 
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // PlayMode(int value) {
-        //     this.value = value;
-        // }
-        // public Integer getValue() {
-        //     return this.value;
-        // }
-        // public static PlayMode fromValue(int value) {
-        //     for (PlayMode mode : PlayMode.values()) {
-        //         if (mode.value == value)
-        //             return mode;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+    public sealed class PlayBody
+    {
+        private readonly PlayMode value;
+
+        public PlayBody(int value)
+        {
+            this.value = (PlayMode)value;
+        }
+
+        public PlayMode getValue()
+        {
+            return this.value;
+        }
+
+        public static PlayBody fromValue(int value)
+        {   
+            if (Enum.IsDefined(typeof(PlayMode), value))
+                return new PlayBody(value);
+            return default(PlayBody);
+        }
     }
 }
