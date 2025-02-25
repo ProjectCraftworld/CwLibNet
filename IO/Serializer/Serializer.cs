@@ -1,14 +1,9 @@
 using Cwlib.Enums;
 using CwLibNet.EX;
 using CwLibNet.IO;
-using CwLibNet.IO.Streams;
-using CwLibNet.IO.Singleton;
-using CwLibNet.IO.Singleton.ResourceSystem;
-using CwLibNet.Structs.Things;
-using CwLibNet.IO.Types.Data;
-using CwLibNet.Util;
-using System;
+using CwLibNet.Types.Data;
 using CwLibNet.Types;
+using CwLibNet.Types.Things;
 using ResourceType = CwLibNet.Enums.ResourceType;
 
 namespace Cwlib.Io.Serializer
@@ -1203,7 +1198,7 @@ namespace Cwlib.Io.Serializer
             }
 
             int count = this.input.i32();
-            T[] output = (T[])Array.NewInstance(clazz, count);
+            T[] output = (T[])System.Array.NewInstance(clazz, count);
             try
             {
                 for (int i = 0; i < count; ++i)
@@ -1313,7 +1308,7 @@ namespace Cwlib.Io.Serializer
             List<Thing> things = new List();
             foreach (object reference in this.referenceObjects.KeySet())
             {
-                if (reference is Thing)
+                if (reference is this.Thing)
                     things.Add((Thing)reference);
             }
 

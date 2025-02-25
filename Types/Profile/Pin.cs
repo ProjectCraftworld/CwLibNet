@@ -1,6 +1,7 @@
 ﻿using Cwlib.Io.Serializer;
 using CwLibNet.Enums;
 using CwLibNet.IO;
+using CwLibNet.Types.Data;
 
 namespace CwLibNet.Types.Profile
 {
