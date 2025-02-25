@@ -8,6 +8,8 @@ using CwLibNet.Structs.Things;
 using CwLibNet.IO.Types.Data;
 using CwLibNet.Util;
 using System;
+using CwLibNet.Types;
+using ResourceType = CwLibNet.Enums.ResourceType;
 
 namespace Cwlib.Io.Serializer
 {

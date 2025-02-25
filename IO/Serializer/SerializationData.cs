@@ -1,4 +1,6 @@
-﻿using CwLibNet.Types;
+﻿using CwLibNet.Enums;
+using CwLibNet.Types;
+using CwLibNet.Types.Data;
 
 namespace CwLibNet.IO.Serialization
 {

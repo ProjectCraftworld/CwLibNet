@@ -1,4 +1,3 @@
-/// <summary>/// DDSReader.java/// <p>/// Copyright (c) 2015 Kenji Sasaki/// Released under the MIT license./// https://github.com/npedotnet/DDSReader/blob/master/LICENSE/// <p>/// English document/// https://github.com/npedotnet/DDSReader/blob/master/README.md/// <p>/// Japanese document/// http://3dtech.jp/wiki/index.php?DDSReader/// </summary>
 namespace CwLibNet.External
 {
     public sealed class DDSReader
@@ -25,9 +24,9 @@ namespace CwLibNet.External
             return buffer[80] & 0xFF | (buffer[81] & 0xFF) << 8 | (buffer[82] & 0xFF) << 16 | (buffer[83] & 0xFF) << 24;
         }
 
-        public static int GetFourCC(byte[] buffer)
+        public static uint GetFourCC(byte[] buffer)
         {
-            return (buffer[84] & 0xFF) << 24 | (buffer[85] & 0xFF) << 16 | (buffer[86] & 0xFF) << 8 | buffer[87] & 0xFF;
+            return (uint)((buffer[84] & 0xFF) << 24 | (buffer[85] & 0xFF) << 16 | (buffer[86] & 0xFF) << 8 | buffer[87] & 0xFF);
         }
 
         public static int GetBitCount(byte[] buffer)
@@ -60,7 +59,7 @@ namespace CwLibNet.External
             int width = GetWidth(buffer);
             int height = GetHeight(buffer);
             int mipmap = GetMipmap(buffer);
-            int type = GetType(buffer);
+            uint type = GetType(buffer);
             if (type == 0)
                 return null;
             int offset = 128;
@@ -89,7 +88,7 @@ namespace CwLibNet.External
                         case 262146:
                         case 262148:
                         case 327682:
-                            offset += (type & 0xFF) * width * height;
+                            offset += ((int)type & 0xFF) * width * height;
                             break;
                         case 0xFF:
                         case 0xFF00:
@@ -165,9 +164,9 @@ namespace CwLibNet.External
             return pixels;
         }
 
-        public static int GetType(byte[] buffer)
+        public static uint GetType(byte[] buffer)
         {
-            int type = 0;
+            uint type = 0;
             int flags = GetPixelFormatFlags(buffer);
             if ((flags & 0x4) != 0)
             {
