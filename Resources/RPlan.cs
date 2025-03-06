@@ -1,3 +1,5 @@
+using Cwlib.Enums;
+using Cwlib.Io.Serializer;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serialization;
@@ -5,15 +7,16 @@ using CwLibNet.Resources.Structs.Inventory;
 using CwLibNet.Resources.Structs.Things;
 using CwLibNet.Resources.Structs.Things.Parts;
 using CwLibNet.Types;
+using CwLibNet.Types.Data;
 
 namespace CwLibNet.Resources
 {
     public class RPlan : Resource
     {
         public static readonly int BASE_ALLOCATION_SIZE = 0x10;
-        public HashSet<ResourceDescriptor> dependencyCache = new HashSet();
+        public HashSet<ResourceDescriptor> dependencyCache = [];
         public bool isUsedForStreaming = false;
-        public Revision revision = new Revision(Revision.LBP1_FINAL_REVISION, 0x4c44, 0x17);
+        public Revision revision = new Revision(Revision.Lbp1FinalRevision, 0x4c44, 0x17);
         public byte[] thingData;
         public InventoryItemDetails inventoryData = new InventoryItemDetails();
         public byte compressionFlags = CompressionFlags.USE_ALL_COMPRESSION;
@@ -74,17 +77,17 @@ namespace CwLibNet.Resources
                 this.revision = revision;
             }
 
-            if (revision.GetSubVersion() >= Revisions.STREAMING_PLAN)
+            if (revision.GetSubVersion() >= ((int)Revisions.StreamingPlan))
                 isUsedForStreaming = serializer.Bool(isUsedForStreaming);
             if (serializer.IsWriting())
                 serializer.I32(serializer.GetRevision().GetHead());
             else
                 serializer.GetInput().I32();
             thingData = serializer.Bytearray(thingData);
-            if (head >= Revisions.PLAN_DETAILS && !isUsedForStreaming)
+            if (head >= ((int)Revisions.PlanDetails) && !isUsedForStreaming)
             {
                 inventoryData = serializer.Struct(inventoryData, typeof(InventoryItemDetails));
-                if (revision.Has(Branch.LEERDAMMER, Revisions.LD_LAMS_KEYS) || head >= Revisions.LAMS_KEYS)
+                if (revision.Has(Types.Branch.Leerdammer, ((int)Revisions.LdLamsKeys)) || head >= ((int)Revisions.LamsKeys))
                 {
                     inventoryData.location = serializer.U32(inventoryData.location);
                     inventoryData.category = serializer.U32(inventoryData.category);
@@ -112,10 +115,10 @@ namespace CwLibNet.Resources
         public override int GetAllocatedSize()
         {
             int size = BASE_ALLOCATION_SIZE;
-            if (this.thingData != null)
-                size += this.thingData.length;
-            if (this.inventoryData != null)
-                size += this.inventoryData.GetAllocatedSize();
+            if (thingData != null)
+                size += thingData.Length;
+            if (inventoryData != null)
+                size += inventoryData.GetAllocatedSize();
             return size;
         }
 
@@ -130,7 +133,7 @@ namespace CwLibNet.Resources
             serializer.Struct(this, typeof(RPlan));
             foreach (ResourceDescriptor descriptor in this.dependencyCache)
                 serializer.AddDependency(descriptor);
-            return new SerializationData(serializer.GetBuffer(), revision, compressionFlags, ResourceType.PLAN, SerializationType.BINARY, serializer.GetDependencies());
+            return new SerializationData(serializer.GetBuffer(), revision, compressionFlags, ResourceType.Plan, SerializationType.BINARY, serializer.GetDependencies());
         }
 
         public virtual Thing[] GetThings()
