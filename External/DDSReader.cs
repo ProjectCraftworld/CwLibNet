@@ -1,23 +1,22 @@
-/// <summary>/// DDSReader.java/// <p>/// Copyright (c) 2015 Kenji Sasaki/// Released under the MIT license./// https://github.com/npedotnet/DDSReader/blob/master/LICENSE/// <p>/// English document/// https://github.com/npedotnet/DDSReader/blob/master/README.md/// <p>/// Japanese document/// http://3dtech.jp/wiki/index.php?DDSReader/// </summary>
 namespace CwLibNet.External
 {
     public sealed class DDSReader
     {
         public static readonly Order ARGB = new Order(16, 8, 0, 24);
         public static readonly Order ABGR = new Order(0, 8, 16, 24);
-        public static int GetHeight(byte[] buffer)
+        public static byte GetHeight(byte[] buffer)
         {
-            return buffer[12] & 0xFF | (buffer[13] & 0xFF) << 8 | (buffer[14] & 0xFF) << 16 | (buffer[15] & 0xFF) << 24;
+            return (byte)(buffer[12] & 0xFF | (buffer[13] & 0xFF) << 8 | (buffer[14] & 0xFF) << 16 | (buffer[15] & 0xFF) << 24);
         }
 
-        public static int GetWidth(byte[] buffer)
+        public static byte GetWidth(byte[] buffer)
         {
-            return buffer[16] & 0xFF | (buffer[17] & 0xFF) << 8 | (buffer[18] & 0xFF) << 16 | (buffer[19] & 0xFF) << 24;
+            return (byte)(buffer[16] & 0xFF | (buffer[17] & 0xFF) << 8 | (buffer[18] & 0xFF) << 16 | (buffer[19] & 0xFF) << 24);
         }
 
-        public static int GetMipmap(byte[] buffer)
+        public static byte GetMipmap(byte[] buffer)
         {
-            return buffer[28] & 0xFF | (buffer[29] & 0xFF) << 8 | (buffer[30] & 0xFF) << 16 | (buffer[31] & 0xFF) << 24;
+            return (byte)(buffer[28] & 0xFF | (buffer[29] & 0xFF) << 8 | (buffer[30] & 0xFF) << 16 | (buffer[31] & 0xFF) << 24);
         }
 
         public static int GetPixelFormatFlags(byte[] buffer)
@@ -25,9 +24,9 @@ namespace CwLibNet.External
             return buffer[80] & 0xFF | (buffer[81] & 0xFF) << 8 | (buffer[82] & 0xFF) << 16 | (buffer[83] & 0xFF) << 24;
         }
 
-        public static int GetFourCC(byte[] buffer)
+        public static uint GetFourCC(byte[] buffer)
         {
-            return (buffer[84] & 0xFF) << 24 | (buffer[85] & 0xFF) << 16 | (buffer[86] & 0xFF) << 8 | buffer[87] & 0xFF;
+            return (uint)((buffer[84] & 0xFF) << 24 | (buffer[85] & 0xFF) << 16 | (buffer[86] & 0xFF) << 8 | buffer[87] & 0xFF);
         }
 
         public static int GetBitCount(byte[] buffer)
@@ -60,7 +59,7 @@ namespace CwLibNet.External
             int width = GetWidth(buffer);
             int height = GetHeight(buffer);
             int mipmap = GetMipmap(buffer);
-            int type = GetType(buffer);
+            uint type = GetType(buffer);
             if (type == 0)
                 return null;
             int offset = 128;
@@ -89,7 +88,7 @@ namespace CwLibNet.External
                         case 262146:
                         case 262148:
                         case 327682:
-                            offset += (type & 0xFF) * width * height;
+                            offset += ((int)type & 0xFF) * width * height;
                             break;
                         case 0xFF:
                         case 0xFF00:
@@ -165,9 +164,9 @@ namespace CwLibNet.External
             return pixels;
         }
 
-        public static int GetType(byte[] buffer)
+        public static uint GetType(byte[] buffer)
         {
-            int type = 0;
+            uint type = 0;
             int flags = GetPixelFormatFlags(buffer);
             if ((flags & 0x4) != 0)
             {

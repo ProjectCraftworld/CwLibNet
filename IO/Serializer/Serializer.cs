@@ -1,13 +1,10 @@
 using Cwlib.Enums;
 using CwLibNet.EX;
 using CwLibNet.IO;
-using CwLibNet.IO.Streams;
-using CwLibNet.IO.Singleton;
-using CwLibNet.IO.Singleton.ResourceSystem;
-using CwLibNet.Structs.Things;
-using CwLibNet.IO.Types.Data;
-using CwLibNet.Util;
-using System;
+using CwLibNet.Types.Data;
+using CwLibNet.Types;
+using CwLibNet.Types.Things;
+using ResourceType = CwLibNet.Enums.ResourceType;
 
 namespace Cwlib.Io.Serializer
 {
@@ -1031,50 +1028,50 @@ namespace Cwlib.Io.Serializer
         /// <param name="value">Structure to serialize</param>
         /// <param name="clazz">Serializable class type</param>
         /// <returns>(De)serialized structure</returns>
-        public T Reference<T extends Serializable>(T value, Class<T> clazz)
+        public T? Reference<T>(T value, Type clazz) where T: ISerializable
         {
-            if (this.isWriting)
+            if (isWriting)
             {
                 if (value == null)
                 {
-                    this.output.i32(0);
-                    return null;
+                    output.i32(0);
+                    return default;
                 }
 
-                int reference = this.referenceObjects.GetOrDefault(value, -1);
-                if (reference == -1)
+                int r = referenceObjects.GetOrDefault(value, -1);
+                if (r == -1)
                 {
-                    int next = this.nextReference++;
-                    this.output.i32(next);
-                    this.referenceIDs.Put(next, value);
-                    this.referenceObjects.Put(value, next);
+                    int next = nextReference++;
+                    output.i32(next);
+                    referenceIDs.Put(next, value);
+                    referenceObjects.Put(value, next);
                     value.Serialize(this);
                     return value;
                 }
                 else
-                    this.output.i32(reference);
+                    this.output.i32(r);
                 return value;
             }
 
-            int reference = this.input.i32();
+            int reference = input.i32();
             if (reference == 0)
-                return null;
-            if (this.referenceIDs.ContainsKey(reference))
-                return (T)this.referenceIDs[reference];
-            T struct = null;
+                return default;
+            if (referenceIDs.ContainsKey(reference))
+                return (T)referenceIDs[reference];
+            T? strutt;
             try
             {
-                struct = clazz.GetDeclaredConstructor().NewInstance();
+                strutt = (T?)Activator.CreateInstance(clazz);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new SerializationException("Failed to create class instance in " + "serializer!");
             }
 
-            this.referenceIDs.Put(reference, struct);
-            this.referenceObjects.Put(struct, reference);
-            struct.Serialize(this);
-            return struct;
+            referenceIDs.Put(reference, strutt);
+            referenceObjects.Put(strutt, reference);
+            strutt?.Serialize(this);
+            return strutt;
         }
 
         /// <summary>
@@ -1084,17 +1081,16 @@ namespace Cwlib.Io.Serializer
         /// <param name="value">Structure to serialize</param>
         /// <param name="clazz">Serializable class type</param>
         /// <returns>(De)serialized structure</returns>
-        public T Struct<T extends Serializable>(T value, Class<T> clazz)
+        public T Struct<T>(T value, Type clazz) where T:ISerializable
         {
             if (!this.isWriting || value == null)
             {
                 try
                 {
-                    value = clazz.GetDeclaredConstructor().NewInstance();
+                    value = (T)Activator.CreateInstance(clazz);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    ex.PrintStackTrace();
                     throw new SerializationException("Failed to create class instance in " + "serializer!");
                 }
             }
@@ -1201,7 +1197,7 @@ namespace Cwlib.Io.Serializer
             }
 
             int count = this.input.i32();
-            T[] output = (T[])Array.NewInstance(clazz, count);
+            T[] output = (T[])System.Array.NewInstance(clazz, count);
             try
             {
                 for (int i = 0; i < count; ++i)
@@ -1311,7 +1307,7 @@ namespace Cwlib.Io.Serializer
             List<Thing> things = new List();
             foreach (object reference in this.referenceObjects.KeySet())
             {
-                if (reference is Thing)
+                if (reference is this.Thing)
                     things.Add((Thing)reference);
             }
 

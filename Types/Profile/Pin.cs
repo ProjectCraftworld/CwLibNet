@@ -1,4 +1,7 @@
-﻿using CwLibNet.IO;
+﻿using Cwlib.Io.Serializer;
+using CwLibNet.Enums;
+using CwLibNet.IO;
+using CwLibNet.Types.Data;
 
 namespace CwLibNet.Types.Profile
 {
@@ -16,18 +19,18 @@ namespace CwLibNet.Types.Profile
     
         public void Serialize(Serializer serializer)
         {
-            Id = serializer.u32(Id);
-            ProgressType = serializer.u32(ProgressType);
-            Category = serializer.u32(Category);
-            TitleLamsKey = serializer.u32(TitleLamsKey);
-            DescriptionLamsKey = serializer.u32(DescriptionLamsKey);
-            Icon = serializer.resource(Icon, ResourceType.Texture, true);
-            InitialProgressValue = serializer.u32(InitialProgressValue);
-            TargetValue = serializer.u32(TargetValue);
-            TrophyToUnlock = serializer.i8(TrophyToUnlock);
-            BehaviourFlags = serializer.i16(BehaviourFlags);
-            if (serializer.getRevision().getVersion() >= 0x3f7)
-                TrophyToUnlockLbp1 = serializer.i8(TrophyToUnlockLbp1);
+            Id = serializer.U32(Id);
+            ProgressType = serializer.U32(ProgressType);
+            Category = serializer.U32(Category);
+            TitleLamsKey = serializer.U32(TitleLamsKey);
+            DescriptionLamsKey = serializer.U32(DescriptionLamsKey);
+            Icon = serializer.Resource(Icon, ResourceType.Texture, true);
+            InitialProgressValue = serializer.U32(InitialProgressValue);
+            TargetValue = serializer.U32(TargetValue);
+            TrophyToUnlock = serializer.I8(TrophyToUnlock);
+            BehaviourFlags = serializer.I16(BehaviourFlags);
+            if (serializer.GetRevision().GetVersion() >= 0x3f7)
+                TrophyToUnlockLbp1 = serializer.I8(TrophyToUnlockLbp1);
         }
     
         public int GetAllocatedSize()

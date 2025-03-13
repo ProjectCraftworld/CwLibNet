@@ -1,4 +1,5 @@
-﻿using CwLibNet.IO;
+﻿using CwLibNet.Enums;
+using CwLibNet.IO;
 using CwLibNet.IO.Serialization;
 using CwLibNet.Types;
 using CwLibNet.Types.Profile;

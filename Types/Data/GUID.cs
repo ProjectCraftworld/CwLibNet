@@ -2,16 +2,22 @@
 
 namespace CwLibNet.Types.Data
 {
-    public readonly struct GUID(uint value)
+    public readonly struct GUID
     {
-        public readonly uint Value = value;
+
+        public GUID(long value)
+        {
+            Value = value;
+        }
+        
+        public readonly long Value;
 
         public override string ToString()
         {
-            return "g" + this.Value;
+            return "g" + Value;
         }
 
-        public override bool Equals([NotNullWhen(true)] object? obj)
+        public override bool Equals(object? obj)
         {
             return Value.Equals(obj);
         }

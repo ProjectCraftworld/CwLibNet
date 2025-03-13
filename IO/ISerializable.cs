@@ -1,4 +1,5 @@
-﻿using CwLibNet.IO.Serialization;
+﻿using Cwlib.Io.Serializer;
+using CwLibNet.IO.Serialization;
 
 namespace CwLibNet.IO
 {

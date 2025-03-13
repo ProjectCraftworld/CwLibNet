@@ -1,6 +1,4 @@
-using static CwLibNet.IO.ValueEnum<int>;
-
-namespace Cwlib.Enums
+namespace CwLibNet.Enums
 {
     public enum ParameterType : int
     {
@@ -32,27 +30,18 @@ namespace Cwlib.Enums
         SPECULAR_COLOR 
     }
 
-    public sealed class ParameterBody
+    public sealed class ParameterBody(byte value)
     {
-        private readonly ParameterType value;
+        private readonly ParameterType value = (ParameterType)value;
 
-        public ParameterBody(byte value)
-        {
-            this.value = (ParameterType)value;
-        }
-
-        public ParameterType getValue()
+        public ParameterType GetValue()
         {
             return this.value;
         }
 
-        public static ParameterBody fromValue(int value)
+        public static ParameterBody? FromValue(int value)
         {
-            if (Enum.IsDefined(typeof(ParameterType), value))
-        {
-            return new ParameterBody(value);
-        }
-            return default(ParameterBody);
+            return Enum.IsDefined(typeof(ParameterType), value) ? new ParameterBody((byte)value) : null;
         }        
     }
 }
