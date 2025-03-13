@@ -1,5 +1,6 @@
 using System.CodeDom;
 using System.Diagnostics;
+using Cwlib.Io.Serializer;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serialization;
@@ -11,22 +12,22 @@ namespace CwLibNet.Resources
 {
     public class RDLC : Resource
     {
-        public readonly int BASE_ALLOCATION_SIZE = 0x10;
+        public static readonly int BASE_ALLOCATION_SIZE = 0x10;
 
         public List<DLCGUID> GUIDs = new List<DLCGUID>();
         public List<DLCFile> Files = new List<DLCFile>();
 
         public override void Serialize(Serializer serializer)
         {
-            GUIDs = serializer.List<DLCGUID>(GUIDs);
-            Files = serializer.List<DLCFile>(Files);
+            GUIDs = serializer.Arraylist<DLCGUID>(GUIDs);
+            Files = serializer.Arraylist<DLCFile>(Files);
         }
 
 
         public override int GetAllocatedSize()
         {
-            int size = RDLC.BASE_ALLOCATION_SIZE;
-            if (this.GUIDs != null) size += (this.GUIDs.size() * DLCGUID.BASE_ALLOCATION_SIZE);
+            int size = BASE_ALLOCATION_SIZE;
+            if (this.GUIDs != null) size += (this.GUIDs.Count * DLCGUID.BASE_ALLOCATION_SIZE);
             if (this.Files != null)
             {
                 foreach (DLCFile file in this.Files)
@@ -40,17 +41,17 @@ namespace CwLibNet.Resources
             Serializer serializer = new Serializer(this.GetAllocatedSize(), revision, compressionFlags);
             serializer.Struct<RDLC>(this);
             return new SerializationData(
-                serializer.getBuffer(),
+                serializer.GetBuffer(),
                 revision,
                 compressionFlags,
-                ResourceType.DOWNLOADABLE_CONTENT,
+                ResourceType.DownloadableContent,
                 SerializationType.BINARY,
-                serializer.getDependencies()
+                serializer.GetDependencies()
             );
         }
     }
 
-    public class DLCFile
+    public class DLCFile: ISerializable
     {
         public const int BASE_ALLOCATION_SIZE = 0x20; // Example size, adjust as needed
 
@@ -60,7 +61,7 @@ namespace CwLibNet.Resources
         }
     }
 
-    public class DLCGUID
+    public class DLCGUID: ISerializable
     {
     }
 }

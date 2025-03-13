@@ -1,4 +1,5 @@
-﻿using CwLibNet.Enums;
+﻿using Cwlib.Io.Serializer;
+using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serialization;
 using CwLibNet.Types;
@@ -14,7 +15,7 @@ namespace CwLibNet.Resources
 
         public override void Serialize(Serializer serializer)
         {
-            Pins = serializer.List<Pin>(Pins);
+            Pins = serializer.Array<Pin>(Pins);
         }
 
         public override int GetAllocatedSize()

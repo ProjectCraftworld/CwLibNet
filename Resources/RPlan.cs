@@ -3,11 +3,9 @@ using Cwlib.Io.Serializer;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serialization;
-using CwLibNet.Resources.Structs.Inventory;
-using CwLibNet.Resources.Structs.Things;
-using CwLibNet.Resources.Structs.Things.Parts;
 using CwLibNet.Types;
 using CwLibNet.Types.Data;
+using CwLibNet.Types.Things;
 
 namespace CwLibNet.Resources
 {
@@ -130,7 +128,7 @@ namespace CwLibNet.Resources
         public override SerializationData Build(Revision revision, byte compressionFlags)
         {
             Serializer serializer = new Serializer(this.GetAllocatedSize() + 0x8000, revision, compressionFlags);
-            serializer.Struct(this, typeof(RPlan));
+            serializer.Struct(this);
             foreach (ResourceDescriptor descriptor in this.dependencyCache)
                 serializer.AddDependency(descriptor);
             return new SerializationData(serializer.GetBuffer(), revision, compressionFlags, ResourceType.Plan, SerializationType.BINARY, serializer.GetDependencies());
@@ -139,7 +137,7 @@ namespace CwLibNet.Resources
         public virtual Thing[] GetThings()
         {
             Serializer serializer = new Serializer(this.thingData, this.revision, this.compressionFlags);
-            Thing[] things = serializer.Array(null, typeof(Thing), true);
+            Thing[] things = serializer.Array<Thing>(default, true);
             foreach (Thing thing in things)
             {
                 if (thing != null)
@@ -151,25 +149,25 @@ namespace CwLibNet.Resources
 
         public void SetThings(Thing[] things)
         {
-            Serializer serializer = new Serializer(0x800000, this.revision, this.compressionFlags);
-            serializer.Array(things, typeof(Thing), true);
+            Serializer serializer = new(0x800000, this.revision, this.compressionFlags);
+            serializer.Array(things, true);
             this.thingData = serializer.GetBuffer();
             ResourceDescriptor[] dependencies = serializer.GetDependencies();
             this.dependencyCache.Clear();
-            Collections.AddAll(this.dependencyCache, dependencies);
+            this.dependencyCache = [..dependencies];
         }
 
         public void SetThing(Thing thing)
         {
-            Serializer serializer = new Serializer(0x800000, this.revision, this.compressionFlags);
-            serializer.Reference(thing, typeof(Thing));
+            Serializer serializer = new(0x800000, this.revision, this.compressionFlags);
+            serializer.Reference(thing);
             Thing[] things = serializer.GetThings();
             serializer = new Serializer(0x800000, this.revision, this.compressionFlags);
-            serializer.Array(things, typeof(Thing), true);
+            serializer.Array(things, true);
             this.thingData = serializer.GetBuffer();
             ResourceDescriptor[] dependencies = serializer.GetDependencies();
             this.dependencyCache.Clear();
-            Collections.AddAll(this.dependencyCache, dependencies);
+            this.dependencyCache = [..dependencies];
         }
     }
 }

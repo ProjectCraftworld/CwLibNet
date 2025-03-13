@@ -32,8 +32,8 @@ namespace CwLibNet.IO.Serialization
             this.Type = Type;
             this.Method = Method;
             this.Dependencies = Dependencies;
-            this.TextureInfo = null;
-            this.StaticMeshInfo = null;
+            TextureInfo = null;
+            StaticMeshInfo = null;
         }
 
         /**
@@ -44,13 +44,13 @@ namespace CwLibNet.IO.Serialization
         public SerializationData(byte[] Buffer)
         {
             this.Buffer = Buffer;
-            this.Revision = null;
-            this.CompressionFlags = Cwlib.Enums.CompressionFlags.USE_NO_COMPRESSION;
-            this.Type = ResourceType.Texture;
-            this.Method = SerializationType.COMPRESSED_TEXTURE;
-            this.Dependencies = null;
-            this.TextureInfo = null;
-            this.StaticMeshInfo = null;
+            Revision = null;
+            CompressionFlags = Cwlib.Enums.CompressionFlags.USE_NO_COMPRESSION;
+            Type = ResourceType.Texture;
+            Method = SerializationType.COMPRESSED_TEXTURE;
+            Dependencies = null;
+            TextureInfo = null;
+            StaticMeshInfo = null;
         }
 
         /**
@@ -62,13 +62,13 @@ namespace CwLibNet.IO.Serialization
         public SerializationData(byte[] Buffer, CellGcmTexture info)
         {
             this.Buffer = Buffer;
-            this.Revision = null;
-            this.CompressionFlags = Cwlib.Enums.CompressionFlags.USE_NO_COMPRESSION;
-            this.Type = ResourceType.GtfTexture;
-            this.Method = info.GetMethod();
-            this.Dependencies = null;
-            this.TextureInfo = info;
-            this.StaticMeshInfo = null;
+            Revision = null;
+            CompressionFlags = Cwlib.Enums.CompressionFlags.USE_NO_COMPRESSION;
+            Type = ResourceType.GtfTexture;
+            Method = info.GetMethod();
+            Dependencies = null;
+            TextureInfo = info;
+            StaticMeshInfo = null;
         }
 
         /**
@@ -82,9 +82,9 @@ namespace CwLibNet.IO.Serialization
         {
             this.Buffer = Buffer;
             this.Revision = Revision;
-            this.CompressionFlags = Cwlib.Enums.CompressionFlags.USE_NO_COMPRESSION;
-            this.Type = ResourceType.StaticMesh;
-            this.Method = SerializationType.BINARY;
+            CompressionFlags = Cwlib.Enums.CompressionFlags.USE_NO_COMPRESSION;
+            Type = ResourceType.StaticMesh;
+            Method = SerializationType.BINARY;
 
             // Maybe I need a Method for gathering Dependencies without actually
             // serializing the data, can probably use reflection for it,
@@ -93,10 +93,10 @@ namespace CwLibNet.IO.Serialization
             Serializer? serializer = new(info.getAllocatedSize(), Revision,
                 Cwlib.Enums.CompressionFlags.USE_NO_COMPRESSION);
             serializer.Struct<StaticMeshInfo>(info, typeof(StaticMeshInfo));
-            this.Dependencies = serializer.GetDependencies();
+            Dependencies = serializer.GetDependencies();
 
-            this.TextureInfo = null;
-            this.StaticMeshInfo = info;
+            TextureInfo = null;
+            StaticMeshInfo = info;
     }
 }
 }

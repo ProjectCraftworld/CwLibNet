@@ -1,5 +1,7 @@
 ﻿using Cwlib.Enums;
 using CwLibNet.Types.Data;
+using CwLibNet.Util;
+using System.Numerics;
 using System.Text;
 
 namespace CwLibNet.IO.Streams
@@ -46,7 +48,7 @@ namespace CwLibNet.IO.Streams
          * @param value Bytes to write
          * @return This output stream
          */
-        public MemoryOutputStream bytes(byte[] value)
+        public MemoryOutputStream Bytes(byte[] value)
         {
             Array.Copy(value, 0, buffer, offset, value.Length);
             offset += value.Length;
@@ -59,11 +61,11 @@ namespace CwLibNet.IO.Streams
          * @param value Bytes to write
          * @return This output stream
          */
-        public MemoryOutputStream bytearray(byte[] value)
+        public MemoryOutputStream Bytearray(byte[] value)
         {
-            if (value == null) return i32(0);
-            i32(value.Length);
-            return bytes(value);
+            if (value == null) return I32(0);
+            I32(value.Length);
+            return Bytes(value);
         }
 
         /**
@@ -74,7 +76,7 @@ namespace CwLibNet.IO.Streams
          */
         public MemoryOutputStream boole(bool value)
         {
-            return u8(value ? 1 : 0);
+            return U8(value ? 1 : 0);
         }
 
         /**
@@ -83,10 +85,10 @@ namespace CwLibNet.IO.Streams
          * @param values bool array to write
          * @return This output stream
          */
-        public MemoryOutputStream boolarray(bool[] values)
+        public MemoryOutputStream Boolarray(bool[] values)
         {
-            if (values == null) return i32(0);
-            i32(values.Length);
+            if (values == null) return I32(0);
+            I32(values.Length);
             foreach (bool value in values)
                 boole(value);
             return this;
@@ -98,7 +100,7 @@ namespace CwLibNet.IO.Streams
          * @param value Byte to write
          * @return This output stream
          */
-        public MemoryOutputStream i8(byte value)
+        public MemoryOutputStream I8(byte value)
         {
             buffer[offset++] = value;
             return this;
@@ -110,7 +112,7 @@ namespace CwLibNet.IO.Streams
          * @param value Byte to write
          * @return This output stream
          */
-        public MemoryOutputStream u8(int value)
+        public MemoryOutputStream U8(int value)
         {
             buffer[offset++] = (byte)(value & 0xFF);
             return this;
@@ -122,11 +124,11 @@ namespace CwLibNet.IO.Streams
          * @param value Short to write
          * @return This output stream
          */
-        public MemoryOutputStream i16(short value)
+        public MemoryOutputStream I16(short value)
         {
             if (isLittleEndian)
-                return this.bytes(Bytes.toBytesLE(value));
-            return this.bytes(Bytes.toBytesBE(value));
+                return this.Bytes(Util.Bytes.ToBytesLE(value));
+            return this.Bytes(Util.Bytes.ToBytesBE(value));
         }
 
         /**
@@ -135,9 +137,9 @@ namespace CwLibNet.IO.Streams
          * @param value Short to write
          * @return This output stream
          */
-        public MemoryOutputStream u16(int value)
+        public MemoryOutputStream U16(int value)
         {
-            return i16((short)(value & 0xFFFF));
+            return I16((short)(value & 0xFFFF));
         }
 
         /**
@@ -146,7 +148,7 @@ namespace CwLibNet.IO.Streams
          * @param value Integer to write
          * @return This output stream
          */
-        public MemoryOutputStream u24(int value)
+        public MemoryOutputStream U24(int value)
         {
             value &= 0xFFFFFF;
             byte[] b;
@@ -166,7 +168,7 @@ namespace CwLibNet.IO.Streams
                 (byte) (value & 0xFF)
             };
             }
-            return bytes(b);
+            return Bytes(b);
         }
 
         /**
@@ -177,13 +179,13 @@ namespace CwLibNet.IO.Streams
          *                flags.
          * @return This output stream
          */
-        public MemoryOutputStream i32(int value, bool force32)
+        public MemoryOutputStream I32(int value, bool force32)
         {
             if (!force32 && ((compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0))
-                return uleb128(value & 0xFFFFFFFFL);
-            if (isLittleEndian))
-            return this.bytes(Bytes.toBytesLE(value));
-            return this.bytes(Bytes.toBytesBE(value));
+                return Uleb128(value & 0xFFFFFFFFL);
+            if (isLittleEndian)
+                return this.Bytes(Util.Bytes.ToBytesLE(value));
+            return this.Bytes(Util.Bytes.ToBytesBE(value));
         }
 
         /**
@@ -193,15 +195,15 @@ namespace CwLibNet.IO.Streams
          * @param value Signed integer to write
          * @return This output stream
          */
-        public MemoryOutputStream s32(int value)
+        public MemoryOutputStream S32(int value)
         {
             if ((compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0)
             {
-                return uleb128((long)((value & 0x7fffffff)) << 1 ^ ((value >> 0x1f)));
+                return Uleb128((long)((value & 0x7fffffff)) << 1 ^ ((value >> 0x1f)));
             }
             else
             {
-                return i32(value, true);
+                return I32(value, true);
             }
         }
 
@@ -213,13 +215,13 @@ namespace CwLibNet.IO.Streams
          *                flags.
          * @return This output stream
          */
-        public MemoryOutputStream u32(long value, bool force32)
+        public MemoryOutputStream U32(long value, bool force32)
         {
             if (!force32 && ((compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0))
-                return uleb128(value & 0xFFFFFFFFL);
+                return Uleb128(value & 0xFFFFFFFFL);
             if (isLittleEndian)
-                return this.bytes(Bytes.toBytesLE((int)(value & 0xFFFFFFFF)));
-            return this.bytes(Bytes.toBytesBE((int)(value & 0xFFFFFFFF)));
+                return this.Bytes(Util.Bytes.ToBytesLE((int)(value & 0xFFFFFFFF)));
+            return this.Bytes(Util.Bytes.ToBytesBE((int)(value & 0xFFFFFFFF)));
         }
 
         /**
@@ -230,13 +232,13 @@ namespace CwLibNet.IO.Streams
          *                flags.
          * @return This output stream
          */
-        public MemoryOutputStream u64(long value, bool force64)
+        public MemoryOutputStream U64(long value, bool force64)
         {
             if (!force64 && ((compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0))
-                return uleb128(value);
+                return Uleb128(value);
             if (isLittleEndian)
             {
-                return bytes([
+                return Bytes([
                 (byte) (value),
                 (byte) (value >>> 8),
                 (byte) (value >>> 16),
@@ -247,7 +249,7 @@ namespace CwLibNet.IO.Streams
                 (byte) (value >>> 56),
             ]);
             }
-            return bytes([
+            return Bytes([
             (byte) (value >>> 56),
             (byte) (value >>> 48),
             (byte) (value >>> 40),
@@ -267,11 +269,11 @@ namespace CwLibNet.IO.Streams
          *                flags.
          * @return This output stream
          */
-        public MemoryOutputStream s64(long value, bool force64)
+        public MemoryOutputStream S64(long value, bool force64)
         {
             return !force64 && ((compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0)
-                ? uleb128(value << 1 ^ (value >> 0x3f))
-                : u64(value, true);
+                ? Uleb128(value << 1 ^ (value >> 0x3f))
+                : U64(value, true);
         }
 
         /**
@@ -280,9 +282,9 @@ namespace CwLibNet.IO.Streams
          * @param value Integer to write
          * @return This output stream
          */
-        public MemoryOutputStream i32(int value)
+        public MemoryOutputStream I32(int value)
         {
-            return i32(value, false);
+            return I32(value, false);
         }
 
         /**
@@ -291,9 +293,9 @@ namespace CwLibNet.IO.Streams
          * @param value Integer to write
          * @return This output stream
          */
-        public MemoryOutputStream u32(long value)
+        public MemoryOutputStream U32(long value)
         {
-            return u32(value, false);
+            return U32(value, false);
         }
 
         /**
@@ -302,9 +304,9 @@ namespace CwLibNet.IO.Streams
          * @param value Long to write
          * @return This output stream
          */
-        public MemoryOutputStream u64(long value)
+        public MemoryOutputStream U64(long value)
         {
-            return u64(value, false);
+            return U64(value, false);
         }
 
         /**
@@ -313,9 +315,9 @@ namespace CwLibNet.IO.Streams
          * @param value Long to write
          * @return This output stream
          */
-        public MemoryOutputStream s64(long value)
+        public MemoryOutputStream S64(long value)
         {
-            return s64(value, false);
+            return S64(value, false);
         }
 
         /**
@@ -324,14 +326,14 @@ namespace CwLibNet.IO.Streams
          * @param value Long to write
          * @return This output stream
          */
-        public MemoryOutputStream uleb128(long value)
+        public MemoryOutputStream Uleb128(long value)
         {
             while (true)
             {
                 byte b = (byte)(value & 0x7f);
                 value >>>= 7;
                 if (value > 0L) b |= 128;
-                i8(b);
+                I8(b);
                 if (value == 0) break;
             }
             return this;
@@ -343,12 +345,12 @@ namespace CwLibNet.IO.Streams
          * @param values Short array to write
          * @return This output stream
          */
-        public MemoryOutputStream shortarray(short[] values)
+        public MemoryOutputStream Shortarray(short[] values)
         {
-            if (values == null) return i32(0);
-            i32(values.Length);
+            if (values == null) return I32(0);
+            I32(values.Length);
             foreach (short value in values)
-                i16(value);
+                I16(value);
             return this;
         }
 
@@ -358,12 +360,12 @@ namespace CwLibNet.IO.Streams
          * @param values Integer array to write
          * @return This output stream
          */
-        public MemoryOutputStream intarray(int[] values)
+        public MemoryOutputStream Intarray(int[] values)
         {
-            if (values == null) return i32(0);
-            i32(values.Length);
+            if (values == null) return I32(0);
+            I32(values.Length);
             foreach (int value in values)
-                i32(value);
+                I32(value);
             return this;
         }
 
@@ -373,12 +375,12 @@ namespace CwLibNet.IO.Streams
          * @param values Long array to write
          * @return This output stream
          */
-        public MemoryOutputStream longarray(long[] values)
+        public MemoryOutputStream Longarray(long[] values)
         {
-            if (values == null) return i32(0);
-            this.i32(values.Length);
+            if (values == null) return I32(0);
+            this.I32(values.Length);
             foreach (long value in values)
-                u64(value);
+                U64(value);
             return this;
         }
 
@@ -389,7 +391,7 @@ namespace CwLibNet.IO.Streams
          * @param value Float to write
          * @return This output stream
          */
-        public MemoryOutputStream f16(float value)
+        public MemoryOutputStream F16(float value)
         {
             int fbits = BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
             int sign = fbits >>> 16 & 0x8000;
@@ -400,18 +402,18 @@ namespace CwLibNet.IO.Streams
                 if ((fbits & 0x7fffffff) >= 0x47800000)
                 {
                     if (val < 0x7f800000)
-                        return u16(sign | 0x7c00);
-                    return u16(sign | 0x7c00 | (fbits & 0x007fffff) >>> 13);
+                        return U16(sign | 0x7c00);
+                    return U16(sign | 0x7c00 | (fbits & 0x007fffff) >>> 13);
                 }
-                return u16(sign | 0x7bff);
+                return U16(sign | 0x7bff);
             }
 
             if (val >= 0x38800000)
-                return u16(sign | val - 0x38000000 >>> 13);
+                return U16(sign | val - 0x38000000 >>> 13);
             if (val < 0x33000000)
-                return u16(sign);
+                return U16(sign);
             val = (fbits & 0x7fffffff) >>> 23;
-            return u16(sign | ((fbits & 0x7fffff | 0x800000) + (0x800000 >>> val - 102) >>> 126 - val));
+            return U16(sign | ((fbits & 0x7fffff | 0x800000) + (0x800000 >>> val - 102) >>> 126 - val));
         }
 
         /**
@@ -420,9 +422,9 @@ namespace CwLibNet.IO.Streams
          * @param value Float to write
          * @return This output stream
          */
-        public MemoryOutputStream f32(float value)
+        public MemoryOutputStream F32(float value)
         {
-            return i32(BitConverter.ToInt32(BitConverter.GetBytes(value), 0), true);
+            return I32(BitConverter.ToInt32(BitConverter.GetBytes(value), 0), true);
         }
 
         /**
@@ -431,12 +433,12 @@ namespace CwLibNet.IO.Streams
          * @param values Float array to write
          * @return This output stream
          */
-        public MemoryOutputStream floatarray(float[] values)
+        public MemoryOutputStream Floatarray(float[] values)
         {
-            if (values == null) return i32(0);
-            i32(values.Length);
+            if (values == null) return I32(0);
+            I32(values.Length);
             foreach (float value in values)
-                f32(value);
+                F32(value);
             return this;
         }
 
@@ -446,11 +448,11 @@ namespace CwLibNet.IO.Streams
          * @param value Vector2f to write
          * @return This output stream
          */
-        public MemoryOutputStream v2(Vector2f value)
+        public MemoryOutputStream V2(Vector2 value)
         {
-            if (value == null) value = new Vector2f().zero();
-            this.f32(value.x);
-            this.f32(value.y);
+            if (value == null) value = Vector2.Zero;
+            this.F32(value.X);
+            this.F32(value.Y);
             return this;
         }
 
@@ -460,12 +462,12 @@ namespace CwLibNet.IO.Streams
          * @param value Vector3f to write
          * @return This output stream
          */
-        public MemoryOutputStream v3(Vector3f value)
+        public MemoryOutputStream v3(Vector3 value)
         {
-            if (value == null) value = new Vector3f().zero();
-            this.f32(value.x);
-            this.f32(value.y);
-            this.f32(value.z);
+            if (value == null) value = Vector3.Zero;
+            this.F32(value.X);
+            this.F32(value.Y);
+            this.F32(value.Z);
             return this;
         }
 
@@ -475,11 +477,11 @@ namespace CwLibNet.IO.Streams
          * @param value Vector3f to write
          * @return This output stream
          */
-        public MemoryOutputStream v3(float x, float y, float z)
+        public MemoryOutputStream V3(float x, float y, float z)
         {
-            f32(x);
-            f32(y);
-            f32(z);
+            F32(x);
+            F32(y);
+            F32(z);
             return this;
         }
 
@@ -489,12 +491,12 @@ namespace CwLibNet.IO.Streams
          * @param value Vector3f to write
          * @return This output stream
          */
-        public MemoryOutputStream v3(Vector4f value)
+        public MemoryOutputStream V3(Vector4 value)
         {
-            if (value == null) value = new Vector4f().zero();
-            this.f32(value.x);
-            this.f32(value.y);
-            this.f32(value.z);
+            if (value == null) value = Vector4.Zero;
+            this.F32(value.X);
+            this.F32(value.Y);
+            this.F32(value.Z);
             return this;
         }
 
@@ -504,13 +506,13 @@ namespace CwLibNet.IO.Streams
          * @param value Vector4f to write
          * @return This output stream
          */
-        public MemoryOutputStream v4(Vector4f value)
+        public MemoryOutputStream V4(Vector4 value)
         {
-            if (value == null) value = new Vector4f().zero();
-            this.f32(value.x);
-            this.f32(value.y);
-            this.f32(value.z);
-            this.f32(value.w);
+            if (value == null) value = Vector4.Zero;
+            this.F32(value.X);
+            this.F32(value.Y);
+            this.F32(value.Z);
+            this.F32(value.W);
             return this;
         }
 
@@ -520,12 +522,12 @@ namespace CwLibNet.IO.Streams
          * @param values Vector array to write
          * @return This output stream
          */
-        public MemoryOutputStream vectorarray(Vector4f[] values)
+        public MemoryOutputStream Vectorarray(Vector4[] values)
         {
-            if (values == null) return i32(0);
-            this.i32(values.Length);
-            foreach (Vector4f value in values)
-                v4(value);
+            if (values == null) return I32(0);
+            this.I32(values.Length);
+            foreach (Vector4 value in values)
+                V4(value);
             return this;
         }
 
@@ -535,14 +537,14 @@ namespace CwLibNet.IO.Streams
          * @param value Matrix4x4 to write
          * @return This output stream
          */
-        public MemoryOutputStream m44(Matrix4f value)
+        public MemoryOutputStream M44(Matrix4x4 value)
         {
-            if (value == null) value = new Matrix4f().identity();
+            if (value == null) value = Matrix4x4.Identity;
 
             float[] identity = new float[] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 
             float[] values = new float[16];
-            value.get(values);
+            // value.get(values);
 
             int flags = 0xFFFF;
             if ((compressionFlags & CompressionFlags.USE_COMPRESSED_MATRICES) != 0)
@@ -551,12 +553,12 @@ namespace CwLibNet.IO.Streams
                 for (int i = 0; i < 16; ++i)
                     if (values[i] != identity[i])
                         flags |= (1 << i);
-                i16((short)flags);
+                I16((short)flags);
             }
 
             for (int i = 0; i < 16; ++i)
                 if ((flags & (1 << i)) != 0)
-                    f32(values[i]);
+                    F32(values[i]);
 
             return this;
         }
@@ -568,14 +570,14 @@ namespace CwLibNet.IO.Streams
          * @param size  Fixed size of string
          * @return This output stream
          */
-        public MemoryOutputStream str(String value, int size)
+        public MemoryOutputStream Str(String value, int size)
         {
-            if (value == null) return bytes(new byte[size]);
+            if (value == null) return Bytes(new byte[size]);
             byte[] data = Encoding.ASCII.GetBytes(value);
             if (data.Length > size)
                 data = data.Take(size).ToArray();
-            bytes(data);
-            this.pad(size - data.Length);
+            Bytes(data);
+            this.Pad(size - data.Length);
             return this;
         }
 
@@ -586,15 +588,15 @@ namespace CwLibNet.IO.Streams
          * @param size  Fixed size of string
          * @return This output stream
          */
-        public MemoryOutputStream wstr(String value, int size)
+        public MemoryOutputStream Wstr(String value, int size)
         {
             size *= 2;
-            if (value == null) return bytes(new byte[size]);
+            if (value == null) return Bytes(new byte[size]);
             byte[] str = Encoding.BigEndianUnicode.GetBytes(value);
             if (str.Length > size)
                 str = str.Take(size).ToArray();
-            bytes(str);
-            pad(size - str.Length);
+            Bytes(str);
+            Pad(size - str.Length);
             return this;
         }
 
@@ -604,12 +606,12 @@ namespace CwLibNet.IO.Streams
          * @param value String to write
          * @return This output stream
          */
-        public MemoryOutputStream str(String value)
+        public MemoryOutputStream str(string value)
         {
-            if (value == null) return i32(0);
-            byte[] string = value.getBytes(StandardCharsets.US_ASCII);
-            this.s32(string.length);
-            return this.bytes(string);
+            if (value == null) return I32(0);
+            byte[] _string = Encoding.ASCII.GetBytes(value);
+            this.S32(_string.Length);
+            return this.Bytes(_string);
         }
 
         /**
@@ -618,12 +620,12 @@ namespace CwLibNet.IO.Streams
          * @param value String to write
          * @return This output stream
          */
-        public MemoryOutputStream wstr(String value)
+        public MemoryOutputStream Wstr(String value)
         {
-            if (value == null) return i32(0);
-            byte[] string = value.getBytes(StandardCharsets.UTF_16BE);
-            this.s32(string.length / 2);
-            return this.bytes(string);
+            if (value == null) return I32(0);
+            byte[] _string = Encoding.BigEndianUnicode.GetBytes(value);
+            this.S32(_string.Length / 2);
+            return this.Bytes(_string);
         }
 
         /**
@@ -632,10 +634,10 @@ namespace CwLibNet.IO.Streams
          * @param value SHA1 hash to write
          * @return This output stream
          */
-        public MemoryOutputStream sha1(SHA1 value)
+        public MemoryOutputStream Sha1(SHA1 value)
         {
-            if (value == null) return pad(0x14);
-            return this.bytes(value.GetHash());
+            if (value == null) return Pad(0x14);
+            return this.Bytes(value.GetHash());
         }
 
         /**
@@ -645,10 +647,10 @@ namespace CwLibNet.IO.Streams
          * @param force32 Whether or not to read as a 32 bit integer, regardless of compression flags.
          * @return This output stream
          */
-        public MemoryOutputStream guid(GUID value, bool force32)
+        public MemoryOutputStream Guid(GUID value, bool force32)
         {
-            if (value == null) return u32(0, force32);
-            return this.u32(value.Value, force32);
+            if (value == null) return U32(0, force32);
+            return this.U32(value.Value, force32);
         }
 
         /**
@@ -657,9 +659,9 @@ namespace CwLibNet.IO.Streams
          * @param value GUID to write
          * @return This output stream
          */
-        public MemoryOutputStream guid(GUID value)
+        public MemoryOutputStream Guid(GUID value)
         {
-            return guid(value, false);
+            return Guid(value, false);
         }
 
 
@@ -670,10 +672,10 @@ namespace CwLibNet.IO.Streams
          * @param value Enum value
          * @return This output stream
          */
-        public MemoryOutputStream enum8(Enum value)
+        public MemoryOutputStream Enum8(Enum value)
         {
-            if (value == null) return u8(0);
-            return i8(Convert.ToByte(value));
+            if (value == null) return U8(0);
+            return I8(Convert.ToByte(value));
         }
 
         /**
@@ -683,10 +685,10 @@ namespace CwLibNet.IO.Streams
          * @param value Enum value
          * @return This output stream
          */
-        public MemoryOutputStream enum32(Enum value)
+        public MemoryOutputStream Enum32(Enum value)
         {
-            if (value == null) return i32(0);
-            return i32(Convert.ToInt32(value));
+            if (value == null) return I32(0);
+            return I32(Convert.ToInt32(value));
         }
 
         /**
@@ -697,12 +699,12 @@ namespace CwLibNet.IO.Streams
          * @param signed Whether or not to write an s32
          * @return This output stream
          */
-        public MemoryOutputStream enum32(Enum value, bool signed)
+        public MemoryOutputStream Enum32(Enum value, bool signed)
         {
-            if (value == null) return i32(0);
+            if (value == null) return I32(0);
             int v = Convert.ToInt32(value);
-            if (signed) return s32(v);
-            return i32(v);
+            if (signed) return S32(v);
+            return I32(v);
         }
 
         /**
@@ -712,12 +714,12 @@ namespace CwLibNet.IO.Streams
          * @param value Enum value
          * @return This output stream
          */
-        public MemoryOutputStream enumarray(Enum[] values)
+        public MemoryOutputStream Enumarray(Enum[] values)
         {
-            if (values == null) return i32(0);
-            this.i32(values.Length);
+            if (values == null) return I32(0);
+            this.I32(values.Length);
             foreach (Enum value in values)
-                this.enum8(value);
+                this.Enum8(value);
             return this;
         }
 
@@ -727,7 +729,7 @@ namespace CwLibNet.IO.Streams
          * @param size Number of bytes to write
          * @return This output stream
          */
-        public MemoryOutputStream pad(int size)
+        public MemoryOutputStream Pad(int size)
         {
             offset += size;
             return this;
@@ -738,9 +740,9 @@ namespace CwLibNet.IO.Streams
          *
          * @return This output stream
          */
-        public MemoryOutputStream shrink()
+        public MemoryOutputStream Shrink()
         {
-            Buffer = Arrays.copyOfRange(Buffer, 0, Offset);
+            Array.Copy(buffer, 0, buffer, 0, offset);
             return this;
         }
 
@@ -750,7 +752,7 @@ namespace CwLibNet.IO.Streams
          * @param offset Offset relative to seek position
          * @param mode   Seek origin
          */
-        public void seek(int off, SeekMode mode)
+        public void Seek(int off, SeekMode mode)
         {
             if (mode == null)
                 throw new NullReferenceException("SeekMode cannot be null!");
@@ -789,9 +791,9 @@ namespace CwLibNet.IO.Streams
          *
          * @param offset Offset to go to
          */
-        public void seek(int offset)
+        public void Seek(int offset)
         {
-            this.seek(offset, SeekMode.Relative);
+            this.Seek(offset, SeekMode.Relative);
         }
 
         public byte[] GetBuffer()
