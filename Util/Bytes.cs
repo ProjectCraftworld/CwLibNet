@@ -1,10 +1,10 @@
 ﻿using Cwlib.Enums;
-using Cwlib.Io.Serializer;
 using CwLibNet.Enums;
 using CwLibNet.IO.Streams;
 using CwLibNet.Types.Data;
 using CwLibNet.Types;
 using System.Numerics;
+using CwLibNet.IO.Serializer;
 
 namespace CwLibNet.Util
 {
@@ -188,7 +188,7 @@ namespace CwLibNet.Util
             return output.GetBuffer();
         }
 
-        public static byte[] GetResourceReference(ResourceDescriptor res, Revision revision,
+        public static byte[] GetResourceReference(ResourceDescriptor? res, Revision revision,
                                                   byte compressionFlags)
         {
             Serializer serializer = new Serializer(0x1c + 0x4, revision, compressionFlags);

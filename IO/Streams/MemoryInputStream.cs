@@ -500,7 +500,7 @@ namespace CwLibNet.IO.Streams
          * @param size Size of string to read
          * @return String value read from the stream
          */
-        public string Str(int size)
+        public string? Str(int size)
         {
             if (size == 0) return "";
             return Encoding.ASCII.GetString(this.Bytes(size)).Replace("\0", "");
@@ -512,7 +512,7 @@ namespace CwLibNet.IO.Streams
          * @param size Size of string to read
          * @return String value read from the stream
          */
-        public string Wstr(int size)
+        public string? Wstr(int size)
         {
             if (size == 0) return "";
             return Encoding.BigEndianUnicode.GetString(this.Bytes(size * 2)).Replace("\0", "");
@@ -523,7 +523,7 @@ namespace CwLibNet.IO.Streams
          *
          * @return String value read from the stream
          */
-        public String Str()
+        public string? Str()
         {
             return this.Str(this.S32());
         }
@@ -533,7 +533,7 @@ namespace CwLibNet.IO.Streams
          *
          * @return String value read from the stream
          */
-        public String Wstr()
+        public string? Wstr()
         {
             return this.Wstr(this.S32());
         }
@@ -543,7 +543,7 @@ namespace CwLibNet.IO.Streams
          *
          * @return SHA1 hash read from the stream
          */
-        public SHA1 Sha1()
+        public SHA1? Sha1()
         {
             return new SHA1(this.Bytes(0x14));
         }

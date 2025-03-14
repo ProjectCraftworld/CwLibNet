@@ -1,8 +1,9 @@
-﻿using Cwlib.Io.Serializer;
-using CwLibNet.Enums;
+﻿using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
 using System.Numerics;
+using CwLibNet.IO.Serializer;
+
 namespace CwLibNet.Structs.StaticMesh
 {
     public class UnknownStruct : ISerializable
@@ -47,8 +48,8 @@ namespace CwLibNet.Structs.StaticMesh
         public ResourceDescriptor? lightmap, risemap, fallmap;
         public int primitiveCount, unknownStructCount, indexBufferSize, vertexStreamSize;
 
-        public StaticPrimitive[] primitives;
-        public UnknownStruct[] unknown;
+        public StaticPrimitive[]? primitives;
+        public UnknownStruct[]? unknown;
 
         public void Serialize(Serializer serializer)
         {
@@ -56,15 +57,15 @@ namespace CwLibNet.Structs.StaticMesh
             risemap = serializer.Resource(risemap, ResourceType.Texture);
             fallmap = serializer.Resource(fallmap, ResourceType.Texture);
 
-            primitiveCount = serializer.i32(primitiveCount);
-            unknownStructCount = serializer.i32(unknownStructCount);
-            indexBufferSize = serializer.i32(indexBufferSize);
-            vertexStreamSize = serializer.i32(vertexStreamSize);
+            primitiveCount = serializer.I32(primitiveCount);
+            unknownStructCount = serializer.I32(unknownStructCount);
+            indexBufferSize = serializer.I32(indexBufferSize);
+            vertexStreamSize = serializer.I32(vertexStreamSize);
 
             primitives = serializer.Array(primitives);
             unknown = serializer.Array(unknown);
 
-            serializer.i32(0x48454c50); // "HELP", no idea, used as a marker?
+            serializer.I32(0x48454c50); // "HELP", no idea, used as a marker?
         }
 
         public int GetAllocatedSize()

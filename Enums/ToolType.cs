@@ -5,99 +5,99 @@ namespace CwLibNet.Enums
     public enum ToolType
     {
         // NONE(0)
-        NONE,
+        NONE = 0,
         // CURSOR(1)
-        CURSOR,
+        CURSOR = 1,
         // VERTEX_EDIT(2)
-        VERTEX_EDIT,
+        VERTEX_EDIT = 2,
         // GLUE(3)
-        GLUE,
+        GLUE = 3,
         // FILL(4)
-        FILL,
+        FILL = 4,
         // STICKER(5)
-        STICKER,
+        STICKER = 5,
         // PHOTO(6)
-        PHOTO,
+        PHOTO = 6,
         // STICKER_CUTTER(7)
-        STICKER_CUTTER,
+        STICKER_CUTTER = 7,
         // SHAPE_STICKER_CUTTER(8)
-        SHAPE_STICKER_CUTTER,
+        SHAPE_STICKER_CUTTER = 8,
         // RESET_PLAYER_AVATAR(9)
-        RESET_PLAYER_AVATAR,
+        RESET_PLAYER_AVATAR = 9,
         // UV_EDIT(10)
-        UV_EDIT,
+        UV_EDIT = 10,
         // CAPTURE_TOOL(11)
-        CAPTURE_TOOL,
+        CAPTURE_TOOL = 11,
         // ELECTRIC(12)
-        ELECTRIC,
+        ELECTRIC = 12,
         // FIRE(13)
-        FIRE,
+        FIRE = 13,
         // PLASMA(14)
-        PLASMA,
+        PLASMA = 14,
         // POISON(15)
-        POISON,
+        POISON = 15,
         // UNLETHAL(16)
-        UNLETHAL,
+        UNLETHAL = 16,
         // PHOTO_FROM_XMB(17)
-        PHOTO_FROM_XMB,
+        PHOTO_FROM_XMB = 17,
         // RESET_COSTUME(18)
-        RESET_COSTUME,
+        RESET_COSTUME = 18,
         // RANDOM_COSTUME(19)
-        RANDOM_COSTUME,
+        RANDOM_COSTUME = 19,
         // SAVE_COSTUME(20)
-        SAVE_COSTUME,
+        SAVE_COSTUME = 20,
         // WASH_COSTUME(21)
-        WASH_COSTUME,
+        WASH_COSTUME = 21,
         // DELETE_COMMUNITY_PHOTOS(22)
-        DELETE_COMMUNITY_PHOTOS,
+        DELETE_COMMUNITY_PHOTOS = 22,
         // DELETE_COMMUNITY_OBJECTS(23)
-        DELETE_COMMUNITY_OBJECTS,
+        DELETE_COMMUNITY_OBJECTS = 23,
         // POD_RESET(24)
-        POD_RESET,
+        POD_RESET = 24,
         // POD_SAVE(25)
-        POD_SAVE,
+        POD_SAVE = 25,
         // PLANET_RESET(26)
-        PLANET_RESET,
+        PLANET_RESET = 26,
         // PLANET_SAVE(27)
-        PLANET_SAVE,
+        PLANET_SAVE = 27,
         // PLANET_RESET_MATERIAL(28)
-        PLANET_RESET_MATERIAL,
+        PLANET_RESET_MATERIAL = 28,
         // PICK_EMITTER_OBJECT(29)
-        PICK_EMITTER_OBJECT,
+        PICK_EMITTER_OBJECT = 29,
         // PICK_GUN_OBJECT(30)
-        PICK_GUN_OBJECT,
+        PICK_GUN_OBJECT = 30,
         // PLANET_RESET_ALL(31)
-        PLANET_RESET_ALL,
+        PLANET_RESET_ALL = 31,
         // STICKER_WASH(32)
-        STICKER_WASH,
+        STICKER_WASH = 32,
         // SLICE_N_DICE(33)
-        SLICE_N_DICE,
+        SLICE_N_DICE = 33,
         // UNPHYSICS(34)
-        UNPHYSICS,
+        UNPHYSICS = 34,
         // PAINT(35)
-        PAINT,
+        PAINT = 35,
         // PICK_UP_POWER_UP_OBJECT(36)
-        PICK_UP_POWER_UP_OBJECT,
+        PICK_UP_POWER_UP_OBJECT = 36,
         // GROUPING(37)
-        GROUPING,
+        GROUPING = 37,
         // WASH(38)
-        WASH,
+        WASH = 38,
         // SET_LAUNCHER_POSITION(39)
-        SET_LAUNCHER_POSITION,
+        SET_LAUNCHER_POSITION = 39,
         // LEVEL_IMPORTER(40)
-        LEVEL_IMPORTER,
+        LEVEL_IMPORTER = 40,
         // DISK_CAPTURE(41)
-        DISK_CAPTURE,
+        DISK_CAPTURE = 41,
         // PICK_ZONE(42)
-        PICK_ZONE,
+        PICK_ZONE = 42,
         // RAIL_EDIT(43)
-        RAIL_EDIT,
+        RAIL_EDIT = 43,
         // ADD_LIGHT(44)
-        ADD_LIGHT,
+        ADD_LIGHT = 44,
         // ADVENTURE_RESET(45)
-        ADVENTURE_RESET,
+        ADVENTURE_RESET = 45,
         // ADVENTURE_SAVE(46)
-        ADVENTURE_SAVE 
+        ADVENTURE_SAVE = 46 
 
         // --------------------
         // TODO enum body members
@@ -122,5 +122,12 @@ namespace CwLibNet.Enums
         //     return ToolType.NONE;
         // }
         // --------------------
+    }
+
+    public static class ToolTypeBody
+    {
+        public static byte GetValue(this ToolType toolType) => (byte)toolType;
+
+        public static ToolType FromValue(byte toolType) => Enum.GetValues(typeof(ToolType)).Cast<ToolType>().FirstOrDefault(type => (byte)type == toolType);
     }
 }

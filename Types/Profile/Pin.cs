@@ -1,6 +1,6 @@
-﻿using Cwlib.Io.Serializer;
-using CwLibNet.Enums;
+﻿using CwLibNet.Enums;
 using CwLibNet.IO;
+using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
 
 namespace CwLibNet.Types.Profile
@@ -11,7 +11,7 @@ namespace CwLibNet.Types.Profile
 
         public long Id, ProgressType, Category;
         public long TitleLamsKey, DescriptionLamsKey;
-        public ResourceDescriptor Icon;
+        public ResourceDescriptor? Icon;
         public long InitialProgressValue, TargetValue;
         public byte TrophyToUnlock;
         public short BehaviourFlags;

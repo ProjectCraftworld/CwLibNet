@@ -1,6 +1,7 @@
 ﻿using CwLibNet.Enums.ValueEnum;
 using CwLibNet.Enums;
 using CwLibNet.External;
+using CwLibNet.IO.Streams;
 
 namespace CwLibNet.Structs.Texture
 {
@@ -69,24 +70,20 @@ namespace CwLibNet.Structs.Texture
 
         public void Write(MemoryOutputStream stream)
         {
-            stream.WriteByte((byte)format);
-            stream.WriteByte(mipmap);
-            stream.WriteByte(dimension);
-            stream.WriteByte(cubemap);
-            stream.WriteInt32(remap, true); // Assuming true means little-endian
-            stream.WriteInt16(width);
-            stream.WriteInt16(height);
-            stream.WriteInt16(depth);
-            stream.WriteByte(location);
-            stream.WriteByte(flags);
-            stream.WriteInt32(pitch, true);
-            stream.WriteInt32(offset, true);
+            stream.Bytes([(byte)format, mipmap, dimension, cubemap]);
+            stream.I32(remap, true);
+            stream.I16(width);
+            stream.I16(height);
+            stream.I16(depth);
+            stream.Bytes([location, flags]);
+            stream.I32(pitch, true);
+            stream.I32(offset, true);
         }
 
         /**
          * Deserializes TextureInfo from stream.
          *
-         * @param stream Stream to read texture info from
+         * @param stream to read texture info from
          * @param method Texture type
          */
         public CellGcmTexture(MemoryInputStream stream, SerializationType method)
@@ -98,26 +95,26 @@ namespace CwLibNet.Structs.Texture
             // it at some other point
 
             if (method == SerializationType.GXT_SWIZZLED)
-                stream.seek(0x14);
+                stream.Seek(0x14);
 
-            this.format = (CellGcmEnumForGtf)(stream.u8());
-            this.mipmap = stream.i8();
-            this.dimension = stream.i8();
+            this.format = (CellGcmEnumForGtf)(stream.U8());
+            this.mipmap = stream.I8();
+            this.dimension = stream.I8();
             // if dimension > 2, MARK TEXTURE AS VOL(UME)TEX
-            this.cubemap = stream.i8();
-            this.remap = stream.i32(true);
-            this.width = stream.i16();
-            this.height = stream.i16();
-            this.depth = stream.i16();
-            this.location = stream.i8();
+            this.cubemap = stream.I8();
+            this.remap = stream.I32(true);
+            this.width = stream.I16();
+            this.height = stream.I16();
+            this.depth = stream.I16();
+            this.location = stream.I8();
 
             // If (padding & 0x1) != 0, MARK TEXTURE AS BUMPTEX | NOSRGB_TEX
             // if (padding & 0x2) != 0, MARK TEXTURE as 0x20000000
             // if (padding & 0x4) != 0, MARK TEXTURE AS 0x40000000
-            this.flags = stream.i8(); // padding
+            this.flags = stream.I8(); // padding
 
-            this.pitch = stream.i32(true);
-            this.offset = stream.i32(true);
+            this.pitch = stream.I32(true);
+            this.offset = stream.I32(true);
         }
 
         public SerializationType GetMethod() => method;

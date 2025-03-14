@@ -71,4 +71,22 @@ namespace CwLibNet.Enums
         // }
         // --------------------
     }
+
+    public static class SlotTypeExtensions
+    {
+        public static SlotType FromValue(int value)
+        {
+            return Enum.GetValues(typeof(SlotType)).Cast<SlotType>().FirstOrDefault(type => (int)type == value);
+        }
+
+        public static bool IsGroup(this SlotType value)
+        {
+            return value is SlotType.DEVELOPER_GROUP or SlotType.LOCAL_GROUP or SlotType.DLC_PACK or SlotType.DEVELOPER_ADVENTURE_AREA or SlotType.ADVENTURE_AREA_LEVEL;
+        }
+
+        public static bool IsLink(this SlotType value)
+        {
+            return value is SlotType.DEVELOPER or SlotType.DLC_LEVEL or SlotType.ADVENTURE_LEVEL_LOCAL or SlotType.DEVELOPER_ADVENTURE;
+        }
+    }
 }

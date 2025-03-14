@@ -1,5 +1,4 @@
-﻿using Cwlib.Io.Serializer;
-using CwLibNet.IO.Serialization;
+﻿using CwLibNet.IO.Serializer;
 using CwLibNet.Types;
 
 namespace CwLibNet.IO
@@ -35,7 +34,7 @@ namespace CwLibNet.IO
             // Using a default implementation since I'm not adding this to every resource right now.
         }
         
-        public abstract void Serialize(Serializer serializer);
+        public abstract void Serialize(Serializer.Serializer serializer);
         
         public abstract int GetAllocatedSize();
     }

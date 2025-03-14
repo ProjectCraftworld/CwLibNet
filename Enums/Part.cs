@@ -1,20 +1,20 @@
-﻿using Cwlib.Io.Serializer;
-using CwLibNet.Enums;
-using CwLibNet.IO;
+﻿using CwLibNet.IO;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Types.Things.Parts;
 
-namespace CwLibNet.Types
+namespace CwLibNet.Enums
 {
     public struct Part : IEquatable<Part>
     {
         
         public static Dictionary<string, Part> Parts = new()
         {
-            { "BODY", new Part("BODY", 0x0, PartHistory.BODY, typeof(PBody)) },
+//            { "BODY", new Part("BODY", 0x0, PartHistory.BODY, typeof(PBody)) },
             { "JOINT", new Part("JOINT", 0x1, PartHistory.JOINT, typeof(PJoint)) },
-            { "WORLD", new Part("WORLD", 0x2, PartHistory.WORLD, typeof(PWorld)) },
-            { "RENDER_MESH", new Part("RENDER_MESH", 0x3, PartHistory.RENDER_MESH, typeof(PRenderMesh)) },
+/*            { "WORLD", new Part("WORLD", 0x2, PartHistory.WORLD, typeof(PWorld)) },
+            { "RENDER_MESH", new Part("RENDER_MESH", 0x3, PartHistory.RENDER_MESH, typeof(PRenderMesh)) }, */
             { "POS", new Part("POS", 0x4, PartHistory.POS, typeof(PPos)) },
-            { "TRIGGER", new Part("TRIGGER", 0x5, PartHistory.TRIGGER, typeof(PTrigger)) },
+/*            { "TRIGGER", new Part("TRIGGER", 0x5, PartHistory.TRIGGER, typeof(PTrigger)) },
             { "TRIGGER_EFFECTOR", new Part("TRIGGER_EFFECTOR", 0x36, PartHistory.TRIGGER_EFFECTOR, null) },
             { "PAINT", new Part("PAINT", 0x37, PartHistory.PAINT, null) },
             { "YELLOWHEAD", new Part("YELLOWHEAD", 0x6, PartHistory.YELLOWHEAD, typeof(PYellowHead)) },
@@ -55,7 +55,7 @@ namespace CwLibNet.Types
             { "MATERIAL_OVERRIDE", new Part("MATERIAL_OVERRIDE", 0x23, PartHistory.MATERIAL_OVERRIDE, typeof(PMaterialOverride)) },
             { "INSTRUMENT", new Part("INSTRUMENT", 0x24, PartHistory.INSTRUMENT, typeof(PInstrument)) },
             { "SEQUENCER", new Part("SEQUENCER", 0x25, PartHistory.SEQUENCER, typeof(PSequencer)) },
-            { "CONTROLINATOR", new Part("CONTROLINATOR", 0x26, PartHistory.CONTROLINATOR, typeof(PControlinator)) }
+            { "CONTROLINATOR", new Part("CONTROLINATOR", 0x26, PartHistory.CONTROLINATOR, typeof(PControlinator)) } */
         };
         
         /**
@@ -167,7 +167,7 @@ namespace CwLibNet.Types
          * @param head    Head revision of resource
          * @param flags   Flags determing what parts can be serialized by a Thing
          * @param version Version determing what parts existed at this point
-         * @return Whether or not a thing contains this part
+         * @return Whether a thing contains this part
          */
         public bool HasPart(int head, long flags, int version)
         {
@@ -199,13 +199,13 @@ namespace CwLibNet.Types
         /// <param name="serializer">Instance of a serializer stream</param>
         /// <typeparam name="T">Type of part</typeparam>
         /// <returns>Whether or not the operation succeeded</returns>
-        public bool Serialize<T>(ISerializable[] parts, int version, long flags, Serializer serializer) where T : ISerializable
+        public bool Serialize<T>(ISerializable?[] parts, int version, long flags, Serializer serializer) where T : ISerializable
         {
             /* The Thing doesn't have this part, so it's "successful" */
             if (!this.HasPart(serializer.GetRevision().Head, flags, version))
                 return true;
 
-            T part = (T) parts[this.Index];
+            T? part = (T) parts[this.Index];
 
             if (this.Serializable == null)
             {
@@ -214,18 +214,18 @@ namespace CwLibNet.Types
                     if (part != null) return false;
                     else
                     {
-                        serializer.i32(0);
+                        serializer.I32(0);
                         return true;
                     }
                 }
                 else if (!serializer.IsWriting())
                 {
-                    return serializer.i32(0) == 0;
+                    return serializer.I32(0) == 0;
                 }
                 return false;
             }
 
-            parts[this.Index] = serializer.Reference(part, this.Serializable);
+            parts[this.Index] = serializer.Reference(part);
 
             return true;
         }

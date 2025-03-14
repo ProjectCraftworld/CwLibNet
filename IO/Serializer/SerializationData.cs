@@ -1,11 +1,10 @@
-﻿using Cwlib.Enums;
-using Cwlib.Io.Serializer;
-using CwLibNet.Enums;
+﻿using CwLibNet.Enums;
+using CwLibNet.Structs.StaticMesh;
 using CwLibNet.Structs.Texture;
 using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
-namespace CwLibNet.IO.Serialization
+namespace CwLibNet.IO.Serializer
 {
     public class SerializationData
     {
@@ -24,7 +23,7 @@ namespace CwLibNet.IO.Serialization
         byte CompressionFlags,
         ResourceType Type,
         SerializationType Method,
-        ResourceDescriptor[] Dependencies)
+        ResourceDescriptor?[] Dependencies)
         {
             this.Buffer = Buffer;
             this.Revision = Revision;
@@ -41,9 +40,9 @@ namespace CwLibNet.IO.Serialization
          *
          * @param Buffer Decompressed texture data
          */
-        public SerializationData(byte[] Buffer)
+        public SerializationData(byte[] buffer)
         {
-            this.Buffer = Buffer;
+            this.Buffer = buffer;
             Revision = null;
             CompressionFlags = Cwlib.Enums.CompressionFlags.USE_NO_COMPRESSION;
             Type = ResourceType.Texture;
@@ -59,9 +58,9 @@ namespace CwLibNet.IO.Serialization
          * @param Buffer Decompressed texture data
          * @param info   Texture metadata
          */
-        public SerializationData(byte[] Buffer, CellGcmTexture info)
+        public SerializationData(byte[] buffer, CellGcmTexture info)
         {
-            this.Buffer = Buffer;
+            this.Buffer = buffer;
             Revision = null;
             CompressionFlags = Cwlib.Enums.CompressionFlags.USE_NO_COMPRESSION;
             Type = ResourceType.GtfTexture;
@@ -78,10 +77,10 @@ namespace CwLibNet.IO.Serialization
          * @param Revision Revision of the serialized resource
          * @param info     Static mesh metadata
          */
-        public SerializationData(byte[] Buffer, Revision Revision, StaticMeshInfo info)
+        public SerializationData(byte[] buffer, Revision revision, StaticMeshInfo info)
         {
-            this.Buffer = Buffer;
-            this.Revision = Revision;
+            this.Buffer = buffer;
+            this.Revision = revision;
             CompressionFlags = Cwlib.Enums.CompressionFlags.USE_NO_COMPRESSION;
             Type = ResourceType.StaticMesh;
             Method = SerializationType.BINARY;
@@ -90,9 +89,9 @@ namespace CwLibNet.IO.Serialization
             // serializing the data, can probably use reflection for it,
             // as to avoid serializing twice.
 
-            Serializer? serializer = new(info.getAllocatedSize(), Revision,
+            Serializer? serializer = new(info.GetAllocatedSize(), revision,
                 Cwlib.Enums.CompressionFlags.USE_NO_COMPRESSION);
-            serializer.Struct<StaticMeshInfo>(info, typeof(StaticMeshInfo));
+            serializer.Struct(info);
             Dependencies = serializer.GetDependencies();
 
             TextureInfo = null;

@@ -9,7 +9,6 @@
 
     <ItemGroup>
       <Folder Include="Types\Things\Components\" />
-      <Folder Include="Types\Things\Parts\" />
     </ItemGroup>
 
 </Project>

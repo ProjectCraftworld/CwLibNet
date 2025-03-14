@@ -1,9 +1,10 @@
 using System.Runtime.InteropServices;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serialization;
+using CwLibNet.IO.Serializer;
+using CwLibNet.IO.Streams;
 using CwLibNet.Types;
-using Serializer = CwLibNet.IO.Serialization;
+using CwLibNet.Types.Data;
 
 namespace CwLibNet.Resources
 {
@@ -12,54 +13,54 @@ namespace CwLibNet.Resources
     {
         public readonly int BASE_ALLOCATION_SIZE = 0x20;
 
-        public List<ResourceDescriptor> planList = new List<ResourceDescriptor>();
+        public List<ResourceDescriptor?> planList = new List<ResourceDescriptor?>();
         public int location, description;
 
-        public ResourceDescriptor[] convertedPlans;
+        public ResourceDescriptor?[] convertedPlans;
 
         public override void Serialize(Serializer serializer)
         {
             
-            if (serializer.isWriting())
+            if (serializer.IsWriting())
             {
-                MemoryOutputStream stream = serializer.getOutput();
-                serializer.Serialize(planList.size());
-                foreach (ResourceDescriptor descriptor in planList)
-                    serializer.resource(descriptor, descriptor.getType());
+                MemoryOutputStream stream = serializer.GetOutput();
+                stream.I32(planList.Count);
+                foreach (ResourceDescriptor? descriptor in planList)
+                    serializer.Resource(descriptor, descriptor!.GetResourceType());
             }
             else
             {
-                int count = serializer.getInput().i32();
-                planList = new List<ResourceDescriptor>(count);
+                int count = serializer.GetInput().I32();
+                planList = new List<ResourceDescriptor?>(count);
                 for (int i = 0; i < count; ++i)
-                    planList.Add(serializer.resource(null, ResourceType.PLAN));
+                    planList.Add(serializer.Resource(null, ResourceType.Plan));
             }
 
-            location = serializer.Serialize(location);
-            description = serializer.Serialize(description);
+            location = serializer.I32(location);
+            description = serializer.I32(description);
 
-            if (serializer.getRevision().getVersion() >= Revisions.PALETTE_CONVERTED_PLANS)
+            if (serializer.GetRevision().GetVersion() >= (int)Revisions.PaletteConvertedPlans)
             {
-                if (serializer.isWriting())
+                if (serializer.IsWriting())
                 {
-                    MemoryOutputStream stream = serializer.getOutput();
-                    serializer.Serialize(convertedPlans.Length);
-                    foreach (ResourceDescriptor descriptor in convertedPlans)
-                        serializer.resource(descriptor, descriptor.getType());
+                    MemoryOutputStream stream = serializer.GetOutput();
+                    stream.I32(convertedPlans.Length);
+                    foreach (ResourceDescriptor? descriptor in convertedPlans)
+                        serializer.Resource(descriptor, descriptor!.GetResourceType());
                 }
                 else 
                 {
-                    int count = serializer.getInput().i32();
+                    int count = serializer.GetInput().I32();
                     convertedPlans = new ResourceDescriptor[count];
                     for (int i = 0; i < count; ++i)
-                        convertedPlans[i] = serializer.resource(null, ResourceType.PLAN);
+                        convertedPlans[i] = serializer.Resource(null, ResourceType.Plan);
                 }
             }
         }
 
         public override int GetAllocatedSize()
         {
-            return BASE_ALLOCATION_SIZE + (this.planList.size() * 0x24);
+            return BASE_ALLOCATION_SIZE + (this.planList.Count * 0x24);
         }
 
         public override SerializationData Build(Revision revision, byte compressionFlags)
@@ -67,12 +68,12 @@ namespace CwLibNet.Resources
             Serializer serializer = new Serializer(this.GetAllocatedSize(), revision, compressionFlags);
             serializer.Struct<RPalette>(this);
         return new SerializationData(
-            serializer.getBuffer(),
+            serializer.GetBuffer(),
             revision,
             compressionFlags,
-            ResourceType.PALETTE,
+            ResourceType.Palette,
             SerializationType.BINARY,
-            serializer.getDependencies()
+            serializer.GetDependencies()
         );
         }
     }

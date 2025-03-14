@@ -1,6 +1,9 @@
 ﻿using System.Runtime.Serialization;
 using CwLibNet.Enums;
+using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using CwLibNet.Types.Things.Parts;
+using CwLibNet.Util;
 using ISerializable = CwLibNet.IO.ISerializable;
 
 namespace CwLibNet.Types.Things
@@ -11,22 +14,22 @@ namespace CwLibNet.Types.Things
 
         public const int BaseAllocationSize = 0x100;
 
-        public string Name;
+        public string? Name;
 
         public int UID = 1;
-        public Thing World;
-        public Thing Parent;
-        public Thing GroupHead;
-        public Thing OldEmitter;
+        public Thing? World;
+        public Thing? Parent;
+        public Thing? GroupHead;
+        public Thing? OldEmitter;
 
         public short CreatedBy = -1, ChangedBy = -1;
         public bool IsStamping;
-        public GUID PlanGuid;
+        public GUID? PlanGuid;
         public bool Hidden;
         public short Flags;
         public byte ExtraFlags;
 
-        private readonly ISerializable[] _parts = new ISerializable[0x3f];
+        private readonly ISerializable?[] parts = new ISerializable[0x3f];
 
         public Thing() { }
 
@@ -37,7 +40,7 @@ namespace CwLibNet.Types.Things
     
         public void Serialize(Serializer serializer)
         {
-            Revision revision = serializer.getRevision();
+            Revision revision = serializer.GetRevision();
             int version = revision.GetVersion();
             int subVersion = revision.GetSubVersion();
 
@@ -52,84 +55,80 @@ namespace CwLibNet.Types.Things
                 maxPartsRevision = PartHistory.GROUP;
 
             // Test serialization marker.
-            if (revision.Has(Branch.Mizuki, (int)Revisions.MzSceneGraph)) name = serializer.wstr(name);
-            else if (version >= Revisions.THING_TEST_MARKER || revision.has(Branch.LEERDAMMER, Revisions.LD_TEST_MARKER))
+            if (revision.Has(Branch.Mizuki, (int)Revisions.MzSceneGraph)) Name = serializer.Wstr(Name);
+            else if (version >= (int)Revisions.ThingTestMarker || revision.Has(Branch.Leerdammer, (int)Revisions.LdTestMarker))
             {
-                serializer.log("TEST_SERIALISATION_MARKER");
-                if (serializer.u8(0xAA) != 0xaa)
+                serializer.Log("TEST_SERIALISATION_MARKER");
+                if (serializer.U8(0xAA) != 0xaa)
                     throw new SerializationException("Test serialization marker is invalid, something has gone terribly wrong!");
             }
 
             if (version < 0x1fd)
             {
-                if (serializer.isWriting())
-                    serializer.reference(SERIALIZE_WORLD_THING ? world : null, typeof(Thing));
+                if (serializer.IsWriting())
+                    serializer.Reference(SerializeWorldThing ? World : null);
                 else
-                    world = serializer.reference(world, typeof(Thing));
+                    World = serializer.Reference(World);
             }
             if (version < 0x27f)
             {
-                parent = serializer.reference(parent, typeof(Thing));
-                UID = serializer.i32(UID);
+                Parent = serializer.Reference(Parent);
+                UID = serializer.I32(UID);
             }
             else
             {
-                UID = serializer.i32(UID);
-                parent = serializer.reference(parent, typeof(Thing));
+                UID = serializer.I32(UID);
+                Parent = serializer.Reference(Parent);
             }
 
-            groupHead = serializer.reference(groupHead, typeof(Thing));
+            GroupHead = serializer.Reference(GroupHead);
 
             if (version >= 0x1c7)
-                oldEmitter = serializer.reference(oldEmitter, typeof(Thing));
+                OldEmitter = serializer.Reference(OldEmitter);
 
             if (version >= 0x1a6 && version < 0x1bc)
-                serializer.array(null, PJoint.class, true);
+                serializer.Array<PJoint>(null, true);
 
-            if ((version >= 0x214 && !revision.isToolkit()) || revision.before(Branch.MIZUKI,
-                    Revisions.MZ_SCENE_GRAPH))
+            if ((version >= 0x214 && !revision.IsToolkit()) || revision.Before(Branch.Mizuki, (int)Revisions.MzSceneGraph))
             {
-                createdBy = serializer.i16(createdBy);
-                changedBy = serializer.i16(changedBy);
+                CreatedBy = serializer.I16(ChangedBy);
+                ChangedBy = serializer.I16(ChangedBy);
             }
 
             if (version < 0x341)
             {
                 if (version > 0x21a)
-                    isStamping = serializer.bool(isStamping);
+                    IsStamping = serializer.Bool(IsStamping);
                 if (version >= 0x254)
-                    planGUID = serializer.guid(planGUID);
+                    PlanGuid = serializer.Guid(PlanGuid);
                 if (version >= 0x2f2)
-                    hidden = serializer.bool(hidden);
+                    Hidden = serializer.Bool(Hidden);
             }
             else
             {
                 if (version >= 0x254)
-                    planGUID = serializer.guid(planGUID);
+                    PlanGuid = serializer.Guid(PlanGuid);
 
                 if (version >= 0x341)
                 {
-                    if (revision.has(Branch.DOUBLE11, 0x62))
-                        flags = serializer.i16(flags);
-                    else
-                        flags = serializer.i8((byte) flags);
+                    Flags = revision.Has(Branch.Double11, 0x62) ? serializer.I16(Flags) : serializer.I8((byte) Flags);
                 }
                 if (subVersion >= 0x110)
-                    extraFlags = serializer.i8(extraFlags);
+                    ExtraFlags = serializer.I8(ExtraFlags);
             }
 
-            bool isCompressed = (version >= 0x297 || revision.has(Branch.LEERDAMMER,
-                Revisions.LD_RESOURCES));
+            bool isCompressed = (version >= 0x297 || revision.Has(Branch.Leerdammer,
+                (int)Revisions.LdResources));
 
             int partsRevision = PartHistory.STREAMING_HINT;
             long flags = -1;
 
-            if (serializer.isWriting())
+            if (serializer.IsWriting())
             {
-                serializer.log("GENERATING FLAGS");
-                Part lastPart = null;
+                serializer.Log("GENERATING FLAGS");
+                Part? lastPart = null;
                 if (isCompressed) flags = 0;
-                foreach (Part part in Part.values())
+                foreach (Part part in Part.Parts.Values)
                 {
                     int index = part.GetIndex();
                     if (version >= 0x13c && (index >= 0x36 && index <= 0x3c)) continue;
@@ -145,50 +144,63 @@ namespace CwLibNet.Types.Things
                         continue;
                     }
 
-                    if (parts[index] != null)
-                    {
-                        // Offset due to PCreatorAnim
-                        if (subVersion < 0x107 && index > 0x28) index++;
+                    if (parts[index] == null) continue;
+                    // Offset due to PCreatorAnim
+                    if (subVersion < 0x107 && index > 0x28) index++;
 
-                        flags |= (1L << index);
+                    flags |= (1L << index);
 
-                        lastPart = part;
-                    }
+                    lastPart = part;
                 }
-                partsRevision = (lastPart == null) ? 0 : lastPart.GetVersion();
+                partsRevision = lastPart?.GetVersion() ?? 0;
             }
 
-            if (serializer.isWriting())
+            if (serializer.IsWriting())
             {
                 if (partsRevision > maxPartsRevision)
                     partsRevision = maxPartsRevision;
             }
 
-            partsRevision = serializer.s32(partsRevision);
+            partsRevision = serializer.S32(partsRevision);
             if (isCompressed)
             {
                 // serializer.log("FLAGS");
-                flags = serializer.u64(flags);
+                flags = serializer.U64(flags);
             }
 
             // I have no idea why they did this
             if (version == 0x13c) partsRevision += 7;
 
-            Part[] partsToSerialize = Part.FromFlags(revision.getHead(), flags, partsRevision);
-            serializer.log(Arrays.toString(partsToSerialize));
+            Part[] partsToSerialize = Part.FromFlags(revision.Head, flags, partsRevision);
+            serializer.Log(string.Join(' ', partsToSerialize));
 
-            for (Part part : partsToSerialize)
+            foreach (Part part in partsToSerialize)
             {
-                serializer.log(part.name() + " [START]");
-                if (!part.serialize(this.parts, partsRevision, flags, serializer))
+                serializer.Log(part.Name + " [START]");
+                if (!part.Serialize<ISerializable>(this.parts, partsRevision, flags, serializer))
                 {
-                    serializer.log(part.name() + " FAILED");
-                    throw new SerializationException(part.name() + " failed to serialize!");
+                    serializer.Log(part.Name + " FAILED");
+                    throw new SerializationException(part.Name + " failed to serialize!");
                 }
-                serializer.log(part.name() + " [END]");
+                serializer.Log(part.Name + " [END]");
             }
 
-            serializer.log("THING " + Bytes.toHex(UID) + " [END]");
+            serializer.Log("THING " + Bytes.ToHex(UID) + " [END]");
+        }
+        
+        public T? GetPart<T>(Part part) where T: ISerializable
+        {
+            return (T?) this.parts[part.GetIndex()];
+        }
+        
+        public bool HasPart(Part part)
+        {
+            return this.parts[part.GetIndex()] != null;
+        }
+
+        public int GetAllocatedSize()
+        {
+            return BaseAllocationSize;
         }
     }
 }

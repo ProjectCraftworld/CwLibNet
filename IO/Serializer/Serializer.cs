@@ -1,14 +1,15 @@
-using Cwlib.Enums;
-using CwLibNet.EX;
-using CwLibNet.IO;
-using CwLibNet.Types.Data;
-using CwLibNet.Types;
-using CwLibNet.Types.Things;
-using ResourceType = CwLibNet.Enums.ResourceType;
-using CwLibNet.IO.Streams;
 using System.Numerics;
+using Cwlib.Enums;
+using CwLibNet.Enums;
+using CwLibNet.EX;
+using CwLibNet.Extensions;
+using CwLibNet.IO.Streams;
+using CwLibNet.Singleton;
+using CwLibNet.Types;
+using CwLibNet.Types.Data;
+using CwLibNet.Types.Things;
 
-namespace Cwlib.Io.Serializer
+namespace CwLibNet.IO.Serializer
 {
     /// <summary>
     /// Reversible serializer for assets, also handles
@@ -17,13 +18,13 @@ namespace Cwlib.Io.Serializer
     public class Serializer
     {
         private readonly bool isWriting;
-        private readonly MemoryInputStream input;
-        private readonly MemoryOutputStream output;
+        private readonly MemoryInputStream? input;
+        private readonly MemoryOutputStream? output;
         private readonly Revision revision;
         private readonly byte compressionFlags;
-        private readonly HashMap<int, object> referenceIDs = new HashMap();
-        private readonly HashMap<object, int> referenceObjects = new HashMap();
-        private readonly HashSet<ResourceDescriptor> dependencies = new HashSet();
+        private readonly Dictionary<int, object> referenceIDs = new();
+        private readonly Dictionary<object, int?> referenceObjects = new();
+        private readonly HashSet<ResourceDescriptor?> dependencies = [];
         private int nextReference = 1;
         /// <summary>
         /// Constructs a deserializer with stream and revision.
@@ -137,11 +138,11 @@ namespace Cwlib.Io.Serializer
         {
             if (isWriting)
             {
-                output.Bool(value);
+                output.Boole(value);
                 return value;
             }
 
-            return input.Bool();
+            return input.Boole();
         }
 
         /// <summary>
@@ -149,7 +150,7 @@ namespace Cwlib.Io.Serializer
         /// </summary>
         /// <param name="values">Boolean array to write</param>
         /// <returns>Boolean array (de)serialized</returns>
-        public boolean[] Boolarray(boolean[] values)
+        public bool[] Boolarray(bool[] values)
         {
             if (isWriting)
             {
@@ -173,7 +174,7 @@ namespace Cwlib.Io.Serializer
                 return value;
             }
 
-            return input.i32() != 0;
+            return input.I32() != 0;
         }
 
         /// <summary>
@@ -260,9 +261,9 @@ namespace Cwlib.Io.Serializer
         /// (De)serializes a 32-bit integer to/from the stream, compressed depending on the flags.
         /// </summary>
         /// <param name="value">Integer to write</param>
-        /// <param name="force32">Whether or not to always write 32 bits regardless of compression flags.</param>
+        /// <param name="force32">Whether to always write 32 bits regardless of compression flags.</param>
         /// <returns>Integer (de)serialized</returns>
-        public int i32(int value, bool force32)
+        public int I32(int value, bool force32)
         {
             if (isWriting)
             {
@@ -270,7 +271,7 @@ namespace Cwlib.Io.Serializer
                 return value;
             }
 
-            return input.i32(force32);
+            return input.I32(force32);
         }
 
         /// <summary>
@@ -301,13 +302,10 @@ namespace Cwlib.Io.Serializer
         /// <returns>Integer (de)serialized</returns>
         public long U32(long value, bool force32)
         {
-            if (isWriting)
-            {
-                output.U32(value, force32);
-                return value;
-            }
+            if (!isWriting) return input.U32(force32);
+            output.U32(value, force32);
+            return value;
 
-            return input.U32(force32);
         }
 
         /// <summary>
@@ -315,9 +313,9 @@ namespace Cwlib.Io.Serializer
         /// </summary>
         /// <param name="value">Integer to write</param>
         /// <returns>Integer (de)serialized</returns>
-        public int i32(int value)
+        public int I32(int value)
         {
-            return i32(value, false);
+            return I32(value, false);
         }
 
         /// <summary>
@@ -358,13 +356,10 @@ namespace Cwlib.Io.Serializer
         /// <returns>Long (de)serialized</returns>
         public long S64(long value, bool force64)
         {
-            if (isWriting)
-            {
-                output.S64(value, force64);
-                return value;
-            }
+            if (!isWriting) return input.S64(force64);
+            output.S64(value, force64);
+            return value;
 
-            return input.S64(force64);
         }
 
         /// <summary>
@@ -420,27 +415,13 @@ namespace Cwlib.Io.Serializer
         /// (De)serializes a 32-bit integer array to/from the stream.
         /// </summary>
         /// <param name="values">Integer array to write</param>
-        /// <param name="signed">Whether integer values are signed</param>
         /// <returns>Integer array (de)serialized</returns>
-        public int[] Intarray(int[] values, bool signed)
+        public int[]? Intarray(int[]? values)
         {
-            if (isWriting)
-            {
-                output.Intarray(values, signed);
-                return values;
-            }
+            if (!isWriting) return input.Intarray();
+            output.Intarray(values);
+            return values;
 
-            return input.Intarray(signed);
-        }
-
-        /// <summary>
-        /// (De)serializes a 32-bit integer array to/from the stream.
-        /// </summary>
-        /// <param name="values">Integer array to write</param>
-        /// <returns>Integer array (de)serialized</returns>
-        public int[] Intarray(int[] values)
-        {
-            return Intarray(values, false);
         }
 
         /// <summary>
@@ -448,7 +429,7 @@ namespace Cwlib.Io.Serializer
         /// </summary>
         /// <param name="values">Long array to write</param>
         /// <returns>Long array (de)serialized</returns>
-        public long[] Longarray(long[] values)
+        public long[]? Longarray(long[]? values)
         {
             if (isWriting)
             {
@@ -510,33 +491,27 @@ namespace Cwlib.Io.Serializer
         /// <summary>
         /// (De)serializes a 2-dimensional floating point vector to/from the stream.
         /// </summary>
-        /// <param name="value">Vector2f to write</param>
+        /// <param name="value">Vector2 to write</param>
         /// <returns>Vector2f (de)serialized</returns>
-        public Vector2f V2(Vector2f value)
+        public Vector2 V2(Vector2 value)
         {
-            if (isWriting)
-            {
-                output.V2(value);
-                return value;
-            }
+            if (!isWriting) return input.V2();
+            output.V2(value);
+            return value;
 
-            return input.V2();
         }
 
         /// <summary>
         /// (De)serializes a 3-dimensional floating point vector to/from the stream.
         /// </summary>
-        /// <param name="value">Vector3f to write</param>
+        /// <param name="value">Vector3 to write</param>
         /// <returns>Vector3f (de)serialized</returns>
         public Vector3 V3(Vector3 value)
         {
-            if (isWriting)
-            {
-                output.V3(value);
-                return value;
-            }
+            if (!isWriting) return input.V3();
+            output.V3(value);
+            return value;
 
-            return input.V3();
         }
 
         /// <summary>
@@ -546,13 +521,10 @@ namespace Cwlib.Io.Serializer
         /// <returns>Vector4f (de)serialized</returns>
         public Vector4 V4(Vector4 value)
         {
-            if (isWriting)
-            {
-                output.V4(value);
-                return value;
-            }
+            if (!isWriting) return input.V4();
+            output.V4(value);
+            return value;
 
-            return input.V4();
         }
 
         /// <summary>
@@ -576,15 +548,12 @@ namespace Cwlib.Io.Serializer
         /// </summary>
         /// <param name="value">Matrix4x4 to write</param>
         /// <returns>Matrix4x4 (de)serialized</returns>
-        public Matrix4x4 M44(Matrix4x4 value)
+        public Matrix4x4? M44(Matrix4x4? value)
         {
-            if (isWriting)
-            {
-                output.M44(value);
-                return value;
-            }
+            if (!isWriting) return input.M44();
+            output.M44(value);
+            return value;
 
-            return input.M44();
         }
 
         /// <summary>
@@ -593,7 +562,7 @@ namespace Cwlib.Io.Serializer
         /// <param name="value">String to write</param>
         /// <param name="size">Fixed length of string to write</param>
         /// <returns>String (de)serialized</returns>
-        public string Str(string value, int size)
+        public string? Str(string? value, int size)
         {
             if (isWriting)
             {
@@ -609,7 +578,7 @@ namespace Cwlib.Io.Serializer
         /// </summary>
         /// <param name="value">String to write</param>
         /// <returns>String (de)serialized</returns>
-        public string Str(string value)
+        public string? Str(string? value)
         {
             if (isWriting)
             {
@@ -625,7 +594,7 @@ namespace Cwlib.Io.Serializer
         /// </summary>
         /// <param name="value">String to write</param>
         /// <returns>String (de)serialized</returns>
-        public string Wstr(string value)
+        public string? Wstr(string? value)
         {
             if (isWriting)
             {
@@ -641,7 +610,7 @@ namespace Cwlib.Io.Serializer
         /// </summary>
         /// <param name="value">SHA1 hash to write</param>
         /// <returns>SHA1 hash (de)serialized</returns>
-        public SHA1 Sha1(SHA1 value)
+        public SHA1? Sha1(SHA1? value)
         {
             if (isWriting)
             {
@@ -658,15 +627,12 @@ namespace Cwlib.Io.Serializer
         /// <param name="value">GUID to write</param>
         /// <param name="force32">Whether or not to force 32 bit, regardless of compression flags.</param>
         /// <returns>GUID (de)serialized</returns>
-        public GUID Guid(GUID value, bool force32)
+        public GUID? Guid(GUID? value, bool force32)
         {
-            if (isWriting)
-            {
-                output.Guid(value, force32);
-                return value;
-            }
+            if (!isWriting) return input.Guid(force32);
+            output.Guid(value, force32);
+            return value;
 
-            return input.Guid(force32);
         }
 
         /// <summary>
@@ -674,7 +640,7 @@ namespace Cwlib.Io.Serializer
         /// </summary>
         /// <param name="value">GUID to write</param>
         /// <returns>GUID (de)serialized</returns>
-        public GUID Guid(GUID value)
+        public GUID? Guid(GUID? value)
         {
             return Guid(value, false);
         }
@@ -684,9 +650,9 @@ namespace Cwlib.Io.Serializer
         /// </summary>
         /// <param name="thing">Thing to write</param>
         /// <returns>Thing (de)serialized</returns>
-        public Thing Thing(Thing thing)
+        public Thing? Thing(Thing? thing)
         {
-            return Reference(thing, typeof(Thing));
+            return Reference(thing);
         }
 
         /// <summary>
@@ -694,9 +660,9 @@ namespace Cwlib.Io.Serializer
         /// </summary>
         /// <param name="things">Things to write</param>
         /// <returns>Things (de)serialized</returns>
-        public Thing[] Thingarray(Thing[] things)
+        public Thing[]? Thingarray(Thing[]? things)
         {
-            return this.Array(things, typeof(Thing), true);
+            return this.Array(things, true);
         }
 
         /// <summary>
@@ -704,7 +670,7 @@ namespace Cwlib.Io.Serializer
         /// </summary>
         /// <param name="things">Things to write</param>
         /// <returns>Things (de)serialized</returns>
-        public List<Thing> Thinglist(List<Thing> things)
+        public List<Thing>? Thinglist(List<Thing>? things)
         {
             return this.Arraylist(things, true);
         }
@@ -714,7 +680,7 @@ namespace Cwlib.Io.Serializer
             int subVersion = revision.GetSubVersion();
             if (subVersion <= 0x12a)
             {
-                ResourceDescriptor descriptor = null;
+                ResourceDescriptor? descriptor = null;
                 if (IsWriting())
                 {
                     if (value != 0)
@@ -725,7 +691,7 @@ namespace Cwlib.Io.Serializer
                 if (!IsWriting())
                 {
                     if (descriptor != null && descriptor.IsGUID())
-                        value = (int)descriptor.GetGUID().Value.Value;
+                        value = (int)descriptor.GetGUID()!.Value.Value;
                 }
             }
 
@@ -740,7 +706,7 @@ namespace Cwlib.Io.Serializer
         /// <param name="value">Resource to write</param>
         /// <param name="type">Type of resource</param>
         /// <returns>Resource (de)serialized</returns>
-        public ResourceDescriptor Resource(ResourceDescriptor value, ResourceType type)
+        public ResourceDescriptor? Resource(ResourceDescriptor? value, ResourceType type)
         {
             return Resource(value, type, false, true, false);
         }
@@ -750,9 +716,9 @@ namespace Cwlib.Io.Serializer
         /// </summary>
         /// <param name="value">Resource to write</param>
         /// <param name="type">Type of resource</param>
-        /// <param name="isDescriptor">Whether or not to skip resource flags</param>
+        /// <param name="isDescriptor">Whether to skip resource flags</param>
         /// <returns>Resource (de)serialized</returns>
-        public ResourceDescriptor Resource(ResourceDescriptor value, ResourceType type, bool isDescriptor)
+        public ResourceDescriptor? Resource(ResourceDescriptor? value, ResourceType type, bool isDescriptor)
         {
             return Resource(value, type, isDescriptor, true, false);
         }
@@ -762,11 +728,11 @@ namespace Cwlib.Io.Serializer
         /// </summary>
         /// <param name="value">Resource to write</param>
         /// <param name="type">Type of resource</param>
-        /// <param name="isDescriptor">Whether or not to skip resource flags</param>
+        /// <param name="isDescriptor">Whether to skip resource flags</param>
         /// <param name="cp">Flag toggle</param>
         /// <param name="t">Serialize resource type</param>
         /// <returns>Resource (de)serialized</returns>
-        public ResourceDescriptor Resource(ResourceDescriptor value, ResourceType type, bool isDescriptor, bool cp, bool t)
+        public ResourceDescriptor? Resource(ResourceDescriptor? value, ResourceType type, bool isDescriptor, bool cp, bool t)
         {
             byte NONE = 0, HASH = 1, GUID = 2;
 
@@ -783,18 +749,18 @@ namespace Cwlib.Io.Serializer
                 if (revision.GetVersion() > 0x22e && !isDescriptor)
                     flags = input.I32();
                 byte guidHashFlag = input.I8();
-                ResourceDescriptor descriptor = null;
+                ResourceDescriptor? descriptor = null;
                 if (guidHashFlag == NONE)
                     return null;
                 GUID? guid = null;
-                SHA1 sha1 = null;
+                SHA1? sha1 = null;
                 if ((guidHashFlag & GUID) != 0)
                     guid = input.Guid();
                 if ((guidHashFlag & HASH) != 0)
                     sha1 = input.Sha1();
                 if (t)
                     type = ResourceType.FromType(input.I32());
-                descriptor = new ResourceDescriptor(guid.Value, sha1, type);
+                descriptor = new ResourceDescriptor(guid!.Value, sha1!, type);
                 if (!descriptor.IsValid())
                     return null;
                 descriptor.SetFlags(flags);
@@ -814,7 +780,7 @@ namespace Cwlib.Io.Serializer
                     flags |= GUID;
                 output.I8(flags);
                 if ((flags & GUID) != 0)
-                    output.Guid(value.GetGUID().Value);
+                    output.Guid(value.GetGUID());
                 if ((flags & HASH) != 0)
                     output.Sha1(value.GetSHA1());
                 if (flags != 0 && !(isDescriptor && type.Equals(ResourceType.Plan)))
@@ -823,7 +789,7 @@ namespace Cwlib.Io.Serializer
             else
                 I8(NONE);
             if (t)
-                output.I32(value.GetResourceType().Value);
+                output.I32(value!.GetResourceType().Value);
             return value;
         }
 
@@ -833,7 +799,7 @@ namespace Cwlib.Io.Serializer
         /// </summary>
         /// <param name="value">Vector to (de)serialize</param>
         /// <returns>(De)serialized vector</returns>
-        public long[] Longvector(long[] value)
+        public long[]? Longvector(long[]? value)
         {
             if ((compressionFlags & CompressionFlags.USE_COMPRESSED_VECTORS) == 0)
                 return Longarray(value);
@@ -845,25 +811,26 @@ namespace Cwlib.Io.Serializer
                     return value;
                 }
 
-                long bytes = 0;
+                long _bytes = 0;
                 foreach (long element in value)
                 {
-                    if (Long.CompareUnsigned(element, bytes) > 0)
-                        bytes = element;
+                    if (element.CompareUnsigned(_bytes) > 0)
+                        _bytes = element;
                 }
 
-                if (bytes == 0)
+                if (_bytes == 0)
                 {
                     output.I32(0);
                     return value;
                 }
 
-                bytes = ((64 - Long.NumberOfLeadingZeros(bytes)) + 7) / 8;
-                output.i32(value.length);
-                output.U8((int)(bytes & 0xFF));
-                for (int i = 0; i < bytes; ++i)
-                    for (int j = 0; j < value.length; ++j)
-                        output.U8((int)(((value[j] >>> (i * 8)) & 0xFF)));
+                _bytes = ((64 - _bytes.NumberOfLeadingZeros()) + 7) / 8;
+                output.I32(value.Length);
+                output.U8((int)(_bytes & 0xFF));
+                for (int i = 0; i < _bytes; ++i)
+                    foreach (var t in value)
+                        output.U8((int)(((t >>> (i * 8)) & 0xFF)));
+
                 return value;
             }
 
@@ -880,29 +847,17 @@ namespace Cwlib.Io.Serializer
 
         /// <summary>
         /// (De)serializes a vector (uint32_t array) to/from the stream, compressed depending on the
-        /// flags
-        /// </summary>
-        /// <param name="value">Vector to (de)serialize</param>
-        /// <returns>(De)serialized vector</returns>
-        public int[] Intvector(int[] value)
-        {
-            return Intvector(value, false);
-        }
-
-        /// <summary>
-        /// (De)serializes a vector (uint32_t array) to/from the stream, compressed depending on the
         /// flags.
         /// </summary>
         /// <param name="value">Vector to (de)serialize</param>
-        /// <param name="signed">Whether integer values are signed</param>
         /// <returns>(De)serialized vector</returns>
-        public int[] Intvector(int[] value, bool signed)
+        public int[]? Intvector(int[]? value)
         {
             if ((compressionFlags & CompressionFlags.USE_COMPRESSED_VECTORS) == 0)
-                return Intarray(value, signed);
+                return Intarray(value);
             if (isWriting)
             {
-                if (value == null || value.length == 0)
+                if (value == null || value.Length == 0)
                 {
                     output.I32(0);
                     return value;
@@ -911,44 +866,34 @@ namespace Cwlib.Io.Serializer
 
                 // Storing in a separate variable because we don't
                 // want to mutate the original array
-                int[] vector = value;
-                if (signed)
-                {
-                    vector = new int[value.length];
-                    for (int i = 0; i < vector.length; ++i)
-                        vector[i] = ((value[i] & 0x7fffffff)) << 1 ^ ((value[i] >> 0x1f));
-                }
+                int[] _vector = value;
 
-                long bytes = Arrays.Stream(vector).MapToLong((x) => x & 0xFFFFFFFF).Max().OrElse(0);
-                if (bytes == 0)
+                long _bytes = _vector.Select((x) => x & 0xFFFFFFFF)?.Max() ?? 0L;
+                if (_bytes == 0)
                 {
-                    output.i32(vector.length);
+                    output.I32(_vector.Length);
                     output.I32(0);
                     return value;
                 }
 
-                bytes = ((64 - Long.NumberOfLeadingZeros(bytes)) + 7) / 8;
-                output.i32(vector.length);
-                output.U8((int)(bytes & 0xFF));
-                for (int i = 0; i < bytes; ++i)
-                    for (int j = 0; j < vector.length; ++j)
-                        output.U8((vector[j] >>> (i * 8)) & 0xFF);
+                _bytes = ((64 - _bytes.NumberOfLeadingZeros()) + 7) / 8;
+                output.I32(_vector.Length);
+                output.U8((int)(_bytes & 0xFF));
+                for (int i = 0; i < _bytes; ++i)
+                    foreach (var t in _vector)
+                        output.U8((t >>> (i * 8)) & 0xFF);
+
                 return value;
             }
 
-            int count = input.i32();
+            int count = input.I32();
             if (count == 0)
-                return new int[0];
+                return [];
             int bytes = input.U8();
-            int[] vector = new int[count];
+            int[]? vector = new int[count];
             for (int i = 0; i < bytes; ++i)
                 for (int j = 0; j < count; ++j)
                     vector[j] |= (input.U8() << (i * 8));
-            if (signed)
-            {
-                for (int i = 0; i < vector.length; ++i)
-                    vector[i] = (vector[i] >> 1 ^ -(vector[i] & 1));
-            }
 
             return vector;
         }
@@ -956,10 +901,9 @@ namespace Cwlib.Io.Serializer
         /// <summary>
         /// (De)serializes a 8-bit enum value to/from the stream.
         /// </summary>
-        /// <param name="<T>">Enum class</param>
         /// <param name="value">Enum value</param>
         /// <returns>(De)serialized enum value</returns>
-        public T Enum8(Enum value)
+        public T? Enum8<T>(T? value) where T: Enum
         {
             if (isWriting)
             {
@@ -967,16 +911,15 @@ namespace Cwlib.Io.Serializer
                 return value;
             }
 
-            return input.Enum8(value.GetType());
+            return input.Enum8<T>();
         }
 
         /// <summary>
         /// (De)serializes a 32-bit enum value to/from the stream.
         /// </summary>
-        /// <param name="<T>">Enum class</param>
         /// <param name="value">Enum value</param>
         /// <returns>(De)serialized enum value</returns>
-        public T Enum32<T extends Enum<T> & ValueEnum<Integer>>(T value)
+        public T Enum32<T>(T value) where T: Enum
         {
             if (isWriting)
             {
@@ -984,17 +927,16 @@ namespace Cwlib.Io.Serializer
                 return value;
             }
 
-            return input.Enum32((Class<T>)value.GetType());
+            return input.Enum32<T>();
         }
 
         /// <summary>
         /// (De)serializes a 32-bit enum value to/from the stream.
         /// </summary>
-        /// <param name="<T>">Enum class</param>
         /// <param name="value">Enum value</param>
-        /// <param name="signed">Whether or not to (de)serialize s32</param>
+        /// <param name="signed">Whether to (de)serialize s32</param>
         /// <returns>(De)serialized enum value</returns>
-        public T Enum32<T extends Enum<T> & ValueEnum<Integer>>(T value, bool signed)
+        public T Enum32<T>(T value, bool signed) where T: Enum
         {
             if (isWriting)
             {
@@ -1002,17 +944,15 @@ namespace Cwlib.Io.Serializer
                 return value;
             }
 
-            return input.Enum32((Class<T>)value.GetType(), signed);
+            return input.Enum32<T>(signed);
         }
 
         /// <summary>
         /// (De)serializes a 8-bit enum value to/from the stream.
         /// </summary>
-        /// <param name="<T>">Enum class</param>
         /// <param name="values">Enum values</param>
-        /// <param name=""></param>
         /// <returns>(De)serialized enum value</returns>
-        public T[] Enumarray<T extends Enum<T> & ValueEnum<Byte>>(T[] values, Class<T> enumeration)
+        public T[] Enumarray<T>(T[] values) where T: Enum
         {
             if (isWriting)
             {
@@ -1020,17 +960,15 @@ namespace Cwlib.Io.Serializer
                 return values;
             }
 
-            return input.Enumarray(enumeration);
+            return input.Enumarray<T>();
         }
 
         /// <summary>
         /// (De)serializes a structure to/from the stream as a reference.
         /// </summary>
-        /// <param name="<T>">Generic serializable structure</param>
         /// <param name="value">Structure to serialize</param>
-        /// <param name="clazz">Serializable class type</param>
         /// <returns>(De)serialized structure</returns>
-        public T? Reference<T>(T value) where T: ISerializable
+        public T? Reference<T>(T? value) where T: ISerializable
         {
             if (isWriting)
             {
@@ -1040,13 +978,13 @@ namespace Cwlib.Io.Serializer
                     return default;
                 }
 
-                int r = referenceObjects.GetOrDefault(value, -1);
+                int r = referenceObjects[value] ?? -1;
                 if (r == -1)
                 {
                     int next = nextReference++;
                     output.I32(next);
-                    referenceIDs.Put(next, value);
-                    referenceObjects.Put(value, next);
+                    referenceIDs.Add(next, value);
+                    referenceObjects.Add(value, next);
                     value.Serialize(this);
                     return value;
                 }
@@ -1055,11 +993,11 @@ namespace Cwlib.Io.Serializer
                 return value;
             }
 
-            int reference = input.i32();
+            int reference = input.I32();
             if (reference == 0)
                 return default;
-            if (referenceIDs.ContainsKey(reference))
-                return (T)referenceIDs[reference];
+            if (referenceIDs.TryGetValue(reference, out var d))
+                return (T)d;
             T? strutt;
             try
             {
@@ -1070,8 +1008,8 @@ namespace Cwlib.Io.Serializer
                 throw new SerializationException("Failed to create class instance in " + "serializer!");
             }
 
-            referenceIDs.Put(reference, strutt);
-            referenceObjects.Put(strutt, reference);
+            referenceIDs.Add(reference, strutt);
+            referenceObjects.Add(strutt, reference);
             strutt?.Serialize(this);
             return strutt;
         }
@@ -1079,7 +1017,6 @@ namespace Cwlib.Io.Serializer
         /// <summary>
         /// (De)serializes a structure to/from the stream.
         /// </summary>
-        /// <param name="<T>">Generic serializable structure</param>
         /// <param name="value">Structure to serialize</param>
         /// <returns>(De)serialized structure</returns>
         public T Struct<T>(T? value) where T: ISerializable?
@@ -1103,20 +1040,17 @@ namespace Cwlib.Io.Serializer
         /// <summary>
         /// (De)serializes an array to/from the stream.
         /// </summary>
-        /// <param name="<T>">Generic serializable structure</param>
         /// <param name="values">Array to serialize</param>
         /// <param name="clazz">Array base serializable type</param>
         /// <returns>(De)serialized array</returns>
-        public T[] Array<T>(T[] values) where T : ISerializable => Array(values, false);
+        public T[] Array<T>(T[]? values) where T : ISerializable => Array(values, false);
 
         /// <summary>
         /// (De)serializes an array to/from the stream.
         /// </summary>
-        /// <param name="<T>">Generic serializable structure</param>
         /// <param name="values">Array to serialize</param>
-        /// <param name="clazz">Array base serializable type</param>
         /// <returns>(De)serialized array</returns>
-        public List<T> Arraylist<T>(List<T> values) where T: ISerializable
+        public List<T> Arraylist<T>(List<T>? values) where T: ISerializable
         {
             return this.Arraylist(values, false);
         }
@@ -1124,11 +1058,10 @@ namespace Cwlib.Io.Serializer
         /// <summary>
         /// (De)serializes an arraylist to/from the stream.
         /// </summary>
-        /// <param name="<T>">Generic serializable structure</param>
         /// <param name="values">Array to serialize</param>
         /// <param name="isReference">Whether the array base structure is a reference type</param>
         /// <returns>(De)serialized array</returns>
-        public List<T>? Arraylist<T>(List<T> values, bool isReference) where T : ISerializable
+        public List<T>? Arraylist<T>(List<T>? values, bool isReference) where T : ISerializable
         {
             Type clazz = typeof(T);
             if (isWriting)
@@ -1172,7 +1105,7 @@ namespace Cwlib.Io.Serializer
         /// <param name="clazz">Array base serializable type</param>
         /// <param name="isReference">Whether the array base structure is a reference type</param>
         /// <returns>(De)serialized array</returns>
-        public T[]? Array<T>(T[] values, bool isReference) where T:ISerializable
+        public T[]? Array<T>(T[]? values, bool isReference) where T:ISerializable
         {
             if (isWriting)
             {
@@ -1271,7 +1204,7 @@ namespace Cwlib.Io.Serializer
         /// used for RPlan's because we can't serialize thing data yet.
         /// </summary>
         /// <param name="dependency">Dependency to add</param>
-        public void AddDependency(ResourceDescriptor dependency)
+        public void AddDependency(ResourceDescriptor? dependency)
         {
             dependencies.Add(dependency);
         }
@@ -1291,8 +1224,8 @@ namespace Cwlib.Io.Serializer
 
         public virtual void SetPointer(int index, object value)
         {
-            referenceIDs.Put(index, value);
-            referenceObjects.Put(value, index);
+            referenceIDs.Add(index, value);
+            referenceObjects.Add(value, index);
         }
 
         public virtual int GetNextReference()
@@ -1300,13 +1233,13 @@ namespace Cwlib.Io.Serializer
             return nextReference++;
         }
 
-        public virtual Thing[] GetThings()
+        public virtual Thing[]? GetThings()
         {
-            List<Thing> things = new();
-            foreach (object reference in referenceObjects.KeySet())
+            List<Thing> things = [];
+            foreach (object reference in referenceObjects.Keys)
             {
-                if (reference is Thing)
-                    things.Add((Thing)reference);
+                if (reference is Thing thing)
+                    things.Add(thing);
             }
 
             return [.. things];
@@ -1327,10 +1260,9 @@ namespace Cwlib.Io.Serializer
             return compressionFlags;
         }
 
-        public ResourceDescriptor[] GetDependencies()
+        public ResourceDescriptor?[] GetDependencies()
         {
-            ResourceDescriptor[] descriptors = new ResourceDescriptor[dependencies.Count];
-            descriptors = [.. dependencies];
+            ResourceDescriptor?[] descriptors = [.. dependencies];
             return descriptors;
         }
     }

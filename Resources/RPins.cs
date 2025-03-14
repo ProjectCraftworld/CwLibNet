@@ -1,7 +1,6 @@
-﻿using Cwlib.Io.Serializer;
-using CwLibNet.Enums;
+﻿using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serialization;
+using CwLibNet.IO.Serializer;
 using CwLibNet.Types;
 using CwLibNet.Types.Profile;
 
@@ -11,30 +10,30 @@ namespace CwLibNet.Resources
     {
         public const int BaseAllocationSize = 0x10;
 
-        public List<Pin> Pins = new();
+        public List<Pin>? Pins = [];
 
         public override void Serialize(Serializer serializer)
         {
-            Pins = serializer.Array<Pin>(Pins);
+            Pins = serializer.Arraylist(Pins);
         }
 
         public override int GetAllocatedSize()
         {
-            return BaseAllocationSize + Pins.Count * Pin.BaseAllocationSize;
+            return BaseAllocationSize + Pins!.Count * Pin.BaseAllocationSize;
         }
 
         public override SerializationData Build(Revision revision, byte compressionFlags)
         {
-            Serializer serializer = new Serializer(this.GetAllocatedSize(), revision,
+            Serializer serializer = new Serializer(GetAllocatedSize(), revision,
                 compressionFlags);
-            serializer.Struct<RPins>(this);
+            serializer.Struct(this);
             return new SerializationData(
-                serializer.getBuffer(),
+                serializer.GetBuffer(),
                 revision,
                 compressionFlags,
                 ResourceType.Pins,
                 SerializationType.BINARY,
-                serializer.getDependencies());
+                serializer.GetDependencies());
         }
     }
 }
