@@ -8,7 +8,6 @@ This is a recreation of Craftworld Toolkit in C# .NET code. It takes after [this
 ### .NET Runtime
 ```bash
 # Install dotnet 
-```bash
 # For Windows
 winget install Microsoft.DotNet.Runtime
 
