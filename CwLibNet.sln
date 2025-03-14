@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CwLibNet", "CwLibNet.csproj", "{45A7D1BA-811C-4B43-BDC8-C4F204577079}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CwLibNet", "CwLibNet/CwLibNet.csproj", "{45A7D1BA-811C-4B43-BDC8-C4F204577079}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CwLibNetTests", "CwLibNetTests\CwLibNetTests.csproj", "{36485459-B4B9-4405-862E-21D36E89856C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +14,11 @@ Global
 		{45A7D1BA-811C-4B43-BDC8-C4F204577079}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45A7D1BA-811C-4B43-BDC8-C4F204577079}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45A7D1BA-811C-4B43-BDC8-C4F204577079}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36485459-B4B9-4405-862E-21D36E89856C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36485459-B4B9-4405-862E-21D36E89856C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36485459-B4B9-4405-862E-21D36E89856C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36485459-B4B9-4405-862E-21D36E89856C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 EndGlobal
