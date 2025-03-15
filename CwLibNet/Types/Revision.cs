@@ -8,6 +8,11 @@
         public readonly short BranchId;
         public readonly short BranchRevision;
 
+        public short GetBranchRevision()
+        {
+            return BranchRevision;
+        }
+
         /**
          * Forms revision with branch data.
          *

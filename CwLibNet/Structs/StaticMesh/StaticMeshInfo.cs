@@ -10,7 +10,7 @@ namespace CwLibNet.Structs.StaticMesh
     {
         public static readonly int BASE_ALLOCATION_SIZE = 0x20;
 
-        public Vector3 min, max;
+        public Vector3? min, max;
         public short structIndexA, structIndexB, firstPrimitive, numPrimitives;
 
         public void Serialize(Serializer serializer)

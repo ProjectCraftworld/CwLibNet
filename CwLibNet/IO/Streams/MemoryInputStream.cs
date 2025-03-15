@@ -27,7 +27,7 @@ namespace CwLibNet.IO.Streams
         private bool isLittleEndian = false;
 
         /**
-         * Creates a memory input stream from byte array.
+         * Creates a memory input stream from a byte array.
          *
          * @param buffer Byte array to use as source
          */
@@ -86,8 +86,10 @@ namespace CwLibNet.IO.Streams
         public byte[] Bytes(int size)
         {
             this.offset += size;
-            Array.Copy(this.buffer, 0, this.buffer, this.offset - size, this.offset);
-            return this.buffer;
+            var secondBuffer = buffer.Skip(offset - size).ToArray();
+            Array.Resize(ref secondBuffer, size);
+//             Array.Copy(this.buffer, 0, this.buffer, this.offset - size, this.offset);
+            return secondBuffer;
         }
 
         /**

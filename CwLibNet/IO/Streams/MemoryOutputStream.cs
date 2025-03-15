@@ -497,13 +497,13 @@ namespace CwLibNet.IO.Streams
          * @param value Vector4f to write
          * @return This output stream
          */
-        public MemoryOutputStream V4(Vector4 value)
+        public MemoryOutputStream V4(Vector4? value)
         {
             if (value == null) value = Vector4.Zero;
-            this.F32(value.X);
-            this.F32(value.Y);
-            this.F32(value.Z);
-            this.F32(value.W);
+            this.F32(value?.X);
+            this.F32(value?.Y);
+            this.F32(value?.Z);
+            this.F32(value?.W);
             return this;
         }
 
@@ -530,12 +530,19 @@ namespace CwLibNet.IO.Streams
          */
         public MemoryOutputStream M44(Matrix4x4? value)
         {
-            if (value == null) value = Matrix4x4.Identity;
+            value ??= Matrix4x4.Identity;
 
             float[] identity = new float[] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 
             float[] values = new float[16];
             // value.get(values);
+            values =
+            [
+                value.Value.M11, value.Value.M12, value.Value.M13, value.Value.M14,
+                value.Value.M21, value.Value.M22, value.Value.M23, value.Value.M24,
+                value.Value.M31, value.Value.M32, value.Value.M33, value.Value.M34,
+                value.Value.M41, value.Value.M42, value.Value.M43, value.Value.M44
+            ];
 
             int flags = 0xFFFF;
             if ((compressionFlags & CompressionFlags.USE_COMPRESSED_MATRICES) != 0)
@@ -728,7 +735,7 @@ namespace CwLibNet.IO.Streams
          */
         public MemoryOutputStream Shrink()
         {
-            Array.Copy(buffer, 0, buffer, 0, offset);
+            Array.Resize(ref buffer, offset);
             return this;
         }
 

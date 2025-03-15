@@ -1,5 +1,6 @@
 namespace CwLibNet.Enums
 {
+    [Flags]
     public enum VisibilityFlags : byte
     {
         NONE = 0x0,
