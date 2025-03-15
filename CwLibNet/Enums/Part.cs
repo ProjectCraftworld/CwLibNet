@@ -9,10 +9,10 @@ namespace CwLibNet.Enums
         
         public static Dictionary<string, Part> Parts = new()
         {
-//            { "BODY", new Part("BODY", 0x0, PartHistory.BODY, typeof(PBody)) },
+            { "BODY", new Part("BODY", 0x0, PartHistory.BODY, typeof(PBody)) },
             { "JOINT", new Part("JOINT", 0x1, PartHistory.JOINT, typeof(PJoint)) },
-/*            { "WORLD", new Part("WORLD", 0x2, PartHistory.WORLD, typeof(PWorld)) },
-            { "RENDER_MESH", new Part("RENDER_MESH", 0x3, PartHistory.RENDER_MESH, typeof(PRenderMesh)) }, */
+            { "WORLD", new Part("WORLD", 0x2, PartHistory.WORLD, typeof(PWorld)) },
+            { "RENDER_MESH", new Part("RENDER_MESH", 0x3, PartHistory.RENDER_MESH, typeof(PRenderMesh)) },
             { "POS", new Part("POS", 0x4, PartHistory.POS, typeof(PPos)) },
 /*            { "TRIGGER", new Part("TRIGGER", 0x5, PartHistory.TRIGGER, typeof(PTrigger)) },
             { "TRIGGER_EFFECTOR", new Part("TRIGGER_EFFECTOR", 0x36, PartHistory.TRIGGER_EFFECTOR, null) },
@@ -39,8 +39,8 @@ namespace CwLibNet.Enums
             { "EMITTER", new Part("EMITTER", 0x14, PartHistory.EMITTER, typeof(PEmitter)) },
             { "REF", new Part("REF", 0x15, PartHistory.REF, typeof(PRef)) },
             { "METADATA", new Part("METADATA", 0x16, PartHistory.METADATA, typeof(PMetadata)) },
-            { "COSTUME", new Part("COSTUME", 0x17, PartHistory.COSTUME, typeof(PCostume)) },
-            { "PARTICLE_EMITTER_2", new Part("PARTICLE_EMITTER_2", 0x3d, PartHistory.PARTICLE_EMITTER_2, null) },
+            { "COSTUME", new Part("COSTUME", 0x17, PartHistory.COSTUME, typeof(PCostume)) }, */
+            { "PARTICLE_EMITTER_2", new Part("PARTICLE_EMITTER_2", 0x3d, PartHistory.PARTICLE_EMITTER_2, null) }, /*
             { "CAMERA_TWEAK", new Part("CAMERA_TWEAK", 0x18, PartHistory.CAMERA_TWEAK, typeof(PCameraTweak)) },
             { "SWITCH", new Part("SWITCH", 0x19, PartHistory.SWITCH, typeof(PSwitch)) },
             { "SWITCH_KEY", new Part("SWITCH_KEY", 0x1a, PartHistory.SWITCH_KEY, typeof(PSwitchKey)) },

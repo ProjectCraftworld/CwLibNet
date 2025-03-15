@@ -10,7 +10,7 @@ namespace CwLibNet.Structs.StaticMesh
     {
         public static readonly int BASE_ALLOCATION_SIZE = 0x60;
 
-        public Vector4 min, max;
+        public Vector4? min, max;
         public ResourceDescriptor? gmat;
         public int vertexStart, indexStart;
         public int numIndices;

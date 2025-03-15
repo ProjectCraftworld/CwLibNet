@@ -506,7 +506,7 @@ namespace CwLibNet.IO.Serializer
         /// </summary>
         /// <param name="value">Vector3 to write</param>
         /// <returns>Vector3f (de)serialized</returns>
-        public Vector3 V3(Vector3 value)
+        public Vector3? V3(Vector3? value)
         {
             if (!isWriting) return input.V3();
             output.V3(value);
@@ -519,7 +519,7 @@ namespace CwLibNet.IO.Serializer
         /// </summary>
         /// <param name="value">Vector4f to write</param>
         /// <returns>Vector4f (de)serialized</returns>
-        public Vector4 V4(Vector4 value)
+        public Vector4? V4(Vector4? value)
         {
             if (!isWriting) return input.V4();
             output.V4(value);
@@ -770,7 +770,7 @@ namespace CwLibNet.IO.Serializer
             }
 
             if (revision.GetVersion() > 0x22e && !isDescriptor)
-                output.U32(value != null ? value.GetFlags() : 0);
+                output.U32(value?.GetFlags() ?? 0);
             if (value != null && value.IsValid())
             {
                 byte flags = 0;
@@ -978,7 +978,7 @@ namespace CwLibNet.IO.Serializer
                     return default;
                 }
 
-                int r = referenceObjects[value] ?? -1;
+                int r = referenceObjects.GetValueOrDefault(value, -1)!.Value;
                 if (r == -1)
                 {
                     int next = nextReference++;
@@ -1005,7 +1005,7 @@ namespace CwLibNet.IO.Serializer
             }
             catch (Exception)
             {
-                throw new SerializationException("Failed to create class instance in " + "serializer!");
+                throw new SerializationException("Failed to create class instance in serializer!");
             }
 
             referenceIDs.Add(reference, strutt);
@@ -1041,7 +1041,7 @@ namespace CwLibNet.IO.Serializer
         /// (De)serializes an array to/from the stream.
         /// </summary>
         /// <param name="values">Array to serialize</param>
-        /// <param name="clazz">Array base serializable type</param>
+        /// <param name="clazz">Array base-serializable type</param>
         /// <returns>(De)serialized array</returns>
         public T[] Array<T>(T[]? values) where T : ISerializable => Array(values, false);
 

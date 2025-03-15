@@ -12,5 +12,5 @@ public static class ResourceLogLevel
 
 public class ResourceSystem
 {
-    public static int LOG_LEVEL = ResourceLogLevel.INFO;
+    public static int LOG_LEVEL = ResourceLogLevel.SERIALIZER_TRACE;
 }
