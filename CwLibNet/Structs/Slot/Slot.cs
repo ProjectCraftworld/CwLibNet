@@ -10,10 +10,11 @@ using CwLibNet.Structs.Server;
 using System.Reflection.Emit;
 using CwLibNet.Util;
 using CwLibNet.Types;
+using CwLibNet.Structs.Slot;
 
 namespace CwLibNet.Structs.Slot 
 {
-    public class Slot
+    public class Slot : ISerializable
     {
         public static readonly BASE_ALLOCATION_SIZE = 
             (SlotID.BASE_ALLOCATION_SIZE * 3) + 0x40 + NetworkOnlineID.BASE_ALLOCATION_SIZE + 0x30;
@@ -285,6 +286,12 @@ namespace CwLibNet.Structs.Slot
             localPath = serializer.Str(localPath);
             if (subVersion >= Revisions.SLOT_TRAILER_THUMBNAIL)
                 thumbPath = serializer.Str(thumbPath);
+        }
+    }
+            public int GetAllocatedSize()
+        {
+            // Implement the logic to calculate the allocated size
+            return BASE_ALLOCATION_SIZE;
         }
     }
 }
