@@ -1,4 +1,6 @@
-﻿namespace CwLibNet.Types
+﻿using CwLibNet.Enums;
+
+namespace CwLibNet.Types
 {
     public readonly struct Revision
     {

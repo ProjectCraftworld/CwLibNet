@@ -1,49 +1,66 @@
-namespace CwLibNet.Enums
+using CwLibNet.Enums;
+
+namespace CwLibNet.Types
 {
-    public class Branch
+    public readonly struct Branch : IEquatable<Branch>
     {
-        public static readonly Branch? NONE = new Branch(0x0, 0x0, 0x0);
-        // dummy branch
-        public static readonly Branch? LEERDAMMER = new Branch((int)Revisions.LdHead, 0x4c44, (int)Revisions.LdMax);
-        // branched revision for Leerdammer update in LBP1
-        // Tag: LD
-        public static readonly Branch? DOUBLE11 = new Branch((int)Revisions.D1Head, 0x4431, (int)Revisions.D1Max);
-        // Vita branched revision; final branch revision is 0x3e2, but it can go
-        // as early as 0x3c1 in earlier branch revisions
-        // Tag: D1
-        public static readonly Branch? MIZUKI = new Branch((int)Revisions.MzHead, 0x4d5a, (int)Revisions.MzMax);
-        // Custom branched revision for Toolkit custom resources
-        // Tag: MZ
+        public static readonly Branch 
+            None = new(0x0, 0x0, 0x0),
+            Leerdammer = new((int)Revisions.LdHead, 0x4c44, (int)Revisions.LdMax),
+            Double11 = new((int)Revisions.D1Head, 0x4431, (int)Revisions.D1Max),
+            Mizuki = new((int)Revisions.MzHead, 0x4d5a, (int)Revisions.MzMax);
 
-        public int Head {get;}
-        public short Id {get;}
-        public short Revision {get;}
-
-        private Branch(int head, int id, int revision)
+        public readonly int Head;
+        public readonly short Id;
+        public readonly short Revision;
+        
+        public Branch(int head, int id, int revision)
         {
             Head = head;
-            Id = (short)id;
-            Revision = (short)revision;
+            Id = (short) id;
+            Revision = (short) revision;
+        }
+    
+        public static Branch? FromId(short id) => id switch
+        {
+            0x0 => None,
+            0x4c44 => Leerdammer,
+            0x4431 => Double11,
+            0x4d5a => Mizuki,
+            _ => null
+        };
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Branch other && Equals(other);
+        }
+    
+        public bool Equals(Branch other)
+        {
+            if (GetHashCode() != other.GetHashCode()) return false;
+            return Head == other.Head && Id == other.Id && Revision == other.Revision;
         }
 
-        public int GetHead()
+        public override int GetHashCode()
         {
-            return Head;
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + Head.GetHashCode();
+                hash = hash * 23 + Id.GetHashCode();
+                hash = hash * 23 + Revision.GetHashCode();
+                return hash;
+            }
         }
 
-        public short GetId()
+        public static bool operator ==(Branch a, Branch b)
         {
-            return Id;
+            return a.Equals(b);
         }
-
-        public short GetRevision()
+    
+        public static bool operator !=(Branch a, Branch b)
         {
-            return Revision;
-        }
-
-        public static Branch? FromID(short id)
-        {
-            return new[] { NONE, LEERDAMMER, DOUBLE11, MIZUKI }.FirstOrDefault(branch => branch!.Id == id);
+            return !a.Equals(b);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace CwLibNet.Presets
         {
             Pack item = new Pack();
             item.contentsType = ContentsType.GROUP;
-            item.mesh = new ResourceDescriptor(0x6a1a, ResourceType.MESH);
+            item.mesh = new ResourceDescriptor(0x6a1a, ResourceType.Mesh);
             
             item.slot.name = name;
             item.slot.description = description;
@@ -31,7 +31,7 @@ namespace CwLibNet.Presets
             item.contentID = null; // TODO: Set contentID if needed
 
             item.contentsType = ContentsType.LEVEL;
-            item.mesh = new ResourceDescriptor(0x3e86, ResourceType.MESH);
+            item.mesh = new ResourceDescriptor(0x3e86, ResourceType.Mesh);
             
             item.slot.name = name;
             item.slot.description = description;

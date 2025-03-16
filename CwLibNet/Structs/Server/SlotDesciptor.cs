@@ -18,7 +18,8 @@ namespace CwLibNet.Structs.Server
         public SHA1[] resources;
         public string[] labels;
         public bool locked;
-        public bool subLevel;
+        public bool isSubLevel;
+        public bool isAdventurePlanet;
         public int shareable;
         public int background;
         public int minplayers = 1, maxplayers = 4;
@@ -50,7 +51,7 @@ namespace CwLibNet.Structs.Server
                 descriptor.root = ((string)element.Element("rootLevel"))?.ToLower();
                 descriptor.icon = ((string)element.Element("icon"))?.ToLower();
                 descriptor.locked = ((string)element.Element("initiallyLocked"))?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
-                descriptor.subLevel = ((string)element.Element("isSubLevel"))?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
+                descriptor.isSubLevel = ((string)element.Element("isSubLevel"))?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
                 descriptor.background = (int?)element.Element("background") ?? 0;
                 descriptor.shareable = (int?)element.Element("shareable") ?? 0;
                 descriptor.labels = ((string)element.Element("authorLabels"))?.Split(',');
