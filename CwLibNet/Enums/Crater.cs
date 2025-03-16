@@ -332,43 +332,91 @@ namespace CwLibNet.Enums
         // SLOT_80_LBP3(-0.97560966f, 0.20564793f, -0.076776974f)
         SLOT_80_LBP3,
         // SLOT_81_LBP3(0.83252716f, -0.5501321f, 0.06521601f)
-        SLOT_81_LBP3 
-
-        // --------------------
-        // TODO enum body members
-        // private final Vector4f value;
-        // Crater(float x, float y, float z) {
-        //     this.value = new Vector4f(x, y, z, 0);
-        // }
-        // public Vector4f getValue() {
-        //     // In case something tries to edit the value contained
-        //     return new Vector4f(this.value);
-        // }
-        // --------------------
-        // --------------------
-        // TODO enum body members
-        // private final Vector4f value;
-        // Crater(float x, float y, float z) {
-        //     this.value = new Vector4f(x, y, z, 0);
-        // }
-        // public Vector4f getValue() {
-        //     // In case something tries to edit the value contained
-        //     return new Vector4f(this.value);
-        // }
-        // --------------------
+        SLOT_81_LBP3
     }
-    public sealed class CraterBodyMembers 
+    public static class CraterExtensions
     {
-        private readonly Vector4 value;
-
-        public CraterBodyMembers(float x, float y, float z)
+        private static readonly Dictionary<Crater, Vector4> _values = new()
         {
-            this.value = new Vector4(x, y, z, 0);
-        }
+            { Crater.SLOT_0_LBP1, new Vector4(0.31077105f, -0.83225715f, -0.45909613f, 0) },
+            { Crater.SLOT_1_LBP1, new Vector4(0.4628601f, 0.86776716f, 0.18094404f, 0) },
+            { Crater.SLOT_2_LBP1, new Vector4(0.7486169f, 0.60400087f, 0.27341494f, 0) },
+            { Crater.SLOT_3_LBP1, new Vector4(0.39563915f, -0.8774683f, -0.2711441f, 0) },
+            { Crater.SLOT_4_LBP1, new Vector4(0.20288597f, -0.9144148f, -0.35026094f, 0) },
+            { Crater.SLOT_5_LBP1, new Vector4(0.25761792f, -0.9545006f, -0.15020494f, 0) },
+            { Crater.SLOT_6_LBP1, new Vector4(0.4088082f, -0.9105484f, -0.06146103f, 0) },
+            { Crater.SLOT_7_LBP1, new Vector4(0.5479258f, -0.82450265f, -0.14132494f, 0) },
+            { Crater.SLOT_8_LBP1, new Vector4(0.5672089f, -0.7657998f, -0.30302593f, 0) },
+            { Crater.SLOT_9_LBP1, new Vector4(-0.172129f, -0.322175f, 0.9309f, 0) },
+            { Crater.SLOT_10_LBP1, new Vector4(-0.05300901f, -0.17990205f, 0.9822552f, 0) },
+            { Crater.SLOT_11_LBP1, new Vector4(-0.09783502f, 0.025761006f, 0.99486923f, 0) },
+            { Crater.SLOT_12_LBP1, new Vector4(-0.4167152f, -0.06320103f, -0.9068374f, 0) },
+            { Crater.SLOT_13_LBP1, new Vector4(-0.26614404f, 0.79785514f, -0.5409201f, 0) },
+            { Crater.SLOT_14_LBP1, new Vector4(-0.07221399f, 0.83258086f, -0.5491759f, 0) },
+            { Crater.SLOT_15_LBP1, new Vector4(0.8303515f, 0.5512984f, -0.08115804f, 0) },
+            { Crater.SLOT_16_LBP1, new Vector4(0.6335288f, 0.7239608f, -0.27298695f, 0) },
+            { Crater.SLOT_17_LBP1, new Vector4(0.754212f, 0.614567f, -0.231239f, 0) },
+            { Crater.SLOT_18_LBP1, new Vector4(0.50869703f, 0.8305341f, -0.22680503f, 0) },
+            { Crater.SLOT_19_LBP1, new Vector4(0.47776696f, 0.87838393f, -0.013427999f, 0) },
+            { Crater.SLOT_20_LBP1, new Vector4(0.62219197f, 0.75183296f, 0.21822998f, 0) },
+            { Crater.SLOT_21_LBP1, new Vector4(0.8079443f, 0.5790812f, 0.109046035f, 0) },
+            { Crater.SLOT_22_LBP1, new Vector4(0.35630608f, 0.3279511f, 0.8749252f, 0) },
+            { Crater.SLOT_23_LBP1, new Vector4(0.512454f, 0.366131f, 0.776749f, 0) },
+            { Crater.SLOT_24_LBP1, new Vector4(0.98978335f, -0.14198504f, 0.013014005f, 0) },
+            { Crater.SLOT_25_LBP1, new Vector4(0.99952567f, -0.023080993f, 0.020388993f, 0) },
+            { Crater.SLOT_26_LBP1, new Vector4(0.9697515f, -0.2230121f, 0.09923604f, 0) },
+            { Crater.SLOT_27_LBP1, new Vector4(0.98948795f, 0.023391997f, 0.14271098f, 0) },
+            { Crater.SLOT_28_LBP1, new Vector4(0.965258f, -0.047163f, 0.257007f, 0) },
+            { Crater.SLOT_29_LBP1, new Vector4(0.6841198f, 0.72766775f, -0.049796984f, 0) },
+            { Crater.SLOT_30_LBP1, new Vector4(-0.55120695f, -0.33277997f, -0.7651329f, 0) },
+            { Crater.SLOT_31_LBP1, new Vector4(0.3719329f, 0.50006884f, 0.7820467f, 0) },
+            { Crater.SLOT_32_LBP1, new Vector4(-0.38784105f, -0.21594504f, -0.8960731f, 0) },
+            { Crater.SLOT_33_LBP1, new Vector4(-0.4184162f, -0.49700522f, -0.76020634f, 0) },
+            { Crater.SLOT_34_LBP1, new Vector4(-0.261681f, -0.104449f, -0.959486f, 0) },
+            { Crater.SLOT_35_LBP1, new Vector4(-0.26347908f, 0.8988393f, 0.3502381f, 0) },
+            { Crater.SLOT_36_LBP1, new Vector4(-0.05115603f, 0.7022214f, -0.7101184f, 0) },
+            { Crater.SLOT_37_LBP1, new Vector4(-0.021189002f, -0.70984006f, 0.70404404f, 0) },
+            { Crater.SLOT_38_LBP1, new Vector4(-0.7321999f, 0.41059193f, 0.54341286f, 0) },
+            { Crater.SLOT_39_LBP1, new Vector4(0.8426612f, -0.19560504f, -0.50165814f, 0) },
+            { Crater.SLOT_40_LBP1, new Vector4(-0.24126509f, -0.2668241f, -0.93305737f, 0) },
+            { Crater.SLOT_41_LBP1, new Vector4(0.7592101f, -0.010854001f, 0.65075505f, 0) },
+            { Crater.SLOT_42_LBP1, new Vector4(-0.9484006f, -0.20853193f, -0.2388529f, 0) },
+            { Crater.SLOT_43_LBP1, new Vector4(-0.9016544f, -0.39435717f, -0.17748709f, 0) },
+            { Crater.SLOT_44_LBP1, new Vector4(-0.8763887f, -0.40167686f, -0.26570392f, 0) },
+            { Crater.SLOT_45_LBP1, new Vector4(-0.93659484f, -0.32658395f, -0.12701596f, 0) },
+            { Crater.SLOT_46_LBP1, new Vector4(-0.92078555f, -0.31372318f, -0.23180114f, 0) },
+            { Crater.SLOT_47_LBP1, new Vector4(-0.8799429f, -0.34116998f, -0.33061096f, 0) },
+            { Crater.SLOT_48_LBP1, new Vector4(-0.91347873f, -0.25022894f, -0.3208459f, 0) },
+            { Crater.SLOT_49_LBP1, new Vector4(-0.95822436f, -0.24382709f, -0.14951406f, 0) },
+            { Crater.SLOT_50_LBP1, new Vector4(0.4321622f, -0.37104517f, -0.8219254f, 0) },
+            { Crater.SLOT_51_LBP1, new Vector4(-0.23641692f, 0.6839048f, -0.69020385f, 0) },
+            { Crater.SLOT_52_LBP1, new Vector4(-0.6752077f, -0.6518117f, -0.34530583f, 0) },
+            { Crater.SLOT_53_LBP1, new Vector4(-0.8629373f, 0.5012612f, -0.06384702f, 0) },
+            { Crater.SLOT_54_LBP1, new Vector4(-0.41883606f, -0.85028714f, 0.31872904f, 0) },
+            { Crater.SLOT_55_LBP1, new Vector4(-0.027164994f, 0.6557988f, 0.7544468f, 0) },
+            { Crater.SLOT_56_LBP1, new Vector4(-0.5452938f, -0.13882895f, -0.82666874f, 0) },
+            { Crater.SLOT_57_LBP1, new Vector4(0.61655706f, 0.18021101f, -0.76640815f, 0) },
+            { Crater.SLOT_58_LBP1, new Vector4(0.17522402f, -0.8983221f, 0.40288207f, 0) },
+            { Crater.SLOT_59_LBP1, new Vector4(-0.32325393f, -0.12421998f, 0.9381238f, 0) },
+            { Crater.SLOT_60_LBP1, new Vector4(0.95858824f, -0.18041405f, 0.22036205f, 0) },
+            { Crater.SLOT_61_LBP1, new Vector4(0.84370273f, 0.2576859f, -0.47091785f, 0) },
+            { Crater.SLOT_62_LBP1, new Vector4(0.86589384f, 0.25325894f, 0.4313789f, 0) },
+            { Crater.SLOT_63_LBP1, new Vector4(0.24578999f, 0.36295098f, -0.8988069f, 0) },
+            { Crater.SLOT_64_LBP1, new Vector4(0.46892294f, -0.76497185f, -0.44150794f, 0) },
+            { Crater.SLOT_65_LBP1, new Vector4(-0.3769459f, -0.3602679f, -0.85329884f, 0) },
+            { Crater.SLOT_66_LBP1, new Vector4(0.11805903f, 0.3125141f, -0.9425482f, 0) },
+            { Crater.SLOT_67_LBP1, new Vector4(0.24369888f, 0.2274599f, -0.9428005f, 0) },
+            { Crater.SLOT_68_LBP1, new Vector4(-0.20356704f, -0.44608912f, -0.8715302f, 0) },
+            { Crater.SLOT_69_LBP1, new Vector4(-0.82691664f, -0.26985687f, 0.4933418f, 0) },
+            { Crater.SLOT_70_LBP1, new Vector4(-0.76749134f, -0.24230312f, 0.5935033f, 0) },
+            { Crater.SLOT_71_LBP1, new Vector4(-0.80561f, -0.125551f, 0.57899f, 0) },
+            { Crater.SLOT_72_LBP1, new Vector4(-0.8650643f, -0.15859807f, 0.47593117f, 0) },
+            { Crater.SLOT_81_LBP1, new Vector4(0.5242757f, -0.5701827f, 0.6324766f, 0) }
+        };
 
-        public Vector4 GetValue()
+        public static Vector4 GetValue(this Crater crater)
         {
-            return new Vector4(this.value.X, this.value.Y, this.value.Z, this.value.W);
+            return _values.TryGetValue(crater, out var value) ? value : Vector4.Zero;
         }
     }
 }
