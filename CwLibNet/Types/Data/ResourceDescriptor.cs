@@ -18,7 +18,7 @@ public class ResourceDescriptor
         flags = descriptor.flags;
     }
 
-    public ResourceDescriptor(string resource, ResourceType type)
+    public ResourceDescriptor(string? resource, ResourceType type)
     {
         if (Strings.IsSHA1(resource))
         {

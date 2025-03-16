@@ -21,7 +21,7 @@ public static class Strings
     /// <summary>
     /// Parses the string as a long.
     /// </summary>
-    public static long GetLong(string number)
+    public static long GetLong(string? number)
     {
         if (string.IsNullOrEmpty(number)) return -1;
         try
@@ -42,7 +42,7 @@ public static class Strings
     /// <summary>
     /// Gets a SHA1 from a string
     /// </summary>
-    public static SHA1? GetSHA1(string hash)
+    public static SHA1? GetSHA1(string? hash)
     {
         if (string.IsNullOrEmpty(hash)) return null;
         hash = hash.Replace(" ", "");
@@ -54,7 +54,7 @@ public static class Strings
     /// <summary>
     /// Gets a GUID from a string
     /// </summary>
-    public static GUID? GetGUID(string number)
+    public static GUID? GetGUID(string? number)
     {
         long value = GetLong(number);
         return value > 0 ? new GUID(value) : null;
@@ -63,7 +63,7 @@ public static class Strings
     /// <summary>
     /// Tests if a given string is a SHA1 hash.
     /// </summary>
-    public static bool IsSHA1(string hash)
+    public static bool IsSHA1(string? hash)
     {
         return !string.IsNullOrEmpty(hash) && Sha1Regex.IsMatch(hash);
     }
@@ -71,7 +71,7 @@ public static class Strings
     /// <summary>
     /// Tests if a given string is a valid GUID.
     /// </summary>
-    public static bool IsGUID(string guid)
+    public static bool IsGUID(string? guid)
     {
         return !string.IsNullOrEmpty(guid) && (GUIDRegex.IsMatch(guid) || HexGUIDRegex.IsMatch(guid));
     }

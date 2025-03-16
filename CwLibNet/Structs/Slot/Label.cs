@@ -7,21 +7,21 @@ namespace CwLibNet.Structs.Slot
     {
         public static readonly int BASE_ALLOCATION_SIZE = 0x8;
 
-        public int key;
-        public int order;
+        public int Key;
+        public int Order;
 
         public Label() { }
 
         public Label(int key, int order)
         {
-            this.key = key;
-            this.order = order;
+            this.Key = key;
+            this.Order = order;
         }
 
         public void Serialize(Serializer serializer)
         {
-            key = serializer.I32(key);
-            order = serializer.I32(order);
+            Key = serializer.I32(Key);
+            Order = serializer.I32(Order);
         }
 
         public int GetAllocatedSize()

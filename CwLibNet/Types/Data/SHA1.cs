@@ -20,7 +20,7 @@ public sealed class SHA1
     /// Constructs a SHA1 hash from a 40-character string.
     /// </summary>
     /// <param name="hash">SHA1 hash string</param>
-    public SHA1(string hash)
+    public SHA1(string? hash)
     {
         if (hash == null)
             throw new ArgumentNullException(nameof(hash), "SHA1 hash string cannot be null!");
