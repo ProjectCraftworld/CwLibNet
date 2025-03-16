@@ -38,7 +38,7 @@ If adding a new file from Craftworld Toolkit, please clean the build first and n
 Community contributions are welcome! Please open an issue or submit a pull request. It may take up to a week for someone to revise.
 
 ## How to Test Craftworld Toolkit .NET
-[](https://cdn.discordapp.com/attachments/1290744979479855154/1350929781578797157/test.mp4?ex=67d886e6&is=67d73566&hm=c11a93b3f55cc5896d88360ffe2d71e79332e745c082b00c7608ea89c48eea84&)
+[Demo Video]()
 
 ## License
 
