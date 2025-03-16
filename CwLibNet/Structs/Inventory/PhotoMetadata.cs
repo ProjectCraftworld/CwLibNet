@@ -14,7 +14,7 @@ public class PhotoMetadata: ISerializable
     public SlotID Level = new();
     public string? LevelName;
     public SHA1? LevelHash = new();
-    public PhotoUser[] Users;
+    public PhotoUser[]? Users;
     public long Timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
     
     public void Serialize(Serializer serializer)
