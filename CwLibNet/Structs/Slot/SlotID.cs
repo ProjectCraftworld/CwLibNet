@@ -6,7 +6,7 @@ namespace CwLibNet.Structs.Slot;
 
 public class SlotID: ISerializable
 {
-    public const int BASE_ALLOCATION_SIZE = 0x10;
+    public const int BaseAllocationSize = 0x10;
     public SlotType SlotType = SlotType.DEVELOPER;
     public long SlotNumber;
     public void Serialize(Serializer serializer)
@@ -16,7 +16,7 @@ public class SlotID: ISerializable
 
     public int GetAllocatedSize()
     {
-        return BASE_ALLOCATION_SIZE;
+        return BaseAllocationSize;
     }
 
     public SlotID()

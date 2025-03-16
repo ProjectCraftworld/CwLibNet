@@ -5,7 +5,7 @@ using CwLibNet.Structs.Slot;
 
 namespace CwLibNet.Types.Data 
 {
-    public class NetworkOnlineID
+    public class NetworkOnlineID : ISerializable
     {
         public const int BASE_ALLOCATION_SIZE = 0x20;
         private byte[] data = new byte[16];
@@ -22,7 +22,7 @@ namespace CwLibNet.Types.Data
             Array.Copy(System.Text.Encoding.ASCII.GetBytes(psid), 0, data, 0, psid.Length);
         }
 
-        public void serialize(Serializer serializer) 
+        public void Serialize(Serializer serializer) 
         {
             bool lengthPrefixed = serializer.GetRevision().GetVersion() >= 0x234;
             if (lengthPrefixed) 
@@ -36,7 +36,7 @@ namespace CwLibNet.Types.Data
             dummy = serializer.Bytes(dummy, 3);
         }
 
-        public int getAllocatedSize() 
+        public int GetAllocatedSize() 
         {
             return BASE_ALLOCATION_SIZE;
         }
