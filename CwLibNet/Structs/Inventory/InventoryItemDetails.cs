@@ -3,9 +3,9 @@ using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Singleton;
 using CwLibNet.Structs.Slot;
+using CwLibNet.Structs.Things.Parts;
 using CwLibNet.Types;
 using CwLibNet.Types.Data;
-using CwLibNet.Types.Things.Parts;
 using Branch = CwLibNet.Types.Branch;
 
 namespace CwLibNet.Structs.Inventory;

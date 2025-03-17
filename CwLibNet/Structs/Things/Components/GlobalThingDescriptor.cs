@@ -3,7 +3,7 @@ using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
 
-namespace CwLibNet.Types.Things.Components;
+namespace CwLibNet.Structs.Things.Components;
 
 public class GlobalThingDescriptor: ISerializable
 {

@@ -1,20 +1,20 @@
 ﻿using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.Types.Things.Parts;
+using CwLibNet.Structs.Things.Parts;
 
 namespace CwLibNet.Enums
 {
     public struct Part : IEquatable<Part>
     {
         
-        public static Dictionary<string, Part> Parts = new()
+        public static readonly Dictionary<string, Part> Parts = new()
         {
             { "BODY", new Part("BODY", 0x0, PartHistory.BODY, typeof(PBody)) },
             { "JOINT", new Part("JOINT", 0x1, PartHistory.JOINT, typeof(PJoint)) },
             { "WORLD", new Part("WORLD", 0x2, PartHistory.WORLD, typeof(PWorld)) },
             { "RENDER_MESH", new Part("RENDER_MESH", 0x3, PartHistory.RENDER_MESH, typeof(PRenderMesh)) },
             { "POS", new Part("POS", 0x4, PartHistory.POS, typeof(PPos)) },
-/*            { "TRIGGER", new Part("TRIGGER", 0x5, PartHistory.TRIGGER, typeof(PTrigger)) },
+            { "TRIGGER", new Part("TRIGGER", 0x5, PartHistory.TRIGGER, typeof(PTrigger)) },
             { "TRIGGER_EFFECTOR", new Part("TRIGGER_EFFECTOR", 0x36, PartHistory.TRIGGER_EFFECTOR, null) },
             { "PAINT", new Part("PAINT", 0x37, PartHistory.PAINT, null) },
             { "YELLOWHEAD", new Part("YELLOWHEAD", 0x6, PartHistory.YELLOWHEAD, typeof(PYellowHead)) },
@@ -24,7 +24,7 @@ namespace CwLibNet.Enums
             { "PARTICLE_CLUMP", new Part("PARTICLE_CLUMP", 0x38, PartHistory.PARTICLE_CLUMP, null) },
             { "PARTICLE_EMITTER", new Part("PARTICLE_EMITTER", 0x39, PartHistory.PARTICLE_EMITTER, null) },
             { "CAMERA_ZONE", new Part("CAMERA_ZONE", 0x3a, PartHistory.CAMERA_ZONE, null) },
-            { "LEVEL_SETTINGS", new Part("LEVEL_SETTINGS", 0xA, PartHistory.LEVEL_SETTINGS, typeof(PLevelSettings)) },
+            /* { "LEVEL_SETTINGS", new Part("LEVEL_SETTINGS", 0xA, PartHistory.LEVEL_SETTINGS, typeof(PLevelSettings)) },
             { "SPRITE_LIGHT", new Part("SPRITE_LIGHT", 0xB, PartHistory.SPRITE_LIGHT, typeof(PSpriteLight)) },
             { "KEYFRAMED_POSITION", new Part("KEYFRAMED_POSITION", 0x3b, PartHistory.KEYFRAMED_POSITION, null) },
             { "CAMERA", new Part("CAMERA", 0x3c, PartHistory.CAMERA, null) },
@@ -72,7 +72,7 @@ namespace CwLibNet.Enums
         /**
          * Serializable class reference
          */
-        public readonly Type Serializable;
+        public readonly Type? Serializable;
 
         /**
          * Creates a part.
@@ -81,7 +81,7 @@ namespace CwLibNet.Enums
          * @param version      The minimum version required for this part to be serialized
          * @param serializable The serializable class represented by this part
          */
-        public Part(String name, int index, int version, Type serializable)
+        public Part(String name, int index, int version, Type? serializable)
         {
             this.Name = name;
             this.Index = index;
@@ -101,7 +101,7 @@ namespace CwLibNet.Enums
             return this.Version;
         }
 
-        public Type GetSerializable()
+        public Type? GetSerializable()
         {
             return this.Serializable;
         }
@@ -205,7 +205,7 @@ namespace CwLibNet.Enums
             if (!this.HasPart(serializer.GetRevision().Head, flags, version))
                 return true;
 
-            T? part = (T) parts[this.Index];
+            T? part = (T?) parts[this.Index];
 
             if (this.Serializable == null)
             {

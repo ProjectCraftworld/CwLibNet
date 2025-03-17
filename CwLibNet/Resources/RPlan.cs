@@ -5,10 +5,10 @@ using CwLibNet.Extensions;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Inventory;
+using CwLibNet.Structs.Things.Parts;
 using CwLibNet.Types;
 using CwLibNet.Types.Data;
 using CwLibNet.Types.Things;
-using CwLibNet.Types.Things.Parts;
 
 namespace CwLibNet.Resources
 {

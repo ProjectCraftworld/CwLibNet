@@ -3,9 +3,10 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using CwLibNet.Types.Things;
 using CwLibNet.Util;
 
-namespace CwLibNet.Types.Things.Parts;
+namespace CwLibNet.Structs.Things.Parts;
 
 public class PRenderMesh: ISerializable
 {

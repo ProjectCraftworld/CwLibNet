@@ -1,7 +1,8 @@
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
+using CwLibNet.Types.Things;
 
-namespace CwLibNet.Types.Things.Components.World;
+namespace CwLibNet.Structs.Things.Components.World;
 
 public class EditorSelection: ISerializable
 {

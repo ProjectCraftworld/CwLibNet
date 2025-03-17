@@ -2,7 +2,7 @@ using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Slot;
 
-namespace CwLibNet.Types.Things.Components;
+namespace CwLibNet.Structs.Things.Components;
 
 public class KeyLink: ISerializable
 {

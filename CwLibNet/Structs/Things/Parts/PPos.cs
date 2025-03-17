@@ -3,6 +3,8 @@ using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Things;
 
+namespace CwLibNet.Structs.Things.Parts;
+
 /**
  * This part represents a Thing's
  * position in the world, as well
@@ -10,7 +12,7 @@ using CwLibNet.Types.Things;
  */
 public class PPos: ISerializable
 {
-    public const int BASE_ALLOCATION_SIZE = 0x100;
+    public const int BaseAllocationSize = 0x100;
 
     public Thing? ThingOfWhichIAmABone;
     public int AnimHash;
@@ -72,6 +74,6 @@ public class PPos: ISerializable
 
     public int GetAllocatedSize()
     {
-        return PPos.BASE_ALLOCATION_SIZE;
+        return PPos.BaseAllocationSize;
     }
 }
