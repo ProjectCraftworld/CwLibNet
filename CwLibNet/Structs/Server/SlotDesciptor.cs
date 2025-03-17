@@ -9,20 +9,20 @@ namespace CwLibNet.Structs.Server
 {
     public class SlotDescriptor 
     {
-        public int id;
-        public string name;
-        public string description;
-        public string root;
-        public string icon;
-        public int x, y;
-        public SHA1[] resources;
-        public string[] labels;
-        public bool locked;
-        public bool isSubLevel;
-        public bool isAdventurePlanet;
-        public int shareable;
-        public int background;
-        public int minplayers = 1, maxplayers = 4;
+        public int Id;
+        public string Name;
+        public string Description;
+        public string? Root;
+        public string? Icon;
+        public int X, Y;
+        public SHA1[] Resources;
+        public string[]? Labels;
+        public bool Locked;
+        public bool IsSubLevel;
+        public bool IsAdventurePlanet;
+        public int Shareable;
+        public int Background;
+        public int Minplayers = 1, Maxplayers = 4;
 
         public static SlotDescriptor[] Parse(string xml)
         {
@@ -45,25 +45,25 @@ namespace CwLibNet.Structs.Server
             {
                 SlotDescriptor descriptor = new SlotDescriptor();
 
-                descriptor.id = (int?)element.Element("id") ?? 0;
-                descriptor.name = (string)element.Element("name");
-                descriptor.description = (string)element.Element("description");
-                descriptor.root = ((string)element.Element("rootLevel"))?.ToLower();
-                descriptor.icon = ((string)element.Element("icon"))?.ToLower();
-                descriptor.locked = ((string)element.Element("initiallyLocked"))?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
-                descriptor.isSubLevel = ((string)element.Element("isSubLevel"))?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
-                descriptor.background = (int?)element.Element("background") ?? 0;
-                descriptor.shareable = (int?)element.Element("shareable") ?? 0;
-                descriptor.labels = ((string)element.Element("authorLabels"))?.Split(',');
-                descriptor.minplayers = (int?)element.Element("minPlayers") ?? 1;
-                descriptor.maxplayers = (int?)element.Element("maxPlayers") ?? 4;
-                descriptor.isAdventurePlanet = ((string)element.Element("isAdventurePlanet"))?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
+                descriptor.Id = (int?)element.Element("id") ?? 0;
+                descriptor.Name = (string)element.Element("name");
+                descriptor.Description = (string)element.Element("description");
+                descriptor.Root = ((string)element.Element("rootLevel"))?.ToLower();
+                descriptor.Icon = ((string)element.Element("icon"))?.ToLower();
+                descriptor.Locked = ((string)element.Element("initiallyLocked"))?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
+                descriptor.IsSubLevel = ((string)element.Element("isSubLevel"))?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
+                descriptor.Background = (int?)element.Element("background") ?? 0;
+                descriptor.Shareable = (int?)element.Element("shareable") ?? 0;
+                descriptor.Labels = ((string)element.Element("authorLabels"))?.Split(',');
+                descriptor.Minplayers = (int?)element.Element("minPlayers") ?? 1;
+                descriptor.Maxplayers = (int?)element.Element("maxPlayers") ?? 4;
+                descriptor.IsAdventurePlanet = ((string)element.Element("isAdventurePlanet"))?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
 
                 var location = element.Element("location");
                 if (location != null)
                 {
-                    descriptor.x = (int?)location.Element("x") ?? 0;
-                    descriptor.y = (int?)location.Element("y") ?? 0;
+                    descriptor.X = (int?)location.Element("x") ?? 0;
+                    descriptor.Y = (int?)location.Element("y") ?? 0;
                 }
 
                 descriptors[i++] = descriptor;

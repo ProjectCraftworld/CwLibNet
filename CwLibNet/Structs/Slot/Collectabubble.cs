@@ -7,15 +7,15 @@ namespace CwLibNet.Structs.Slot
 {
     public class Collectabubble : ISerializable
     {
-        public static readonly int BaseAllocationSize = 0x8;
+        public const int BaseAllocationSize = 0x8;
 
-        public ResourceDescriptor plan;
-        public int count;
+        public ResourceDescriptor? Plan;
+        public int Count;
 
         public void Serialize(Serializer serializer)
         {
-            plan = serializer.Resource(plan, ResourceType.Plan, true);
-            count = serializer.I32(count);
+            Plan = serializer.Resource(Plan, ResourceType.Plan, true);
+            Count = serializer.I32(Count);
         }
 
         public int GetAllocatedSize()

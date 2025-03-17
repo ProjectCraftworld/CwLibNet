@@ -1146,6 +1146,16 @@ namespace CwLibNet.IO.Serializer
 
             return output;
         }
+        
+        public long I64(long value) { return this.I64(value, false); }
+        
+        public long I64(long value, bool force64) {
+            if (this.isWriting) {
+                this.output.I64(value, force64);
+                return value;
+            }
+            return this.input.I64(force64);
+        }
 
         /// <summary>
         /// Shrinks the buffer to current offset and returns the buffer.

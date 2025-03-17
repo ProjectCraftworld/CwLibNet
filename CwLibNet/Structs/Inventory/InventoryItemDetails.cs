@@ -16,7 +16,7 @@ public class InventoryItemDetails: ISerializable
 
     public string? TranslationTag = "";
 
-    public long DateAdded = DateTime.Now.ToBinary() / 1000;
+    public long DateAdded = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
 
     public SlotID LevelUnlockSlotId = new SlotID();
 

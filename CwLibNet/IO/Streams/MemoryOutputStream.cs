@@ -310,6 +310,33 @@ namespace CwLibNet.IO.Streams
         {
             return S64(value, false);
         }
+        
+        public MemoryOutputStream I64(long value, bool force64) {
+            if (!force64 && ((this.compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0))
+                return this.Uleb128(value);
+            if (this.isLittleEndian) {
+                return this.Bytes([
+                    (byte) (value),
+                    (byte) (value >>> 8),
+                    (byte) (value >>> 16),
+                    (byte) (value >>> 24),
+                    (byte) (value >>> 32),
+                    (byte) (value >>> 40),
+                    (byte) (value >>> 48),
+                    (byte) (value >>> 56)
+                ]);
+            }
+            return this.Bytes([
+                (byte) (value >>> 56),
+                (byte) (value >>> 48),
+                (byte) (value >>> 40),
+                (byte) (value >>> 32),
+                (byte) (value >>> 24),
+                (byte) (value >>> 16),
+                (byte) (value >>> 8),
+                (byte) (value)
+            ]);
+        }
 
         /**
          * Writes a variable length quantity to the stream.

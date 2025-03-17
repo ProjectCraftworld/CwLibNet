@@ -198,6 +198,30 @@ namespace CwLibNet.IO.Streams
             }
             return (int)(this.Uleb128() & 0xFFFFFFFF);
         }
+        
+        public long I64(bool force64) {
+            if (!force64 && (this.compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0)
+                return this.Uleb128();
+            byte[] b = this.Bytes(8);
+            if (this.isLittleEndian) {
+                return	(b[7] & 0xFFL) << 56 |
+                        (b[6] & 0xFFL) << 48 |
+                        (b[5] & 0xFFL) << 40 |
+                        (b[4] & 0xFFL) << 32 |
+                        (b[3] & 0xFFL) << 24 |
+                        (b[2] & 0xFFL) << 16 |
+                        (b[1] & 0xFFL) << 8 |
+                        (b[0] & 0xFFL) << 0;
+            }
+            return	(b[0] & 0xFFL) << 56 |
+                    (b[1] & 0xFFL) << 48 |
+                    (b[2] & 0xFFL) << 40 |
+                    (b[3] & 0xFFL) << 32 |
+                    (b[4] & 0xFFL) << 24 |
+                    (b[5] & 0xFFL) << 16 |
+                    (b[6] & 0xFFL) << 8 |
+                    (b[7] & 0xFFL) << 0;
+        }
 
         /**
          * Reads a signed 32-bit integer from the stream, compressed depending on flags.

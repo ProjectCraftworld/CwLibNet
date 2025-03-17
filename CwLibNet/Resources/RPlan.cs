@@ -14,7 +14,7 @@ namespace CwLibNet.Resources
 {
     public class RPlan : Resource
     {
-        public const int BASE_ALLOCATION_SIZE = 0x10;
+        public const int BaseAllocationSize = 0x10;
         public HashSet<ResourceDescriptor?> DependencyCache = [];
         public bool IsUsedForStreaming = false;
         public Revision Revision = new Revision(Revision.Lbp1FinalRevision, 0x4c44, 0x17);
@@ -99,8 +99,8 @@ namespace CwLibNet.Resources
                     InventoryData.CategoryTag = serializer.Str(InventoryData.CategoryTag);
                     if (!serializer.IsWriting())
                     {
-                        // InventoryData.Location = RTranslationTable.MakeLamsKeyID(InventoryData.Location);
-                        // InventoryData.Category = RTranslationTable.MakeLamsKeyID(InventoryData.CategoryTag);
+                        InventoryData.Location = RTranslationTable.MakeLamsKeyID(InventoryData.LocationTag);
+                        InventoryData.Category = RTranslationTable.MakeLamsKeyID(InventoryData.CategoryTag);
                     }
                 }
             }
@@ -115,7 +115,7 @@ namespace CwLibNet.Resources
 
         public override int GetAllocatedSize()
         {
-            int size = BASE_ALLOCATION_SIZE;
+            int size = BaseAllocationSize;
             if (ThingData != null)
                 size += ThingData.Length;
             if (InventoryData != null)

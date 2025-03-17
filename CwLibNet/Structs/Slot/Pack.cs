@@ -8,22 +8,22 @@ namespace CwLibNet.Structs.Slot
 {
     public class Pack
     {
-        public static readonly int BaseAllocationSize = 0x40 + Slot.BaseAllocationSize;
-        public ContentsType contentsType = ContentsType.LEVEL;
-        public ResourceDescriptor mesh /*= ContentsType.LEVEL.getBadgeMesh()*/;
-        public Slot slot = new Slot();
-        public string contentID;
-        public long timeStamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // seconds since epoch
-        public bool crossBuyCompatible = false; // TODO: Set to true if cross-buy compatible
+        public static readonly int BASE_ALLOCATION_SIZE = 0x40 + Slot.BaseAllocationSize;
+        public ContentsType ContentsType = ContentsType.LEVEL;
+        public ResourceDescriptor? Mesh /*= ContentsType.LEVEL.getBadgeMesh()*/;
+        public Slot Slot = new();
+        public string? ContentId;
+        public long TimeStamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // seconds since epoch
+        public bool CrossBuyCompatible = false; // TODO: Set to true if cross-buy compatible
 
         public void Serialize(Serializer serializer) 
         {
-            contentsType = serializer.Enum32(contentsType);
-            mesh = serializer.Resource(mesh, ResourceType.Mesh, true);
-            slot = serializer.Struct(slot);
-            contentID = serializer.Str(contentID);
-            timeStamp = serializer.S64(timeStamp);
-            if (serializer.GetRevision().IsVita()) crossBuyCompatible = serializer.Bool(crossBuyCompatible); 
+            ContentsType = serializer.Enum32(ContentsType);
+            Mesh = serializer.Resource(Mesh, ResourceType.Mesh, true);
+            Slot = serializer.Struct(Slot);
+            ContentId = serializer.Str(ContentId);
+            TimeStamp = serializer.S64(TimeStamp);
+            if (serializer.GetRevision().IsVita()) CrossBuyCompatible = serializer.Bool(CrossBuyCompatible); 
         }
     }
 }

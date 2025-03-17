@@ -1,6 +1,6 @@
 namespace CwLibNet.Extensions;
 
-public static class Long
+public static class Longs
 {
     public static int NumberOfLeadingZeros(this long value)
     {
