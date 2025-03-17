@@ -1,4 +1,4 @@
-﻿using Cwlib.Enums;
+﻿using CwLibNet.Enums;
 using CwLibNet.Types.Data;
 using CwLibNet.Util;
 using System.Numerics;

@@ -1,5 +1,4 @@
-﻿using Cwlib.Enums;
-using CwLibNet.Enums;
+﻿using CwLibNet.Enums;
 using CwLibNet.IO.Streams;
 using CwLibNet.Types.Data;
 using CwLibNet.Types;

@@ -1,5 +1,4 @@
 using System.Numerics;
-using Cwlib.Enums;
 using CwLibNet.Enums;
 using CwLibNet.Extensions;
 using CwLibNet.IO;
@@ -20,7 +19,7 @@ namespace CwLibNet.Resources
         public Revision Revision = new Revision(Revision.Lbp1FinalRevision, 0x4c44, 0x17);
         public byte[] ThingData;
         public InventoryItemDetails InventoryData = new InventoryItemDetails();
-        public byte CompressionFlags = Cwlib.Enums.CompressionFlags.USE_ALL_COMPRESSION;
+        public byte CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_ALL_COMPRESSION;
         public RPlan()
         {
             this.ThingData = [];
