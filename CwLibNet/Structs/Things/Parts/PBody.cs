@@ -3,8 +3,9 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.IO.Streams;
+using CwLibNet.Types.Things;
 
-namespace CwLibNet.Types.Things.Parts;
+namespace CwLibNet.Structs.Things.Parts;
 
 public class PBody: ISerializable
 {

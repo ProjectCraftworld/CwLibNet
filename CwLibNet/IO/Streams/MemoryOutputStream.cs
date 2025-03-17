@@ -540,7 +540,7 @@ namespace CwLibNet.IO.Streams
          * @param values Vector array to write
          * @return This output stream
          */
-        public MemoryOutputStream Vectorarray(Vector4[] values)
+        public MemoryOutputStream Vectorarray(Vector4[]? values)
         {
             if (values == null) return I32(0);
             this.I32(values.Length);

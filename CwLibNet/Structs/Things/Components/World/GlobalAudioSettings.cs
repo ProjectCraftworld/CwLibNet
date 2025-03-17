@@ -1,7 +1,7 @@
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 
-namespace CwLibNet.Types.Things.Components.World;
+namespace CwLibNet.Structs.Things.Components.World;
 
 public class GlobalAudioSettings: ISerializable
 {

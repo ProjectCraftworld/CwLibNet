@@ -3,9 +3,10 @@ using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Resources;
 using CwLibNet.Structs.Inventory;
+using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
-namespace CwLibNet.Types.Things.Parts;
+namespace CwLibNet.Structs.Things.Parts;
 
 public class PMetadata: ISerializable
 {

@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
@@ -11,12 +10,12 @@ namespace CwLibNet.Resources
 
     public class RPalette : Resource
     {
-        public readonly int BASE_ALLOCATION_SIZE = 0x20;
+        public const int BaseAllocationSize = 0x20;
 
-        public List<ResourceDescriptor?> planList = new List<ResourceDescriptor?>();
-        public int location, description;
+        public List<ResourceDescriptor?> PlanList = [];
+        public int Location, Description;
 
-        public ResourceDescriptor?[] convertedPlans;
+        public ResourceDescriptor?[]? ConvertedPlans;
 
         public override void Serialize(Serializer serializer)
         {
@@ -24,49 +23,49 @@ namespace CwLibNet.Resources
             if (serializer.IsWriting())
             {
                 MemoryOutputStream stream = serializer.GetOutput();
-                stream.I32(planList.Count);
-                foreach (ResourceDescriptor? descriptor in planList)
+                stream.I32(PlanList.Count);
+                foreach (ResourceDescriptor? descriptor in PlanList)
                     serializer.Resource(descriptor, descriptor!.GetResourceType());
             }
             else
             {
                 int count = serializer.GetInput().I32();
-                planList = new List<ResourceDescriptor?>(count);
+                PlanList = new List<ResourceDescriptor?>(count);
                 for (int i = 0; i < count; ++i)
-                    planList.Add(serializer.Resource(null, ResourceType.Plan));
+                    PlanList.Add(serializer.Resource(null, ResourceType.Plan));
             }
 
-            location = serializer.I32(location);
-            description = serializer.I32(description);
+            Location = serializer.I32(Location);
+            Description = serializer.I32(Description);
 
             if (serializer.GetRevision().GetVersion() >= (int)Revisions.PaletteConvertedPlans)
             {
                 if (serializer.IsWriting())
                 {
                     MemoryOutputStream stream = serializer.GetOutput();
-                    stream.I32(convertedPlans.Length);
-                    foreach (ResourceDescriptor? descriptor in convertedPlans)
+                    stream.I32(ConvertedPlans?.Length ?? 0);
+                    foreach (ResourceDescriptor? descriptor in ConvertedPlans)
                         serializer.Resource(descriptor, descriptor!.GetResourceType());
                 }
                 else 
                 {
                     int count = serializer.GetInput().I32();
-                    convertedPlans = new ResourceDescriptor[count];
+                    ConvertedPlans = new ResourceDescriptor[count];
                     for (int i = 0; i < count; ++i)
-                        convertedPlans[i] = serializer.Resource(null, ResourceType.Plan);
+                        ConvertedPlans[i] = serializer.Resource(null, ResourceType.Plan);
                 }
             }
         }
 
         public override int GetAllocatedSize()
         {
-            return BASE_ALLOCATION_SIZE + (this.planList.Count * 0x24);
+            return BaseAllocationSize + (this.PlanList.Count * 0x24);
         }
 
         public override SerializationData Build(Revision revision, byte compressionFlags)
         {
             Serializer serializer = new Serializer(this.GetAllocatedSize(), revision, compressionFlags);
-            serializer.Struct<RPalette>(this);
+            serializer.Struct(this);
         return new SerializationData(
             serializer.GetBuffer(),
             revision,

@@ -1,7 +1,8 @@
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
+using CwLibNet.Types;
 
-namespace CwLibNet.Types.Things.Components.World;
+namespace CwLibNet.Structs.Things.Components.World;
 
 public class GlobalSettings: ISerializable
 {

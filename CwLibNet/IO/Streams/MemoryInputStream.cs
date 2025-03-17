@@ -490,10 +490,10 @@ namespace CwLibNet.IO.Streams
          *
          * @return Vector array read from the stream
          */
-        public Vector4[] Vectorarray()
+        public Vector4[]? Vectorarray()
         {
             int count = this.I32();
-            Vector4[] elements = new Vector4[count];
+            Vector4[]? elements = new Vector4[count];
             for (int i = 0; i < count; ++i)
                 elements[i] = this.V4();
             return elements;

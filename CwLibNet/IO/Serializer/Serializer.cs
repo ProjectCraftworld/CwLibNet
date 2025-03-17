@@ -532,7 +532,7 @@ namespace CwLibNet.IO.Serializer
         /// </summary>
         /// <param name="values">Vector array to write</param>
         /// <returns>Vector array (de)serialized</returns>
-        public Vector4[] Vectorarray(Vector4[] values)
+        public Vector4[]? Vectorarray(Vector4[]? values)
         {
             if (isWriting)
             {

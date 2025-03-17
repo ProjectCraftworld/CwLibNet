@@ -1,9 +1,9 @@
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 
-namespace CwLibNet.Types.Things.Components.World;
+namespace CwLibNet.Structs.Things.Components.World;
 
-public class BroadcastMicrochipEntry: ISerializable
+public class MoveCursor: ISerializable
 {
     public void Serialize(Serializer serializer)
     {

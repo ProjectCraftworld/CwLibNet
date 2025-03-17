@@ -4,7 +4,7 @@ using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Inventory;
 using CwLibNet.Types.Data;
 
-namespace CwLibNet.Types.Things.Components;
+namespace CwLibNet.Structs.Things.Components;
 
 public class EggLink: ISerializable
 {
