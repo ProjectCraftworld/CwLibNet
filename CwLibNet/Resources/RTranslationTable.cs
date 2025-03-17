@@ -45,6 +45,11 @@ namespace CwLibNet.Resources
             return (v0 + v1 * 0xDEADBEEFL) & 0xFFFFFFFFL;
         }
 
+        public RTranslationTable(Dictionary<long, string?> translationTable)
+        {
+            this.lookup = translationTable;
+        }
+
         public RTranslationTable(byte[] data)
         {
             // Legacy RTranslationTable is just a text file.
@@ -81,7 +86,7 @@ namespace CwLibNet.Resources
             
                 stream.Seek(tableOffset + stringStart, SeekMode.Begin);
 
-                string? text = Encoding.Unicode.GetString(stream.Bytes(stringEnd - stream.GetOffset()));
+                string? text = Encoding.BigEndianUnicode.GetString(stream.Bytes(stringEnd - stream.GetOffset())).Trim((char)0xFEFF);
                 this.lookup.Add(key, text);
 
                 stream.Seek(oldOffset, SeekMode.Begin);
@@ -112,6 +117,21 @@ namespace CwLibNet.Resources
         
         public override SerializationData Build(Revision revision, byte compressionFlags)
         {
+            return Build();
+        }
+
+        public override int GetAllocatedSize()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Serialize(Serializer serializer)
+        {
+            throw new NotImplementedException();
+        }
+
+        public SerializationData Build()
+        {
             int stringTableSize = this.lookup.Values
                 .Select(element => (Encoding.BigEndianUnicode.GetBytes(element).Length + 1) * 2)
                 .Aggregate(0, (total, element) => total + element) - 2;
@@ -122,7 +142,7 @@ namespace CwLibNet.Resources
             keyTable.I32(this.lookup.Count);
 
             List<long> keys = this.lookup.Keys.ToList();
-            keys.Sort((a, z) => Longs.CompareUnsigned(a, z));
+            keys.Sort((a, z) => a.CompareUnsigned(z));
             foreach (long key in keys)
             {
                 string? value = this.lookup[key];
@@ -144,16 +164,6 @@ namespace CwLibNet.Resources
 
             stringTable.Shrink();
             return new SerializationData(Bytes.Combine(keyTable.GetBuffer(), stringTable.GetBuffer()));
-        }
-
-        public override int GetAllocatedSize()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Serialize(Serializer serializer)
-        {
-            throw new NotImplementedException();
         }
     }
 }
