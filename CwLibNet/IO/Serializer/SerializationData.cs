@@ -44,7 +44,7 @@ namespace CwLibNet.IO.Serializer
         {
             this.Buffer = buffer;
             Revision = null;
-            CompressionFlags = Cwlib.Enums.CompressionFlags.USE_NO_COMPRESSION;
+            CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_NO_COMPRESSION;
             Type = ResourceType.Texture;
             Method = SerializationType.COMPRESSED_TEXTURE;
             Dependencies = null;
@@ -62,7 +62,7 @@ namespace CwLibNet.IO.Serializer
         {
             this.Buffer = buffer;
             Revision = null;
-            CompressionFlags = Cwlib.Enums.CompressionFlags.USE_NO_COMPRESSION;
+            CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_NO_COMPRESSION;
             Type = ResourceType.GtfTexture;
             Method = info.GetMethod();
             Dependencies = null;
@@ -81,7 +81,7 @@ namespace CwLibNet.IO.Serializer
         {
             this.Buffer = buffer;
             this.Revision = revision;
-            CompressionFlags = Cwlib.Enums.CompressionFlags.USE_NO_COMPRESSION;
+            CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_NO_COMPRESSION;
             Type = ResourceType.StaticMesh;
             Method = SerializationType.BINARY;
 
@@ -90,7 +90,7 @@ namespace CwLibNet.IO.Serializer
             // as to avoid serializing twice.
 
             Serializer? serializer = new(info.GetAllocatedSize(), revision,
-                Cwlib.Enums.CompressionFlags.USE_NO_COMPRESSION);
+                CwLibNet.Enums.CompressionFlags.USE_NO_COMPRESSION);
             serializer.Struct(info);
             Dependencies = serializer.GetDependencies();
 
