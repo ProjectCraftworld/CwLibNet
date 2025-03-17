@@ -1,6 +1,6 @@
 using System;
 
-namespace Cwlib.Enums
+namespace CwLibNet.Enums
 {
     public sealed class CompressionFlags
     {

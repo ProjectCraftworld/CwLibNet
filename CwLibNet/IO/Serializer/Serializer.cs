@@ -1,10 +1,10 @@
 using System.Numerics;
-using Cwlib.Enums;
 using CwLibNet.Enums;
 using CwLibNet.EX;
 using CwLibNet.Extensions;
 using CwLibNet.IO.Streams;
 using CwLibNet.Singleton;
+using CwLibNet.Structs.Font;
 using CwLibNet.Types;
 using CwLibNet.Types.Data;
 using CwLibNet.Types.Things;
@@ -1274,6 +1274,11 @@ namespace CwLibNet.IO.Serializer
         {
             ResourceDescriptor?[] descriptors = [.. dependencies];
             return descriptors;
+        }
+
+        internal GlyphInfo[]? Array(GlyphInfo[]? glyphs, Type type)
+        {
+            throw new NotImplementedException();
         }
     }
 }
