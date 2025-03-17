@@ -89,45 +89,45 @@ namespace CwLibNet.Structs.Slot
 
         public Slot(SlotDescriptor descriptor)
         {
-            id = new SlotID(SlotType.USER_CREATED_ON_SERVER, descriptor.id);
-            this.name = descriptor.name;
-            this.description = descriptor.description;
+            id = new SlotID(SlotType.USER_CREATED_ON_SERVER, descriptor.Id);
+            this.name = descriptor.Name;
+            this.description = descriptor.Description;
 
-            if (Strings.IsSHA1(descriptor.root) || Strings.IsGUID(descriptor.root))
+            if (Strings.IsSHA1(descriptor.Root) || Strings.IsGUID(descriptor.Root))
             {
-                if (descriptor.isAdventurePlanet)
+                if (descriptor.IsAdventurePlanet)
                 {
-                    this.adventure = new ResourceDescriptor(descriptor.root, ResourceType.AdventureCreateProfile);
+                    this.adventure = new ResourceDescriptor(descriptor.Root, ResourceType.AdventureCreateProfile);
                 }
                 else
                 {
-                    this.root = new ResourceDescriptor(descriptor.root, ResourceType.Level);
+                    this.root = new ResourceDescriptor(descriptor.Root, ResourceType.Level);
                 }
             }
 
-            if (Strings.IsSHA1(descriptor.icon) || Strings.IsGUID(descriptor.icon))
+            if (Strings.IsSHA1(descriptor.Icon) || Strings.IsGUID(descriptor.Icon))
             {
-                this.icon = new ResourceDescriptor(descriptor.icon, ResourceType.Texture);
+                this.icon = new ResourceDescriptor(descriptor.Icon, ResourceType.Texture);
             }
-            if (descriptor.labels != null)
+            if (descriptor.Labels != null)
             {
-                this.labels = new Label[descriptor.labels.Length];
+                this.labels = new Label[descriptor.Labels.Length];
                 for (int i = 0; i < this.labels.Length; i++)
                 {
                     this.labels[i]
-                        = new Label((int) RTranslationTable.MakeLamsKeyID(descriptor.labels[i]), i);
+                        = new Label((int) RTranslationTable.MakeLamsKeyID(descriptor.Labels[i]), i);
                 }
             }
 
-            this.initiallyLocked = descriptor.locked;
-            this.isSubLevel = descriptor.isSubLevel;
-            this.shareable = descriptor.shareable != 0;
-            if (descriptor.background != 0)
+            this.initiallyLocked = descriptor.Locked;
+            this.isSubLevel = descriptor.IsSubLevel;
+            this.shareable = descriptor.Shareable != 0;
+            if (descriptor.Background != 0)
             {
-                this.backgroundGUID = new GUID(descriptor.background);
+                this.backgroundGUID = new GUID(descriptor.Background);
             }
-            this.minPlayers = (byte)Math.Clamp(descriptor.minplayers, 1, 4);
-            this.maxPlayers = (byte)Math.Clamp(descriptor.maxplayers, 1, 4);
+            this.minPlayers = (byte)Math.Clamp(descriptor.Minplayers, 1, 4);
+            this.maxPlayers = (byte)Math.Clamp(descriptor.Maxplayers, 1, 4);
         }
 
         public void Serialize(Serializer serializer)
