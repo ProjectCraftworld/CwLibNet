@@ -134,5 +134,10 @@ namespace CwLibNet.Types
             if (this.BranchId != 0) return $"Revision: (r{this.Head:D}, b{this.BranchId:X4}:{this.BranchRevision:X4})";
             return $"Revision: (r{this.Head:D})";
         }
+
+        public static explicit operator int(Revision v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
