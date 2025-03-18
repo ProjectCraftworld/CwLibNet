@@ -61,7 +61,7 @@ public class ResourceDescriptor
         flags = ResourceFlags.NONE;
     }
 
-    public ResourceDescriptor(GUID guid, SHA1? sha1, ResourceType type)
+    public ResourceDescriptor(GUID? guid, SHA1? sha1, ResourceType type)
     {
         this.guid = guid;
         this.sha1 = sha1 != null && sha1.Equals(SHA1.EMPTY) ? null : sha1;

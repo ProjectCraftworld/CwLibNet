@@ -38,7 +38,12 @@ namespace CwLibNet.Structs.Texture
             offset = 0;
         }
 
-        public CellGcmTexture(byte[] ddsData, bool isNoSrgb)
+        public bool IsBumpTexture()
+        {
+            return (this.flags & 0x1) != 0;
+        }
+        
+        public CellGcmTexture(byte[]? ddsData, bool isNoSrgb)
         {
             // Implement DDS parsing logic here
             // For example:

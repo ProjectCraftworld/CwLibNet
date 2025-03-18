@@ -17,7 +17,7 @@ namespace CwLibNet.Resources
         public HashSet<ResourceDescriptor?> DependencyCache = [];
         public bool IsUsedForStreaming;
         public Revision Revision = new(Revision.Lbp1FinalRevision, 0x4c44, 0x17);
-        public byte[] ThingData;
+        public byte[]? ThingData;
         public InventoryItemDetails InventoryData = new();
         public byte CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_ALL_COMPRESSION;
         public RPlan()
@@ -167,7 +167,7 @@ namespace CwLibNet.Resources
             this.DependencyCache = [..dependencies];
         }
 
-        public void SetThing(Thing thing)
+        public void SetThing(Thing? thing)
         {
             Serializer serializer = new(0x800000, this.Revision, this.CompressionFlags);
             serializer.Reference(thing);

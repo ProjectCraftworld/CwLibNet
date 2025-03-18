@@ -45,7 +45,7 @@ public class RTranslationTable : Resource
         this.lookup = translationTable;
     }
 
-    public RTranslationTable(byte[] data)
+    public RTranslationTable(byte[]? data)
     {
         // Legacy RTranslationTable is just a text file.
         if (Bytes.ToShortBE(data) == ((ushort) 0xFEFF)) {

@@ -8,8 +8,8 @@ public class NetworkPlayerID: ISerializable
     public const int BaseAllocationSize = NetworkOnlineID.BASE_ALLOCATION_SIZE + 0x10;
 
     private NetworkOnlineID handle = new NetworkOnlineID();
-    private byte[] opt = new byte[8];
-    private byte[] reserved = new byte[8];
+    private byte[]? opt = new byte[8];
+    private byte[]? reserved = new byte[8];
 
     public NetworkPlayerID() { }
 

@@ -27,7 +27,7 @@ public class Utils
         [Fact]
         public void ToShortBE()
         {
-            byte[] testBytes = [24, 32]; // Random chosen number
+            byte[]? testBytes = [24, 32]; // Random chosen number
             short testShort = Bytes.ToShortBE(testBytes);
             Assert.Equal(6176, testShort);
         }
@@ -35,7 +35,7 @@ public class Utils
         [Fact]
         public void ToShortLE()
         {
-            byte[] testBytes = [24, 32];
+            byte[]? testBytes = [24, 32];
             short testShort = Bytes.ToShortLE(testBytes);
             Assert.Equal(8216, testShort);
         }
@@ -43,7 +43,7 @@ public class Utils
         [Fact]
         public void ToIntegerBE()
         {
-            byte[] testBytes = [24, 32, 41, 71];
+            byte[]? testBytes = [24, 32, 41, 71];
             int testInt = Bytes.ToIntegerBE(testBytes);
             Assert.Equal(404760903, testInt);
         }
@@ -51,7 +51,7 @@ public class Utils
         [Fact]
         public void ToIntegerLE()
         {
-            byte[] testBytes = [24, 32, 41, 71];
+            byte[]? testBytes = [24, 32, 41, 71];
             int testInt = Bytes.ToIntegerLE(testBytes);
             Assert.Equal(1193877528, testInt);
         }
@@ -59,56 +59,56 @@ public class Utils
         [Fact]
         public void ToBytesBE()
         {
-            byte[] originalBytes = [24, 32];
-            byte[] testBytes = Bytes.ToBytesBE((short)6176);
+            byte[]? originalBytes = [24, 32];
+            byte[]? testBytes = Bytes.ToBytesBE((short)6176);
             Assert.Equal(originalBytes, testBytes);
         }
 
         [Fact]
         public void ToBytesLE()
         {
-            byte[] originalBytes = [24, 32];
-            byte[] testBytes = Bytes.ToBytesLE((short)8216);
+            byte[]? originalBytes = [24, 32];
+            byte[]? testBytes = Bytes.ToBytesLE((short)8216);
             Assert.Equal(originalBytes, testBytes);
         }
 
         [Fact]
         public void ToBytesBEInt()
         {
-            byte[] originalBytes = [24, 32, 41, 71];
-            byte[] testBytes = Bytes.ToBytesBE(404760903);
+            byte[]? originalBytes = [24, 32, 41, 71];
+            byte[]? testBytes = Bytes.ToBytesBE(404760903);
             Assert.Equal(originalBytes, testBytes);
         }
 
         [Fact]
         public void ToBytesLEInt()
         {
-            byte[] originalBytes = [24, 32, 41, 71];
-            byte[] testBytes = Bytes.ToBytesLE(1193877528);
+            byte[]? originalBytes = [24, 32, 41, 71];
+            byte[]? testBytes = Bytes.ToBytesLE(1193877528);
             Assert.Equal(originalBytes, testBytes);
         }
 
         [Fact]
         public void GetIntegerBufferAllCompressed()
         {
-            byte[] originalBytes = [223, 219, 22];
-            byte[] testBytes = Bytes.GetIntegerBuffer(372191, 7);
+            byte[]? originalBytes = [223, 219, 22];
+            byte[]? testBytes = Bytes.GetIntegerBuffer(372191, 7);
             Assert.Equal(originalBytes, testBytes);
         }
 
         [Fact]
         public void GetIntegerBufferAllUncompressed()
         {
-            byte[] originalBytes = [0, 5, 173, 223];
-            byte[] testBytes = Bytes.GetIntegerBuffer(372191, 0);
+            byte[]? originalBytes = [0, 5, 173, 223];
+            byte[]? testBytes = Bytes.GetIntegerBuffer(372191, 0);
             Assert.Equal(originalBytes, testBytes);
         }
 
         [Fact]
         public void GetResourceReferenceAllCompressed()
         {
-            byte[] originalBytes = [2, 255, 255, 3];
-            byte[] testBytes = Bytes.GetResourceReference(new ResourceDescriptor(65535, ResourceType.Texture),
+            byte[]? originalBytes = [2, 255, 255, 3];
+            byte[]? testBytes = Bytes.GetResourceReference(new ResourceDescriptor(65535, ResourceType.Texture),
                 new Revision((int)Revisions.Lbp1Max), 7);
             Assert.Equal(originalBytes, testBytes);
         }
@@ -116,8 +116,8 @@ public class Utils
         [Fact]
         public void GetResourceReferenceAllUncompressed()
         {
-            byte[] originalBytes = [2, 0, 0, 255, 255];
-            byte[] testBytes =  Bytes.GetResourceReference(new ResourceDescriptor(65535, ResourceType.Texture),
+            byte[]? originalBytes = [2, 0, 0, 255, 255];
+            byte[]? testBytes =  Bytes.GetResourceReference(new ResourceDescriptor(65535, ResourceType.Texture),
                 new Revision((int)Revisions.Lbp1Max), 0);
             Assert.Equal(originalBytes, testBytes);
         }

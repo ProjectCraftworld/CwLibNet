@@ -19,7 +19,7 @@ namespace CwLibNet.Util
          * @param bytes Byte array to hexify
          * @return Hex representation of byte array
          */
-        public static string ToHex(byte[] bytes)
+        public static string ToHex(byte[]? bytes)
         {
             if (bytes == null)
                 throw new NullReferenceException("Can't convert null byte array to hexadecimal string!");
@@ -67,7 +67,7 @@ namespace CwLibNet.Util
          * @param b 2-byte array containing big-order short
          * @return the short from the byte array
          */
-        public static short ToShortBE(byte[] b)
+        public static short ToShortBE(byte[]? b)
         {
             if (b == null)
                 throw new NullReferenceException("Can't read data type from null byte array!");
@@ -80,7 +80,7 @@ namespace CwLibNet.Util
          * @param b 2-byte array containing litte-order short
          * @return the short from the byte array
          */
-        public static short ToShortLE(byte[] b)
+        public static short ToShortLE(byte[]? b)
         {
             if (b == null)
                 throw new NullReferenceException("Can't read data type from null byte array!");
@@ -93,7 +93,7 @@ namespace CwLibNet.Util
          * @param b 4-byte array containing big-order integer
          * @return the integer from the byte array
          */
-        public static int ToIntegerBE(byte[] b)
+        public static int ToIntegerBE(byte[]? b)
         {
             if (b == null)
                 throw new NullReferenceException("Can't read data type from null byte array!");
@@ -109,7 +109,7 @@ namespace CwLibNet.Util
          * @param b 4-byte array containing little-order integer
          * @return the integer from the byte array
          */
-        public static int ToIntegerLE(byte[] b)
+        public static int ToIntegerLE(byte[]? b)
         {
             if (b == null)
                 throw new NullReferenceException("Can't read data type from null byte array!");
@@ -125,7 +125,7 @@ namespace CwLibNet.Util
          * @param v short primitive
          * @return the big-order byte array containing the short
          */
-        public static byte[] ToBytesBE(short v)
+        public static byte[]? ToBytesBE(short v)
         {
             return [
             (byte) (v >>> 8),
@@ -139,7 +139,7 @@ namespace CwLibNet.Util
          * @param v short primitive
          * @return the little-order byte array containing the short
          */
-        public static byte[] ToBytesLE(short v)
+        public static byte[]? ToBytesLE(short v)
         {
             return [
             (byte) (v & 0xFF),
@@ -153,7 +153,7 @@ namespace CwLibNet.Util
          * @param v integer primitive
          * @return the big-order byte array containing the integer
          */
-        public static byte[] ToBytesBE(int v)
+        public static byte[]? ToBytesBE(int v)
         {
             return [
             (byte) (v >>> 24),
@@ -169,7 +169,7 @@ namespace CwLibNet.Util
          * @param v integer primitive
          * @return the little-order byte array containing the integer
          */
-        public static byte[] ToBytesLE(int v)
+        public static byte[]? ToBytesLE(int v)
         {
             return [
             (byte) (v & 0xFF),
@@ -179,7 +179,7 @@ namespace CwLibNet.Util
         ];
         }
 
-        public static byte[] GetIntegerBuffer(long value, byte compressionFlags)
+        public static byte[]? GetIntegerBuffer(long value, byte compressionFlags)
         {
             MemoryOutputStream output = new MemoryOutputStream(0x8, compressionFlags);
             output.U32(value);
@@ -187,7 +187,7 @@ namespace CwLibNet.Util
             return output.GetBuffer();
         }
 
-        public static byte[] GetResourceReference(ResourceDescriptor? res, Revision revision,
+        public static byte[]? GetResourceReference(ResourceDescriptor? res, Revision revision,
                                                   byte compressionFlags)
         {
             Serializer serializer = new Serializer(0x1c + 0x4, revision, compressionFlags);
@@ -251,13 +251,14 @@ namespace CwLibNet.Util
          * @param size Size of each byte chunk
          * @return Chunked byte arrays
          */
-        public static byte[][] Split(byte[] data, int size)
+        public static byte[][] Split(byte[]? data, int size)
         {
             byte[][] _out = new byte[(int)Math.Ceiling(data.Length / (double)size)][];
             int start = 0;
             for (int i = 0; i < _out.Length; ++i)
         {
                 int end = Math.Min(data.Length, start + size);
+                _out[i] = new byte[end + start];
                 Array.Copy(data, _out[i], end + start);
                 _out = _out.Skip(start).ToArray();
                 start += size;
@@ -273,13 +274,13 @@ namespace CwLibNet.Util
          * @param arrays Byte arrays to combine
          * @return Combined byte arrays.
          */
-        public static byte[] Combine(params byte[][] arrays)
+        public static byte[]? Combine(params byte[]?[] arrays)
         {
             int totalLength = 0;
-            foreach (byte[] bytes in arrays) totalLength += bytes.Length;
-            byte[] result = new byte[totalLength];
+            foreach (byte[]? bytes in arrays) totalLength += bytes.Length;
+            byte[]? result = new byte[totalLength];
             int currentIndex = 0;
-            foreach (byte[] array in arrays)
+            foreach (byte[]? array in arrays)
             {
                 Array.Copy(array, 0, result, currentIndex, array.Length);
                 currentIndex += array.Length;
@@ -297,7 +298,7 @@ namespace CwLibNet.Util
          * @param replacement Data to replace original pattern with
          * @return Bytearray with replaced patterns
          */
-        public static byte[] Replace(byte[] source, byte[] original, byte[] replacement)
+        public static byte[]? Replace(byte[]? source, byte[]? original, byte[]? replacement)
         {
             if (Equals(original, replacement)) return source;
 
@@ -314,7 +315,7 @@ namespace CwLibNet.Util
             }
 
             int diff = replacement.Length - original.Length;
-            byte[] buffer =
+            byte[]? buffer =
                 new byte[source.Length - (original.Length * offsets.Length) + (replacement.Length * offsets.Length)];
 
             int sourceOffset = 0;
@@ -345,7 +346,7 @@ namespace CwLibNet.Util
          * @param value Value to encode
          * @return Encoded byte array
          */
-        public static byte[] PackULEB128(long value)
+        public static byte[]? PackULEB128(long value)
         {
             MemoryOutputStream stream = new MemoryOutputStream(0x10,
                 CompressionFlags.USE_ALL_COMPRESSION);

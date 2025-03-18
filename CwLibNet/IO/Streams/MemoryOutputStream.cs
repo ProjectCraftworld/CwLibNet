@@ -12,7 +12,7 @@ namespace CwLibNet.IO.Streams
      */
     public class MemoryOutputStream
     {
-        private byte[] buffer;
+        private byte[]? buffer;
 
         private int offset = 0;
         private readonly int length;
@@ -48,7 +48,7 @@ namespace CwLibNet.IO.Streams
          * @param value Bytes to write
          * @return This output stream
          */
-        public MemoryOutputStream Bytes(byte[] value)
+        public MemoryOutputStream Bytes(byte[]? value)
         {
             Array.Copy(value, 0, buffer, offset, value.Length);
             offset += value.Length;
@@ -151,7 +151,7 @@ namespace CwLibNet.IO.Streams
         public MemoryOutputStream U24(int value)
         {
             value &= 0xFFFFFF;
-            byte[] b;
+            byte[]? b;
             if (isLittleEndian)
             {
                 b = new byte[] {
@@ -598,7 +598,7 @@ namespace CwLibNet.IO.Streams
         public MemoryOutputStream Str(string? value, int size)
         {
             if (value == null) return Bytes(new byte[size]);
-            byte[] data = Encoding.ASCII.GetBytes(value);
+            byte[]? data = Encoding.ASCII.GetBytes(value);
             if (data.Length > size)
                 data = data.Take(size).ToArray();
             Bytes(data);
@@ -617,7 +617,7 @@ namespace CwLibNet.IO.Streams
         {
             size *= 2;
             if (value == null) return Bytes(new byte[size]);
-            byte[] str = Encoding.BigEndianUnicode.GetBytes(value);
+            byte[]? str = Encoding.BigEndianUnicode.GetBytes(value);
             if (str.Length > size)
                 str = str.Take(size).ToArray();
             Bytes(str);
@@ -631,10 +631,10 @@ namespace CwLibNet.IO.Streams
          * @param value String to write
          * @return This output stream
          */
-        public MemoryOutputStream str(string value)
+        public MemoryOutputStream Str(string value)
         {
             if (value == null) return I32(0);
-            byte[] _string = Encoding.ASCII.GetBytes(value);
+            byte[]? _string = Encoding.ASCII.GetBytes(value);
             this.S32(_string.Length);
             return this.Bytes(_string);
         }
@@ -648,7 +648,7 @@ namespace CwLibNet.IO.Streams
         public MemoryOutputStream Wstr(string? value)
         {
             if (value == null) return I32(0);
-            byte[] _string = Encoding.BigEndianUnicode.GetBytes(value);
+            byte[]? _string = Encoding.BigEndianUnicode.GetBytes(value);
             this.S32(_string.Length / 2);
             return this.Bytes(_string);
         }
@@ -816,7 +816,7 @@ namespace CwLibNet.IO.Streams
             this.Seek(off, SeekMode.Relative);
         }
 
-        public byte[] GetBuffer()
+        public byte[]? GetBuffer()
         {
             return buffer;
         }

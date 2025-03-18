@@ -9,11 +9,11 @@ namespace CwLibNet.Util
 {
     public static class Compressor
     {
-        public static byte[] DeflateData(byte[] data)
+        public static byte[]? DeflateData(byte[] data)
         {
             using (MemoryStream outputStream = new MemoryStream())
             {
-                using (DeflateStream deflateStream = new DeflateStream(outputStream, CompressionLevel.Optimal))
+                using (ZLibStream deflateStream = new ZLibStream(outputStream, CompressionLevel.Optimal))
                 {
                     deflateStream.Write(data, 0, data.Length);
                 }
@@ -21,7 +21,7 @@ namespace CwLibNet.Util
             }
         }
 
-        public static byte[] InflateData(byte[] data, int size)
+        public static byte[]? InflateData(byte[]? data, int size)
         {
             try
             {
@@ -44,7 +44,7 @@ namespace CwLibNet.Util
             }
         }
 
-        public static byte[] DecompressData(MemoryInputStream stream, int endOffset)
+        public static byte[]? DecompressData(MemoryInputStream stream, int endOffset)
         {
             short flag = stream.I16(); // Some flag? Always 0x0001
             short chunks = stream.I16();
@@ -67,13 +67,13 @@ namespace CwLibNet.Util
             MemoryOutputStream inflateStream = new MemoryOutputStream(decompressedSize);
             for (int i = 0; i < chunks; ++i)
             {
-                byte[] deflatedData = stream.Bytes(compressed[i]);
+                byte[]? deflatedData = stream.Bytes(compressed[i]);
                 if (compressed[i] == decompressed[i])
                 {
                     inflateStream.Bytes(deflatedData);
                     continue;
                 }
-                byte[] inflatedData = InflateData(deflatedData, decompressed[i]);
+                byte[]? inflatedData = InflateData(deflatedData, decompressed[i]);
                 if (inflatedData == null)
                 {
                     throw new SerializationException("An error occurred while inflating data!");
@@ -84,7 +84,7 @@ namespace CwLibNet.Util
             return inflateStream.GetBuffer();
         }
 
-        public static byte[] GetCompressedStream(byte[] data, bool isCompressed)
+        public static byte[]? GetCompressedStream(byte[]? data, bool isCompressed)
         {
             if (data == null) return Array.Empty<byte>();
             if (!isCompressed)
@@ -97,11 +97,11 @@ namespace CwLibNet.Util
             short[] compressedSize = new short[chunks.Length];
             short[] uncompressedSize = new short[chunks.Length];
 
-            byte[][] zlibStreams = new byte[chunks.Length][];
+            byte[]?[] zlibStreams = new byte[chunks.Length][];
 
             for (int i = 0; i < chunks.Length; ++i)
             {
-                byte[] compressed = DeflateData(chunks[i]);
+                byte[]? compressed = DeflateData(chunks[i]);
                 zlibStreams[i] = compressed;
                 compressedSize[i] = (short)compressed.Length;
                 uncompressedSize[i] = (short)chunks[i].Length;
@@ -117,7 +117,7 @@ namespace CwLibNet.Util
                 output.I16(uncompressedSize[i]);
             }
 
-            byte[] combinedZlibStreams = Bytes.Combine(zlibStreams);
+            byte[]? combinedZlibStreams = Bytes.Combine(zlibStreams);
             return Bytes.Combine(output.GetBuffer(), combinedZlibStreams);
         }
     }

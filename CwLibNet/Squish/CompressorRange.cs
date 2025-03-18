@@ -1,0 +1,190 @@
+namespace CwLibNet.Squish;
+
+public class CompressorRange : CompressorColourFit
+{
+    // Static arrays for temporary storage.
+    private static readonly int[] closest = new int[16];
+    private static readonly int[] indices = new int[16];
+    private static readonly Vec[] codes = new Vec[4];
+
+    // Static constructor to initialize the codes array.
+    static CompressorRange()
+    {
+        for (int i = 0; i < codes.Length; i++)
+        {
+            codes[i] = new Vec();
+        }
+    }
+
+    private readonly Util.Squish.CompressionMetric metric;
+    private readonly Vec start = new Vec();
+    private readonly Vec end = new Vec();
+
+    private float bestError;
+
+    public CompressorRange(ColourSet colours, Util.Squish.CompressionType type, Util.Squish.CompressionMetric metric)
+        : base(colours, type)
+    {
+        this.metric = metric;
+        bestError = float.MaxValue;
+
+        int count = colours.GetCount();
+        Vec[] points = colours.GetPoints();
+
+        // Compute the covariance matrix using a shared matrix from the base class.
+        Matrix cov = Matrix.ComputeWeightedCovariance(colours, CompressorColourFit.covariance);
+        // Compute the principal component from the covariance.
+        Vec principle = Matrix.ComputePrincipleComponent(cov);
+
+        if (count > 0)
+        {
+            float aX, aY, aZ;
+            float bX, bY, bZ;
+            float min, max;
+
+            // Initialize with the first point.
+            aX = bX = points[0].X;
+            aY = bY = points[0].Y;
+            aZ = bZ = points[0].Z;
+            min = max = points[0].Dot(principle);
+
+            // Find the points that have the minimum and maximum dot product with the principle.
+            for (int i = 1; i < count; ++i)
+            {
+                Vec p = points[i];
+                float val = p.Dot(principle);
+                if (val < min)
+                {
+                    aX = p.X;
+                    aY = p.Y;
+                    aZ = p.Z;
+                    min = val;
+                }
+                else if (val > max)
+                {
+                    bX = p.X;
+                    bY = p.Y;
+                    bZ = p.Z;
+                    max = val;
+                }
+            }
+
+            // Clamp the endpoints to the grid and [0,1] range.
+            aX = Clamp(aX, GRID_X, GRID_X_RCP);
+            aY = Clamp(aY, GRID_Y, GRID_Y_RCP);
+            aZ = Clamp(aZ, GRID_Z, GRID_Z_RCP);
+            start.Set(aX, aY, aZ);
+
+            bX = Clamp(bX, GRID_X, GRID_X_RCP);
+            bY = Clamp(bY, GRID_Y, GRID_Y_RCP);
+            bZ = Clamp(bZ, GRID_Z, GRID_Z_RCP);
+            end.Set(bX, bY, bZ);
+        }
+    }
+
+    // Implements the 3–code compression method.
+    public override void Compress3(byte[] block, int offset)
+    {
+        int count = colours.GetCount();
+        Vec[] points = colours.GetPoints();
+        Vec v = new Vec();
+
+        // Create a codebook:
+        //   codes[0] = start
+        //   codes[1] = end
+        //   codes[2] = (start + end) * 0.5f
+        codes[0].Set(start);
+        codes[1].Set(end);
+        codes[2].Set(start).Add(end).Mul(0.5f);
+
+        float error = 0.0f;
+        for (int i = 0; i < count; ++i)
+        {
+            Vec p = points[i];
+
+            float dist = float.MaxValue;
+            int index = 0;
+            // Find the closest code among the three.
+            for (int j = 0; j < 3; ++j)
+            {
+                Vec c = codes[j];
+                v.Set(
+                    (p.X - c.X) * metric.R,
+                    (p.Y - c.Y) * metric.G,
+                    (p.Z - c.Z) * metric.G
+                );
+                float d = v.LengthSq();
+                if (d < dist)
+                {
+                    dist = d;
+                    index = j;
+                }
+            }
+
+            closest[i] = index;
+            error += dist;
+        }
+
+        // If this scheme improves the error, save the indices and write the block.
+        if (error < bestError)
+        {
+            colours.RemapIndices(closest, indices);
+            ColourBlock.WriteColourBlock3(start, end, indices, block, offset);
+            bestError = error;
+        }
+    }
+
+    // Implements the 4–code compression method.
+    public override void Compress4(byte[] block, int offset)
+    {
+        int count = colours.GetCount();
+        Vec[] points = colours.GetPoints();
+        Vec v = new Vec();
+
+        // Create a codebook:
+        //   codes[0] = start
+        //   codes[1] = end
+        //   codes[2] = (start * (2/3)) + (end * (1/3))
+        //   codes[3] = (start * (1/3)) + (end * (2/3))
+        codes[0].Set(start);
+        codes[1].Set(end);
+        codes[2].Set(2.0f / 3.0f).Mul(start).Add(v.Set(1.0f / 3.0f).Mul(end));
+        codes[3].Set(1.0f / 3.0f).Mul(start).Add(v.Set(2.0f / 3.0f).Mul(end));
+
+        float error = 0.0f;
+        for (int i = 0; i < count; ++i)
+        {
+            Vec p = points[i];
+
+            float dist = float.MaxValue;
+            int index = 0;
+            // Find the closest code among the four.
+            for (int j = 0; j < 4; ++j)
+            {
+                Vec c = codes[j];
+                v.Set(
+                    (p.X - c.X) * metric.R,
+                    (p.Y - c.Y) * metric.G,
+                    (p.Z - c.Z) * metric.B
+                );
+                float d = v.LengthSq();
+                if (d < dist)
+                {
+                    dist = d;
+                    index = j;
+                }
+            }
+
+            closest[i] = index;
+            error += dist;
+        }
+
+        // Save this scheme if it results in a lower error.
+        if (error < bestError)
+        {
+            colours.RemapIndices(closest, indices);
+            ColourBlock.WriteColourBlock4(start, end, indices, block, offset);
+            bestError = error;
+        }
+    }
+}

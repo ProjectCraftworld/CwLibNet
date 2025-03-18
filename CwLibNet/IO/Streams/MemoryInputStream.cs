@@ -18,7 +18,7 @@ namespace CwLibNet.IO.Streams
 
     public class MemoryInputStream
     {
-        private readonly byte[] buffer;
+        private readonly byte[]? buffer;
 
         private int offset = 0;
         private readonly int length;
@@ -31,7 +31,7 @@ namespace CwLibNet.IO.Streams
          *
          * @param buffer Byte array to use as source
          */
-        public MemoryInputStream(byte[] buffer)
+        public MemoryInputStream(byte[]? buffer)
         {
             if (buffer == null)
                 throw new NullReferenceException("Buffer supplied to MemoryInputStream cannot be " +
@@ -46,7 +46,7 @@ namespace CwLibNet.IO.Streams
          * @param buffer           Byte array to use as source
          * @param compressionFlags Flags for compression methods used
          */
-        public MemoryInputStream(byte[] buffer, byte compressionFlags): this(buffer)
+        public MemoryInputStream(byte[]? buffer, byte compressionFlags): this(buffer)
         {
             this.compressionFlags = compressionFlags;
         }
@@ -61,7 +61,7 @@ namespace CwLibNet.IO.Streams
             if (path == null)
                 throw new NullReferenceException("Path supplied to MemoryInputStream cannot be " +
                                                "null!");
-            byte[] data = File.ReadAllBytes(path) ?? throw new ArgumentException("File provided could not be read!");
+            byte[]? data = File.ReadAllBytes(path) ?? throw new ArgumentException("File provided could not be read!");
             this.buffer = data;
             this.length = data.Length;
         }
@@ -83,7 +83,7 @@ namespace CwLibNet.IO.Streams
          * @param size Number of bytes to read from the stream
          * @return Bytes read from the stream
          */
-        public byte[] Bytes(int size)
+        public byte[]? Bytes(int size)
         {
             this.offset += size;
             var secondBuffer = buffer.Skip(offset - size).ToArray();
@@ -97,7 +97,7 @@ namespace CwLibNet.IO.Streams
          *
          * @return Bytes read from the stream
          */
-        public byte[] Bytearray()
+        public byte[]? Bytearray()
         {
             int size = this.I32();
             return this.Bytes(size);
@@ -154,7 +154,7 @@ namespace CwLibNet.IO.Streams
          */
         public short I16()
         {
-            byte[] bytes = this.Bytes(2);
+            byte[]? bytes = this.Bytes(2);
             if (isLittleEndian) return CwLibNet.Util.Bytes.ToShortLE(bytes);
             return CwLibNet.Util.Bytes.ToShortBE(bytes);
         }
@@ -176,7 +176,7 @@ namespace CwLibNet.IO.Streams
          */
         public int U24()
         {
-            byte[] b = this.Bytes(3);
+            byte[]? b = this.Bytes(3);
             if (this.isLittleEndian)
                 return (b[2] & 0xFF) << 16 | (b[1] & 0xFF) << 8 | b[0] & 0xFF;
             return (b[0] & 0xFF) << 16 | (b[1] & 0xFF) << 8 | b[2] & 0xFF;
@@ -192,7 +192,7 @@ namespace CwLibNet.IO.Streams
         {
             if (force32 || (this.compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0)
             {
-                byte[] bytes = this.Bytes(4);
+                byte[]? bytes = this.Bytes(4);
                 if (this.isLittleEndian) return CwLibNet.Util.Bytes.ToIntegerLE(bytes);
                 return CwLibNet.Util.Bytes.ToIntegerBE(bytes);
             }
@@ -202,7 +202,7 @@ namespace CwLibNet.IO.Streams
         public long I64(bool force64) {
             if (!force64 && (this.compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0)
                 return this.Uleb128();
-            byte[] b = this.Bytes(8);
+            byte[]? b = this.Bytes(8);
             if (this.isLittleEndian) {
                 return	(b[7] & 0xFFL) << 56 |
                         (b[6] & 0xFFL) << 48 |
@@ -260,7 +260,7 @@ namespace CwLibNet.IO.Streams
         {
             if (force64 || (this.compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0)
             {
-                byte[] b = this.Bytes(8);
+                byte[]? b = this.Bytes(8);
                 if (this.isLittleEndian)
                 {
                     return (b[7] & 0xFF) << 56 |
@@ -715,7 +715,7 @@ namespace CwLibNet.IO.Streams
             return this.isLittleEndian;
         }
 
-        public byte[] GetBuffer()
+        public byte[]? GetBuffer()
         {
             return this.buffer;
         }

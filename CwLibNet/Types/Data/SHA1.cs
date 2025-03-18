@@ -4,7 +4,7 @@ public sealed class SHA1
 {
     public static readonly SHA1 EMPTY = new SHA1();
 
-    private readonly byte[] hashBytes;
+    private readonly byte[]? hashBytes;
     private readonly string hashString;
 
     /// <summary>
@@ -37,7 +37,7 @@ public sealed class SHA1
     /// Creates a SHA1 instance from a 20-byte buffer.
     /// </summary>
     /// <param name="hash">SHA1 source buffer</param>
-    public SHA1(byte[] hash)
+    public SHA1(byte[]? hash)
     {
         if (hash == null)
             throw new ArgumentNullException(nameof(hash), "SHA1 hash cannot be null!");
@@ -53,17 +53,17 @@ public sealed class SHA1
     /// </summary>
     /// <param name="buffer">Source buffer to be hashed</param>
     /// <returns>A SHA1 hash instance</returns>
-    public static SHA1 FromBuffer(byte[] buffer)
+    public static SHA1 FromBuffer(byte[]? buffer)
     {
         if (buffer == null)
             throw new ArgumentNullException(nameof(buffer), "Data buffer provided to SHA1 hasher cannot be null!");
 
         using XSHA1 sha1 = XSHA1.Create();
-        byte[] hash = sha1.ComputeHash(buffer);
+        byte[]? hash = sha1.ComputeHash(buffer);
         return new SHA1(hash);
     }
 
-    public byte[] GetHash()
+    public byte[]? GetHash()
     {
         return this.hashBytes;
     }

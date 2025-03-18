@@ -13,7 +13,7 @@ namespace CwLibNet.Util
      * @param pattern Pattern to search for
      * @return Index in byte array where pattern occurs, -1 if not found
      */
-        public static int IndexOf(byte[] data, byte[] pattern) => IndexOf(data, pattern, 0);
+        public static int IndexOf(byte[]? data, byte[]? pattern) => IndexOf(data, pattern, 0);
 
         /**
          * Finds the first occurence of a pattern in a byte array starting from an offset.
@@ -23,7 +23,7 @@ namespace CwLibNet.Util
          * @param offset  Offset to start from
          * @return Index in byte array where pattern occurs, -1 if not found
          */
-        public static int IndexOf(byte[] data, byte[] pattern, int offset)
+        public static int IndexOf(byte[]? data, byte[]? pattern, int offset)
         {
             int[] failure = ComputeFailure(pattern);
             int j = 0;
@@ -48,7 +48,7 @@ namespace CwLibNet.Util
          * @param pattern Pattern to search for
          * @return Indices in byte array where pattern occurs
          */
-        public static int[] indicesOf(byte[] data, byte[] pattern)
+        public static int[] indicesOf(byte[]? data, byte[]? pattern)
         {
             List<int> indices = new ();
             int offset = IndexOf(data, pattern, 0);
@@ -67,7 +67,7 @@ namespace CwLibNet.Util
          * @param pattern Pattern to search for
          * @return Partial match table
          */
-        private static int[] ComputeFailure(byte[] pattern)
+        private static int[] ComputeFailure(byte[]? pattern)
         {
             int[] failure = new int[pattern.Length];
             int j = 0;

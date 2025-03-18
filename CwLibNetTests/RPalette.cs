@@ -9,7 +9,7 @@ namespace CwLibNetTests;
 public class RPaletteTests
 {
 
-    private readonly byte[] _bytes =
+    private readonly byte[]? _bytes =
     [
         12, 0, 2, 178, 211, 2, 0, 2, 179, 211, 2, 0, 2, 180, 211, 2, 
         0, 2, 203, 211, 2, 0, 2, 207, 212, 2, 0, 2, 208, 212, 2, 0, 

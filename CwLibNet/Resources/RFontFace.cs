@@ -14,10 +14,10 @@ public class RFontFace
     public short[] GlyphIndex = new short[128];
     public int[]? GlyphPageUsed = new int[16];
     public GlyphInfo[]? Glyphs;
-    public byte[] Data;
+    public byte[]? Data;
     public bool IsCompressed;
 
-    public RFontFace(byte[] data)
+    public RFontFace(byte[]? data)
     {
         MemoryInputStream stream = new MemoryInputStream(data, CompressionFlags.USE_NO_COMPRESSION);
             
@@ -48,7 +48,7 @@ public class RFontFace
 
     public SKBitmap GetGlyphImage(GlyphInfo info)
     {
-        byte[] glyph = GetGlyphData(info);
+        byte[]? glyph = GetGlyphData(info);
         int w = info.boxW & 0xFF;
         int h = info.boxH & 0xFF;
         SKBitmap image = new SKBitmap(w, h,
@@ -80,14 +80,14 @@ public class RFontFace
         return image;
     }
 
-    public byte[] GetGlyphData(GlyphInfo info)
+    public byte[]? GetGlyphData(GlyphInfo info)
     {
         int imageSize = info.boxW * info.boxH;
 
         if (IsCompressed)
         {
             int size = (Data[info.offset] << 8) | Data[info.offset + 1];
-            byte[] stream = Data.Skip(info.offset + 2).Take(size).ToArray();
+            byte[]? stream = Data.Skip(info.offset + 2).Take(size).ToArray();
             return Compressor.InflateData(stream, imageSize);
         }
 

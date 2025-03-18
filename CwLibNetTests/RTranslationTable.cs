@@ -5,7 +5,7 @@ namespace CwLibNetTests;
 
 public class RTranslationTableTests
 {
-    private static readonly byte[] lamsKeyExample =
+    private static readonly byte[]? lamsKeyExample =
     [
         0, 0, 0, 2, 73, 150, 2, 210, 0, 0, 0, 0, 73, 150, 2, 211,
         0, 0, 0, 18, 254, 255, 0, 84, 0, 101, 0, 115, 0, 116, 0, 32,
