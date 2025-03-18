@@ -17,7 +17,7 @@ namespace CwLibNet.IO
         public abstract SerializationData Build(Revision revision, byte compressionFlags);
 
         /// <summary>
-        /// Performs necessary fixes to a resource after serializing is finished.
+        /// Performs the necessary fixes to a resource after serializing is finished.
         /// </summary>
         /// <param name="revision">The revision of the loaded resource</param>
         public virtual void OnLoadFinished(Revision revision)

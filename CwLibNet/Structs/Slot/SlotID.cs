@@ -11,7 +11,8 @@ public class SlotID: ISerializable
     public long SlotNumber;
     public void Serialize(Serializer serializer)
     {
-        throw new NotImplementedException();
+        SlotType = serializer.Enum32(SlotType);
+        SlotNumber = serializer.U32(SlotNumber);
     }
 
     public int GetAllocatedSize()
@@ -38,8 +39,8 @@ public class SlotID: ISerializable
 
     public override int GetHashCode()
     {
-        int result = (int) (this.SlotNumber ^ (this.SlotNumber >>> 32));
-        result = 31 * result + (this.SlotType.GetHashCode());
+        int result = (int) (SlotNumber ^ (SlotNumber >>> 32));
+        result = 31 * result + SlotType.GetHashCode();
         return result; 
     }
 

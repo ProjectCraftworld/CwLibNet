@@ -24,7 +24,7 @@ namespace CwLibNet.Types.Data
 
         public void Serialize(Serializer serializer) 
         {
-            bool lengthPrefixed = serializer.GetRevision().GetVersion() >= 0x234;
+            bool lengthPrefixed = serializer.GetRevision().GetVersion() < 0x234;
             if (lengthPrefixed) 
             {
                 serializer.I32((byte)data.Length);

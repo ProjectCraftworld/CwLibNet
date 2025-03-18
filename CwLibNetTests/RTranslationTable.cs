@@ -11,7 +11,7 @@ public class RTranslationTableTests
         0, 0, 0, 18, 254, 255, 0, 84, 0, 101, 0, 115, 0, 116, 0, 32,
         0, 107, 0, 101, 0, 121, 254, 255, 0, 84, 0, 101, 0, 115, 0, 116,
         0, 32, 0, 107, 0, 101, 0, 121, 0, 32, 0, 50
-    ];
+    ]; // this is a LAMS table made ad-hoc to avoid copyright problems
     
     [Fact]
     public void CheckLAMSKey()

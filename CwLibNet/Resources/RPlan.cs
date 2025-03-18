@@ -15,10 +15,10 @@ namespace CwLibNet.Resources
     {
         public const int BaseAllocationSize = 0x10;
         public HashSet<ResourceDescriptor?> DependencyCache = [];
-        public bool IsUsedForStreaming = false;
-        public Revision Revision = new Revision(Revision.Lbp1FinalRevision, 0x4c44, 0x17);
+        public bool IsUsedForStreaming;
+        public Revision Revision = new(Revision.Lbp1FinalRevision, 0x4c44, 0x17);
         public byte[] ThingData;
-        public InventoryItemDetails InventoryData = new InventoryItemDetails();
+        public InventoryItemDetails InventoryData = new();
         public byte CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_ALL_COMPRESSION;
         public RPlan()
         {

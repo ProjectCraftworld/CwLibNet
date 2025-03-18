@@ -1,6 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
+using CwLibNet.Resources;
 using CwLibNet.Singleton;
 using CwLibNet.Structs.Slot;
 using CwLibNet.Structs.Things.Parts;
@@ -49,7 +50,7 @@ public class InventoryItemDetails: ISerializable
     public bool Shareable;
     public bool Copyright;
 
-    public NetworkPlayerID Creator = new NetworkPlayerID();
+    public NetworkPlayerID? Creator = new NetworkPlayerID();
 
     public ToolType ToolType = ToolType.NONE;
     public byte Flags;
@@ -102,7 +103,7 @@ public class InventoryItemDetails: ISerializable
         if (serializer.GetRevision().GetVersion() > 0x37c)
         {
             DateAdded = serializer.S64(DateAdded);
-            LevelUnlockSlotId = serializer.Struct<SlotID>(LevelUnlockSlotId);
+            LevelUnlockSlotId = serializer.Struct(LevelUnlockSlotId);
             HighlightSound = serializer.Guid(HighlightSound);
             Colour = serializer.I32(Colour);
 
@@ -130,12 +131,12 @@ public class InventoryItemDetails: ISerializable
 
             Creator = serializer.Reference(Creator);
 
-            ToolType = Enums.ToolTypeBody.FromValue(serializer.I8(ToolType.GetValue()));
+            ToolType = ToolTypeBody.FromValue(serializer.I8(ToolType.GetValue()));
             Flags = serializer.I8(Flags);
 
 
             if (serializer.GetRevision().Has(Branch.Double11,
-                (int)Revisions.D1DetailsProportional))
+                    (int)Revisions.D1DetailsProportional))
                 MakeSizeProportional = serializer.Bool(MakeSizeProportional);
 
             if (!serializer.IsWriting())
@@ -172,7 +173,7 @@ public class InventoryItemDetails: ISerializable
 
             if (head > 0x196)
                 ToolType =
-                    Enums.ToolTypeBody.FromValue((byte) serializer.I32(ToolType.GetValue(),
+                    ToolTypeBody.FromValue((byte) serializer.I32(ToolType.GetValue(),
                         true));
             Icon = serializer.Resource(Icon, ResourceType.Texture, true);
             if (head > 0x1c0)
@@ -202,7 +203,7 @@ public class InventoryItemDetails: ISerializable
             if (head > 0x176)
             {
                 LevelUnlockSlotId.SlotType =
-                    SlotTypeExtensions.FromValue(
+                    (SlotType)(
                         serializer.I32((int)LevelUnlockSlotId.SlotType)
                     );
 
@@ -244,11 +245,11 @@ public class InventoryItemDetails: ISerializable
         HighlightSound = serializer.Guid(HighlightSound, true);
 
         // In these older versions of the inventory details,
-        // 32 bit values are enforced while still using encoded values elsewhere,
+        // 32-bit values are enforced while still using encoded values elsewhere,
         // so for some structures like SlotID, we need to force it manually.
 
         LevelUnlockSlotId.SlotType =
-            SlotTypeExtensions.FromValue(
+            (SlotType)(
                 serializer.I32((int)LevelUnlockSlotId.SlotType, true)
             );
 
@@ -311,6 +312,8 @@ public class InventoryItemDetails: ISerializable
 
         if (!serializer.IsWriting())
             UpdateTranslations();
+
+
     }
     public int GetAllocatedSize()
     {
@@ -338,22 +341,21 @@ public class InventoryItemDetails: ISerializable
 
     private void UpdateTranslations()
     {
-        /* if (!string.IsNullOrEmpty(this.TranslationTag))
+        if (!string.IsNullOrEmpty(this.TranslationTag))
         {
             this.TitleKey =
-                RTranslationTable.makeLamsKeyID(this.TranslationTag + "_NAME");
+                RTranslationTable.MakeLamsKeyID(this.TranslationTag + "_NAME");
             this.DescriptionKey =
-                RTranslationTable.makeLamsKeyID(this.TranslationTag + "_DESC");
+                RTranslationTable.MakeLamsKeyID(this.TranslationTag + "_DESC");
         }
 
-        RTranslationTable lams = ResourceSystem.getLAMS();
+        /* RTranslationTable lams = ResourceSystem.getLAMS();
         if (lams == null) return;
         if (this.TitleKey != 0)
             this.TranslatedTitle = lams.translate(this.TitleKey);
         if (this.DescriptionKey != 0)
-            this.TranslatedDescription = lams.translate(this.DescriptionKey);
-            */
+            this.TranslatedDescription = lams.translate(this.DescriptionKey); */
         
-        throw new NotImplementedException("UpdateTranslations");
+        // This should never be implemented as we don't want the ResourceSystem singleton in the library!
     }
 }
