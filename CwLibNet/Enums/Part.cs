@@ -29,8 +29,8 @@ namespace CwLibNet.Enums
             { "KEYFRAMED_POSITION", new Part("KEYFRAMED_POSITION", 0x3b, PartHistory.KEYFRAMED_POSITION, null) },
             { "CAMERA", new Part("CAMERA", 0x3c, PartHistory.CAMERA, null) },
             { "SCRIPT_NAME", new Part("SCRIPT_NAME", 0xC, PartHistory.SCRIPT_NAME, typeof(PScriptName)) },
-            /* { "CREATURE", new Part("CREATURE", 0xD, PartHistory.CREATURE, typeof(PCreature)) },
-            { "CHECKPOINT", new Part("CHECKPOINT", 0xE, PartHistory.CHECKPOINT, typeof(PCheckpoint)) },
+            { "CREATURE", new Part("CREATURE", 0xD, PartHistory.CREATURE, typeof(PCreature)) },
+            { "CHECKPOINT", new Part("CHECKPOINT", 0xE, PartHistory.CHECKPOINT, typeof(PCheckpoint)) }, /*
             { "STICKERS", new Part("STICKERS", 0xF, PartHistory.STICKERS, typeof(PStickers)) },
             { "DECORATIONS", new Part("DECORATIONS", 0x10, PartHistory.DECORATIONS, typeof(PDecorations)) },
             { "SCRIPT", new Part("SCRIPT", 0x11, PartHistory.SCRIPT, typeof(PScript)) },
