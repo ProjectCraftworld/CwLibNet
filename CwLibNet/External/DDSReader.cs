@@ -19,9 +19,9 @@ namespace CwLibNet.External
             return (byte)(buffer[28] & 0xFF | (buffer[29] & 0xFF) << 8 | (buffer[30] & 0xFF) << 16 | (buffer[31] & 0xFF) << 24);
         }
 
-        public static int GetPixelFormatFlags(byte[]? buffer)
+        public static uint GetPixelFormatFlags(byte[]? buffer)
         {
-            return buffer[80] & 0xFF | (buffer[81] & 0xFF) << 8 | (buffer[82] & 0xFF) << 16 | (buffer[83] & 0xFF) << 24;
+            return (uint)(buffer[80] & 0xFF | (buffer[81] & 0xFF) << 8 | (buffer[82] & 0xFF) << 16 | (buffer[83] & 0xFF) << 24);
         }
 
         public static uint GetFourCC(byte[]? buffer)
@@ -167,7 +167,7 @@ namespace CwLibNet.External
         public static uint GetType(byte[]? buffer)
         {
             uint type = 0;
-            int flags = GetPixelFormatFlags(buffer);
+            uint flags = GetPixelFormatFlags(buffer);
             if ((flags & 0x4) != 0)
             {
                 type = GetFourCC(buffer);

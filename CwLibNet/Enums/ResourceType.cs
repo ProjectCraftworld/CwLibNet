@@ -1,4 +1,5 @@
-﻿using CwLibNet.Resources;
+﻿using System.Reflection;
+using CwLibNet.Resources;
 
 namespace CwLibNet.Enums
 {
@@ -117,8 +118,10 @@ namespace CwLibNet.Enums
             if (value.Length > 3)
                 value = value[..3];
             value = value.ToUpper();
-            // TODO
-            return Invalid;
+            return (ResourceType)(typeof(ResourceType).GetFields(BindingFlags.Static | BindingFlags.Public)
+                .Where(p => p.FieldType == typeof(ResourceType))
+                .Where(p => ((ResourceType)(p.GetValue(null) ?? Invalid)).Header == value).Select(e => e.GetValue(null))
+                .FirstOrDefault(Invalid) ?? Invalid);
         }
 
         /// <summary>

@@ -156,7 +156,7 @@ public class Images
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine("There was an error when converting DDS to BufferedImage.");
+            Console.Error.WriteLine("There was an error when converting DDS to SKBitmap.");
         }
         return null;
     }

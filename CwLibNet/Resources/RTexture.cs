@@ -37,17 +37,16 @@ public class RTexture
         {
             case 0xffd8ffe0:
             case 0x89504e47:
-                BinaryReader stream = new BinaryReader(new MemoryStream(data));
                 try
                 {
-                    // this.cached = ImageIO.read(stream);
-                    stream.Close();
+                    this.cached = SKBitmap.Decode(data);
                 }
                 catch (IOException ex)
                 {
                     throw new SerializationException("An error occured reading " +
                                                      "BufferedImage");
                 }
+
                 return;
             case 0x44445320:
                 this.cached = Images.FromDds(data);
@@ -63,7 +62,7 @@ public class RTexture
         ResourceType type = resource.getResourceType();
         if (type.Value != ResourceType.Texture.Value && type.Value != ResourceType.GtfTexture.Value)
             throw new SerializationException("Invalid resource provided to RTexture");
-        //this.data = resource.getStream().getBuffer();
+        this.data = resource.getStream().GetBuffer();
         switch (resource.getSerializationType().GetValue())
         {
             case " ":
@@ -71,7 +70,7 @@ public class RTexture
                 {
                     // ResourceSystem.println("Texture", "Detected COMPRESSED_TEXTURE,
                     // decompressing to DDS");
-                    // this.cached = Images.fromDDS(this.data);
+                    this.cached = Images.FromDds(this.data);
 
                     byte[]? footer = this.data.Skip(this.data.Length - 4).Take(4).ToArray();
                     if (Bytes.ToIntegerBE(footer) == 0x42554D50)

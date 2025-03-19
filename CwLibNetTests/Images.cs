@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using CwLibNet.Enums;
 using CwLibNet.Extensions;
+using CwLibNet.Resources;
 using CwLibNet.Util;
 using SkiaSharp;
 
@@ -119,7 +120,15 @@ public class ImagesTests
     {
         SKBitmap bitmap = SKBitmap.Decode(image);
         byte[] bytes = Images.ToTex(bitmap, SquishCompressionType.DXT5, false, true);
-        File.WriteAllBytes("/Users/manoplay/test.tex", bytes);
         Assert.Equal(tex, bytes);
+    }
+
+    [Fact]
+    public void Deserialize()
+    {
+        RTexture texture = new RTexture(tex);
+        SKBitmap aimage = texture.getImage();
+        byte[] apng = SKImage.FromBitmap(aimage).Encode(SKEncodedImageFormat.Png, 100).ToArray();
+        Assert.Equal(image, apng);
     }
 }

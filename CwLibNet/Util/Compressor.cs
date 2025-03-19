@@ -26,7 +26,7 @@ namespace CwLibNet.Util
             try
             {
                 using (MemoryStream inputStream = new MemoryStream(data))
-                using (DeflateStream deflateStream = new DeflateStream(inputStream, CompressionMode.Decompress))
+                using (ZLibStream deflateStream = new ZLibStream(inputStream, CompressionMode.Decompress))
                 using (MemoryStream outputStream = new MemoryStream(size))
                 {
                     byte[] buffer = new byte[1024];
