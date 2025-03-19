@@ -116,12 +116,9 @@ namespace CwLibNet.Enums
         
         public static HashSet<InventoryObjectType> FromFlags(int flags, Revision revision)
         {
-            int version = GameVersion.GetFlag(revision);
             HashSet<InventoryObjectType> set = new HashSet<InventoryObjectType>();
             foreach (InventoryObjectType type in Enum.GetValues(typeof(InventoryObjectType)))
             {
-                if ((flags & version) == 0)
-                    continue;
                 if ((flags & (int)type) != 0)
                     set.Add(type);
             }

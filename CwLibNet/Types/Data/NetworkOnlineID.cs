@@ -8,9 +8,9 @@ namespace CwLibNet.Types.Data
     public class NetworkOnlineID : ISerializable
     {
         public const int BASE_ALLOCATION_SIZE = 0x20;
-        private byte[] data = new byte[16];
+        private byte[]? data = new byte[16];
         private byte term = 0x00;
-        private byte[] dummy = new byte[3];
+        private byte[]? dummy = new byte[3];
 
         public NetworkOnlineID() { }
 
@@ -24,7 +24,7 @@ namespace CwLibNet.Types.Data
 
         public void Serialize(Serializer serializer) 
         {
-            bool lengthPrefixed = serializer.GetRevision().GetVersion() >= 0x234;
+            bool lengthPrefixed = serializer.GetRevision().GetVersion() < 0x234;
             if (lengthPrefixed) 
             {
                 serializer.I32((byte)data.Length);

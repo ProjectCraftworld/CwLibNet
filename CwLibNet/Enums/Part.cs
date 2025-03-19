@@ -25,21 +25,21 @@ namespace CwLibNet.Enums
             { "PARTICLE_EMITTER", new Part("PARTICLE_EMITTER", 0x39, PartHistory.PARTICLE_EMITTER, null) },
             { "CAMERA_ZONE", new Part("CAMERA_ZONE", 0x3a, PartHistory.CAMERA_ZONE, null) },
             { "LEVEL_SETTINGS", new Part("LEVEL_SETTINGS", 0xA, PartHistory.LEVEL_SETTINGS, typeof(PLevelSettings)) },
-            /* { "SPRITE_LIGHT", new Part("SPRITE_LIGHT", 0xB, PartHistory.SPRITE_LIGHT, typeof(PSpriteLight)) },
+            { "SPRITE_LIGHT", new Part("SPRITE_LIGHT", 0xB, PartHistory.SPRITE_LIGHT, typeof(PSpriteLight)) },
             { "KEYFRAMED_POSITION", new Part("KEYFRAMED_POSITION", 0x3b, PartHistory.KEYFRAMED_POSITION, null) },
             { "CAMERA", new Part("CAMERA", 0x3c, PartHistory.CAMERA, null) },
             { "SCRIPT_NAME", new Part("SCRIPT_NAME", 0xC, PartHistory.SCRIPT_NAME, typeof(PScriptName)) },
             { "CREATURE", new Part("CREATURE", 0xD, PartHistory.CREATURE, typeof(PCreature)) },
-            { "CHECKPOINT", new Part("CHECKPOINT", 0xE, PartHistory.CHECKPOINT, typeof(PCheckpoint)) },
+            { "CHECKPOINT", new Part("CHECKPOINT", 0xE, PartHistory.CHECKPOINT, typeof(PCheckpoint)) }, /*
             { "STICKERS", new Part("STICKERS", 0xF, PartHistory.STICKERS, typeof(PStickers)) },
             { "DECORATIONS", new Part("DECORATIONS", 0x10, PartHistory.DECORATIONS, typeof(PDecorations)) },
             { "SCRIPT", new Part("SCRIPT", 0x11, PartHistory.SCRIPT, typeof(PScript)) },
             { "SHAPE", new Part("SHAPE", 0x12, PartHistory.SHAPE, typeof(PShape)) },
             { "EFFECTOR", new Part("EFFECTOR", 0x13, PartHistory.EFFECTOR, typeof(PEffector)) },
             { "EMITTER", new Part("EMITTER", 0x14, PartHistory.EMITTER, typeof(PEmitter)) },
-            { "REF", new Part("REF", 0x15, PartHistory.REF, typeof(PRef)) },
+            { "REF", new Part("REF", 0x15, PartHistory.REF, typeof(PRef)) }, */
             { "METADATA", new Part("METADATA", 0x16, PartHistory.METADATA, typeof(PMetadata)) },
-            { "COSTUME", new Part("COSTUME", 0x17, PartHistory.COSTUME, typeof(PCostume)) }, */
+/*            { "COSTUME", new Part("COSTUME", 0x17, PartHistory.COSTUME, typeof(PCostume)) }, */
             { "PARTICLE_EMITTER_2", new Part("PARTICLE_EMITTER_2", 0x3d, PartHistory.PARTICLE_EMITTER_2, null) }, /*
             { "CAMERA_TWEAK", new Part("CAMERA_TWEAK", 0x18, PartHistory.CAMERA_TWEAK, typeof(PCameraTweak)) },
             { "SWITCH", new Part("SWITCH", 0x19, PartHistory.SWITCH, typeof(PSwitch)) },

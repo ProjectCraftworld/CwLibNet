@@ -42,4 +42,4 @@ Community contributions are welcome! Please open an issue or submit a pull reque
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License besides from the Squish directory which is a translation of "jsqush" by acmi and it's BSD-3 Clause licensed. More information in the directory itself.

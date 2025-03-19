@@ -4,57 +4,57 @@ namespace CwLibNet.External
     {
         public static readonly Order ARGB = new Order(16, 8, 0, 24);
         public static readonly Order ABGR = new Order(0, 8, 16, 24);
-        public static byte GetHeight(byte[] buffer)
+        public static byte GetHeight(byte[]? buffer)
         {
             return (byte)(buffer[12] & 0xFF | (buffer[13] & 0xFF) << 8 | (buffer[14] & 0xFF) << 16 | (buffer[15] & 0xFF) << 24);
         }
 
-        public static byte GetWidth(byte[] buffer)
+        public static byte GetWidth(byte[]? buffer)
         {
             return (byte)(buffer[16] & 0xFF | (buffer[17] & 0xFF) << 8 | (buffer[18] & 0xFF) << 16 | (buffer[19] & 0xFF) << 24);
         }
 
-        public static byte GetMipmap(byte[] buffer)
+        public static byte GetMipmap(byte[]? buffer)
         {
             return (byte)(buffer[28] & 0xFF | (buffer[29] & 0xFF) << 8 | (buffer[30] & 0xFF) << 16 | (buffer[31] & 0xFF) << 24);
         }
 
-        public static int GetPixelFormatFlags(byte[] buffer)
+        public static uint GetPixelFormatFlags(byte[]? buffer)
         {
-            return buffer[80] & 0xFF | (buffer[81] & 0xFF) << 8 | (buffer[82] & 0xFF) << 16 | (buffer[83] & 0xFF) << 24;
+            return (uint)(buffer[80] & 0xFF | (buffer[81] & 0xFF) << 8 | (buffer[82] & 0xFF) << 16 | (buffer[83] & 0xFF) << 24);
         }
 
-        public static uint GetFourCC(byte[] buffer)
+        public static uint GetFourCC(byte[]? buffer)
         {
             return (uint)((buffer[84] & 0xFF) << 24 | (buffer[85] & 0xFF) << 16 | (buffer[86] & 0xFF) << 8 | buffer[87] & 0xFF);
         }
 
-        public static int GetBitCount(byte[] buffer)
+        public static int GetBitCount(byte[]? buffer)
         {
             return buffer[88] & 0xFF | (buffer[89] & 0xFF) << 8 | (buffer[90] & 0xFF) << 16 | (buffer[91] & 0xFF) << 24;
         }
 
-        public static int GetRedMask(byte[] buffer)
+        public static int GetRedMask(byte[]? buffer)
         {
             return buffer[92] & 0xFF | (buffer[93] & 0xFF) << 8 | (buffer[94] & 0xFF) << 16 | (buffer[95] & 0xFF) << 24;
         }
 
-        public static int GetGreenMask(byte[] buffer)
+        public static int GetGreenMask(byte[]? buffer)
         {
             return buffer[96] & 0xFF | (buffer[97] & 0xFF) << 8 | (buffer[98] & 0xFF) << 16 | (buffer[99] & 0xFF) << 24;
         }
 
-        public static int GetBlueMask(byte[] buffer)
+        public static int GetBlueMask(byte[]? buffer)
         {
             return buffer[100] & 0xFF | (buffer[101] & 0xFF) << 8 | (buffer[102] & 0xFF) << 16 | (buffer[103] & 0xFF) << 24;
         }
 
-        public static int GetAlphaMask(byte[] buffer)
+        public static int GetAlphaMask(byte[]? buffer)
         {
             return buffer[104] & 0xFF | (buffer[105] & 0xFF) << 8 | (buffer[106] & 0xFF) << 16 | (buffer[107] & 0xFF) << 24;
         }
 
-        public static int[] Read(byte[] buffer, Order order, int mipmapLevel)
+        public static int[] Read(byte[]? buffer, Order order, int mipmapLevel)
         {
             int width = GetWidth(buffer);
             int height = GetHeight(buffer);
@@ -164,10 +164,10 @@ namespace CwLibNet.External
             return pixels;
         }
 
-        public static uint GetType(byte[] buffer)
+        public static uint GetType(byte[]? buffer)
         {
             uint type = 0;
-            int flags = GetPixelFormatFlags(buffer);
+            uint flags = GetPixelFormatFlags(buffer);
             if ((flags & 0x4) != 0)
             {
                 type = GetFourCC(buffer);
@@ -242,7 +242,7 @@ namespace CwLibNet.External
             return type;
         }
 
-        private static int[] DecodeDXT1(int width, int height, int offset, byte[] buffer, Order order)
+        private static int[] DecodeDXT1(int width, int height, int offset, byte[]? buffer, Order order)
         {
             int[] pixels = new int[width * height];
             int index = offset;
@@ -280,12 +280,12 @@ namespace CwLibNet.External
             return pixels;
         }
 
-        private static int[] DecodeDXT2(int width, int height, int offset, byte[] buffer, Order order)
+        private static int[] DecodeDXT2(int width, int height, int offset, byte[]? buffer, Order order)
         {
             return DecodeDXT3(width, height, offset, buffer, order);
         }
 
-        private static int[] DecodeDXT3(int width, int height, int offset, byte[] buffer, Order order)
+        private static int[] DecodeDXT3(int width, int height, int offset, byte[]? buffer, Order order)
         {
             int index = offset;
             int w = (width + 3) / 4;
@@ -334,12 +334,12 @@ namespace CwLibNet.External
             return pixels;
         }
 
-        private static int[] DecodeDXT4(int width, int height, int offset, byte[] buffer, Order order)
+        private static int[] DecodeDXT4(int width, int height, int offset, byte[]? buffer, Order order)
         {
             return DecodeDXT5(width, height, offset, buffer, order);
         }
 
-        private static int[] DecodeDXT5(int width, int height, int offset, byte[] buffer, Order order)
+        private static int[] DecodeDXT5(int width, int height, int offset, byte[]? buffer, Order order)
         {
             int index = offset;
             int w = (width + 3) / 4;
@@ -400,7 +400,7 @@ namespace CwLibNet.External
             return pixels;
         }
 
-        private static int[] ReadA1R5G5B5(int width, int height, int offset, byte[] buffer, Order order)
+        private static int[] ReadA1R5G5B5(int width, int height, int offset, byte[]? buffer, Order order)
         {
             int index = offset;
             int[] pixels = new int[width * height];
@@ -418,7 +418,7 @@ namespace CwLibNet.External
             return pixels;
         }
 
-        private static int[] ReadX1R5G5B5(int width, int height, int offset, byte[] buffer, Order order)
+        private static int[] ReadX1R5G5B5(int width, int height, int offset, byte[]? buffer, Order order)
         {
             int index = offset;
             int[] pixels = new int[width * height];
@@ -436,7 +436,7 @@ namespace CwLibNet.External
             return pixels;
         }
 
-        private static int[] ReadA4R4G4B4(int width, int height, int offset, byte[] buffer, Order order)
+        private static int[] ReadA4R4G4B4(int width, int height, int offset, byte[]? buffer, Order order)
         {
             int index = offset;
             int[] pixels = new int[width * height];
@@ -454,7 +454,7 @@ namespace CwLibNet.External
             return pixels;
         }
 
-        private static int[] ReadX4R4G4B4(int width, int height, int offset, byte[] buffer, Order order)
+        private static int[] ReadX4R4G4B4(int width, int height, int offset, byte[]? buffer, Order order)
         {
             int index = offset;
             int[] pixels = new int[width * height];
@@ -472,7 +472,7 @@ namespace CwLibNet.External
             return pixels;
         }
 
-        private static int[] ReadR5G6B5(int width, int height, int offset, byte[] buffer, Order order)
+        private static int[] ReadR5G6B5(int width, int height, int offset, byte[]? buffer, Order order)
         {
             int index = offset;
             int[] pixels = new int[width * height];
@@ -490,7 +490,7 @@ namespace CwLibNet.External
             return pixels;
         }
 
-        private static int[] ReadL8(int width, int height, int offset, byte[] buffer, Order order)
+        private static int[] ReadL8(int width, int height, int offset, byte[]? buffer, Order order)
         {
             int index = offset;
             int[] pixels = new int[width * height];
@@ -504,7 +504,7 @@ namespace CwLibNet.External
             return pixels;
         }
 
-        private static int[] ReadR8G8B8(int width, int height, int offset, byte[] buffer, Order order)
+        private static int[] ReadR8G8B8(int width, int height, int offset, byte[]? buffer, Order order)
         {
             int index = offset;
             int[] pixels = new int[width * height];
@@ -520,7 +520,7 @@ namespace CwLibNet.External
             return pixels;
         }
 
-        private static int[] ReadA8B8G8R8(int width, int height, int offset, byte[] buffer, Order order)
+        private static int[] ReadA8B8G8R8(int width, int height, int offset, byte[]? buffer, Order order)
         {
             int index = offset;
             int[] pixels = new int[width * height];
@@ -536,7 +536,7 @@ namespace CwLibNet.External
             return pixels;
         }
 
-        private static int[] ReadX8B8G8R8(int width, int height, int offset, byte[] buffer, Order order)
+        private static int[] ReadX8B8G8R8(int width, int height, int offset, byte[]? buffer, Order order)
         {
             int index = offset;
             int[] pixels = new int[width * height];
@@ -553,7 +553,7 @@ namespace CwLibNet.External
             return pixels;
         }
 
-        private static int[] ReadA8R8G8B8(int width, int height, int offset, byte[] buffer, Order order)
+        private static int[] ReadA8R8G8B8(int width, int height, int offset, byte[]? buffer, Order order)
         {
             int index = offset;
             int[] pixels = new int[width * height];
@@ -569,7 +569,7 @@ namespace CwLibNet.External
             return pixels;
         }
 
-        private static int[] ReadX8R8G8B8(int width, int height, int offset, byte[] buffer, Order order)
+        private static int[] ReadX8R8G8B8(int width, int height, int offset, byte[]? buffer, Order order)
         {
             int index = offset;
             int[] pixels = new int[width * height];

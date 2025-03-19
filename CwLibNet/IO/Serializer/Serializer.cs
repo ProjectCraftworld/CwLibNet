@@ -75,7 +75,7 @@ namespace CwLibNet.IO.Serializer
         /// <param name="data">Buffer to use in deserializer</param>
         /// <param name="revision">Revision of resource contained by buffer</param>
         /// <param name="compressionFlags">Compression flags to use during deserialization</param>
-        public Serializer(byte[] data, Revision revision, byte compressionFlags)
+        public Serializer(byte[]? data, Revision revision, byte compressionFlags)
         {
             input = new MemoryInputStream(data, compressionFlags);
             output = null;
@@ -101,7 +101,7 @@ namespace CwLibNet.IO.Serializer
         /// </summary>
         /// <param name="value">Bytes to write</param>
         /// <returns>Bytes serialized</returns>
-        public byte[] Bytearray(byte[] value)
+        public byte[]? Bytearray(byte[]? value)
         {
             if (isWriting)
             {
@@ -118,7 +118,7 @@ namespace CwLibNet.IO.Serializer
         /// <param name="value">Bytes to write</param>
         /// <param name="size">Number of bytes to read</param>
         /// <returns>Bytes serialized</returns>
-        public byte[] Bytes(byte[] value, int size)
+        public byte[]? Bytes(byte[]? value, int size)
         {
             if (isWriting)
             {
@@ -1161,7 +1161,7 @@ namespace CwLibNet.IO.Serializer
         /// Shrinks the buffer to current offset and returns the buffer.
         /// </summary>
         /// <returns>The shrinked buffer</returns>
-        public byte[] GetBuffer()
+        public byte[]? GetBuffer()
         {
             if (!isWriting)
                 return null;

@@ -1,38 +1,43 @@
 namespace CwLibNet.Enums
 {
-    public enum SerializationType
+    public class SerializationType
     {
         // UNKNOWN(null)
-        UNKNOWN,
-        // BINARY("b")
-        BINARY,
-        // TEXT("t")
-        TEXT,
-        // ENCRYPTED_BINARY("e")
-        ENCRYPTED_BINARY,
-        // COMPRESSED_TEXTURE(" ")
-        COMPRESSED_TEXTURE,
-        // GTF_SWIZZLED("s")
-        GTF_SWIZZLED,
-        // GXT_SWIZZLED("S")
-        GXT_SWIZZLED 
+        public static SerializationType UNKNOWN = new(null),
+            // BINARY("b")
+            BINARY = new("b"),
+            // TEXT("t")
+            TEXT = new("t"),
+            // ENCRYPTED_BINARY("e")
+            ENCRYPTED_BINARY = new("e"),
+            // COMPRESSED_TEXTURE(" ")
+            COMPRESSED_TEXTURE = new (" "),
+            // GTF_SWIZZLED("s")
+            GTF_SWIZZLED = new ("s"),
+            // GXT_SWIZZLED("S")
+            GXT_SWIZZLED = new ("S");
 
         // --------------------
         // TODO enum body members
-        // private final String value;
-        // SerializationType(String value) {
-        //     this.value = value;
-        // }
-        // public String getValue() {
-        //     return this.value;
-        // }
-        // public static SerializationType fromValue(String value) {
-        //     for (SerializationType type : SerializationType.values()) {
-        //         if (value.equals(type.value))
-        //             return type;
-        //     }
-        //     return SerializationType.UNKNOWN;
-        // }
-        // --------------------
+        private readonly string? value;
+        SerializationType(string? value) {
+            this.value = value;
+        }
+        public string? GetValue() => this.value;
+        public static SerializationType FromValue(String? value)
+        {
+
+            return value switch
+            {
+                null => UNKNOWN,
+                "b" => BINARY,
+                "t" => TEXT,
+                "e" => ENCRYPTED_BINARY,
+                " " => COMPRESSED_TEXTURE,
+                "s" => GTF_SWIZZLED,
+                "S" => GXT_SWIZZLED,
+                _ => UNKNOWN
+            };
+        }
     }
 }

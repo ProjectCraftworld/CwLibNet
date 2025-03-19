@@ -5,12 +5,14 @@ namespace CwLibNet.Structs.Inventory;
 
 public class UserCreatedDetails: ISerializable
 {
-    public String Name = "";
-    public String Description = "";
+    public const int BaseAllocationSize = 0x8;
+    
+    public string? Name = "";
+    public string? Description = "";
 
     public UserCreatedDetails() { }
 
-    public UserCreatedDetails(String name, String description)
+    public UserCreatedDetails(string? name, string? description)
     {
         this.Name = name;
         this.Description = description;
@@ -18,11 +20,20 @@ public class UserCreatedDetails: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        throw new NotImplementedException();
+        Name = serializer.Wstr(Name);
+        Description = serializer.Wstr(Description);
     }
 
+    
     public int GetAllocatedSize()
     {
-        throw new NotImplementedException();
+        int size = BaseAllocationSize;
+        if (Name != null)
+            size += (Name.Length * 2);
+        if (Description != null)
+            size += (Description.Length * 2);
+        return size;
     }
+
+
 }

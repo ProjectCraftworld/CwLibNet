@@ -17,8 +17,8 @@ public class SerializerTests
         MemoryOutputStream outputStream = new MemoryOutputStream(posTest.GetAllocatedSize());
         Serializer serializer = new Serializer(outputStream, new Revision((int)Revisions.Lbp1Max));
         serializer.Struct(posTest);
-        byte[] bytes = serializer.GetBuffer();
-        byte[] originalBytes =
+        byte[]? bytes = serializer.GetBuffer();
+        byte[]? originalBytes =
         [
             0,
             0,
@@ -167,8 +167,8 @@ public class SerializerTests
         MemoryOutputStream outputStream = new MemoryOutputStream(exampleThing.GetAllocatedSize());
         Serializer serializer = new Serializer(outputStream, new Revision((int)Revisions.Lbp1Max));
         serializer.Thing(exampleThing);
-        byte[] bytes = serializer.GetBuffer();
-        byte[] originalBytes =
+        byte[]? bytes = serializer.GetBuffer();
+        byte[]? originalBytes =
         [
             0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 8, 123, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0
         ];
@@ -178,7 +178,7 @@ public class SerializerTests
     [Fact]
     public void DeserializeThing()
     {
-        byte[] originalBytes =
+        byte[]? originalBytes =
         [
             0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 8, 123, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0
         ];
@@ -193,7 +193,7 @@ public class SerializerTests
     public void SerializeThingWithParts()
     {
         Thing exampleThing = new Thing(2171);
-        byte[] originalBytes =
+        byte[]? originalBytes =
         [
             0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 8, 123, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 5,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 63, 128, 0, 0, 64, 0, 0,
@@ -207,7 +207,7 @@ public class SerializerTests
         MemoryOutputStream outputStream = new MemoryOutputStream(exampleThing.GetAllocatedSize());
         Serializer serializer = new Serializer(outputStream, new Revision((int)Revisions.Lbp1Max));
         serializer.Thing(exampleThing);
-        byte[] bytes = serializer.GetBuffer();
+        byte[]? bytes = serializer.GetBuffer();
         Assert.Equal(originalBytes, bytes);
     }
 
@@ -217,7 +217,7 @@ public class SerializerTests
         Thing exampleThing = new Thing(2171);
         exampleThing.SetPart(Part.Parts["POS"],
             new PPos(new Matrix4x4(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)));
-        byte[] originalBytes =
+        byte[]? originalBytes =
         [
             0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 8, 123, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 5,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 63, 128, 0, 0, 64, 0, 0,

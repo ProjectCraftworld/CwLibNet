@@ -3,6 +3,7 @@ using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Resources;
 using CwLibNet.Structs.Inventory;
+using CwLibNet.Structs.Things.Components;
 using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
@@ -27,6 +28,8 @@ public class PMetadata: ISerializable
 
     public ResourceDescriptor? Icon;
     public PhotoMetadata? PhotoMetadata;
+    
+    public Value? Value;
 
     public bool Referencable;
     public bool AllowEmit;
@@ -36,10 +39,10 @@ public class PMetadata: ISerializable
         Revision revision = serializer.GetRevision();
         int version = revision.GetVersion();
 
-        /* bool hasDepreciatedValue = (version < 0x297 && !revision.IsLeerdammer()) || (revision.IsLeerdammer() && !revision.Has(Branch.Leerdammer, Revisions.LdResources));
+        bool hasDepreciatedValue = (version < 0x297 && !revision.IsLeerdammer()) || (revision.IsLeerdammer() && !revision.Has(Branch.Leerdammer, (int)Revisions.LdResources));
 
         if (hasDepreciatedValue)
-            Value = serializer.Struct(Value, Value.)class); */
+            Value = serializer.Struct(Value);
         
         if (revision.Has(Branch.Leerdammer, (int)Revisions.LdLamsKeys) || version > 0x2ba) {
             TitleKey = serializer.U32(TitleKey);
@@ -77,7 +80,7 @@ public class PMetadata: ISerializable
             PrimaryIndex = serializer.I32(PrimaryIndex);
         FluffCost = serializer.I32(FluffCost);
 
-        // if (hasDepreciatedValue) serializer.I32(0); // unknown
+        if (hasDepreciatedValue) serializer.I32(0); // unknown
         
         if (serializer.IsWriting())
             serializer.GetOutput().I32(Type.GetFlags());

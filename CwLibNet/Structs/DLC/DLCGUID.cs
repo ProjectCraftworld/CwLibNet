@@ -1,26 +1,25 @@
-using System;
-using CwLibNet.Types.Data;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
+using CwLibNet.Types.Data;
 
-namespace CwLibNet.Structs.DLC
+namespace CwLibNet.Structs.DLC;
+
+public class DLCGUID: ISerializable
 {
-    public class DLCGUID : ISerializable
+    public const int BaseAllocationSize = 0x10;
+        
+    public GUID? GUID;
+    public int Flags = DLCFileFlags.NONE;
+
+    public void Serialize(Serializer serializer)
     {
-        public static readonly int BASE_ALLOCATION_SIZE = 0x10; // for the GUID
-        public GUID guid;
-        public int flags = DLCFileFlags.NONE;
+        GUID = serializer.Guid(GUID);
+        Flags = serializer.I32(Flags);
+    }
 
-        public virtual void Serialize(Serializer serializer)
-        {
-            guid = (GUID)serializer.Guid(guid);
-            flags = serializer.I32(flags);
-        }
-
-        public virtual int GetAllocatedSize()
-        {
-            return DLCGUID.BASE_ALLOCATION_SIZE;
-        }
+    public int GetAllocatedSize()
+    {
+        return BaseAllocationSize;
     }
 }

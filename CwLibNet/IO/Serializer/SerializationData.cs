@@ -18,7 +18,7 @@ namespace CwLibNet.IO.Serializer
         public readonly StaticMeshInfo? StaticMeshInfo;
 
         public SerializationData(
-        byte[] Buffer,
+        byte[]? Buffer,
         Revision Revision,
         byte CompressionFlags,
         ResourceType Type,
@@ -40,7 +40,7 @@ namespace CwLibNet.IO.Serializer
          *
          * @param Buffer Decompressed texture data
          */
-        public SerializationData(byte[] buffer)
+        public SerializationData(byte[]? buffer)
         {
             this.Buffer = buffer;
             Revision = null;
