@@ -137,10 +137,10 @@ public class RMesh: Resource
      */
     public float[] Mass;
 
-    public ImplicitEllipsoid[] ImplicitEllipsoids = new ImplicitEllipsoid[0];
-    public Matrix4x4[] ClusterImplicitEllipsoids = new Matrix4x4[0];
-    public ImplicitEllipsoid[] InsideImplicitEllipsoids = new ImplicitEllipsoid[0];
-    public ImplicitPlane[] ImplicitPlanes = new ImplicitPlane[0];
+    public ImplicitEllipsoid[] ImplicitEllipsoids = [];
+    public Matrix4x4[] ClusterImplicitEllipsoids = [];
+    public ImplicitEllipsoid[] InsideImplicitEllipsoids = [];
+    public ImplicitPlane[] ImplicitPlanes = [];
 
     /**
      * Settings for how this mesh's softbody physics behave.
@@ -715,8 +715,10 @@ public class RMesh: Resource
             int region = primitive.Region;
             if (!meshes.ContainsKey(region))
             {
-                List<Primitive> primitives = [];
-                primitives.Add(primitive);
+                List<Primitive> primitives =
+                [
+                    primitive
+                ];
                 meshes.Add(region, primitives);
             }
             else meshes[region].Add(primitive);
@@ -1033,9 +1035,10 @@ public class RMesh: Resource
         for (int i = 0; i < count; ++i)
         {
             byte[] buffer = stream.Bytes(0x10);
-            joints[i] = new byte[] {
+            joints[i] =
+            [
                 buffer[3], buffer[7], buffer[0xB], buffer[0xF]
-            };
+            ];
         }
         return joints;
     }
@@ -1081,12 +1084,13 @@ public class RMesh: Resource
         for (int i = 0; i < count; ++i)
         {
             byte[] buffer = stream.Bytes(0x10);
-            float[] rawWeights = {
+            float[] rawWeights =
+            [
                 (float) ((int) buffer[2] & 0xFF),
                 (float) ((int) buffer[1] & 0xFF),
                 (float) ((int) buffer[0] & 0xFF),
                 0
-            };
+            ];
 
             // If this vertex isn't weighted against a single bone,
             // we'll need to calculate the last weight.
