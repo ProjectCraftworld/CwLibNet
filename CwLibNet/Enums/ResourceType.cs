@@ -131,8 +131,10 @@ namespace CwLibNet.Enums
         /// <returns>Resource type</returns>
         public static ResourceType FromType(int value)
         {
-            // TODO
-            return Invalid;
+            return (ResourceType)(typeof(ResourceType).GetFields(BindingFlags.Static | BindingFlags.Public)
+                 .Where(p => p.FieldType == typeof(ResourceType))
+                 .Where(p => ((ResourceType)(p.GetValue(null) ?? Invalid)).Value == value).Select(e => e.GetValue(null))
+                 .FirstOrDefault(Invalid) ?? Invalid);
         }
     }
 }
