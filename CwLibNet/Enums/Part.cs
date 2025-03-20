@@ -30,11 +30,11 @@ namespace CwLibNet.Enums
             { "CAMERA", new Part("CAMERA", 0x3c, PartHistory.CAMERA, null) },
             { "SCRIPT_NAME", new Part("SCRIPT_NAME", 0xC, PartHistory.SCRIPT_NAME, typeof(PScriptName)) },
             { "CREATURE", new Part("CREATURE", 0xD, PartHistory.CREATURE, typeof(PCreature)) },
-            { "CHECKPOINT", new Part("CHECKPOINT", 0xE, PartHistory.CHECKPOINT, typeof(PCheckpoint)) }, /*
+            { "CHECKPOINT", new Part("CHECKPOINT", 0xE, PartHistory.CHECKPOINT, typeof(PCheckpoint)) },
             { "STICKERS", new Part("STICKERS", 0xF, PartHistory.STICKERS, typeof(PStickers)) },
             { "DECORATIONS", new Part("DECORATIONS", 0x10, PartHistory.DECORATIONS, typeof(PDecorations)) },
             { "SCRIPT", new Part("SCRIPT", 0x11, PartHistory.SCRIPT, typeof(PScript)) },
-            { "SHAPE", new Part("SHAPE", 0x12, PartHistory.SHAPE, typeof(PShape)) },
+            { "SHAPE", new Part("SHAPE", 0x12, PartHistory.SHAPE, typeof(PShape)) }, /*
             { "EFFECTOR", new Part("EFFECTOR", 0x13, PartHistory.EFFECTOR, typeof(PEffector)) },
             { "EMITTER", new Part("EMITTER", 0x14, PartHistory.EMITTER, typeof(PEmitter)) },
             { "REF", new Part("REF", 0x15, PartHistory.REF, typeof(PRef)) }, */
@@ -198,10 +198,10 @@ namespace CwLibNet.Enums
         /// <param name="flags">Flags determing what parts can be serialized by this Thing</param>
         /// <param name="serializer">Instance of a serializer stream</param>
         /// <typeparam name="T">Type of part</typeparam>
-        /// <returns>Whether or not the operation succeeded</returns>
+        /// <returns>Whether the operation succeeded</returns>
         public bool Serialize<T>(ISerializable?[] parts, int version, long flags, Serializer serializer) where T : ISerializable
         {
-            /* The Thing doesn't have this part, so it's "successful" */
+            /* The Thing doesn't have this part, so it's "successful". */
             if (!this.HasPart(serializer.GetRevision().Head, flags, version))
                 return true;
 

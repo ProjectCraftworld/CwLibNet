@@ -9,7 +9,7 @@ namespace CwLibNet.Enums
             Invalid = new(null, 0, "unknown/", ""),
             Texture = new("TEX", 1, "textures/", ".tex"),
             GtfTexture = new("GTF", 1, "textures/", ".tex"),
-            Mesh = new("MSH", 2, /*typeof(RMesh),*/ "meshes/", ".mol"),
+            Mesh = new("MSH", 2, typeof(RMesh), "meshes/", ".mol"),
             PixelShader = new(null, 3, "shaders/fragment/", ".fpo"),
             VertexShader = new(null, 4, "shaders/vertex/", ".vpo"),
             Animation = new("ANM", 5, /* typeof(RAnimation), */ "animations/", ".anim"),

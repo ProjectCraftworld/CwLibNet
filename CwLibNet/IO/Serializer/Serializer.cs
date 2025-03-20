@@ -22,8 +22,8 @@ namespace CwLibNet.IO.Serializer
         private readonly MemoryOutputStream? output;
         private readonly Revision revision;
         private readonly byte compressionFlags;
-        private readonly Dictionary<int, object> referenceIDs = new();
-        private readonly Dictionary<object, int?> referenceObjects = new();
+        private readonly Dictionary<int, object?> referenceIDs = new();
+        private readonly Dictionary<object?, int?> referenceObjects = new();
         private readonly HashSet<ResourceDescriptor?> dependencies = [];
         private int nextReference = 1;
         /// <summary>
@@ -1019,7 +1019,7 @@ namespace CwLibNet.IO.Serializer
         /// </summary>
         /// <param name="value">Structure to serialize</param>
         /// <returns>(De)serialized structure</returns>
-        public T Struct<T>(T? value) where T: ISerializable?
+        public T Struct<T>(T? value)
         {
             if (!isWriting || value == null)
             {
@@ -1232,7 +1232,7 @@ namespace CwLibNet.IO.Serializer
             return (T)referenceIDs[index];
         }
 
-        public virtual void SetPointer(int index, object value)
+        public virtual void SetPointer(int index, object? value)
         {
             referenceIDs.Add(index, value);
             referenceObjects.Add(value, index);
@@ -1246,7 +1246,7 @@ namespace CwLibNet.IO.Serializer
         public virtual Thing[]? GetThings()
         {
             List<Thing> things = [];
-            foreach (object reference in referenceObjects.Keys)
+            foreach (object? reference in referenceObjects.Keys)
             {
                 if (reference is Thing thing)
                     things.Add(thing);

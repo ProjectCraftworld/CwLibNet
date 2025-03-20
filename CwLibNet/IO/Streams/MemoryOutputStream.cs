@@ -631,7 +631,7 @@ namespace CwLibNet.IO.Streams
          * @param value String to write
          * @return This output stream
          */
-        public MemoryOutputStream Str(string value)
+        public MemoryOutputStream Str(string? value)
         {
             if (value == null) return I32(0);
             byte[]? _string = Encoding.ASCII.GetBytes(value);
