@@ -12,7 +12,7 @@ namespace CwLibNet.Enums
             Mesh = new("MSH", 2, typeof(RMesh), "meshes/", ".mol"),
             PixelShader = new(null, 3, "shaders/fragment/", ".fpo"),
             VertexShader = new(null, 4, "shaders/vertex/", ".vpo"),
-            Animation = new("ANM", 5, /* typeof(RAnimation), */ "animations/", ".anim"),
+            Animation = new("ANM", 5, typeof(RAnimation), "animations/", ".anim"),
             GuidSubstitution = new("GSB", 6, "guid_subst/", ".gsub"),
             GfxMaterial = new("GMT", 7 /*, typeof(RGfxMaterial) */, "gfx_materials/", ".gmat"),
             SpuElf = new(null, 8, "spu/", ".sbu"),

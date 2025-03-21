@@ -27,4 +27,9 @@ public static class Vector
             _ => throw new IndexOutOfRangeException()
         };
     }
+
+    public static Vector4 Lerp(this Vector4 a, Vector4 b, float amount)
+    {
+        return Vector4.Lerp(a, b, amount);
+    }
 }
