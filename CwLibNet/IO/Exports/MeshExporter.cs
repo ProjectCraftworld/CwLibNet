@@ -1,5 +1,3 @@
-using System.Drawing;
-using System.Net.Mime;
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.Extensions;
@@ -9,7 +7,6 @@ using CwLibNet.Singleton;
 using CwLibNet.Structs.Animation;
 using CwLibNet.Structs.Gmat;
 using CwLibNet.Structs.Mesh;
-using CwLibNet.Structs.StaticMesh;
 using CwLibNet.Types;
 using CwLibNet.Types.Data;
 using CwLibNet.Util;
@@ -34,7 +31,7 @@ public class MeshExporter
         Dictionary<String, int> bufferViews = new();
         Dictionary<String, int> materials = new();
         Dictionary<String, int> textures = new();
-        int accessorCount = 0;
+        int accessorCount;
 
         public static Glb FromAnimation(RAnimation animation, RMesh mesh)
         {
@@ -44,7 +41,7 @@ public class MeshExporter
             {
                 glb = new Glb();
                 byte[]? dataBuffer = glb.GetBufferFromAnimation(animation);
-                VGltf.Types.Buffer buffer = new()
+                Buffer buffer = new()
                 {
                     ByteLength = dataBuffer.Length
                 };
@@ -490,7 +487,7 @@ public class MeshExporter
                                 else
                                     glPrimitive.Material = (glb.CreateMaterial(materialName));
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
                                 glPrimitive.Material = (glb.CreateMaterial(materialName));
                             }
