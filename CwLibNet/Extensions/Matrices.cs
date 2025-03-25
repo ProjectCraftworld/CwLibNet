@@ -46,6 +46,18 @@ public static class Matrices
         
         return q;
     }
+
+    public static float[] Linearize(this Matrix4x4 amatrix)
+    {
+        Matrix4x4 matrix = Matrix4x4.Transpose(amatrix);
+        return
+        [
+            matrix.M11, matrix.M12, matrix.M13, matrix.M14,
+            matrix.M21, matrix.M22, matrix.M23, matrix.M24,
+            matrix.M31, matrix.M32, matrix.M33, matrix.M34,
+            matrix.M41, matrix.M42, matrix.M43, matrix.M44
+        ];
+    }
     
     public static Quaternion RotateLocalX(this Quaternion q, float angle)
     {

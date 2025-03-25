@@ -6,4 +6,14 @@ public static class Float
         // Angle in 10th of a degree
         return (float)((angleIn10thofaDegree * Math.PI)/1800); 
     }
+
+    public static float IntBitsToFloat(this int value)
+    {
+        return BitConverter.ToSingle(BitConverter.GetBytes(value), 0);
+    }
+
+    public static int FloatToIntBits(this float value)
+    {
+        return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
+    }
 }

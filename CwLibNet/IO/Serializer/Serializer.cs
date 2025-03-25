@@ -224,6 +224,22 @@ namespace CwLibNet.IO.Serializer
 
             return input.I16();
         }
+        
+        /// <summary>
+        /// (De)serializes a ushort to/from the stream.
+        /// </summary>
+        /// <param name="value">Ushort to write</param>
+        /// <returns>Ushort (de)serialized</returns>
+        public ushort I16(ushort value)
+        {
+            if (isWriting)
+            {
+                output.I16(value);
+                return value;
+            }
+
+            return (ushort)input.I16();
+        }
 
         /// <summary>
         /// (De)serializes an integer to/from the stream as a short.

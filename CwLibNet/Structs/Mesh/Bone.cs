@@ -2,6 +2,7 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.Extensions;
 using CwLibNet.IO.Serializer;
+using CwLibNet.Resources;
 using CwLibNet.Structs.Animation;
 
 namespace CwLibNet.Structs.Mesh;
@@ -40,8 +41,7 @@ public class Bone: AnimBone
      */
     public Bone(String name)
     {
-        throw new NotImplementedException("Missing RAnimation");
-//        this.animHash = RAnimation.calculateAnimationHash(name);
+        this.animHash = RAnimation.CalculateAnimationHash(name);
         if (name is { Length: >= MAX_BONE_NAME_LENGTH }) // null terminated
             name = name[..MAX_BONE_NAME_LENGTH];
         this.name = name;
