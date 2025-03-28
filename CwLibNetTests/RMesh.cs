@@ -331,5 +331,7 @@ public class RMeshTests
     {
         RMesh mesh = new RMesh();
         mesh.Serialize(new Serializer(new MemoryInputStream(_data), new Revision(569)));
+        byte[] built = mesh.Build(new Revision(569), 0).Buffer;
+        Assert.Equal(_data, built);
     }
 }

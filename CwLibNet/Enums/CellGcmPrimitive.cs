@@ -5,9 +5,9 @@ namespace CwLibNet.Enums
     public enum CellGcmPrimitive
     {
         // POINTS(1)
-        POINTS,
+        POINTS = 1,
         // LINES(2)
-        LINES,
+        LINES = 2,
         // LINE_LOOP(3)
         LINE_LOOP,
         // LINE_STRIP(4)

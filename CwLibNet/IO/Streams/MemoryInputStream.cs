@@ -607,9 +607,9 @@ namespace CwLibNet.IO.Streams
         public T? Enum8<T>() where T : Enum
         {
             byte number = this.I8();
-            foreach (T constant in Enum.GetValues(typeof(T)))
-                if (constant.Equals(number))
-                    return constant;
+            foreach (var constant in Enum.GetValues(typeof(T)))
+                if ((int)constant == number)
+                    return (T)constant;
             return default;
         }
 
