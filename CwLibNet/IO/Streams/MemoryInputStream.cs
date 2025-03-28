@@ -630,16 +630,16 @@ namespace CwLibNet.IO.Streams
          *
          * @param <T>         Type of enum
          * @param enumeration Enum class
-         * @param signed      Whether or not to read a signed value
+         * @param signed      Whether to read a signed value
          * @return Resolved enum constant
          */
         public T Enum32<T>(bool signed)
         {
             int number = (signed) ? this.S32() : this.I32();
-            T[] constants = (T[])Enum.GetValues(typeof(T));
-            foreach (T constant in constants)
-                if (constant.Equals(number))
-                    return constant;
+            var constants = Enum.GetValues(typeof(T));
+            foreach (var constant in constants)
+                if ((int)constant == (number))
+                    return (T)constant;
             return default;
         }
 
