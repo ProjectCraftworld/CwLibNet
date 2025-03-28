@@ -29,11 +29,11 @@ public class FileArchive: Fart
             int entryCount;
             byte[] entryCountBuffer = new byte[4];
             RandomAccess.Read(handle, entryCountBuffer, RandomAccess.GetLength(handle) - 0x8);
-            entryCount = BitConverter.ToInt32(entryCountBuffer, 0);
+            entryCount = Bytes.ToIntegerBE(entryCountBuffer);
             this.Entries = new Fat[entryCount];
             byte[] magicBuffer = new byte[4];
-            RandomAccess.Read(handle, magicBuffer, RandomAccess.GetLength(handle) - 0x8);
-            if (BitConverter.ToInt32(magicBuffer, 0) != 0x46415243 /* FARC */)
+            RandomAccess.Read(handle, magicBuffer, RandomAccess.GetLength(handle) - 0x4);
+            if (!magicBuffer.SequenceEqual("FARC"u8.ToArray())  /* FARC */)
                 throw new SerializationException("Invalid FARC, magic does not match!");
             this.FatOffset = RandomAccess.GetLength(handle) - 0x8 - (entryCount * 0x1cL);
 
@@ -83,7 +83,7 @@ public class FileArchive: Fart
 
         byte[] table = Fart.GenerateFat(fat);
         
-        SafeFileHandle handle = System.IO.File.OpenHandle(File);
+        SafeFileHandle handle = System.IO.File.OpenHandle(File, access: FileAccess.Write);
 
         long fatOffset = this.FatOffset;
 

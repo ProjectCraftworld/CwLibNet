@@ -1,4 +1,5 @@
 using CwLibNet.Types.Data;
+using CwLibNet.Types.Databases;
 
 namespace CwLibNet.Singleton;
 
@@ -10,11 +11,6 @@ public static class ResourceLogLevel
     public const int WARNING = 3;
     public const int DEBUG = 4;
     public const int SERIALIZER_TRACE = 5;
-}
-
-public struct FileEntry
-{
-    public string Path;
 }
 
 public class ResourceSystem

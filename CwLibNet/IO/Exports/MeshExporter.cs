@@ -9,6 +9,7 @@ using CwLibNet.Structs.Gmat;
 using CwLibNet.Structs.Mesh;
 using CwLibNet.Types;
 using CwLibNet.Types.Data;
+using CwLibNet.Types.Databases;
 using CwLibNet.Util;
 using SkiaSharp;
 using VGltf;
@@ -476,7 +477,7 @@ public class MeshExporter
                         if (entry != null)
                         {
                             materialName =
-                                Path.GetFileName(entry.Value.Path).Replace(
+                                Path.GetFileName(entry.Path).Replace(
                                     "[.][^.]+$", "");
                             try
                             {
@@ -742,7 +743,7 @@ public class MeshExporter
                     byte[] texture = this.ConvertTexture(gmat, textureIndex);
                     if (texture == null) continue;
                     int source =
-                        AddTexture(Path.GetFileNameWithoutExtension(entry.Value.Path), texture);
+                        AddTexture(Path.GetFileNameWithoutExtension(entry.Path), texture);
                     SKBitmap image = SKBitmap.FromImage(SKImage.FromEncodedData(texture));
                     KhrTextureTransform transforms = new KhrTextureTransform();
                     transforms.Offset = textureOffset;
@@ -761,7 +762,7 @@ public class MeshExporter
                     switch (wire.PortTo)
                     {
                         case 0:
-                            if (entry.Value.Path.Contains("dirt"))
+                            if (entry.Path.Contains("dirt"))
                             {
                                 Material.OcclusionTextureInfoType occInfo =
                                     new Material.OcclusionTextureInfoType();
@@ -823,7 +824,7 @@ public class MeshExporter
                                 byte[] bytes = image.Encode(SKEncodedImageFormat.Png, 100).ToArray();
 
                                 source =
-                                    AddTexture(Path.GetFileNameWithoutExtension(entry.Value.Path) + "_converted", bytes);
+                                    AddTexture(Path.GetFileNameWithoutExtension(entry.Path) + "_converted", bytes);
                             }
 
                             Material.NormalTextureInfoType normal =
