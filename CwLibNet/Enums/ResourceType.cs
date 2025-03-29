@@ -28,7 +28,7 @@ namespace CwLibNet.Enums
             Material = new("MAT", 16, /* typeof(RMaterial), */"physics_materials/", ".mat"),
             DownloadableContent = new("DLC", 17, typeof(RDLC), "dlc/", ".dlc"),
             EditorSettings = new(null, 18, "editor_settings/", ".edset"),
-            Joint = new("JNT", 19, /* typeof(RJoint), */ "joints/", ".joint"),
+            Joint = new("JNT", 19, typeof(RJoint), "joints/", ".joint"),
             GameConstants = new("CON", 20, "constants/", ".con"),
             PoppetSettings = new("POP", 21, "poppet_settings/", ".pop"),
             CachedLevelData = new("CLD", 22, "cached/levels/", ".cld"),

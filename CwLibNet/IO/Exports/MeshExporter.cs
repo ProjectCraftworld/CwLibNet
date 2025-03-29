@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.Extensions;
@@ -355,6 +356,7 @@ public class MeshExporter
             {
                 ByteLength = (dataBuffer.Length)
             };
+            glb.gltf.Buffers ??= [];
             glb.gltf.Buffers.Add(buffer);
             glb.buffer = dataBuffer;
 
@@ -376,7 +378,7 @@ public class MeshExporter
                 {
                     Primitive primitive = subMeshes[m][i];
                     Mesh.PrimitiveType glPrimitive = new Mesh.PrimitiveType();
-
+                    glPrimitive.Attributes ??= [];
                     glPrimitive.Attributes.Add("POSITION",
                         glb.CreateAccessor(
                             "VERTICES",
@@ -501,34 +503,42 @@ public class MeshExporter
                     }
 
                     glPrimitive.Mode = Mesh.PrimitiveType.ModeEnum.TRIANGLES;
-
+                    glMesh.Primitives ??= [];
                     glMesh.Primitives.Add(glPrimitive);
                 }
 
+                glb.gltf.Meshes ??= [];
                 glb.gltf.Meshes.Add(glMesh);
             }
 
-            Node root = new Node();
-            root.Name = ("Armature");
+            Node root = new Node
+            {
+                Name = ("Armature")
+            };
 
             glb.CreateSkeleton(mesh);
             Skin skin = new Skin();
             foreach (Bone bone in mesh.Bones)
             {
                 int index = glb.GetNodeIndex(bone.getName());
+                root.Children ??= [];
+                skin.Joints ??= [];
                 skin.Joints = [..skin.Joints, (index)];
                 if (bone.parent == -1)
                     root.Children = [..root.Children, (index)];
             }
             skin.InverseBindMatrices = (glb.CreateAccessor("MATRIX", 5126, "MAT4", 0,
                 mesh.Bones.Length));
+            glb.gltf.Skins ??= [];
             glb.gltf.Skins.Add(skin);
 
             for (int i = 0; i < subMeshes.Length; ++i)
             {
-                Node child = new Node();
-                child.Mesh = i;
-                child.Skin = (0);
+                Node child = new Node
+                {
+                    Mesh = i,
+                    Skin = (0)
+                };
                 glb.gltf.Nodes.Add(child);
                 root.Children = [..root.Children, (glb.gltf.Nodes.Count - 1)];
             }
@@ -537,9 +547,13 @@ public class MeshExporter
 
             glb.gltf.Scene = (0);
 
-            Scene scene = new Scene();
-            scene.Name = ("Scene");
+            Scene scene = new Scene
+            {
+                Name = ("Scene")
+            };
+            scene.Nodes ??= [];
             scene.Nodes = [..scene.Nodes, (glb.gltf.Nodes.Count - 1)];
+            glb.gltf.Scenes ??= [];
             glb.gltf.Scenes.Add(scene);
 
             return glb;
@@ -596,8 +610,10 @@ public class MeshExporter
 
         private int CreateNode(String name, Matrix4x4 transform)
         {
-            Node node = new Node();
-            node.Name = (name);
+            Node node = new Node
+            {
+                Name = (name)
+            };
 
             Vector3 translation = transform.GetTranslation();
             node.Translation = ( [translation.X, translation.Y, translation.Z]);
@@ -608,7 +624,7 @@ public class MeshExporter
 
             Vector3 scale = transform.GetScale();
             node.Scale = ( [scale.X, scale.Y, scale.Z]);
-
+            gltf.Nodes ??= [];
             this.gltf.Nodes.Add(node);
             return this.gltf.Nodes.Count - 1;
         }
@@ -934,9 +950,10 @@ public class MeshExporter
             accessor.BufferView = (GetBufferView(bufferView));
             accessor.ByteOffset = (offset);
             accessor.ComponentType = (Accessor.ComponentTypeEnum)(componentType);
-            accessor.Type = (Accessor.TypeEnum)Enum.Parse(typeof(Accessor.TypeEnum), type);
+            accessor.Type = (Accessor.TypeEnum)Enum.Parse(typeof(Accessor.TypeEnum), type.FirstCase());
             accessor.Count = (count);
             this.accessorCount++;
+            this.gltf.Accessors ??= [];
             this.gltf.Accessors.Add(accessor);
             return this.accessorCount - 1;
         }
@@ -951,6 +968,7 @@ public class MeshExporter
                 ByteOffset = offset,
                 ByteLength = length
             };
+            this.gltf.BufferViews ??= [];
             this.gltf.BufferViews.Add(view);
             int index = this.bufferViews.Count;
             this.bufferViews.Add(name, index);
@@ -1260,8 +1278,12 @@ public class MeshExporter
 
         public void Export(String path)
         {
+            CultureInfo en = new CultureInfo("en-US");
+            CultureInfo old = Thread.CurrentThread.CurrentCulture;
+            Thread.CurrentThread.CurrentCulture = en;
             using FileStream stream = new FileStream(path, FileMode.Create);
             GltfWriter.Write(stream, gltf, new JsonSchemaRegistry());
+            Thread.CurrentThread.CurrentCulture = old;
         }
     }
 }
