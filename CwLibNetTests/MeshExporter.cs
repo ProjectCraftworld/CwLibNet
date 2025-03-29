@@ -1,4 +1,3 @@
-using CwLibNet.IO.Exports;
 using CwLibNet.IO.Serializer;
 using CwLibNet.IO.Streams;
 using CwLibNet.Resources;
@@ -329,9 +328,10 @@ public class MeshExporterTests
     [Fact]
     public void CreateGLB()
     {
-        RMesh rmesh = new RMesh();
-        rmesh.Serialize(new Serializer(new MemoryInputStream(mesh), new Revision(569)));
-        MeshExporter.Glb glb = MeshExporter.Glb.FromMesh(rmesh);
-        glb.Export("/Users/manoplay/test.glb");
+        throw new NotImplementedException("Not implemented");
+        // RMesh rmesh = new RMesh();
+        // rmesh.Serialize(new Serializer(new MemoryInputStream(mesh), new Revision(569)));
+        // MeshExporter.Glb glb = MeshExporter.Glb.FromMesh(rmesh);
+        // glb.Export("/Users/manoplay/test.glb");
     }
 }

@@ -14,10 +14,10 @@ public class FileArchive: Fart
 
         try
         {
-            SafeFileHandle handle = System.IO.File.OpenHandle(File);
-            if (RandomAccess.GetLength(handle) < 0x8)
+            FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read);
+            if (fs.Length < 0x8)
             {
-                handle.Close();
+                fs.Close();
                 throw new SerializationException("Invalid FARC, size is less than minimum" +
                                                  " of 8 " +
                                                  "bytes!");
@@ -28,19 +28,21 @@ public class FileArchive: Fart
 
             int entryCount;
             byte[] entryCountBuffer = new byte[4];
-            RandomAccess.Read(handle, entryCountBuffer, RandomAccess.GetLength(handle) - 0x8);
+            fs.Seek(fs.Length, SeekOrigin.Begin);
+            fs.Read(entryCountBuffer, 0, 4);
             entryCount = Bytes.ToIntegerBE(entryCountBuffer);
             this.Entries = new Fat[entryCount];
             byte[] magicBuffer = new byte[4];
-            RandomAccess.Read(handle, magicBuffer, RandomAccess.GetLength(handle) - 0x4);
+            fs.Seek(fs.Length - 0x4, SeekOrigin.Begin);
+            fs.Read(magicBuffer, 0, 0x4);
             if (!magicBuffer.SequenceEqual("FARC"u8.ToArray())  /* FARC */)
                 throw new SerializationException("Invalid FARC, magic does not match!");
-            this.FatOffset = RandomAccess.GetLength(handle) - 0x8 - (entryCount * 0x1cL);
+            this.FatOffset = fs.Length - 0x8 - (entryCount * 0x1cL);
 
             fatTable = new byte[entryCount * 0x1c];
 
-//            archive.seek(this.FatOffset);
-            RandomAccess.Read(handle, fatTable, this.FatOffset);
+            fs.Seek(this.FatOffset, SeekOrigin.Begin);
+            fs.Read(fatTable, 0,fatTable.Length);
         }
         catch (IOException ex)
         {
@@ -82,28 +84,31 @@ public class FileArchive: Fart
         }
 
         byte[] table = Fart.GenerateFat(fat);
-        
-        SafeFileHandle handle = System.IO.File.OpenHandle(File, access: FileAccess.Write);
+
+        FileStream stream = new FileStream(File, FileMode.Create, FileAccess.Write);
 
         long fatOffset = this.FatOffset;
 
+        stream.Seek(offset, SeekOrigin.Begin);
         foreach (byte[] buffer in buffers)
         {
-            RandomAccess.Write(handle, buffer, fatOffset);
+            stream.Write(buffer, 0, buffer.Length);
             fatOffset += buffer.Length;
+//            stream.Seek(offset, SeekOrigin.Begin);
         }
 
-        RandomAccess.Write(handle, table, fatOffset);
+        stream.Write(table, 0, table.Length);
         fatOffset += table.Length;
 
         // Footer
-        RandomAccess.Write(handle, Bytes.ToBytesBE(fat.Length), fatOffset);
+        byte[] data = Bytes.ToBytesBE(fat.Length);
+        stream.Write(data, 0, data.Length);
         fatOffset += sizeof(int);
-        RandomAccess.Write(handle, "FARC"u8, fatOffset); // FARC
+        stream.Write("FARC"u8.ToArray(), 0, 4); // FARC
 
         // archive.setLength(archive.getFilePointer());
 
-        // Update state of the archive in memory.
+        // Update the state of the archive in memory.
         this.Entries = fat;
         this.Queue.Clear();
         this.Lookup.Clear();
@@ -111,7 +116,7 @@ public class FileArchive: Fart
             this.Lookup.Add(row.getSHA1(), row);
         this.FatOffset = fatOffset;
         this.LastModified = new DateTimeOffset(System.IO.File.GetLastAccessTime(File)).ToUnixTimeSeconds();
-
+        stream.Close();
         return true;
     }
 }

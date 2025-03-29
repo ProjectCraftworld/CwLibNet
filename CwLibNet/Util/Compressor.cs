@@ -5,43 +5,41 @@ using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.IO.Streams;
 using CwLibNet.EX;
+using ZLibDotNet;
+using static ZLibDotNet.ZLib;
+
 namespace CwLibNet.Util
 {
     public static class Compressor
     {
         public static byte[]? DeflateData(byte[] data)
         {
-            using (MemoryStream outputStream = new MemoryStream())
+            Span<byte> compressed = new byte[data.Length];
+            ZLib zLib = new ZLib();
+            ZStream zStream = new ()
             {
-                using (ZLibStream deflateStream = new ZLibStream(outputStream, CompressionLevel.Optimal))
-                {
-                    deflateStream.Write(data, 0, data.Length);
-                }
-                return outputStream.ToArray();
-            }
+                Input = data,
+                Output = compressed
+            };
+            zLib.DeflateInit(ref zStream, Z_NO_COMPRESSION);
+            zLib.Deflate(ref zStream, Z_FULL_FLUSH);
+            zLib.DeflateEnd(ref zStream);
+            return compressed.ToArray();
         }
 
         public static byte[]? InflateData(byte[]? data, int size)
         {
-            try
+            ZLib zLib = new ZLib();
+            Span<byte> uncompressed = new byte[size];
+            ZStream zStream = new ()
             {
-                using (MemoryStream inputStream = new MemoryStream(data))
-                using (ZLibStream deflateStream = new ZLibStream(inputStream, CompressionMode.Decompress))
-                using (MemoryStream outputStream = new MemoryStream(size))
-                {
-                    byte[] buffer = new byte[1024];
-                    int bytesRead;
-                    while ((bytesRead = deflateStream.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        outputStream.Write(buffer, 0, bytesRead);
-                    }
-                    return outputStream.ToArray();
-                }
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+                Input = data,
+                Output = uncompressed
+            };
+            zLib.InflateInit(ref zStream, Z_NO_COMPRESSION);
+            zLib.Inflate(ref zStream, Z_FULL_FLUSH);
+            zLib.InflateEnd(ref zStream);
+            return uncompressed.ToArray();
         }
 
         public static byte[]? DecompressData(MemoryInputStream stream, int endOffset)

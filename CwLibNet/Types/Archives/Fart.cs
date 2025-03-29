@@ -85,8 +85,10 @@ public abstract class Fart: IEnumerable<Fat>
             throw new ArgumentException("This entry does not belong to this archive!");
         try
         {
+            using var fileStream = new FileStream(this.File, FileMode.Open, FileAccess.Read);
             byte[]? buffer = new byte[fat.getSize()];
-            RandomAccess.Read(System.IO.File.OpenHandle(File), buffer, fat.getOffset());
+            fileStream.Seek(fat.getOffset(), SeekOrigin.Begin);
+            fileStream.Read(buffer, 0, buffer.Length);
             return buffer;
         }
         catch (IOException ex) { return null; }

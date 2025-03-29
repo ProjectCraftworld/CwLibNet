@@ -121,7 +121,7 @@ namespace CwLibNet.Enums
             return (ResourceType)(typeof(ResourceType).GetFields(BindingFlags.Static | BindingFlags.Public)
                 .Where(p => p.FieldType == typeof(ResourceType))
                 .Where(p => ((ResourceType)(p.GetValue(null) ?? Invalid)).Header == value).Select(e => e.GetValue(null))
-                .FirstOrDefault(Invalid) ?? Invalid);
+                .FirstOrDefault() ?? Invalid);
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace CwLibNet.Enums
             return (ResourceType)(typeof(ResourceType).GetFields(BindingFlags.Static | BindingFlags.Public)
                  .Where(p => p.FieldType == typeof(ResourceType))
                  .Where(p => ((ResourceType)(p.GetValue(null) ?? Invalid)).Value == value).Select(e => e.GetValue(null))
-                 .FirstOrDefault(Invalid) ?? Invalid);
+                 .FirstOrDefault() ?? Invalid);
         }
     }
 }

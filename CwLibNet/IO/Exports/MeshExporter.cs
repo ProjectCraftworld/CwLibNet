@@ -1,3 +1,5 @@
+#if false
+
 using System.Globalization;
 using System.Numerics;
 using CwLibNet.Enums;
@@ -1287,3 +1289,5 @@ public class MeshExporter
         }
     }
 }
+
+#endif
