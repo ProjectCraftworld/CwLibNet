@@ -61,8 +61,8 @@ namespace CwLibNet.Structs.Texture
                 _ => throw new ArgumentException("Invalid format!")
             };
             mipmap = DDSReader.GetMipmap(ddsData);
-            width = DDSReader.GetWidth(ddsData);
-            height = DDSReader.GetHeight(ddsData);
+            width = (short)DDSReader.GetWidth(ddsData);
+            height = (short)DDSReader.GetHeight(ddsData);
             depth = 1;
             cubemap = 0;
             remap = 0xaae4;

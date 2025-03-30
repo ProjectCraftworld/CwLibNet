@@ -5,8 +5,6 @@ using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.IO.Streams;
 using CwLibNet.EX;
-using ZLibDotNet;
-using static ZLibDotNet.ZLib;
 
 namespace CwLibNet.Util
 {
@@ -14,32 +12,18 @@ namespace CwLibNet.Util
     {
         public static byte[]? DeflateData(byte[] data)
         {
-            Span<byte> compressed = new byte[data.Length];
-            ZLib zLib = new ZLib();
-            ZStream zStream = new ()
-            {
-                Input = data,
-                Output = compressed
-            };
-            zLib.DeflateInit(ref zStream, Z_NO_COMPRESSION);
-            zLib.Deflate(ref zStream, Z_FULL_FLUSH);
-            zLib.DeflateEnd(ref zStream);
-            return compressed.ToArray();
+            Ionic.Zlib.ZlibStream deflater = new(new MemoryStream(data), Ionic.Zlib.CompressionMode.Compress);
+            MemoryStream stream = new();
+            deflater.CopyTo(stream);
+            return stream.ToArray();
         }
 
         public static byte[]? InflateData(byte[]? data, int size)
         {
-            ZLib zLib = new ZLib();
-            Span<byte> uncompressed = new byte[size];
-            ZStream zStream = new ()
-            {
-                Input = data,
-                Output = uncompressed
-            };
-            zLib.InflateInit(ref zStream, Z_NO_COMPRESSION);
-            zLib.Inflate(ref zStream, Z_FULL_FLUSH);
-            zLib.InflateEnd(ref zStream);
-            return uncompressed.ToArray();
+            Ionic.Zlib.ZlibStream inflater = new(new MemoryStream(data), Ionic.Zlib.CompressionMode.Decompress);
+            MemoryStream stream = new();
+            inflater.CopyTo(stream);
+            return stream.ToArray();
         }
 
         public static byte[]? DecompressData(MemoryInputStream stream, int endOffset)
