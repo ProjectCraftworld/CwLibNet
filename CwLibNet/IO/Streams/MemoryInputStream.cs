@@ -86,8 +86,8 @@ namespace CwLibNet.IO.Streams
         public byte[]? Bytes(int size)
         {
             this.offset += size;
-            var secondBuffer = buffer.Skip(offset - size).ToArray();
-            Array.Resize(ref secondBuffer, size);
+            var secondBuffer = buffer[(offset - size)..(offset)]; // buffer.Skip(offset - size).ToArray();
+//            Array.Resize(ref secondBuffer, size);
 //             Array.Copy(this.buffer, 0, this.buffer, this.offset - size, this.offset);
             return secondBuffer;
         }

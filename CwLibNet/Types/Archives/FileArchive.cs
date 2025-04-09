@@ -28,7 +28,7 @@ public class FileArchive: Fart
 
             int entryCount;
             byte[] entryCountBuffer = new byte[4];
-            fs.Seek(fs.Length, SeekOrigin.Begin);
+            fs.Seek(fs.Length - 8, SeekOrigin.Begin);
             fs.Read(entryCountBuffer, 0, 4);
             entryCount = Bytes.ToIntegerBE(entryCountBuffer);
             this.Entries = new Fat[entryCount];

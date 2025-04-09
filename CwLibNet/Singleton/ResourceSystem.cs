@@ -14,10 +14,30 @@ public static class ResourceLogLevel
     public const int SERIALIZER_TRACE = 5;
 }
 
-public class ResourceSystem
+public static class ResourceSystem
 {
     private static List<FileDb> fileDBs = [];
     private static List<FileArchive> fileArchives = [];
+
+    public static bool IsInitialized => fileDBs.Count > 0 && fileArchives.Count > 0;
+
+    public static void LoadGameRoot(string path)
+    {
+        fileDBs = new List<FileDb>();
+        fileArchives = new List<FileArchive>();
+        var dbFiles = Directory.GetFiles(path, "*.map", SearchOption.AllDirectories);
+        foreach (var dbFile in dbFiles)
+        {
+            var db = new FileDb(dbFile);
+            fileDBs.Add(db);
+        }
+        var archiveFiles = Directory.GetFiles(path, "*.farc", SearchOption.AllDirectories);
+        foreach (var archiveFile in archiveFiles)
+        {
+            var archive = new FileArchive(archiveFile);
+            fileArchives.Add(archive);
+        }
+    }
     
     public static FileEntry? Get(ResourceDescriptor resource)
     {
