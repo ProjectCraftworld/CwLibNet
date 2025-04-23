@@ -4,14 +4,14 @@ namespace CwLibNet.External
     {
         public static readonly Order ARGB = new Order(16, 8, 0, 24);
         public static readonly Order ABGR = new Order(0, 8, 16, 24);
-        public static byte GetHeight(byte[]? buffer)
+        public static int GetHeight(byte[]? buffer)
         {
-            return (byte)(buffer[12] & 0xFF | (buffer[13] & 0xFF) << 8 | (buffer[14] & 0xFF) << 16 | (buffer[15] & 0xFF) << 24);
+            return (buffer[12] & 0xFF | (buffer[13] & 0xFF) << 8 | (buffer[14] & 0xFF) << 16 | (buffer[15] & 0xFF) << 24);
         }
 
-        public static byte GetWidth(byte[]? buffer)
+        public static int GetWidth(byte[]? buffer)
         {
-            return (byte)(buffer[16] & 0xFF | (buffer[17] & 0xFF) << 8 | (buffer[18] & 0xFF) << 16 | (buffer[19] & 0xFF) << 24);
+            return (buffer[16] & 0xFF | (buffer[17] & 0xFF) << 8 | (buffer[18] & 0xFF) << 16 | (buffer[19] & 0xFF) << 24);
         }
 
         public static byte GetMipmap(byte[]? buffer)

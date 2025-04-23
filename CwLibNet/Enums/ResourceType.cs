@@ -9,12 +9,12 @@ namespace CwLibNet.Enums
             Invalid = new(null, 0, "unknown/", ""),
             Texture = new("TEX", 1, "textures/", ".tex"),
             GtfTexture = new("GTF", 1, "textures/", ".tex"),
-            Mesh = new("MSH", 2, /*typeof(RMesh),*/ "meshes/", ".mol"),
+            Mesh = new("MSH", 2, typeof(RMesh), "meshes/", ".mol"),
             PixelShader = new(null, 3, "shaders/fragment/", ".fpo"),
             VertexShader = new(null, 4, "shaders/vertex/", ".vpo"),
-            Animation = new("ANM", 5, /* typeof(RAnimation), */ "animations/", ".anim"),
+            Animation = new("ANM", 5, typeof(RAnimation), "animations/", ".anim"),
             GuidSubstitution = new("GSB", 6, "guid_subst/", ".gsub"),
-            GfxMaterial = new("GMT", 7 /*, typeof(RGfxMaterial) */, "gfx_materials/", ".gmat"),
+            GfxMaterial = new("GMT", 7, typeof(RGfxMaterial), "gfx_materials/", ".gmat"),
             SpuElf = new(null, 8, "spu/", ".sbu"),
             Level = new("LVL", 9, /* typeof(RLevel), */"levels/", ".bin"),
             Filename =
@@ -25,10 +25,10 @@ namespace CwLibNet.Enums
             FileOfBytes = new(null, 13, "raw_data/", ".raw"),
             SettingsSoftPhys = new("SSP", 14, "softphys_settings/", ".sph"),
             FontFace = new("FNT", 15, typeof(RFontFace), "fonts/", ".fnt"),
-            Material = new("MAT", 16, /* typeof(RMaterial), */"physics_materials/", ".mat"),
+            Material = new("MAT", 16, typeof(RMaterial), "physics_materials/", ".mat"),
             DownloadableContent = new("DLC", 17, typeof(RDLC), "dlc/", ".dlc"),
             EditorSettings = new(null, 18, "editor_settings/", ".edset"),
-            Joint = new("JNT", 19, /* typeof(RJoint), */ "joints/", ".joint"),
+            Joint = new("JNT", 19, typeof(RJoint), "joints/", ".joint"),
             GameConstants = new("CON", 20, "constants/", ".con"),
             PoppetSettings = new("POP", 21, "poppet_settings/", ".pop"),
             CachedLevelData = new("CLD", 22, "cached/levels/", ".cld"),
@@ -121,7 +121,7 @@ namespace CwLibNet.Enums
             return (ResourceType)(typeof(ResourceType).GetFields(BindingFlags.Static | BindingFlags.Public)
                 .Where(p => p.FieldType == typeof(ResourceType))
                 .Where(p => ((ResourceType)(p.GetValue(null) ?? Invalid)).Header == value).Select(e => e.GetValue(null))
-                .FirstOrDefault(Invalid) ?? Invalid);
+                .FirstOrDefault() ?? Invalid);
         }
 
         /// <summary>
@@ -131,8 +131,10 @@ namespace CwLibNet.Enums
         /// <returns>Resource type</returns>
         public static ResourceType FromType(int value)
         {
-            // TODO
-            return Invalid;
+            return (ResourceType)(typeof(ResourceType).GetFields(BindingFlags.Static | BindingFlags.Public)
+                 .Where(p => p.FieldType == typeof(ResourceType))
+                 .Where(p => ((ResourceType)(p.GetValue(null) ?? Invalid)).Value == value).Select(e => e.GetValue(null))
+                 .FirstOrDefault() ?? Invalid);
         }
     }
 }

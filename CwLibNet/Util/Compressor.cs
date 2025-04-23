@@ -5,43 +5,25 @@ using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.IO.Streams;
 using CwLibNet.EX;
+
 namespace CwLibNet.Util
 {
     public static class Compressor
     {
         public static byte[]? DeflateData(byte[] data)
         {
-            using (MemoryStream outputStream = new MemoryStream())
-            {
-                using (ZLibStream deflateStream = new ZLibStream(outputStream, CompressionLevel.Optimal))
-                {
-                    deflateStream.Write(data, 0, data.Length);
-                }
-                return outputStream.ToArray();
-            }
+            Ionic.Zlib.ZlibStream deflater = new(new MemoryStream(data), Ionic.Zlib.CompressionMode.Compress);
+            MemoryStream stream = new();
+            deflater.CopyTo(stream);
+            return stream.ToArray();
         }
 
         public static byte[]? InflateData(byte[]? data, int size)
         {
-            try
-            {
-                using (MemoryStream inputStream = new MemoryStream(data))
-                using (ZLibStream deflateStream = new ZLibStream(inputStream, CompressionMode.Decompress))
-                using (MemoryStream outputStream = new MemoryStream(size))
-                {
-                    byte[] buffer = new byte[1024];
-                    int bytesRead;
-                    while ((bytesRead = deflateStream.Read(buffer, 0, buffer.Length)) > 0)
-                    {
-                        outputStream.Write(buffer, 0, bytesRead);
-                    }
-                    return outputStream.ToArray();
-                }
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            Ionic.Zlib.ZlibStream inflater = new(new MemoryStream(data), Ionic.Zlib.CompressionMode.Decompress);
+            MemoryStream stream = new();
+            inflater.CopyTo(stream);
+            return stream.ToArray();
         }
 
         public static byte[]? DecompressData(MemoryInputStream stream, int endOffset)

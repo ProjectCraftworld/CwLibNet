@@ -13,24 +13,6 @@ namespace CwLibNet.Enums
         // TOUCH(3)
         TOUCH,
         // RADIUS_3D(4)
-        RADIUS_3D 
-
-        // --------------------
-        // TODO enum body members
-        // private final byte value;
-        // TriggerType(int value) {
-        //     this.value = (byte) value;
-        // }
-        // public Byte getValue() {
-        //     return this.value;
-        // }
-        // public static TriggerType fromValue(int value) {
-        //     for (TriggerType type : TriggerType.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+        RADIUS_3D
     }
 }

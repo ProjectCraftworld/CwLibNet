@@ -12,10 +12,12 @@ namespace CwLibNet.Presets
     {
         public static Pack Group(string name, string description, string author, ResourceDescriptor icon)
         {
-            Pack item = new Pack();
-            item.ContentsType = ContentsType.GROUP;
-            item.Mesh = new ResourceDescriptor(0x6a1a, ResourceType.Mesh);
-            
+            Pack item = new()
+            {
+                ContentsType = ContentsType.GROUP,
+                Mesh = new ResourceDescriptor(0x6a1a, ResourceType.Mesh)
+            };
+
             item.Slot.name = name;
             item.Slot.description = description;
 
@@ -26,13 +28,14 @@ namespace CwLibNet.Presets
         }
         public static Pack Level(string name, string description, string author, ResourceDescriptor icon)
         {
-            Pack item = new Pack();
+            Pack item = new()
+            {
+                ContentId = null,
 
-            item.ContentId = null; // TODO: Set contentID if needed
+                ContentsType = ContentsType.LEVEL,
+                Mesh = new ResourceDescriptor(0x3e86, ResourceType.Mesh)
+            };
 
-            item.ContentsType = ContentsType.LEVEL;
-            item.Mesh = new ResourceDescriptor(0x3e86, ResourceType.Mesh);
-            
             item.Slot.name = name;
             item.Slot.description = description;
 

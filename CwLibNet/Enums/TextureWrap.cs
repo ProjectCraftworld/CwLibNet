@@ -5,7 +5,7 @@ namespace CwLibNet.Enums
     public enum TextureWrap
     {
         // WRAP(1)
-        WRAP,
+        WRAP = 1,
         // MIRROR(2)
         MIRROR,
         // CLAMP_TO_EDGE(3)
@@ -20,23 +20,5 @@ namespace CwLibNet.Enums
         MIRROR_ONCE_BORDER,
         // MIRROR_ONCE_CLAMP(8)
         MIRROR_ONCE_CLAMP 
-
-        // --------------------
-        // TODO enum body members
-        // private final byte value;
-        // TextureWrap(int value) {
-        //     this.value = (byte) (value & 0xFF);
-        // }
-        // public Byte getValue() {
-        //     return this.value;
-        // }
-        // public static TextureWrap fromValue(byte value) {
-        //     for (TextureWrap wrap : TextureWrap.values()) {
-        //         if (wrap.value == value)
-        //             return wrap;
-        //     }
-        //     return null;
-        // }
-        // --------------------
     }
 }

@@ -86,8 +86,8 @@ namespace CwLibNet.IO.Streams
         public byte[]? Bytes(int size)
         {
             this.offset += size;
-            var secondBuffer = buffer.Skip(offset - size).ToArray();
-            Array.Resize(ref secondBuffer, size);
+            var secondBuffer = buffer[(offset - size)..(offset)]; // buffer.Skip(offset - size).ToArray();
+//            Array.Resize(ref secondBuffer, size);
 //             Array.Copy(this.buffer, 0, this.buffer, this.offset - size, this.offset);
             return secondBuffer;
         }
@@ -607,9 +607,9 @@ namespace CwLibNet.IO.Streams
         public T? Enum8<T>() where T : Enum
         {
             byte number = this.I8();
-            foreach (T constant in Enum.GetValues(typeof(T)))
-                if (constant.Equals(number))
-                    return constant;
+            foreach (var constant in Enum.GetValues(typeof(T)))
+                if ((int)constant == number)
+                    return (T)constant;
             return default;
         }
 
@@ -630,16 +630,16 @@ namespace CwLibNet.IO.Streams
          *
          * @param <T>         Type of enum
          * @param enumeration Enum class
-         * @param signed      Whether or not to read a signed value
+         * @param signed      Whether to read a signed value
          * @return Resolved enum constant
          */
         public T Enum32<T>(bool signed)
         {
             int number = (signed) ? this.S32() : this.I32();
-            T[] constants = (T[])Enum.GetValues(typeof(T));
-            foreach (T constant in constants)
-                if (constant.Equals(number))
-                    return constant;
+            var constants = Enum.GetValues(typeof(T));
+            foreach (var constant in constants)
+                if ((int)constant == (number))
+                    return (T)constant;
             return default;
         }
 

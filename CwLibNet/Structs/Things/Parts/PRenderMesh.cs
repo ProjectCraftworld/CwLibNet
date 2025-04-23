@@ -16,7 +16,7 @@ public class PRenderMesh: ISerializable
 
     public ResourceDescriptor? Mesh;
 //    public MeshInstance Instance;
-    public Thing[]? BoneThings = new Thing[0];
+    public Thing[]? BoneThings = [];
     public Matrix4x4[] BoneModels = [];
     public ResourceDescriptor? Anim;
     public float AnimPos = 0.0f, AnimSpeed = 1.0f;

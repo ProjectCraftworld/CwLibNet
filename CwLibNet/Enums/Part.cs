@@ -4,9 +4,9 @@ using CwLibNet.Structs.Things.Parts;
 
 namespace CwLibNet.Enums
 {
-    public struct Part : IEquatable<Part>
+    public struct Part(String name, int index, int version, Type? serializable) : IEquatable<Part>
     {
-        
+
         public static readonly Dictionary<string, Part> Parts = new()
         {
             { "BODY", new Part("BODY", 0x0, PartHistory.BODY, typeof(PBody)) },
@@ -30,11 +30,11 @@ namespace CwLibNet.Enums
             { "CAMERA", new Part("CAMERA", 0x3c, PartHistory.CAMERA, null) },
             { "SCRIPT_NAME", new Part("SCRIPT_NAME", 0xC, PartHistory.SCRIPT_NAME, typeof(PScriptName)) },
             { "CREATURE", new Part("CREATURE", 0xD, PartHistory.CREATURE, typeof(PCreature)) },
-            { "CHECKPOINT", new Part("CHECKPOINT", 0xE, PartHistory.CHECKPOINT, typeof(PCheckpoint)) }, /*
+            { "CHECKPOINT", new Part("CHECKPOINT", 0xE, PartHistory.CHECKPOINT, typeof(PCheckpoint)) },
             { "STICKERS", new Part("STICKERS", 0xF, PartHistory.STICKERS, typeof(PStickers)) },
             { "DECORATIONS", new Part("DECORATIONS", 0x10, PartHistory.DECORATIONS, typeof(PDecorations)) },
             { "SCRIPT", new Part("SCRIPT", 0x11, PartHistory.SCRIPT, typeof(PScript)) },
-            { "SHAPE", new Part("SHAPE", 0x12, PartHistory.SHAPE, typeof(PShape)) },
+            { "SHAPE", new Part("SHAPE", 0x12, PartHistory.SHAPE, typeof(PShape)) }, /*
             { "EFFECTOR", new Part("EFFECTOR", 0x13, PartHistory.EFFECTOR, typeof(PEffector)) },
             { "EMITTER", new Part("EMITTER", 0x14, PartHistory.EMITTER, typeof(PEmitter)) },
             { "REF", new Part("REF", 0x15, PartHistory.REF, typeof(PRef)) }, */
@@ -57,53 +57,37 @@ namespace CwLibNet.Enums
             { "SEQUENCER", new Part("SEQUENCER", 0x25, PartHistory.SEQUENCER, typeof(PSequencer)) },
             { "CONTROLINATOR", new Part("CONTROLINATOR", 0x26, PartHistory.CONTROLINATOR, typeof(PControlinator)) } */
         };
-        
+
         /**
          * Minimum version required for this part
          * to be serialized.
          */
-        public readonly int Version;
+        public readonly int Version = version;
 
         /**
          * Index of this part.
          */
-        public readonly int Index;
+        public readonly int Index = index;
 
         /**
          * Serializable class reference
          */
-        public readonly Type? Serializable;
-
-        /**
-         * Creates a part.
-         *
-         * @param index        Index of this part
-         * @param version      The minimum version required for this part to be serialized
-         * @param serializable The serializable class represented by this part
-         */
-        public Part(String name, int index, int version, Type? serializable)
-        {
-            this.Name = name;
-            this.Index = index;
-            this.Version = version;
-            this.Serializable = serializable;
-        }
-
-        public String Name;
+        public readonly Type? Serializable = serializable;
+        public String Name = name;
 
         public int GetIndex()
         {
-            return this.Index;
+            return Index;
         }
 
         public int GetVersion()
         {
-            return this.Version;
+            return Version;
         }
 
         public Type? GetSerializable()
         {
-            return this.Serializable;
+            return Serializable;
         }
 
         /**
@@ -145,9 +129,9 @@ namespace CwLibNet.Enums
          */
         public static Part[] FromFlags(int head, long flags, int version)
         {
-            List<Part> parts = new List<Part>(64);
+            List<Part> parts = new(64);
             parts.AddRange(Parts.Values.Where(part => part.HasPart(head, flags, version)));
-            return parts.ToArray();
+            return [.. parts];
         }
 
         public static bool operator ==(Part p1, Part p2)
@@ -189,7 +173,7 @@ namespace CwLibNet.Enums
             return version >= this.Version
                    && (((1L << index) & flags) != 0);
         }
-    
+
         /// <summary>
         /// (De)serializes this part to a stream.
         /// </summary>
@@ -198,14 +182,14 @@ namespace CwLibNet.Enums
         /// <param name="flags">Flags determing what parts can be serialized by this Thing</param>
         /// <param name="serializer">Instance of a serializer stream</param>
         /// <typeparam name="T">Type of part</typeparam>
-        /// <returns>Whether or not the operation succeeded</returns>
+        /// <returns>Whether the operation succeeded</returns>
         public bool Serialize<T>(ISerializable?[] parts, int version, long flags, Serializer serializer) where T : ISerializable
         {
-            /* The Thing doesn't have this part, so it's "successful" */
+            /* The Thing doesn't have this part, so it's "successful". */
             if (!this.HasPart(serializer.GetRevision().Head, flags, version))
                 return true;
 
-            T? part = (T?) parts[this.Index];
+            T? part = (T?)parts[this.Index];
 
             if (this.Serializable == null)
             {

@@ -48,13 +48,11 @@ namespace CwLibNet.Enums
             return this.value;
         }
 
-        public static ModifierType GetFlags(HashSet<ModifierType> set)
+        public static short GetFlags(HashSet<ModifierType>? set)
         {
-            int flags = 0;
-            if (set == null) return (ModifierType)flags;
-            foreach (ModifierType value in set)
-                flags |= (1 << (int)value);
-            return (ModifierType)flags;
+            short flags = 0;
+            if (set == null) return flags;
+            return set.Aggregate(flags, (current, value) => (short)((ushort)current | (1 << (short)value)));
         }
 
         public static HashSet<ModifierType> fromValue(int value)

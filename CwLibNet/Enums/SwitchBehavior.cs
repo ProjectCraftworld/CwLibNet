@@ -11,24 +11,6 @@ namespace CwLibNet.Enums
         // DIRECTION(2)
         DIRECTION,
         // ONE_SHOT(3)
-        ONE_SHOT 
-
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // SwitchBehavior(int value) {
-        //     this.value = value;
-        // }
-        // public Integer getValue() {
-        //     return this.value;
-        // }
-        // public static SwitchBehavior fromValue(int value) {
-        //     for (SwitchBehavior behavior : SwitchBehavior.values()) {
-        //         if (behavior.value == value)
-        //             return behavior;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+        ONE_SHOT
     }
 }

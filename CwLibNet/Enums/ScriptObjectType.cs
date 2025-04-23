@@ -45,24 +45,6 @@ namespace CwLibNet.Enums
         // ARRAY_S64(19)
         ARRAY_S64,
         // ARRAY_F64(20)
-        ARRAY_F64 
-
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // ScriptObjectType(int value) {
-        //     this.value = value;
-        // }
-        // public Integer getValue() {
-        //     return this.value;
-        // }
-        // public static ScriptObjectType fromValue(int value) {
-        //     for (ScriptObjectType type : ScriptObjectType.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+        ARRAY_F64
     }
 }

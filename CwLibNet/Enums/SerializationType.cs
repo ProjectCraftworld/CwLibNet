@@ -17,8 +17,6 @@ namespace CwLibNet.Enums
             // GXT_SWIZZLED("S")
             GXT_SWIZZLED = new ("S");
 
-        // --------------------
-        // TODO enum body members
         private readonly string? value;
         SerializationType(string? value) {
             this.value = value;
