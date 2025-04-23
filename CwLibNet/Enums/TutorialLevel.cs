@@ -102,29 +102,5 @@ namespace CwLibNet.Enums
         VIDEO_MAGIC_EYE,
         // VIDEO_NO_JOIN_POST(0x30)
         VIDEO_NO_JOIN_POST 
-
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // TutorialLevel(int value) {
-        //     this.value = value;
-        // }
-        // public Integer getValue() {
-        //     return this.value;
-        // }
-        // /**
-        //  * Attempts to get a ToolType from value.
-        //  *
-        //  * @param value Tool type value
-        //  * @return ToolType
-        //  */
-        // public static TutorialLevel fromValue(int value) {
-        //     for (TutorialLevel level : TutorialLevel.values()) {
-        //         if (level.value == value)
-        //             return level;
-        //     }
-        //     return TutorialLevel.UNKNOWN;
-        // }
-        // --------------------
     }
 }

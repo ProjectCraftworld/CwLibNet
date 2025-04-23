@@ -40,36 +40,6 @@ namespace CwLibNet.Enums
         ADVENTURE_LEVEL_LOCAL,
         // ADVENTURE_AREA_LEVEL(17)
         ADVENTURE_AREA_LEVEL 
-
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // SlotType(int value) {
-        //     this.value = value;
-        // }
-        // public Integer getValue() {
-        //     return this.value;
-        // }
-        // /**
-        //  * Attempts to get a SlotType from value.
-        //  *
-        //  * @param value Slot type value
-        //  * @return SlotType
-        //  */
-        // public static SlotType fromValue(int value) {
-        //     for (SlotType type : SlotType.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return SlotType.DEVELOPER;
-        // }
-        // public boolean isGroup() {
-        //     return this.equals(SlotType.DEVELOPER_GROUP) || this.equals(SlotType.LOCAL_GROUP) || this.equals(SlotType.DLC_PACK) || this.equals(SlotType.DEVELOPER_ADVENTURE_AREA) || this.equals(SlotType.ADVENTURE_AREA_LEVEL);
-        // }
-        // public boolean isLink() {
-        //     return this.equals(SlotType.DEVELOPER) || this.equals(SlotType.DLC_LEVEL) || this.equals(SlotType.ADVENTURE_LEVEL_LOCAL) || this.equals(SlotType.DEVELOPER_ADVENTURE);
-        // }
-        // --------------------
     }
 
     public static class SlotTypeExtensions

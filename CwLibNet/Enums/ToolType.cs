@@ -97,31 +97,7 @@ namespace CwLibNet.Enums
         // ADVENTURE_RESET(45)
         ADVENTURE_RESET = 45,
         // ADVENTURE_SAVE(46)
-        ADVENTURE_SAVE = 46 
-
-        // --------------------
-        // TODO enum body members
-        // private final byte value;
-        // ToolType(int value) {
-        //     this.value = (byte) value;
-        // }
-        // public Byte getValue() {
-        //     return this.value;
-        // }
-        // /**
-        //  * Attempts to get a ToolType from value.
-        //  *
-        //  * @param value Tool type value
-        //  * @return ToolType
-        //  */
-        // public static ToolType fromValue(byte value) {
-        //     for (ToolType type : ToolType.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return ToolType.NONE;
-        // }
-        // --------------------
+        ADVENTURE_SAVE = 46
     }
 
     public static class ToolTypeBody

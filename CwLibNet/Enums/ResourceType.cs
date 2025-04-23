@@ -25,7 +25,7 @@ namespace CwLibNet.Enums
             FileOfBytes = new(null, 13, "raw_data/", ".raw"),
             SettingsSoftPhys = new("SSP", 14, "softphys_settings/", ".sph"),
             FontFace = new("FNT", 15, typeof(RFontFace), "fonts/", ".fnt"),
-            Material = new("MAT", 16, /* typeof(RMaterial), */"physics_materials/", ".mat"),
+            Material = new("MAT", 16, typeof(RMaterial), "physics_materials/", ".mat"),
             DownloadableContent = new("DLC", 17, typeof(RDLC), "dlc/", ".dlc"),
             EditorSettings = new(null, 18, "editor_settings/", ".edset"),
             Joint = new("JNT", 19, typeof(RJoint), "joints/", ".joint"),

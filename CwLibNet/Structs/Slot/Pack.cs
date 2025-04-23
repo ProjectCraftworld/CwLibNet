@@ -10,11 +10,11 @@ namespace CwLibNet.Structs.Slot
     {
         public static readonly int BASE_ALLOCATION_SIZE = 0x40 + Slot.BaseAllocationSize;
         public ContentsType ContentsType = ContentsType.LEVEL;
-        public ResourceDescriptor? Mesh /*= ContentsType.LEVEL.getBadgeMesh()*/;
+        public ResourceDescriptor? Mesh;
         public Slot Slot = new();
         public string? ContentId;
         public long TimeStamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // seconds since epoch
-        public bool CrossBuyCompatible = false; // TODO: Set to true if cross-buy compatible
+        public bool CrossBuyCompatible = false;
 
         public void Serialize(Serializer serializer) 
         {

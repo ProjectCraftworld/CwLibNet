@@ -1,7 +1,3 @@
-using System.Numerics;
-using CwLibNet.IO;
-using static CwLibNet.IO.ValueEnum<int>;
-
 namespace CwLibNet.Enums
 {
     public enum AudioMaterial : int
@@ -103,29 +99,5 @@ namespace CwLibNet.Enums
         FLOATY,
         // COLLECTABELL(48)
         COLLECTABELL 
-
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // AudioMaterial(int value) {
-        //     this.value = value;
-        // }
-        // public Integer getValue() {
-        //     return this.value;
-        // }
-        // /**
-        //  * Attempts to get an audio material from value.
-        //  *
-        //  * @param value Sound enum value
-        //  * @return Audio material
-        //  */
-        // public static AudioMaterial fromValue(int value) {
-        //     for (AudioMaterial type : AudioMaterial.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return null;
-        // }
-        // --------------------
     }
 }

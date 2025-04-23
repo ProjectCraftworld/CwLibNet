@@ -5,7 +5,7 @@ namespace CwLibNet.Enums
     public enum SwitchType
     {
         // INVALID(-1)
-        INVALID,
+        INVALID = -1,
         // BUTTON(0)
         BUTTON,
         // LEVER(1)
@@ -176,24 +176,6 @@ namespace CwLibNet.Enums
         // DECORATION_MOUNT(83)
         DECORATION_MOUNT,
         // SPRING_SENSOR(84)
-        SPRING_SENSOR 
-
-        // --------------------
-        // TODO enum body members
-        // private final int value;
-        // SwitchType(int value) {
-        //     this.value = value;
-        // }
-        // public Integer getValue() {
-        //     return this.value;
-        // }
-        // public static SwitchType fromValue(int value) {
-        //     for (SwitchType type : SwitchType.values()) {
-        //         if (type.value == value)
-        //             return type;
-        //     }
-        //     return null;
-        // }
-        // --------------------
+        SPRING_SENSOR
     }
 }
