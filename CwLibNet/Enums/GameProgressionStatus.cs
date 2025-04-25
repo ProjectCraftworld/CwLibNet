@@ -28,7 +28,7 @@ namespace CwLibNet.Enums
 
         public GameProgressionStatus getValue()
         {
-            return this.value;
+            return value;
         }
         /// <summary>
         /// Attempts to get GameProgressionStatus from value.

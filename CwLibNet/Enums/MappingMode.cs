@@ -44,7 +44,7 @@ namespace CwLibNet.Enums
 
         public MappingMode getValue()
         {
-            return this.value;
+            return value;
         }
 
         public static MappingBody fromValue(int value)

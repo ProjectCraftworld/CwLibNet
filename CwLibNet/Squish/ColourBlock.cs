@@ -44,9 +44,9 @@ public class ColourBlock {
 
 	private static int FloatTo565(Vec colour) {
 		// get the components in the correct range
-		int r = (int)Math.Round(CompressorColourFit.GRID_X * colour.X);
-		int g = (int)Math.Round(CompressorColourFit.GRID_Y * colour.Y);
-		int b = (int)Math.Round(CompressorColourFit.GRID_Z * colour.Z);
+		var r = (int)Math.Round(CompressorColourFit.GRID_X * colour.X);
+		var g = (int)Math.Round(CompressorColourFit.GRID_Y * colour.Y);
+		var b = (int)Math.Round(CompressorColourFit.GRID_Z * colour.Z);
 
 		// pack into a single value
 		return (r << 11) | (g << 5) | b;
@@ -60,16 +60,16 @@ public class ColourBlock {
 		block[offset + 3] = (byte)(b >> 8);
 
 		// write the indices
-		for ( int i = 0; i < 4; ++i ) {
-			int index = 4 * i;
+		for ( var i = 0; i < 4; ++i ) {
+			var index = 4 * i;
 			block[offset + 4 + i] = (byte)(indices[index + 0] | (indices[index + 1] << 2) | (indices[index + 2] << 4) | (indices[index + 3] << 6));
 		}
 	}
 
 	public static void WriteColourBlock3(Vec start, Vec end, int[] indices, byte[] block, int offset) {
 		// get the packed values
-		int a = FloatTo565(start);
-		int b = FloatTo565(end);
+		var a = FloatTo565(start);
+		var b = FloatTo565(end);
 
 		// remap the indices
 		if ( a <= b ) {
@@ -78,7 +78,7 @@ public class ColourBlock {
 		} else {
 			// swap a and b
 			(a, b) = (b, a);
-			for ( int i = 0; i < 16; ++i ) {
+			for ( var i = 0; i < 16; ++i ) {
 				if ( indices[i] == 0 )
 					_remapped[i] = 1;
 				else if ( indices[i] == 1 )
@@ -94,15 +94,15 @@ public class ColourBlock {
 
 	public static void WriteColourBlock4(Vec start, Vec end, int[] indices, byte[] block, int offset) {
 		// get the packed values
-		int a = FloatTo565(start);
-		int b = FloatTo565(end);
+		var a = FloatTo565(start);
+		var b = FloatTo565(end);
 
 		// remap the indices
 
 		if ( a < b ) {
 			// swap a and b
 			(a, b) = (b, a);
-			for ( int i = 0; i < 16; ++i )
+			for ( var i = 0; i < 16; ++i )
 				_remapped[i] = (indices[i] ^ 0x1) & 0x3;
 		} else if ( a == b ) {
 			// use index 0
@@ -118,15 +118,15 @@ public class ColourBlock {
 
 	public static void DecompressColour(byte[] rgba, byte[] block, int offset, bool isDxt1) {
 		// unpack the endpoints
-		int[] codes = ColourBlock._codes;
+		var codes = _codes;
 
-		int a = Unpack565(block, offset, codes, 0);
-		int b = Unpack565(block, offset + 2, codes, 4);
+		var a = Unpack565(block, offset, codes, 0);
+		var b = Unpack565(block, offset + 2, codes, 4);
 
 		// generate the midpoints
-		for ( int i = 0; i < 3; ++i ) {
-			int c = codes[i];
-			int d = codes[4 + i];
+		for ( var i = 0; i < 3; ++i ) {
+			var c = codes[i];
+			var d = codes[4 + i];
 
 			if ( isDxt1 && a <= b ) {
 				codes[8 + i] = (c + d) / 2;
@@ -142,11 +142,11 @@ public class ColourBlock {
 		codes[12 + 3] = (isDxt1 && a <= b) ? 0 : 255;
 
 		// unpack the indices
-		int[] indices = ColourBlock._indices;
+		var indices = _indices;
 
-		for ( int i = 0; i < 4; ++i ) {
-			int index = 4 * i;
-			int packed = (block[offset + 4 + i] & 0xFF);
+		for ( var i = 0; i < 4; ++i ) {
+			var index = 4 * i;
+			var packed = (block[offset + 4 + i] & 0xFF);
 
 			indices[index + 0] = packed & 0x3;
 			indices[index + 1] = (packed >> 2) & 0x3;
@@ -155,21 +155,21 @@ public class ColourBlock {
 		}
 
 		// store out the colours
-		for ( int i = 0; i < 16; ++i ) {
-			int index = 4 * indices[i];
-			for ( int j = 0; j < 4; ++j )
+		for ( var i = 0; i < 16; ++i ) {
+			var index = 4 * indices[i];
+			for ( var j = 0; j < 4; ++j )
 				rgba[4 * i + j] = (byte)codes[index + j];
 		}
 	}
 
 	private static int Unpack565(byte[] packed, int pOffset, int[] colour, int cOffset) {
 		// build the packed value
-		int value = (packed[pOffset + 0] & 0xff) | ((packed[pOffset + 1] & 0xff) << 8);
+		var value = (packed[pOffset + 0] & 0xff) | ((packed[pOffset + 1] & 0xff) << 8);
 
 		// get the components in the stored range
-		int red = (value >> 11) & 0x1f;
-		int green = (value >> 5) & 0x3f;
-		int blue = value & 0x1f;
+		var red = (value >> 11) & 0x1f;
+		var green = (value >> 5) & 0x3f;
+		var blue = value & 0x1f;
 
 		// scale up to 8 bits
 		colour[cOffset + 0] = (red << 3) | (red >> 2);

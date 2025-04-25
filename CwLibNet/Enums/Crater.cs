@@ -1,5 +1,5 @@
 using System.Numerics;
-using static CwLibNet.IO.ValueEnum<int>;
+using static CwLibNet.IO.IValueEnum<int>;
 
 namespace CwLibNet.Enums
 {

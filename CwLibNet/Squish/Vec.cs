@@ -39,9 +39,11 @@ public class Vec {
 		this(a, a, a) {
 	}
 
+/*
 	public Vec(Vec v): 
 		this(v.X, v.Y, v.Z){
 	}
+*/
 
 	public Vec(float a, float b, float c) {
 		X = a;
@@ -51,25 +53,23 @@ public class Vec {
 
 
 	public Vec Set(float a) {
-		this.X = a;
-		this.Y = a;
-		this.Z = a;
+		X = a;
+		Y = a;
+		Z = a;
 
 		return this;
 	}
 
-	public Vec Set(float x, float y, float z) {
-		this.X = x;
-		this.Y = y;
-		this.Z = z;
-
-		return this;
+	public void Set(float x, float y, float z) {
+		X = x;
+		Y = y;
+		Z = z;
 	}
 
 	public Vec Set(Vec v) {
-		this.X = v.X;
-		this.Y = v.Y;
-		this.Z = v.Z;
+		X = v.X;
+		Y = v.Y;
+		Z = v.Z;
 
 		return this;
 	}
@@ -82,12 +82,10 @@ public class Vec {
 		return this;
 	}
 
-	public Vec Add(float x, float y, float z) {
-		this.X += x;
-		this.Y += y;
-		this.Z += z;
-
-		return this;
+	public void Add(float x, float y, float z) {
+		X += x;
+		Y += y;
+		Z += z;
 	}
 
 	public Vec Sub(Vec v) {
@@ -114,14 +112,12 @@ public class Vec {
 		return this;
 	}
 
-	public Vec Div(float s) {
-		float t = 1.0f / s;
+	public void Div(float s) {
+		var t = 1.0f / s;
 
 		X *= t;
 		Y *= t;
 		Z *= t;
-
-		return this;
 	}
 
 	public float LengthSq() {

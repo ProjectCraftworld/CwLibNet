@@ -25,13 +25,13 @@ public class FieldLayoutDetails: ISerializable
 
     public FieldLayoutDetails(FieldLayoutDetails details)
     {
-        this.Name = details.Name;
-        this.Modifiers = new HashSet<ModifierType>(details.Modifiers);
-        this.MachineType = details.MachineType;
-        this.FishType = details.FishType;
-        this.DimensionCount = details.DimensionCount;
-        this.ArrayBaseMachineType = details.ArrayBaseMachineType;
-        this.InstanceOffset = details.InstanceOffset;
+        Name = details.Name;
+        Modifiers = new HashSet<ModifierType>(details.Modifiers);
+        MachineType = details.MachineType;
+        FishType = details.FishType;
+        DimensionCount = details.DimensionCount;
+        ArrayBaseMachineType = details.ArrayBaseMachineType;
+        InstanceOffset = details.InstanceOffset;
     }
 
     
@@ -67,8 +67,8 @@ public class FieldLayoutDetails: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = FieldLayoutDetails.BaseAllocationSize;
-        if (this.Name != null) size += (this.Name.Length);
+        int size = BaseAllocationSize;
+        if (Name != null) size += (Name.Length);
         return size;
     }
 

@@ -80,8 +80,8 @@ public class PRenderMesh: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = PRenderMesh.BaseAllocationSize;
-        if (this.BoneThings != null) size += (this.BoneThings.Length * 0x4);
+        int size = BaseAllocationSize;
+        if (BoneThings != null) size += (BoneThings.Length * 0x4);
         return size;
     }
 }

@@ -31,8 +31,8 @@ public class PTrigger: ISerializable
 
     public PTrigger(TriggerType type, float radius)
     {
-        this.TriggerType = type;
-        this.RadiusMultiplier = radius;
+        TriggerType = type;
+        RadiusMultiplier = radius;
     }
 
     public void Serialize(Serializer serializer)
@@ -103,8 +103,8 @@ public class PTrigger: ISerializable
         int size = BaseAllocationSize;
         // We'll actually calculate the size of these Things
         // in the Thing class to avoid circular dependencies.
-        if (this.InThings != null)
-            size += (this.InThings.Length) * Thing.BaseAllocationSize;
+        if (InThings != null)
+            size += (InThings.Length) * Thing.BaseAllocationSize;
         return size;
     }
 }

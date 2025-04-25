@@ -1,4 +1,4 @@
-using static CwLibNet.IO.ValueEnum<int>;
+using static CwLibNet.IO.IValueEnum<int>;
 
 namespace CwLibNet.Enums
 {
@@ -35,7 +35,7 @@ namespace CwLibNet.Enums
 
         public ModCompatibility getValue()
         {
-            return this.value;
+            return value;
         }
         public static ModCompBody fromValue(int value)
         {

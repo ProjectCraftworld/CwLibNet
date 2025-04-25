@@ -51,16 +51,16 @@ public class Primitive: ISerializable
 
     public Primitive(int minVert, int maxVert, int firstIndex, int numIndices)
     {
-        this.MinVert = minVert;
-        this.MaxVert = maxVert;
-        this.FirstIndex = firstIndex;
-        this.NumIndices = numIndices;
+        MinVert = minVert;
+        MaxVert = maxVert;
+        FirstIndex = firstIndex;
+        NumIndices = numIndices;
     }
 
     public Primitive(ResourceDescriptor? material, int minVert, int maxVert, int firstIndex,
                      int numIndices)
     : this(minVert, maxVert, firstIndex, numIndices) {
-        this.Material = material;
+        Material = material;
     }
 
     
@@ -100,8 +100,8 @@ public class Primitive: ISerializable
      */
     public void SetMinMax(int minVert, int maxVert)
     {
-        this.MinVert = minVert;
-        this.MaxVert = maxVert;
+        MinVert = minVert;
+        MaxVert = maxVert;
     }
 
 }

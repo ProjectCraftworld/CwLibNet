@@ -1,9 +1,9 @@
 namespace CwLibNet.Enums
 {
-    public sealed class BoneFlag
+    public static class BoneFlag
     {
-        public static readonly int NONE = 0x0;
-        public static readonly int CAMERA = 0x1;
-        public static readonly int DUMMY = 0x2;
+        public const int NONE = 0x0;
+        public const int CAMERA = 0x1;
+        public const int DUMMY = 0x2;
     }
 }

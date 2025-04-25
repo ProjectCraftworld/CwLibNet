@@ -71,12 +71,12 @@ public class RGfxMaterial: Resource
 
     public RGfxMaterial()
     {
-        this.WrapS = new TextureWrap[MAX_TEXTURES];
-        this.WrapT = new TextureWrap[MAX_TEXTURES];
+        WrapS = new TextureWrap[MAX_TEXTURES];
+        WrapT = new TextureWrap[MAX_TEXTURES];
         for (int i = 0; i < 8; ++i)
         {
-            this.WrapS[i] = TextureWrap.WRAP;
-            this.WrapT[i] = TextureWrap.WRAP;
+            WrapS[i] = TextureWrap.WRAP;
+            WrapT[i] = TextureWrap.WRAP;
         }
     }
 
@@ -141,12 +141,12 @@ public class RGfxMaterial: Resource
                     if (version < 0x34f)
                         offset += shader.Length;
                 }
-                if (this.Code != null) offset += this.Code.Length;
+                if (Code != null) offset += Code.Length;
                 stream.I32(offset);
                 for (int i = 0; i < sourceOffsets; ++i)
                     stream.Bytes(Shaders[i]);
-                if (this.Code != null)
-                    stream.Bytes(this.Code);
+                if (Code != null)
+                    stream.Bytes(Code);
             }
             for (int i = 0; i < MAX_TEXTURES; ++i)
                 serializer.Resource(Textures[i], ResourceType.Texture);
@@ -242,16 +242,16 @@ public class RGfxMaterial: Resource
     public override int GetAllocatedSize()
     {
         int size = BASE_ALLOCATION_SIZE;
-        if (this.Shaders != null) size += this.Shaders.Sum(shader => shader.Length);
-        if (this.Code != null)
-            size += this.Code.Length;
-        if (this.Boxes != null)
-            foreach (MaterialBox box in this.Boxes)
+        if (Shaders != null) size += Shaders.Sum(shader => shader.Length);
+        if (Code != null)
+            size += Code.Length;
+        if (Boxes != null)
+            foreach (MaterialBox box in Boxes)
                 size += box.GetAllocatedSize();
-        if (this.Wires != null)
-            foreach (MaterialWire wire in this.Wires)
+        if (Wires != null)
+            foreach (MaterialWire wire in Wires)
                 size += wire.GetAllocatedSize();
-        if (this.ParameterAnimations != null)
+        if (ParameterAnimations != null)
             foreach (MaterialParameterAnimation animation in ParameterAnimations)
                 size += animation.GetAllocatedSize();
         return size;
@@ -260,7 +260,7 @@ public class RGfxMaterial: Resource
     
     public override SerializationData Build(Revision revision, byte compressionFlags)
     {
-        Serializer serializer = new Serializer(this.GetAllocatedSize(), revision,
+        Serializer serializer = new Serializer(GetAllocatedSize(), revision,
                 compressionFlags);
         serializer.Struct(this);
         return new SerializationData(
@@ -283,7 +283,7 @@ public class RGfxMaterial: Resource
     {
         int head = revision.GetVersion();
         int sourceOffsets = 0xC;
-        if ((this.Flags & 0x10000) != 0)
+        if ((Flags & 0x10000) != 0)
             sourceOffsets = 0x18;
         if (head < 0x3c1 || !revision.IsVita() || revision.Before(Branch.Double11,
                 (int)Revisions.D1Shader))
@@ -306,7 +306,7 @@ public class RGfxMaterial: Resource
      */
     public MaterialWire FindWireFrom(int box)
     {
-        foreach (MaterialWire wire in this.Wires)
+        foreach (MaterialWire wire in Wires)
             if (wire.BoxFrom == box)
                 return wire;
         return null;
@@ -319,9 +319,9 @@ public class RGfxMaterial: Resource
      */
     public int GetOutputBox()
     {
-        for (int i = 0; i < this.Boxes.Count; ++i)
+        for (int i = 0; i < Boxes.Count; ++i)
         {
-            MaterialBox box = this.Boxes[i];
+            MaterialBox box = Boxes[i];
             if (box.Type == BoxType.OUTPUT)
                 return i;
         }
@@ -330,19 +330,19 @@ public class RGfxMaterial: Resource
 
     public int GetBoxIndex(MaterialBox box)
     {
-        for (int i = 0; i < this.Boxes.Count; ++i)
-            if (box == this.Boxes[i]) return i;
+        for (int i = 0; i < Boxes.Count; ++i)
+            if (box == Boxes[i]) return i;
         return -1;
     }
 
     public MaterialWire GetWireConnectedToPort(MaterialBox box, int port)
     {
-        return this.GetWireConnectedToPort(this.GetBoxIndex(box), port);
+        return GetWireConnectedToPort(GetBoxIndex(box), port);
     }
 
     public MaterialWire GetWireConnectedToPort(int box, int port)
     {
-        foreach (MaterialWire wire in this.Wires)
+        foreach (MaterialWire wire in Wires)
         {
             if (wire.BoxTo == box && (wire.PortTo & 0xff) == port)
                 return wire;
@@ -352,43 +352,43 @@ public class RGfxMaterial: Resource
 
     public MaterialBox[] GetBoxesConnected(MaterialBox box)
     {
-        return this.GetBoxesConnected(this.GetBoxIndex(box));
+        return GetBoxesConnected(GetBoxIndex(box));
     }
 
     public MaterialBox[] GetBoxesConnected(int box)
     {
         List<MaterialBox> boxes = [];
-        foreach (MaterialWire wire in this.Wires)
+        foreach (MaterialWire wire in Wires)
         {
             if (wire.BoxTo == box)
-                boxes.Add(this.Boxes[wire.BoxFrom]);
+                boxes.Add(Boxes[wire.BoxFrom]);
         }
         return boxes.ToArray();
     }
 
     public MaterialBox GetBoxConnectedToPort(MaterialBox box, int port)
     {
-        return this.GetBoxConnectedToPort(this.GetBoxIndex(box), port);
+        return GetBoxConnectedToPort(GetBoxIndex(box), port);
     }
 
     public MaterialBox GetBoxConnectedToPort(int box, int port)
     {
-        foreach (MaterialWire wire in this.Wires)
+        foreach (MaterialWire wire in Wires)
         {
             if (wire.BoxTo == box && (wire.PortTo & 0xff) == port)
-                return this.Boxes[wire.BoxFrom];
+                return Boxes[wire.BoxFrom];
         }
         return null;
     }
 
     public MaterialBox GetBoxFrom(MaterialWire wire)
     {
-        return this.Boxes[wire.BoxFrom];
+        return Boxes[wire.BoxFrom];
     }
 
     public MaterialBox GetBoxTo(MaterialWire wire)
     {
-        return this.Boxes[wire.BoxTo];
+        return Boxes[wire.BoxTo];
     }
 
     public static RGfxMaterial GetBumpLayout(

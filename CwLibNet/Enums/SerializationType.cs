@@ -21,7 +21,7 @@ namespace CwLibNet.Enums
         SerializationType(string? value) {
             this.value = value;
         }
-        public string? GetValue() => this.value;
+        public string? GetValue() => value;
         public static SerializationType FromValue(String? value)
         {
 

@@ -42,7 +42,7 @@ public class RTranslationTable : Resource
 
     public RTranslationTable(Dictionary<long, string?> translationTable)
     {
-        this.lookup = translationTable;
+        lookup = translationTable;
     }
 
     public RTranslationTable(byte[]? data)
@@ -52,7 +52,7 @@ public class RTranslationTable : Resource
             string?[] lines = Encoding.Unicode.GetString(data).Split('\n');
             for (int i = 0; i < lines.Length; i+=2)
             {
-                this.lookup.Add(MakeLamsKeyID(lines[i]), lines[i + 1]);
+                lookup.Add(MakeLamsKeyID(lines[i]), lines[i + 1]);
             }
             return;
         }
@@ -63,7 +63,7 @@ public class RTranslationTable : Resource
         int count = stream.I32();
 
         int tableOffset = 0x4 + (count * 0x8);
-        this.lookup = new Dictionary<long, string?>(count);
+        lookup = new Dictionary<long, string?>(count);
         for (int i = 0; i < count; ++i) {
             long key = stream.U32();
             int stringStart = stream.I32();
@@ -82,7 +82,7 @@ public class RTranslationTable : Resource
             stream.Seek(tableOffset + stringStart, SeekMode.Begin);
 
             string? text = Encoding.BigEndianUnicode.GetString(stream.Bytes(stringEnd - stream.GetOffset())).Trim((char)0xFEFF);
-            this.lookup.Add(key, text);
+            lookup.Add(key, text);
 
             stream.Seek(oldOffset, SeekMode.Begin);
         }
@@ -91,22 +91,22 @@ public class RTranslationTable : Resource
     private Dictionary<long, string?> lookup = new();
         
     public string? Translate(String tag) {
-        return this.Translate(RTranslationTable.MakeLamsKeyID(tag));
+        return Translate(MakeLamsKeyID(tag));
     }
         
-    public string? Translate(int key) { return this.Translate(key & 0xFFFFFFFF); }
+    public string? Translate(int key) { return Translate(key & 0xFFFFFFFF); }
         
     public string? Translate(long key)
     {
-        return this.lookup.ContainsKey(key) ? this.lookup[key] : null;
+        return lookup.ContainsKey(key) ? lookup[key] : null;
     }
         
     public void Add(String key, String value) { 
-        this.lookup.Add(RTranslationTable.MakeLamsKeyID(key), value);
+        lookup.Add(MakeLamsKeyID(key), value);
     }
 
     public void Add(long key, String value) {
-        this.lookup.Add(key, value);
+        lookup.Add(key, value);
     }
 
         
@@ -127,20 +127,20 @@ public class RTranslationTable : Resource
 
     public SerializationData Build()
     {
-        int stringTableSize = this.lookup.Values
+        int stringTableSize = lookup.Values
             .Select(element => (Encoding.BigEndianUnicode.GetBytes(element).Length + 1) * 2)
             .Aggregate(0, (total, element) => total + element) - 2;
 
         Dictionary<string, int> offsets = new Dictionary<string, int>();
         MemoryOutputStream stringTable = new MemoryOutputStream(stringTableSize);
-        MemoryOutputStream keyTable = new MemoryOutputStream((this.lookup.Count * 8) + 4);
-        keyTable.I32(this.lookup.Count);
+        MemoryOutputStream keyTable = new MemoryOutputStream((lookup.Count * 8) + 4);
+        keyTable.I32(lookup.Count);
 
-        List<long> keys = this.lookup.Keys.ToList();
+        List<long> keys = lookup.Keys.ToList();
         keys.Sort((a, z) => a.CompareUnsigned(z));
         foreach (long key in keys)
         {
-            string? value = this.lookup[key];
+            string? value = lookup[key];
             keyTable.U32(key);
             if (offsets.ContainsKey(value))
             {

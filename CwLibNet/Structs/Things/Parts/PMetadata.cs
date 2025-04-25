@@ -102,11 +102,11 @@ public class PMetadata: ISerializable
     public int GetAllocatedSize()
     {
         int size = BaseAllocationSize;
-        if (this.NameTranslationTag != null) size += this.NameTranslationTag.Length;
-        if (this.DescTranslationTag != null) size += this.DescTranslationTag.Length;
-        if (this.LocationTag != null) size += this.LocationTag.Length;
-        if (this.CategoryTag != null) size += this.CategoryTag.Length;
-        if (this.PhotoMetadata != null) size += this.PhotoMetadata.GetAllocatedSize();
+        if (NameTranslationTag != null) size += NameTranslationTag.Length;
+        if (DescTranslationTag != null) size += DescTranslationTag.Length;
+        if (LocationTag != null) size += LocationTag.Length;
+        if (CategoryTag != null) size += CategoryTag.Length;
+        if (PhotoMetadata != null) size += PhotoMetadata.GetAllocatedSize();
         return size;
     }
 }

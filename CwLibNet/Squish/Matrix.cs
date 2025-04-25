@@ -40,7 +40,7 @@ public class Matrix {
 	}
 
 	public Matrix(float a) {
-		for ( int i = 0; i < 6; ++i )
+		for ( var i = 0; i < 6; ++i )
 			values[i] = a;
 	}
 
@@ -48,18 +48,18 @@ public class Matrix {
 		return values[index];
 	}
 
-	public static Matrix ComputeWeightedCovariance(ColourSet mColours, Matrix covariance) {
-		int count = mColours.GetCount();
-		Vec[] points = mColours.GetPoints();
-		float[] weights = mColours.GetWeights();
+	public static Matrix? ComputeWeightedCovariance(ColourSet mColours, Matrix? covariance) {
+		var count = mColours.GetCount();
+		var points = mColours.GetPoints();
+		var weights = mColours.GetWeights();
 
-		Vec centroid = new Vec();
-		Vec a = new Vec();
-		Vec b = new Vec();
+		var centroid = new Vec();
+		var a = new Vec();
+		var b = new Vec();
 
 		// compute the centroid
-		float total = 0.0f;
-		for ( int i = 0; i < count; ++i ) {
+		var total = 0.0f;
+		for ( var i = 0; i < count; ++i ) {
 			total += weights[i];
 			centroid.Add(a.Set(points[i]).Mul(weights[i]));
 		}
@@ -71,9 +71,9 @@ public class Matrix {
 		else
 			Array.Fill(covariance.values, 0.0f);
 
-		float[] values = covariance.values;
+		var values = covariance.values;
 
-		for ( int i = 0; i < count; ++i ) {
+		for ( var i = 0; i < count; ++i ) {
 			a.Set(points[i]).Sub(centroid);
 			b.Set(a).Mul(weights[i]);
 
@@ -89,11 +89,11 @@ public class Matrix {
 		return covariance;
 	}
 
-	private static Vec GetMultiplicity1Evector(Matrix matrix, float evalue) {
-		float[] values = matrix.values;
+	private static Vec GetMultiplicity1Evector(Matrix? matrix, float evalue) {
+		var values = matrix.values;
 
 		// compute M
-		float[] m = Matrix._m;
+		var m = _m;
 		m[0] = values[0] - evalue;
 		m[1] = values[1];
 		m[2] = values[2];
@@ -102,7 +102,7 @@ public class Matrix {
 		m[5] = values[5] - evalue;
 
 		// compute U
-		float[] u = Matrix._u;
+		var u = _u;
 		u[0] = m[3] * m[5] - m[4] * m[4];
 		u[1] = m[2] * m[4] - m[1] * m[5];
 		u[2] = m[1] * m[4] - m[2] * m[3];
@@ -111,33 +111,29 @@ public class Matrix {
 		u[5] = m[0] * m[3] - m[1] * m[1];
 
 		// find the largest component
-		float mc = Math.Abs(u[0]);
-		int mi = 0;
-		for ( int i = 1; i < 6; ++i ) {
-			float c = Math.Abs(u[i]);
-			if ( c > mc ) {
-				mc = c;
-				mi = i;
-			}
+		var mc = Math.Abs(u[0]);
+		var mi = 0;
+		for ( var i = 1; i < 6; ++i ) {
+			var c = Math.Abs(u[i]);
+			if (!(c > mc)) continue;
+			mc = c;
+			mi = i;
 		}
 
 		// pick the column with this component
-		switch ( mi ) {
-			case 0:
-				return new Vec(u[0], u[1], u[2]);
-			case 1:
-			case 3:
-				return new Vec(u[1], u[3], u[4]);
-			default:
-				return new Vec(u[2], u[4], u[5]);
-		}
+		return mi switch
+		{
+			0 => new Vec(u[0], u[1], u[2]),
+			1 or 3 => new Vec(u[1], u[3], u[4]),
+			_ => new Vec(u[2], u[4], u[5])
+		};
 	}
 
-	private static Vec GetMultiplicity2Evector(Matrix matrix, float evalue) {
-		float[] values = matrix.values;
+	private static Vec GetMultiplicity2Evector(Matrix? matrix, float evalue) {
+		var values = matrix.values;
 
 		// compute M
-		float[] m = Matrix._m;
+		var m = _m;
 		m[0] = values[0] - evalue;
 		m[1] = values[1];
 		m[2] = values[2];
@@ -146,50 +142,44 @@ public class Matrix {
 		m[5] = values[5] - evalue;
 
 		// find the largest component
-		float mc = Math.Abs(m[0]);
-		int mi = 0;
-		for ( int i = 1; i < 6; ++i ) {
-			float c = Math.Abs(m[i]);
-			if ( c > mc ) {
-				mc = c;
-				mi = i;
-			}
+		var mc = Math.Abs(m[0]);
+		var mi = 0;
+		for ( var i = 1; i < 6; ++i ) {
+			var c = Math.Abs(m[i]);
+			if (!(c > mc)) continue;
+			mc = c;
+			mi = i;
 		}
 
 		// pick the first eigenvector based on this index
-		switch ( mi ) {
-			case 0:
-			case 1:
-				return new Vec(-m[1], m[0], 0.0f);
-			case 2:
-				return new Vec(m[2], 0.0f, -m[0]);
-			case 3:
-			case 4:
-				return new Vec(0.0f, -m[4], m[3]);
-			default:
-				return new Vec(0.0f, -m[5], m[4]);
-		}
+		return mi switch
+		{
+			0 or 1 => new Vec(-m[1], m[0], 0.0f),
+			2 => new Vec(m[2], 0.0f, -m[0]),
+			3 or 4 => new Vec(0.0f, -m[4], m[3]),
+			_ => new Vec(0.0f, -m[5], m[4])
+		};
 	}
 
-	public static Vec ComputePrincipleComponent(Matrix matrix) {
-		float[] m = matrix.values;
+	public static Vec ComputePrincipleComponent(Matrix? matrix) {
+		var m = matrix.values;
 
 		// compute the cubic coefficients
-		float c0 = m[0] * m[3] * m[5]
-						 + 2.0f * m[1] * m[2] * m[4]
-						 - m[0] * m[4] * m[4]
-						 - m[3] * m[2] * m[2]
-						 - m[5] * m[1] * m[1];
-		float c1 = m[0] * m[3] + m[0] * m[5] + m[3] * m[5]
-						 - m[1] * m[1] - m[2] * m[2] - m[4] * m[4];
-		float c2 = m[0] + m[3] + m[5];
+		var c0 = m[0] * m[3] * m[5]
+		         + 2.0f * m[1] * m[2] * m[4]
+		         - m[0] * m[4] * m[4]
+		         - m[3] * m[2] * m[2]
+		         - m[5] * m[1] * m[1];
+		var c1 = m[0] * m[3] + m[0] * m[5] + m[3] * m[5]
+		         - m[1] * m[1] - m[2] * m[2] - m[4] * m[4];
+		var c2 = m[0] + m[3] + m[5];
 
 		// compute the quadratic coefficients
-		float a = c1 - (1.0f / 3.0f) * c2 * c2;
-		float b = (-2.0f / 27.0f) * c2 * c2 * c2 + (1.0f / 3.0f) * c1 * c2 - c0;
+		var a = c1 - (1.0f / 3.0f) * c2 * c2;
+		var b = (-2.0f / 27.0f) * c2 * c2 * c2 + (1.0f / 3.0f) * c1 * c2 - c0;
 
 		// compute the root count check
-		float q = 0.25f * b * b + (1.0f / 27.0f) * a * a * a;
+		var q = 0.25f * b * b + (1.0f / 27.0f) * a * a * a;
 
 		// test the multiplicity
 		if ( FltEpsilon < q ) {
@@ -197,16 +187,16 @@ public class Matrix {
 			return new Vec(1.0f);
 		} else if ( q < -FltEpsilon ) {
 			// three distinct roots
-			float theta = (float)Math.Atan2(Math.Sqrt(-q), -0.5f * b);
-			float rho = (float)Math.Sqrt(0.25f * b * b - q);
+			var theta = (float)Math.Atan2(Math.Sqrt(-q), -0.5f * b);
+			var rho = (float)Math.Sqrt(0.25f * b * b - q);
 
-			float rt = (float)Math.Pow(rho, 1.0f / 3.0f);
-			float ct = (float)Math.Cos(theta / 3.0f);
-			float st = (float)Math.Sin(theta / 3.0f);
+			var rt = (float)Math.Pow(rho, 1.0f / 3.0f);
+			var ct = (float)Math.Cos(theta / 3.0f);
+			var st = (float)Math.Sin(theta / 3.0f);
 
-			float l1 = (1.0f / 3.0f) * c2 + 2.0f * rt * ct;
-			float l2 = (1.0f / 3.0f) * c2 - rt * (ct + (float)Math.Sqrt(3.0f) * st);
-			float l3 = (1.0f / 3.0f) * c2 - rt * (ct - (float)Math.Sqrt(3.0f) * st);
+			var l1 = (1.0f / 3.0f) * c2 + 2.0f * rt * ct;
+			var l2 = (1.0f / 3.0f) * c2 - rt * (ct + (float)Math.Sqrt(3.0f) * st);
+			var l3 = (1.0f / 3.0f) * c2 - rt * (ct - (float)Math.Sqrt(3.0f) * st);
 
 			// pick the larger
 			if ( Math.Abs(l2) > Math.Abs(l1) )
@@ -224,14 +214,11 @@ public class Matrix {
 			else
 				rt = (float)Math.Pow(0.5f * b, 1.0f / 3.0f);
 
-			float l1 = (1.0f / 3.0f) * c2 + rt;		// repeated
-			float l2 = (1.0f / 3.0f) * c2 - 2.0f * rt;
+			var l1 = (1.0f / 3.0f) * c2 + rt;		// repeated
+			var l2 = (1.0f / 3.0f) * c2 - 2.0f * rt;
 
 			// get the eigenvector
-			if ( Math.Abs(l1) > Math.Abs(l2) )
-				return GetMultiplicity2Evector(matrix, l1);
-			else
-				return GetMultiplicity1Evector(matrix, l2);
+			return Math.Abs(l1) > Math.Abs(l2) ? GetMultiplicity2Evector(matrix, l1) : GetMultiplicity1Evector(matrix, l2);
 		}
 	}
 

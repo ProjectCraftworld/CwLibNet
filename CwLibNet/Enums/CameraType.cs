@@ -1,4 +1,4 @@
-using static CwLibNet.IO.ValueEnum<int>;
+using static CwLibNet.IO.IValueEnum<int>;
 
 namespace CwLibNet.Enums
 {
@@ -25,7 +25,7 @@ namespace CwLibNet.Enums
 
         public int getPart()
         {
-            return (int)this.part;
+            return (int)part;
         }
 
         public static CameraBodyMembers fromValue(int part)

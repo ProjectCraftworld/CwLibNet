@@ -40,7 +40,7 @@ namespace CwLibNet.Structs.Texture
 
         public bool IsBumpTexture()
         {
-            return (this.flags & 0x1) != 0;
+            return (flags & 0x1) != 0;
         }
         
         public CellGcmTexture(byte[]? ddsData, bool isNoSrgb)
@@ -102,24 +102,24 @@ namespace CwLibNet.Structs.Texture
             if (method == SerializationType.GXT_SWIZZLED)
                 stream.Seek(0x14);
 
-            this.format = (CellGcmEnumForGtf)(stream.U8());
-            this.mipmap = stream.I8();
-            this.dimension = stream.I8();
+            format = (CellGcmEnumForGtf)(stream.U8());
+            mipmap = stream.I8();
+            dimension = stream.I8();
             // if dimension > 2, MARK TEXTURE AS VOL(UME)TEX
-            this.cubemap = stream.I8();
-            this.remap = stream.I32(true);
-            this.width = stream.I16();
-            this.height = stream.I16();
-            this.depth = stream.I16();
-            this.location = stream.I8();
+            cubemap = stream.I8();
+            remap = stream.I32(true);
+            width = stream.I16();
+            height = stream.I16();
+            depth = stream.I16();
+            location = stream.I8();
 
             // If (padding & 0x1) != 0, MARK TEXTURE AS BUMPTEX | NOSRGB_TEX
             // if (padding & 0x2) != 0, MARK TEXTURE as 0x20000000
             // if (padding & 0x4) != 0, MARK TEXTURE AS 0x40000000
-            this.flags = stream.I8(); // padding
+            flags = stream.I8(); // padding
 
-            this.pitch = stream.I32(true);
-            this.offset = stream.I32(true);
+            pitch = stream.I32(true);
+            offset = stream.I32(true);
         }
 
         public SerializationType GetMethod() => method;

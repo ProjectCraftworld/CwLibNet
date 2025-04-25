@@ -37,7 +37,7 @@ namespace CwLibNet.IO.Streams
                 throw new NullReferenceException("Buffer supplied to MemoryInputStream cannot be " +
                                                "null!");
             this.buffer = buffer;
-            this.length = buffer.Length;
+            length = buffer.Length;
         }
 
         /**
@@ -62,8 +62,8 @@ namespace CwLibNet.IO.Streams
                 throw new NullReferenceException("Path supplied to MemoryInputStream cannot be " +
                                                "null!");
             byte[]? data = File.ReadAllBytes(path) ?? throw new ArgumentException("File provided could not be read!");
-            this.buffer = data;
-            this.length = data.Length;
+            buffer = data;
+            length = data.Length;
         }
 
         /**
@@ -85,7 +85,7 @@ namespace CwLibNet.IO.Streams
          */
         public byte[]? Bytes(int size)
         {
-            this.offset += size;
+            offset += size;
             var secondBuffer = buffer[(offset - size)..(offset)]; // buffer.Skip(offset - size).ToArray();
 //            Array.Resize(ref secondBuffer, size);
 //             Array.Copy(this.buffer, 0, this.buffer, this.offset - size, this.offset);
@@ -99,8 +99,8 @@ namespace CwLibNet.IO.Streams
          */
         public byte[]? Bytearray()
         {
-            int size = this.I32();
-            return this.Bytes(size);
+            int size = I32();
+            return Bytes(size);
         }
 
         /**
@@ -110,7 +110,7 @@ namespace CwLibNet.IO.Streams
          */
         public bool Boole()
         {
-        return this.I8() != 0;
+        return I8() != 0;
         }
 
         /**
@@ -120,10 +120,10 @@ namespace CwLibNet.IO.Streams
          */
         public bool[] Boolarray()
         {
-            int count = this.I32();
+            int count = I32();
             bool[] elements = new bool[count];
             for (int i = 0; i < count; ++i)
-                elements[i] = this.Boole();
+                elements[i] = Boole();
             return elements;
         }
 
@@ -134,7 +134,7 @@ namespace CwLibNet.IO.Streams
          */
         public byte I8()
         {
-            return this.buffer[this.offset++];
+            return buffer[offset++];
         }
 
         /**
@@ -144,7 +144,7 @@ namespace CwLibNet.IO.Streams
          */
         public int U8()
         {
-            return this.buffer[this.offset++] & 0xFF;
+            return buffer[offset++] & 0xFF;
         }
 
         /**
@@ -154,9 +154,9 @@ namespace CwLibNet.IO.Streams
          */
         public short I16()
         {
-            byte[]? bytes = this.Bytes(2);
-            if (isLittleEndian) return CwLibNet.Util.Bytes.ToShortLE(bytes);
-            return CwLibNet.Util.Bytes.ToShortBE(bytes);
+            byte[]? bytes = Bytes(2);
+            if (isLittleEndian) return Util.Bytes.ToShortLE(bytes);
+            return Util.Bytes.ToShortBE(bytes);
         }
 
         /**
@@ -166,7 +166,7 @@ namespace CwLibNet.IO.Streams
          */
         public int U16()
         {
-            return (this.I16() & 0xFFFF);
+            return (I16() & 0xFFFF);
         }
 
         /**
@@ -176,8 +176,8 @@ namespace CwLibNet.IO.Streams
          */
         public int U24()
         {
-            byte[]? b = this.Bytes(3);
-            if (this.isLittleEndian)
+            byte[]? b = Bytes(3);
+            if (isLittleEndian)
                 return (b[2] & 0xFF) << 16 | (b[1] & 0xFF) << 8 | b[0] & 0xFF;
             return (b[0] & 0xFF) << 16 | (b[1] & 0xFF) << 8 | b[2] & 0xFF;
         }
@@ -190,20 +190,20 @@ namespace CwLibNet.IO.Streams
          */
         public int I32(bool force32)
         {
-            if (force32 || (this.compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0)
+            if (force32 || (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0)
             {
-                byte[]? bytes = this.Bytes(4);
-                if (this.isLittleEndian) return CwLibNet.Util.Bytes.ToIntegerLE(bytes);
-                return CwLibNet.Util.Bytes.ToIntegerBE(bytes);
+                byte[]? bytes = Bytes(4);
+                if (isLittleEndian) return Util.Bytes.ToIntegerLE(bytes);
+                return Util.Bytes.ToIntegerBE(bytes);
             }
-            return (int)(this.Uleb128() & 0xFFFFFFFF);
+            return (int)(Uleb128() & 0xFFFFFFFF);
         }
         
         public long I64(bool force64) {
-            if (!force64 && (this.compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0)
-                return this.Uleb128();
-            byte[]? b = this.Bytes(8);
-            if (this.isLittleEndian) {
+            if (!force64 && (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0)
+                return Uleb128();
+            byte[]? b = Bytes(8);
+            if (isLittleEndian) {
                 return	(b[7] & 0xFFL) << 56 |
                         (b[6] & 0xFFL) << 48 |
                         (b[5] & 0xFFL) << 40 |
@@ -231,9 +231,9 @@ namespace CwLibNet.IO.Streams
          */
         public int S32()
         {
-            if (((this.compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0))
-                return this.I32(true);
-            int v = (int)this.Uleb128();
+            if (((compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0))
+                return I32(true);
+            int v = (int)Uleb128();
             return (v >> 1 ^ -(v & 1));
         }
 
@@ -245,9 +245,9 @@ namespace CwLibNet.IO.Streams
          */
         public long U32(bool force32)
         {
-            if (force32 || (this.compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0)
-                return this.I32(true) & 0xFFFFFFFFL;
-            return this.Uleb128();
+            if (force32 || (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0)
+                return I32(true) & 0xFFFFFFFFL;
+            return Uleb128();
         }
 
         /**
@@ -258,10 +258,10 @@ namespace CwLibNet.IO.Streams
          */
         public long U64(bool force64)
         {
-            if (force64 || (this.compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0)
+            if (force64 || (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0)
             {
-                byte[]? b = this.Bytes(8);
-                if (this.isLittleEndian)
+                byte[]? b = Bytes(8);
+                if (isLittleEndian)
                 {
                     return (b[7] & 0xFF) << 56 |
                            (b[6] & 0xFF) << 48 |
@@ -281,7 +281,7 @@ namespace CwLibNet.IO.Streams
                        (b[6] & 0xFF) << 8 |
                        (b[7] & 0xFF) << 0;
             }
-            return this.Uleb128();
+            return Uleb128();
         }
 
         /**
@@ -292,9 +292,9 @@ namespace CwLibNet.IO.Streams
          */
         public long S64(bool force64)
         {
-            if (force64 || ((this.compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0))
-                return this.U64(true);
-            long v = this.Uleb128();
+            if (force64 || ((compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0))
+                return U64(true);
+            long v = Uleb128();
             return v >> 1 ^ -(v & 1L);
         }
 
@@ -305,7 +305,7 @@ namespace CwLibNet.IO.Streams
          */
         public int I32()
         {
-            return this.I32(false);
+            return I32(false);
         }
 
         /**
@@ -315,7 +315,7 @@ namespace CwLibNet.IO.Streams
          */
         public long U32()
         {
-            return this.U32(false);
+            return U32(false);
         }
 
         /**
@@ -325,7 +325,7 @@ namespace CwLibNet.IO.Streams
          */
         public long U64()
         {
-            return this.U64(false);
+            return U64(false);
         }
 
         /**
@@ -335,7 +335,7 @@ namespace CwLibNet.IO.Streams
          */
         public long S64()
         {
-            return this.S64(false);
+            return S64(false);
         }
 
         /**
@@ -349,7 +349,7 @@ namespace CwLibNet.IO.Streams
             int i = 0;
             while (true)
             {
-                long b = this.U8() & 0xFFL;
+                long b = U8() & 0xFFL;
                 result |= (b & 0x7f) << 7 * i;
                 if ((b & 0x80L) == 0L)
                     break;
@@ -365,10 +365,10 @@ namespace CwLibNet.IO.Streams
          */
         public short[] Shortarray()
         {
-            int count = this.I32();
+            int count = I32();
             short[] elements = new short[count];
             for (int i = 0; i < count; ++i)
-                elements[i] = this.I16();
+                elements[i] = I16();
             return elements;
         }
 
@@ -379,10 +379,10 @@ namespace CwLibNet.IO.Streams
          */
         public int[] Intarray()
         {
-            int count = this.I32();
+            int count = I32();
             int[] elements = new int[count];
             for (int i = 0; i < count; ++i)
-                elements[i] = this.I32();
+                elements[i] = I32();
             return elements;
         }
 
@@ -393,10 +393,10 @@ namespace CwLibNet.IO.Streams
          */
         public long[] Longarray()
         {
-            int count = this.I32();
+            int count = I32();
             long[] elements = new long[count];
             for (int i = 0; i < count; ++i)
-                elements[i] = this.U64();
+                elements[i] = U64();
             return elements;
         }
 
@@ -408,7 +408,7 @@ namespace CwLibNet.IO.Streams
          */
         public float F16()
         {
-            int half = this.U16();
+            int half = U16();
             int mant = half & 0x03ff;
             int exp = half & 0x7c00;
             if (exp == 0x7c00) exp = 0x3fc00;
@@ -438,7 +438,7 @@ namespace CwLibNet.IO.Streams
          */
         public float F32()
         {
-            return BitConverter.Int32BitsToSingle(this.I32(true));
+            return BitConverter.Int32BitsToSingle(I32(true));
         }
 
         /**
@@ -448,10 +448,10 @@ namespace CwLibNet.IO.Streams
          */
         public float[] Floatarray()
         {
-            int count = this.I32();
+            int count = I32();
             float[] elements = new float[count];
             for (int i = 0; i < count; ++i)
-                elements[i] = this.F32();
+                elements[i] = F32();
             return elements;
         }
 
@@ -462,7 +462,7 @@ namespace CwLibNet.IO.Streams
          */
         public Vector2 V2()
         {
-            return new Vector2(this.F32(), this.F32());
+            return new Vector2(F32(), F32());
         }
 
         /**
@@ -472,7 +472,7 @@ namespace CwLibNet.IO.Streams
          */
         public Vector3 V3()
         {
-            return new Vector3(this.F32(), this.F32(), this.F32());
+            return new Vector3(F32(), F32(), F32());
         }
 
         /**
@@ -482,7 +482,7 @@ namespace CwLibNet.IO.Streams
          */
         public Vector4 V4()
         {
-            return new Vector4(this.F32(), this.F32(), this.F32(), this.F32());
+            return new Vector4(F32(), F32(), F32(), F32());
         }
 
         /**
@@ -492,10 +492,10 @@ namespace CwLibNet.IO.Streams
          */
         public Vector4[]? Vectorarray()
         {
-            int count = this.I32();
+            int count = I32();
             Vector4[]? elements = new Vector4[count];
             for (int i = 0; i < count; ++i)
-                elements[i] = this.V4();
+                elements[i] = V4();
             return elements;
         }
 
@@ -509,12 +509,12 @@ namespace CwLibNet.IO.Streams
             float[] matrix = new float[] { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 };
 
             int flags = 0xFFFF;
-            if ((this.compressionFlags & CompressionFlags.USE_COMPRESSED_MATRICES) != 0)
-                flags = this.I16();
+            if ((compressionFlags & CompressionFlags.USE_COMPRESSED_MATRICES) != 0)
+                flags = I16();
 
             for (int i = 0; i < 16; ++i)
                 if ((flags & (1 << i)) != 0)
-                    matrix[i] = this.F32();
+                    matrix[i] = F32();
 
             Matrix4x4 mat = new Matrix4x4(matrix[0], matrix[1], matrix[2], matrix[3], matrix[4], matrix[5], matrix[6], matrix[7], matrix[8], matrix[9], matrix[10], matrix[11], matrix[12], matrix[13], matrix[14], matrix[15]);
             return mat;
@@ -529,7 +529,7 @@ namespace CwLibNet.IO.Streams
         public string? Str(int size)
         {
             if (size == 0) return "";
-            return Encoding.ASCII.GetString(this.Bytes(size)).Replace("\0", "");
+            return Encoding.ASCII.GetString(Bytes(size)).Replace("\0", "");
         }
 
         /**
@@ -541,7 +541,7 @@ namespace CwLibNet.IO.Streams
         public string? Wstr(int size)
         {
             if (size == 0) return "";
-            return Encoding.BigEndianUnicode.GetString(this.Bytes(size * 2)).Replace("\0", "");
+            return Encoding.BigEndianUnicode.GetString(Bytes(size * 2)).Replace("\0", "");
         }
 
         /**
@@ -551,7 +551,7 @@ namespace CwLibNet.IO.Streams
          */
         public string? Str()
         {
-            return this.Str(this.S32());
+            return Str(S32());
         }
 
         /**
@@ -561,7 +561,7 @@ namespace CwLibNet.IO.Streams
          */
         public string? Wstr()
         {
-            return this.Wstr(this.S32());
+            return Wstr(S32());
         }
 
         /**
@@ -571,7 +571,7 @@ namespace CwLibNet.IO.Streams
          */
         public SHA1? Sha1()
         {
-            return new SHA1(this.Bytes(0x14));
+            return new SHA1(Bytes(0x14));
         }
 
         /**
@@ -581,7 +581,7 @@ namespace CwLibNet.IO.Streams
          */
         public GUID? Guid()
         {
-            return this.Guid(false);
+            return Guid(false);
         }
 
         /**
@@ -592,7 +592,7 @@ namespace CwLibNet.IO.Streams
          */
         public GUID? Guid(bool force32)
         {
-            long number = this.U32(force32);
+            long number = U32(force32);
             if (number == 0) return null;
             return new GUID(number);
         }
@@ -606,7 +606,7 @@ namespace CwLibNet.IO.Streams
          */
         public T? Enum8<T>() where T : Enum
         {
-            byte number = this.I8();
+            byte number = I8();
             foreach (var constant in Enum.GetValues(typeof(T)))
                 if ((int)constant == number)
                     return (T)constant;
@@ -622,7 +622,7 @@ namespace CwLibNet.IO.Streams
          */
         public T Enum32<T>() where T : Enum
         {
-            return this.Enum32<T>(false);
+            return Enum32<T>(false);
         }
 
         /**
@@ -635,7 +635,7 @@ namespace CwLibNet.IO.Streams
          */
         public T Enum32<T>(bool signed)
         {
-            int number = (signed) ? this.S32() : this.I32();
+            int number = (signed) ? S32() : I32();
             var constants = Enum.GetValues(typeof(T));
             foreach (var constant in constants)
                 if ((int)constant == (number))
@@ -653,10 +653,10 @@ namespace CwLibNet.IO.Streams
          */
         public T[] Enumarray<T>() where T: Enum
         {
-            int count = this.I32();
+            int count = I32();
             T[] elements = new T[count];
             for (int i = 0; i < count; ++i)
-                elements[i] = this.Enum8<T>();
+                elements[i] = Enum8<T>();
             return elements;
         }
 
@@ -675,7 +675,7 @@ namespace CwLibNet.IO.Streams
             {
                 case SeekMode.Begin:
                     {
-                        if (offset > this.length)
+                        if (offset > length)
                             throw new ArgumentException("Can't seek past stream length.");
                         this.offset = offset;
                         break;
@@ -683,7 +683,7 @@ namespace CwLibNet.IO.Streams
                 case SeekMode.Relative:
                     {
                         int newOffset = this.offset + offset;
-                        if (newOffset > this.length || newOffset < 0)
+                        if (newOffset > length || newOffset < 0)
                             throw new ArgumentException("Can't seek outside bounds of " +
                                                                "stream.");
                         this.offset = newOffset;
@@ -691,10 +691,10 @@ namespace CwLibNet.IO.Streams
                     }
                 case SeekMode.End:
                     {
-                        if (offset < 0 || this.length - offset < 0)
+                        if (offset < 0 || length - offset < 0)
                             throw new ArgumentException("Can't seek outside bounds of " +
                                                                "stream.");
-                        this.offset = this.length - offset;
+                        this.offset = length - offset;
                         break;
                     }
             }
@@ -707,37 +707,37 @@ namespace CwLibNet.IO.Streams
          */
         public void Seek(int offset)
         {
-            this.Seek(offset, SeekMode.Relative);
+            Seek(offset, SeekMode.Relative);
         }
 
         public bool IsLittleEndian()
         {
-            return this.isLittleEndian;
+            return isLittleEndian;
         }
 
         public byte[]? GetBuffer()
         {
-            return this.buffer;
+            return buffer;
         }
 
         public int GetOffset()
         {
-            return this.offset;
+            return offset;
         }
 
         public int GetLength()
         {
-            return this.length;
+            return length;
         }
 
         public byte GetCompressionFlags()
         {
-            return this.compressionFlags;
+            return compressionFlags;
         }
 
         public void SetLittleEndian(bool value)
         {
-            this.isLittleEndian = value;
+            isLittleEndian = value;
         }
     }
 }

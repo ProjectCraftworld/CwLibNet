@@ -80,27 +80,27 @@ public class Decal: ISerializable
 
     public Decal(ResourceDescriptor texture)
     {
-        this.Texture = texture;
+        Texture = texture;
     }
 
     public Decal(ResourceDescriptor texture, float u, float v, float scale, float angle,
                  bool flipped)
     {
-        this.Texture = texture;
+        Texture = texture;
 
-        this.U = u;
-        this.V = v;
+        U = u;
+        V = v;
 
         float sx = scale;
         float sy = scale;
         if (flipped)
             sx = -sx;
 
-        this.Xvecu = (float) (sx * Math.Cos(angle));
-        this.Xvecv = (float) (sx * Math.Sin(angle));
+        Xvecu = (float) (sx * Math.Cos(angle));
+        Xvecv = (float) (sx * Math.Sin(angle));
 
-        this.Yvecu = (float) (-sy * Math.Sin(angle));
-        this.Yvecv = (float) (sy * Math.Cos(angle));
+        Yvecu = (float) (-sy * Math.Sin(angle));
+        Yvecv = (float) (sy * Math.Cos(angle));
     }
 
     
@@ -184,7 +184,7 @@ public class Decal: ISerializable
 
     public int GetAllocatedSize()
     {
-        return Decal.BaseAllocationSize;
+        return BaseAllocationSize;
     }
 
 

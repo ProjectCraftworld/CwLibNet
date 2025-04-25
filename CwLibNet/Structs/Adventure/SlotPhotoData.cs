@@ -34,8 +34,8 @@ namespace CwLibNet.Structs.Adventure
         public virtual int GetAllocatedSize()
         {
             int size = BaseAllocationSize;
-            if (this.Photos != null)
-                size += (this.Photos.Length * 0x24);
+            if (Photos != null)
+                size += (Photos.Length * 0x24);
             return size;
         }
     }

@@ -90,44 +90,44 @@ namespace CwLibNet.Structs.Slot
         public Slot(SlotDescriptor descriptor)
         {
             id = new SlotID(SlotType.USER_CREATED_ON_SERVER, descriptor.Id);
-            this.name = descriptor.Name;
-            this.description = descriptor.Description;
+            name = descriptor.Name;
+            description = descriptor.Description;
 
             if (Strings.IsSHA1(descriptor.Root) || Strings.IsGUID(descriptor.Root))
             {
                 if (descriptor.IsAdventurePlanet)
                 {
-                    this.adventure = new ResourceDescriptor(descriptor.Root, ResourceType.AdventureCreateProfile);
+                    adventure = new ResourceDescriptor(descriptor.Root, ResourceType.AdventureCreateProfile);
                 }
                 else
                 {
-                    this.root = new ResourceDescriptor(descriptor.Root, ResourceType.Level);
+                    root = new ResourceDescriptor(descriptor.Root, ResourceType.Level);
                 }
             }
 
             if (Strings.IsSHA1(descriptor.Icon) || Strings.IsGUID(descriptor.Icon))
             {
-                this.icon = new ResourceDescriptor(descriptor.Icon, ResourceType.Texture);
+                icon = new ResourceDescriptor(descriptor.Icon, ResourceType.Texture);
             }
             if (descriptor.Labels != null)
             {
-                this.labels = new Label[descriptor.Labels.Length];
-                for (int i = 0; i < this.labels.Length; i++)
+                labels = new Label[descriptor.Labels.Length];
+                for (int i = 0; i < labels.Length; i++)
                 {
-                    this.labels[i]
+                    labels[i]
                         = new Label((int) RTranslationTable.MakeLamsKeyID(descriptor.Labels[i]), i);
                 }
             }
 
-            this.initiallyLocked = descriptor.Locked;
-            this.isSubLevel = descriptor.IsSubLevel;
-            this.shareable = descriptor.Shareable != 0;
+            initiallyLocked = descriptor.Locked;
+            isSubLevel = descriptor.IsSubLevel;
+            shareable = descriptor.Shareable != 0;
             if (descriptor.Background != 0)
             {
-                this.backgroundGUID = new GUID(descriptor.Background);
+                backgroundGUID = new GUID(descriptor.Background);
             }
-            this.minPlayers = (byte)Math.Clamp(descriptor.Minplayers, 1, 4);
-            this.maxPlayers = (byte)Math.Clamp(descriptor.Maxplayers, 1, 4);
+            minPlayers = (byte)Math.Clamp(descriptor.Minplayers, 1, 4);
+            maxPlayers = (byte)Math.Clamp(descriptor.Maxplayers, 1, 4);
         }
 
         public void Serialize(Serializer serializer)

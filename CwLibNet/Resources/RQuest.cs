@@ -53,12 +53,12 @@ namespace CwLibNet.Resources
 
         public virtual int GetAllocatedSize()
         {
-            return RQuest.BASE_ALLOCATION_SIZE;
+            return BASE_ALLOCATION_SIZE;
         }
 
         public SerializationData Build(Revision revision, byte compressionFlags)
         {
-            Serializer serializer = new Serializer(this.GetAllocatedSize(), revision,
+            Serializer serializer = new Serializer(GetAllocatedSize(), revision,
                 compressionFlags);
             serializer.Struct<RQuest>(this);
             return new SerializationData(

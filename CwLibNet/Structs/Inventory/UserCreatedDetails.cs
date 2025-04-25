@@ -14,8 +14,8 @@ public class UserCreatedDetails: ISerializable
 
     public UserCreatedDetails(string? name, string? description)
     {
-        this.Name = name;
-        this.Description = description;
+        Name = name;
+        Description = description;
     }
     
     public void Serialize(Serializer serializer)

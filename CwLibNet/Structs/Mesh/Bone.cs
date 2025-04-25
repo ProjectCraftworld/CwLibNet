@@ -41,7 +41,7 @@ public class Bone: AnimBone
      */
     public Bone(String name)
     {
-        this.animHash = RAnimation.CalculateAnimationHash(name);
+        animHash = RAnimation.CalculateAnimationHash(name);
         if (name is { Length: >= MAX_BONE_NAME_LENGTH }) // null terminated
             name = name[..MAX_BONE_NAME_LENGTH];
         this.name = name;
@@ -75,7 +75,7 @@ public class Bone: AnimBone
 
     public string? getName()
     {
-        return this.name;
+        return name;
     }
 
     public void setName(String name)
@@ -139,7 +139,7 @@ public class Bone: AnimBone
         if (skeleton == null)
             throw new NullReferenceException("Can't get bones from null skeleton!");
         for (int i = 0; i < skeleton.Length; ++i)
-            if (skeleton[i].animHash == this.animHash)
+            if (skeleton[i].animHash == animHash)
                 return i;
         return -1;
     }
@@ -155,7 +155,7 @@ public class Bone: AnimBone
         if (skeleton == null)
             throw new NullReferenceException("Can't get bones from null skeleton!");
         List<Bone> bones = new(skeleton.Length);
-        int index = this.getIndex(skeleton);
+        int index = getIndex(skeleton);
         if (index == -1)
             throw new ArgumentException("This bone doesn't exist in the skeleton " +
                                                "provided!");
@@ -170,19 +170,19 @@ public class Bone: AnimBone
 
     public Matrix4x4? getLocalTransform(Bone[] bones)
     {
-        if (this.parent == -1) return this.skinPoseMatrix;
-        Bone bone = bones[this.parent];
-        return bone.invSkinPoseMatrix * (this.skinPoseMatrix);
+        if (parent == -1) return skinPoseMatrix;
+        Bone bone = bones[parent];
+        return bone.invSkinPoseMatrix * (skinPoseMatrix);
     }
 
     
     public int GetAllocatedSize()
     {
         int size = BASE_ALLOCATION_SIZE;
-        if (this.shapeInfos != null)
-            size += this.shapeInfos.Length * MeshShapeInfo.BaseAllocationSize;
-        if (this.shapeVerts != null)
-            size += this.shapeVerts.Length * MeshShapeVertex.BaseAllocationSize;
+        if (shapeInfos != null)
+            size += shapeInfos.Length * MeshShapeInfo.BaseAllocationSize;
+        if (shapeVerts != null)
+            size += shapeVerts.Length * MeshShapeVertex.BaseAllocationSize;
         return size;
     }
 

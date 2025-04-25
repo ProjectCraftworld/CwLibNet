@@ -49,7 +49,7 @@ public class AnimBone: ISerializable
     
     public virtual int GetAllocatedSize()
     {
-        return AnimBone.BASE_ALLOCATION_SIZE;
+        return BASE_ALLOCATION_SIZE;
     }
 
 

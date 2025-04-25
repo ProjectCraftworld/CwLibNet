@@ -16,24 +16,6 @@ namespace CwLibNet.IO
         /// <returns>Serialization data</returns>
         public abstract SerializationData Build(Revision revision, byte compressionFlags);
 
-        /// <summary>
-        /// Performs necessary fixes to a resource after serializing is finished.
-        /// </summary>
-        /// <param name="revision">The revision of the loaded resource</param>
-        public virtual void OnLoadFinished(Revision revision)
-        {
-            // Using a default implementation since I'm not adding this to every resource right now.
-        }
-
-        /// <summary>
-        /// Performs necessary fixes to a resource for serialization for a specified revision.
-        /// </summary>
-        /// <param name="revision">The target revision</param>
-        public virtual void OnStartSave(Revision revision)
-        {
-            // Using a default implementation since I'm not adding this to every resource right now.
-        }
-        
         public abstract void Serialize(Serializer.Serializer serializer);
         
         public abstract int GetAllocatedSize();

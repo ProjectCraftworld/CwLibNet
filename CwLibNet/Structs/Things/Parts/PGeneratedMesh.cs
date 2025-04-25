@@ -90,8 +90,8 @@ public class PGeneratedMesh : ISerializable
 
     public PGeneratedMesh(ResourceDescriptor? material, ResourceDescriptor? bevel)
     {
-        this.GfxMaterial = material;
-        this.Bevel = bevel;
+        GfxMaterial = material;
+        Bevel = bevel;
     }
 
     public void Serialize(Serializer serializer)

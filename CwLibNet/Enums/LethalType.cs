@@ -48,7 +48,7 @@ namespace CwLibNet.Enums
 
         public LethalType getType()
         {
-            return this.type;
+            return type;
         }
         public static LethalBody fromValue(int type)
         {

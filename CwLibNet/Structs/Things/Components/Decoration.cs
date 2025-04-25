@@ -78,9 +78,9 @@ public class Decoration: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = Decoration.BaseAllocationSize;
-        if (this.RenderMesh != null)
-            size += this.RenderMesh.GetAllocatedSize();
+        int size = BaseAllocationSize;
+        if (RenderMesh != null)
+            size += RenderMesh.GetAllocatedSize();
         return size;
     }
 

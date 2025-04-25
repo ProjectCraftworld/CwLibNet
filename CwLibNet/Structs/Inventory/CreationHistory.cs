@@ -13,12 +13,12 @@ public class CreationHistory : ISerializable
 
     public CreationHistory(string? creator)
     {
-        this.Creators = [creator];
+        Creators = [creator];
     }
 
     public CreationHistory(string?[] creators)
     {
-        this.Creators = creators;
+        Creators = creators;
     }
 
     public void Serialize(Serializer serializer)
@@ -53,8 +53,8 @@ public class CreationHistory : ISerializable
     public int GetAllocatedSize()
     {
         int size = BaseAllocationSize;
-        if (this.Creators == null) return size;
-        foreach (string? editor in this.Creators)
+        if (Creators == null) return size;
+        foreach (string? editor in Creators)
             size += ((editor!.Length * 2) + 4);
         return size;
     }

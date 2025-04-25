@@ -12,7 +12,7 @@ namespace CwLibNet.Enums
         public static readonly int DIRT = (1 << 9);
         [Obsolete]
         public static readonly int PROCEDURAL = (1 << 6);
-        public static readonly int DIFFUSE_COLOR = CacheFlags.DIFFUSE | (1 << 7);
-        public static readonly int SPECULAR_COLOR = CacheFlags.SPECULAR | (1 << 8);
+        public static readonly int DIFFUSE_COLOR = DIFFUSE | (1 << 7);
+        public static readonly int SPECULAR_COLOR = SPECULAR | (1 << 8);
     }
 }

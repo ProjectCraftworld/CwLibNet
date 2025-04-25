@@ -32,12 +32,12 @@ public class Skeleton: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = Skeleton.BaseAllocationSize;
-        if (this.Bones != null) size += Bones.Sum(bone => bone.GetAllocatedSize());
-        if (this.Mirror != null) size += (this.Mirror.Length * 0x2);
-        if (this.MirrorType != null) size += (this.MirrorType.Length * 0x2);
-        if (this.CullBones != null)
-            size += (this.CullBones.Length * CullBone.BaseAllocationSize);
+        int size = BaseAllocationSize;
+        if (Bones != null) size += Bones.Sum(bone => bone.GetAllocatedSize());
+        if (Mirror != null) size += (Mirror.Length * 0x2);
+        if (MirrorType != null) size += (MirrorType.Length * 0x2);
+        if (CullBones != null)
+            size += (CullBones.Length * CullBone.BaseAllocationSize);
         return size;
     }
 

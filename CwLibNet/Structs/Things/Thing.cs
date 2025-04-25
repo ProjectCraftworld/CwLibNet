@@ -35,7 +35,7 @@ namespace CwLibNet.Types.Things
 
         public Thing(int uid)
         {
-            this.UID = uid;
+            UID = uid;
         }
     
         public void Serialize(Serializer serializer)
@@ -177,7 +177,7 @@ namespace CwLibNet.Types.Things
             foreach (Part part in partsToSerialize)
             {
                 serializer.Log(part.Name + " [START]");
-                bool o = (bool)part.GetType().GetMethod("Serialize")!.MakeGenericMethod(part.Serializable).Invoke(part, [this.parts, partsRevision, flags, serializer]);
+                bool o = (bool)part.GetType().GetMethod("Serialize")!.MakeGenericMethod(part.Serializable).Invoke(part, [parts, partsRevision, flags, serializer]);
                 if (!o)
                 {
                     serializer.Log(part.Name + " FAILED");
@@ -191,17 +191,17 @@ namespace CwLibNet.Types.Things
         
         public T? GetPart<T>(Part part) where T: ISerializable
         {
-            return (T?) this.parts[part.GetIndex()];
+            return (T?) parts[part.GetIndex()];
         }
 
         public void SetPart<T>(Part part, T value) where T : ISerializable
         {
-            this.parts[part.GetIndex()] = value;
+            parts[part.GetIndex()] = value;
         }
         
         public bool HasPart(Part part)
         {
-            return this.parts[part.GetIndex()] != null;
+            return parts[part.GetIndex()] != null;
         }
 
         public int GetAllocatedSize()

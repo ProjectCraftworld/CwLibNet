@@ -12,7 +12,7 @@ public class PDecorations: ISerializable
 
     public PDecorations(Decoration decor)
     {
-        this.decorations = [decor];
+        decorations = [decor];
     }
 
     

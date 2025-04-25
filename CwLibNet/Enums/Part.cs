@@ -98,7 +98,7 @@ namespace CwLibNet.Enums
          */
         public string GetNameForReflection()
         {
-            string name = this.Name.ToLower();
+            string name = Name.ToLower();
             string[] words = name.Split('_');
 
             for (int i = 0; i < words.Length; ++i)
@@ -155,22 +155,22 @@ namespace CwLibNet.Enums
          */
         public bool HasPart(int head, long flags, int version)
         {
-            if ((head & 0xFFFF) >= 0x13c && (this.Index >= 0x36 && this.Index <= 0x3c))
+            if ((head & 0xFFFF) >= 0x13c && (Index >= 0x36 && Index <= 0x3c))
                 return false;
             if ((head & 0xFFFF) >= 0x18c && this == Parts["PARTICLE_EMITTER_2"])
                 return false;
             if ((head >> 0x10) >= 0x107 && this == Parts["CREATOR_ANIM"])
                 return false;
 
-            int index = this.Index;
+            int index = Index;
             if (version < PartHistory.CREATOR_ANIM)
-                return version >= this.Version
+                return version >= Version
                        && (((1L << index) & flags) != 0);
             if (this == Parts["CREATOR_ANIM"])
                 return ((1L << 0x29) & flags) != 0;
             if (((head >> 0x10) < 0x107) && index > 0x28) index++;
 
-            return version >= this.Version
+            return version >= Version
                    && (((1L << index) & flags) != 0);
         }
 
@@ -186,12 +186,12 @@ namespace CwLibNet.Enums
         public bool Serialize<T>(ISerializable?[] parts, int version, long flags, Serializer serializer) where T : ISerializable
         {
             /* The Thing doesn't have this part, so it's "successful". */
-            if (!this.HasPart(serializer.GetRevision().Head, flags, version))
+            if (!HasPart(serializer.GetRevision().Head, flags, version))
                 return true;
 
-            T? part = (T?)parts[this.Index];
+            T? part = (T?)parts[Index];
 
-            if (this.Serializable == null)
+            if (Serializable == null)
             {
                 if (serializer.IsWriting())
                 {
@@ -209,7 +209,7 @@ namespace CwLibNet.Enums
                 return false;
             }
 
-            parts[this.Index] = serializer.Reference(part);
+            parts[Index] = serializer.Reference(part);
 
             return true;
         }

@@ -136,6 +136,6 @@ public class PSpriteLight: ISerializable
 
     public int GetAllocatedSize()
     {
-        return PSpriteLight.BaseAllocationSize;
+        return BaseAllocationSize;
     }
 }

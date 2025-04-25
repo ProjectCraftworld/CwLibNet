@@ -16,7 +16,7 @@ public class SoftbodySpring: ISerializable
     {
         A = (short) a;
         B = (short) b;
-        this.RestLengthSq = restLengthSq;
+        RestLengthSq = restLengthSq;
     }
 
     

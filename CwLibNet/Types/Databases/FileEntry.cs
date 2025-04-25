@@ -41,15 +41,15 @@ public class FileEntry
     
     public T? GetResource<T>(int key)
     {
-        object? value = this.resources[key];
+        object? value = resources[key];
         if (value == null) return default;
         return (T) value;
     }
 
     public void setDetails(FileEntry entry)
     {
-        this.Path = entry.Path;
-        this.Size = entry.Size;
-        this.Sha1 = entry.Sha1;
+        Path = entry.Path;
+        Size = entry.Size;
+        Sha1 = entry.Sha1;
     }
 }

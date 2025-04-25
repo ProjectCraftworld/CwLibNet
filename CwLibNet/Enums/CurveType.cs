@@ -33,7 +33,7 @@ namespace CwLibNet.Enums
 
         public CurveType getType()
         {
-            return this.value;
+            return value;
         }
         /// <summary>
         /// Attempts to get a f-curve type from value.

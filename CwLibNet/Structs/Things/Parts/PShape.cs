@@ -132,15 +132,15 @@ public class PShape: ISerializable
 
     public PShape(Vector3?[] vertices)
     {
-        this.Polygon.Vertices = vertices;
-        this.Polygon.Loops = new int[] { vertices.Length };
-        this.Polygon.RequiresZ = true;
+        Polygon.Vertices = vertices;
+        Polygon.Loops = new int[] { vertices.Length };
+        Polygon.RequiresZ = true;
     }
 
     public PShape(float massDepth, float thickness, Vector3?[] vertices): this(vertices)
     {
-        this.MassDepth = massDepth;
-        this.Thickness = thickness;
+        MassDepth = massDepth;
+        Thickness = thickness;
     }
 
     
@@ -169,7 +169,7 @@ public class PShape: ISerializable
             else
             {
                 Vector4 color = serializer.GetInput().V4();
-                this.Color = (uint)Colors.GetARGB(color);
+                Color = (uint)Colors.GetARGB(color);
             }
         }
         else Color = (uint)serializer.I32((int)Color);

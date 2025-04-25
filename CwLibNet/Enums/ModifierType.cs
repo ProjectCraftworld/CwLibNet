@@ -1,4 +1,4 @@
-using static CwLibNet.IO.ValueEnum<int>;
+using static CwLibNet.IO.IValueEnum<int>;
 
 namespace CwLibNet.Enums
 {
@@ -45,7 +45,7 @@ namespace CwLibNet.Enums
 
         public ModifierType getValue()
         {
-            return this.value;
+            return value;
         }
 
         public static short GetFlags(HashSet<ModifierType>? set)

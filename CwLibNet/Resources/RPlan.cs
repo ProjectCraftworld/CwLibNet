@@ -22,43 +22,43 @@ namespace CwLibNet.Resources
         public byte CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_ALL_COMPRESSION;
         public RPlan()
         {
-            this.ThingData = [];
+            ThingData = [];
         }
 
         public RPlan(Revision revision, byte compressionFlags, Thing thing, PMetadata metadata)
         {
-            this.Revision = revision;
-            this.CompressionFlags = compressionFlags;
-            this.SetThing(thing);
-            this.InventoryData = new InventoryItemDetails(metadata);
-            this.ThingData = [];
+            Revision = revision;
+            CompressionFlags = compressionFlags;
+            SetThing(thing);
+            InventoryData = new InventoryItemDetails(metadata);
+            ThingData = [];
         }
 
         public RPlan(Revision revision, byte compressionFlags, Thing[]? things, PMetadata metadata)
         {
-            this.Revision = revision;
-            this.CompressionFlags = compressionFlags;
-            this.SetThings(things);
-            this.InventoryData = new InventoryItemDetails(metadata);
-            this.ThingData = [];
+            Revision = revision;
+            CompressionFlags = compressionFlags;
+            SetThings(things);
+            InventoryData = new InventoryItemDetails(metadata);
+            ThingData = [];
         }
 
         public RPlan(Revision revision, byte compressionFlags, Thing thing, InventoryItemDetails details)
         {
-            this.Revision = revision;
-            this.CompressionFlags = compressionFlags;
-            this.SetThing(thing);
-            this.InventoryData = details;
-            this.ThingData = [];
+            Revision = revision;
+            CompressionFlags = compressionFlags;
+            SetThing(thing);
+            InventoryData = details;
+            ThingData = [];
         }
 
         public RPlan(Revision revision, byte compressionFlags, Thing[]? things, InventoryItemDetails details)
         {
-            this.Revision = revision;
-            this.CompressionFlags = compressionFlags;
-            this.SetThings(things);
-            this.InventoryData = details;
-            this.ThingData = [];
+            Revision = revision;
+            CompressionFlags = compressionFlags;
+            SetThings(things);
+            InventoryData = details;
+            ThingData = [];
         }
 
         public override void Serialize(Serializer serializer)
@@ -74,7 +74,7 @@ namespace CwLibNet.Resources
             if (!serializer.IsWriting())
             {
                 CompressionFlags = serializer.GetCompressionFlags();
-                this.Revision = revision;
+                Revision = revision;
             }
 
             if (revision.GetSubVersion() >= ((int)Revisions.StreamingPlan))
@@ -87,7 +87,7 @@ namespace CwLibNet.Resources
             if (head >= ((int)Revisions.PlanDetails) && !IsUsedForStreaming)
             {
                 InventoryData = serializer.Struct(InventoryData);
-                if (revision.Has(Types.Branch.Leerdammer, ((int)Revisions.LdLamsKeys)) || head >= ((int)Revisions.LamsKeys))
+                if (revision.Has(Branch.Leerdammer, ((int)Revisions.LdLamsKeys)) || head >= ((int)Revisions.LamsKeys))
                 {
                     InventoryData.Location = serializer.U32(InventoryData.Location);
                     InventoryData.Category = serializer.U32(InventoryData.Category);
@@ -124,21 +124,21 @@ namespace CwLibNet.Resources
 
         public SerializationData Build()
         {
-            return this.Build(this.Revision, this.CompressionFlags);
+            return Build(Revision, CompressionFlags);
         }
 
         public override SerializationData Build(Revision revision, byte compressionFlags)
         {
-            Serializer serializer = new Serializer(this.GetAllocatedSize() + 0x8000, revision, compressionFlags);
+            Serializer serializer = new Serializer(GetAllocatedSize() + 0x8000, revision, compressionFlags);
             serializer.Struct(this);
-            foreach (ResourceDescriptor? descriptor in this.DependencyCache)
+            foreach (ResourceDescriptor? descriptor in DependencyCache)
                 serializer.AddDependency(descriptor);
             return new SerializationData(serializer.GetBuffer(), revision, compressionFlags, ResourceType.Plan, SerializationType.BINARY, serializer.GetDependencies());
         }
 
         public virtual Thing[]? GetThings()
         {
-            Serializer serializer = new Serializer(this.ThingData, this.Revision, this.CompressionFlags);
+            Serializer serializer = new Serializer(ThingData, Revision, CompressionFlags);
             Thing[]? things = serializer.Array<Thing>(null, true);
             if (Revision.GetVersion() >= 0x341)
             {
@@ -159,25 +159,25 @@ namespace CwLibNet.Resources
 
         public void SetThings(Thing[]? things)
         {
-            Serializer serializer = new(0x800000, this.Revision, this.CompressionFlags);
+            Serializer serializer = new(0x800000, Revision, CompressionFlags);
             serializer.Array(things, true);
-            this.ThingData = serializer.GetBuffer();
+            ThingData = serializer.GetBuffer();
             ResourceDescriptor?[] dependencies = serializer.GetDependencies();
-            this.DependencyCache.Clear();
-            this.DependencyCache = [..dependencies];
+            DependencyCache.Clear();
+            DependencyCache = [..dependencies];
         }
 
         public void SetThing(Thing? thing)
         {
-            Serializer serializer = new(0x800000, this.Revision, this.CompressionFlags);
+            Serializer serializer = new(0x800000, Revision, CompressionFlags);
             serializer.Reference(thing);
             Thing[]? things = serializer.GetThings();
-            serializer = new Serializer(0x800000, this.Revision, this.CompressionFlags);
+            serializer = new Serializer(0x800000, Revision, CompressionFlags);
             serializer.Array(things, true);
-            this.ThingData = serializer.GetBuffer();
+            ThingData = serializer.GetBuffer();
             ResourceDescriptor?[] dependencies = serializer.GetDependencies();
-            this.DependencyCache.Clear();
-            this.DependencyCache = [..dependencies];
+            DependencyCache.Clear();
+            DependencyCache = [..dependencies];
         }
     }
 }

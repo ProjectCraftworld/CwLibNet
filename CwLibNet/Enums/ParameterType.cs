@@ -36,7 +36,7 @@ namespace CwLibNet.Enums
 
         public ParameterType GetValue()
         {
-            return this.value;
+            return value;
         }
 
         public static ParameterBody? FromValue(int value)

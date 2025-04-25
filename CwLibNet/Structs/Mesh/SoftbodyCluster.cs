@@ -20,7 +20,7 @@ public class SoftbodyCluster
         // float9x9
         for (int i = 0; i < QUAD_DYADIC_SUM_LENGTH; ++i)
             if (i % 10 == 0)
-                this.restQuadraticDyadicSum[i] = 1.0f;
+                restQuadraticDyadicSum[i] = 1.0f;
     }
 
     public void setName(String name)
@@ -37,6 +37,6 @@ public class SoftbodyCluster
             throw new ArgumentException("Rest quadratic dyadic sum array length must" +
                                         " be " +
                                         "81!");
-        this.restQuadraticDyadicSum = sum;
+        restQuadraticDyadicSum = sum;
     }
 }

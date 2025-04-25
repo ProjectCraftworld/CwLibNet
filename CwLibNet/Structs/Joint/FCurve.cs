@@ -25,7 +25,7 @@ public class FCurve
     
     public int GetAllocatedSize()
     {
-        return FCurve.BaseAllocationSize;
+        return BaseAllocationSize;
     }
 
 

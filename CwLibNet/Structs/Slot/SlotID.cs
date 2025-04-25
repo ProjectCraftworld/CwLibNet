@@ -26,8 +26,8 @@ public class SlotID: ISerializable
 
     public SlotID(SlotType type, long id)
     {
-        this.SlotType = type;
-        this.SlotNumber = id;
+        SlotType = type;
+        SlotNumber = id;
     }
 
     public override bool Equals(object? obj)

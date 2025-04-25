@@ -28,7 +28,7 @@ namespace CwLibNet.Enums
 
         public ContentsType getType()
         {
-            return this.type;
+            return type;
         }
 
         public static ContentsBodyMembers fromValue(int type)

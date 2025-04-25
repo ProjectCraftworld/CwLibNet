@@ -23,18 +23,18 @@ public class Morph
      */
     public Morph(Vector3[] offsets, Vector3[] normals)
     {
-        this.Offsets = offsets;
-        this.Normals = normals;
+        Offsets = offsets;
+        Normals = normals;
     }
 
     public Vector3[] GetOffsets()
     {
-        return this.Offsets;
+        return Offsets;
     }
 
     public Vector3[] GetNormals()
     {
-        return this.Normals;
+        return Normals;
     }
 
 

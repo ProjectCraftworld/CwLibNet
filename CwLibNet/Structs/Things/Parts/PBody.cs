@@ -90,5 +90,5 @@ public class PBody: ISerializable
             EditingPlayer = serializer.Reference(EditingPlayer);
     }
     
-    public int GetAllocatedSize() { return PBody.BaseAllocationSize; }
+    public int GetAllocatedSize() { return BaseAllocationSize; }
 }

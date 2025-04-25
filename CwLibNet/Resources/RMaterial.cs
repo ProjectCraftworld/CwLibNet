@@ -153,7 +153,7 @@ namespace CwLibNet.Resources
 
         public override SerializationData Build(Revision revision, byte compressionFlags)
         {
-            Serializer serializer = new(this.GetAllocatedSize(), revision,
+            Serializer serializer = new(GetAllocatedSize(), revision,
                 compressionFlags);
             serializer.Struct(this);
             return new SerializationData(

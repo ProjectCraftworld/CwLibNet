@@ -47,7 +47,7 @@ public class WhipSim : ISerializable
 
         public int GetAllocatedSize()
         {
-            return WhipSim.BASE_ALLOCATION_SIZE;
+            return BASE_ALLOCATION_SIZE;
         }
     }
 
@@ -72,7 +72,7 @@ public class WhipSim : ISerializable
 
         public int GetAllocatedSize()
         {
-            return SpringData.BASE_ALLOCATION_SIZE;
+            return BASE_ALLOCATION_SIZE;
         }
     }
 

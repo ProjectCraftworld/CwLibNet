@@ -94,10 +94,10 @@ public class Polygon: ISerializable
     public int GetAllocatedSize()
     {
         int size = BaseAllocationSize;
-        if (this.Vertices != null)
-            size += (this.Vertices.Length * 0xC);
-        if (this.Loops != null)
-            size += (this.Loops.Length * 0x4);
+        if (Vertices != null)
+            size += (Vertices.Length * 0xC);
+        if (Loops != null)
+            size += (Loops.Length * 0x4);
         return size;
     }
 

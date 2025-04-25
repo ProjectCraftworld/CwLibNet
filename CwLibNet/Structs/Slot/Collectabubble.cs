@@ -20,7 +20,7 @@ namespace CwLibNet.Structs.Slot
 
         public int GetAllocatedSize()
         {
-            return Collectabubble.BaseAllocationSize;
+            return BaseAllocationSize;
         }
     }
 }

@@ -22,10 +22,10 @@ public class MaterialWire: ISerializable
      */
     public MaterialWire(int boxFrom, int boxTo, int portFrom, int portTo)
     {
-        this.BoxFrom = boxFrom;
-        this.BoxTo = boxTo;
-        this.PortFrom = (byte) portFrom;
-        this.PortTo = (byte) portTo;
+        BoxFrom = boxFrom;
+        BoxTo = boxTo;
+        PortFrom = (byte) portFrom;
+        PortTo = (byte) portTo;
     }
 
     
@@ -42,7 +42,7 @@ public class MaterialWire: ISerializable
     
     public int GetAllocatedSize()
     {
-        return MaterialWire.BaseAllocationSize;
+        return BaseAllocationSize;
     }
 
 

@@ -25,8 +25,8 @@ public class ContactCache: ISerializable
     public int GetAllocatedSize()
     {
         int size = BaseAllocationSize;
-        if (this.Contacts != null)
-            foreach (Contact contact in this.Contacts)
+        if (Contacts != null)
+            foreach (Contact contact in Contacts)
         size += contact.GetAllocatedSize();
         return size;
     }

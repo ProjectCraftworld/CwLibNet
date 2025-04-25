@@ -18,8 +18,8 @@ public class EditorSelection: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = EditorSelection.BaseAllocationSize;
-        if (this.Name != null) size += (this.Name.Length);
+        int size = BaseAllocationSize;
+        if (Name != null) size += (Name.Length);
         return size;
     }
 }

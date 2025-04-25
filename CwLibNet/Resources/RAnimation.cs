@@ -27,10 +27,10 @@ public class RAnimation: Resource
 
         public RpsAnimData(RAnimation animation)
         {
-            this.Rot = new Vector4?[animation.Bones.Length];
-            this.Pos = new Vector4?[animation.Bones.Length];
-            this.Scale = new Vector4?[animation.Bones.Length];
-            this.Morph = new float[animation.MorphCount];
+            Rot = new Vector4?[animation.Bones.Length];
+            Pos = new Vector4?[animation.Bones.Length];
+            Scale = new Vector4?[animation.Bones.Length];
+            Morph = new float[animation.MorphCount];
         }
     }
 
@@ -154,7 +154,7 @@ public class RAnimation: Resource
         if (isWriting)
         {
             MemoryOutputStream memoryOutputStream = new MemoryOutputStream(0x50000);
-            foreach (AnimBone bone in this.Bones)
+            foreach (AnimBone bone in Bones)
             {
                 memoryOutputStream.I32(bone.animHash);
                 memoryOutputStream.U8(bone.parent);
@@ -163,14 +163,14 @@ public class RAnimation: Resource
                 memoryOutputStream.U8(0); // Padding
             }
 
-            foreach (byte bone in this.RotBonesAnimated) memoryOutputStream.I8(bone);
-            foreach (byte bone in this.PosBonesAnimated) memoryOutputStream.I8(bone);
-            foreach (byte bone in this.ScaledBonesAnimated) memoryOutputStream.I8(bone);
-            foreach (byte bone in this.MorphsAnimated) memoryOutputStream.I8(bone);
+            foreach (byte bone in RotBonesAnimated) memoryOutputStream.I8(bone);
+            foreach (byte bone in PosBonesAnimated) memoryOutputStream.I8(bone);
+            foreach (byte bone in ScaledBonesAnimated) memoryOutputStream.I8(bone);
+            foreach (byte bone in MorphsAnimated) memoryOutputStream.I8(bone);
 
             if ((memoryOutputStream.GetOffset() % 2) != 0) memoryOutputStream.U8(0);
 
-            foreach (Vector4 rotation in this.PackedRotation)
+            foreach (Vector4 rotation in PackedRotation)
             {
                 short xrot = (short) Math.Round(rotation.X * 0x7fff);
                 xrot &= ~1;
@@ -181,21 +181,21 @@ public class RAnimation: Resource
                 memoryOutputStream.I16((short) (Math.Round(rotation.Z * 0x7fff)));
             }
 
-            foreach (Vector4 position in this.PackedPosition)
+            foreach (Vector4 position in PackedPosition)
             {
                 memoryOutputStream.F16(position.X);
                 memoryOutputStream.F16(position.Y);
                 memoryOutputStream.F16(position.Z);
             }
 
-            foreach (Vector4 scale in this.PackedScale)
+            foreach (Vector4 scale in PackedScale)
             {
                 memoryOutputStream.F16(scale.X);
                 memoryOutputStream.F16(scale.Y);
                 memoryOutputStream.F16(scale.Z);
             }
 
-            foreach (float morph in this.PackedMorph) memoryOutputStream.F16(morph);
+            foreach (float morph in PackedMorph) memoryOutputStream.F16(morph);
 
             while (memoryOutputStream.GetOffset() % 16 != 0) memoryOutputStream.U8(0);
 
@@ -204,11 +204,11 @@ public class RAnimation: Resource
             byte[]? animationData = memoryOutputStream.GetBuffer();
             memoryOutputStream = serializer.GetOutput();
 
-            memoryOutputStream.U8(this.Bones.Length);
-            memoryOutputStream.U8(this.RotBonesAnimated.Length);
-            memoryOutputStream.U8(this.PosBonesAnimated.Length);
-            memoryOutputStream.U8(this.ScaledBonesAnimated.Length);
-            memoryOutputStream.U8(this.MorphsAnimated.Length);
+            memoryOutputStream.U8(Bones.Length);
+            memoryOutputStream.U8(RotBonesAnimated.Length);
+            memoryOutputStream.U8(PosBonesAnimated.Length);
+            memoryOutputStream.U8(ScaledBonesAnimated.Length);
+            memoryOutputStream.U8(MorphsAnimated.Length);
             memoryOutputStream.U16(0); // locatorKeys
 
             if (version > 0x38b)
@@ -306,15 +306,15 @@ public class RAnimation: Resource
     {
         if (looped)
         {
-            int nf = (frame - this.LoopStart) % (this.NumFrames - this.LoopStart);
+            int nf = (frame - LoopStart) % (NumFrames - LoopStart);
             if (nf < 0)
-                nf += (this.NumFrames - this.LoopStart);
-            return this.LoopStart + nf;
+                nf += (NumFrames - LoopStart);
+            return LoopStart + nf;
         }
 
         if (frame < 0) return 0;
-        if (this.NumFrames <= frame)
-            return this.NumFrames - 1;
+        if (NumFrames <= frame)
+            return NumFrames - 1;
         return frame;
     }
 
@@ -331,60 +331,60 @@ public class RAnimation: Resource
     {
         RpsAnimData data = new RpsAnimData(this);
 
-        for (int i = 0; i < this.Bones.Length; ++i)
+        for (int i = 0; i < Bones.Length; ++i)
         {
-            data.Rot[i] = this.PackedRotation[i];
-            data.Pos[i] = this.PackedPosition[i];
-            data.Scale[i] = this.PackedScale[i];
+            data.Rot[i] = PackedRotation[i];
+            data.Pos[i] = PackedPosition[i];
+            data.Scale[i] = PackedScale[i];
         }
 
-        if (this.MorphCount >= 0)
-            Array.Copy(this.PackedMorph, 0, data.Morph, 0, this.MorphCount);
+        if (MorphCount >= 0)
+            Array.Copy(PackedMorph, 0, data.Morph, 0, MorphCount);
 
         if (frame > 0)
         {
-            this.Unpack(data.Rot, this.PackedRotation, this.RotBonesAnimated.Length, frame,
-                this.Bones.Length, this.RotBonesAnimated);
-            this.Unpack(data.Pos, this.PackedPosition, this.PosBonesAnimated.Length, frame,
-                this.Bones.Length, this.PosBonesAnimated);
-            this.Unpack(data.Scale, this.PackedScale, this.ScaledBonesAnimated.Length, frame,
-                this.Bones.Length, this.ScaledBonesAnimated);
+            Unpack(data.Rot, PackedRotation, RotBonesAnimated.Length, frame,
+                Bones.Length, RotBonesAnimated);
+            Unpack(data.Pos, PackedPosition, PosBonesAnimated.Length, frame,
+                Bones.Length, PosBonesAnimated);
+            Unpack(data.Scale, PackedScale, ScaledBonesAnimated.Length, frame,
+                Bones.Length, ScaledBonesAnimated);
         }
 
-        int offset = this.MorphsAnimated.Length * (frame - 1) + this.MorphCount;
-        for (int morph = 0; morph < this.MorphsAnimated.Length; ++morph)
-            data.Morph[this.MorphsAnimated[morph] & 0xff] = this.PackedMorph[offset + morph];
+        int offset = MorphsAnimated.Length * (frame - 1) + MorphCount;
+        for (int morph = 0; morph < MorphsAnimated.Length; ++morph)
+            data.Morph[MorphsAnimated[morph] & 0xff] = PackedMorph[offset + morph];
 
         return data;
     }
 
     public Vector4? GetBasePosition(int boneIndex)
     {
-        return this.PackedPosition[boneIndex];
+        return PackedPosition[boneIndex];
     }
 
     public Vector4? GetBaseRotation(int boneIndex)
     {
-        return this.PackedRotation[boneIndex];
+        return PackedRotation[boneIndex];
     }
 
     public Vector4? GetBaseScale(int boneIndex)
     {
-        return this.PackedScale[boneIndex];
+        return PackedScale[boneIndex];
     }
 
     public float GetBaseWeight(int morphIndex)
     {
-        return this.PackedMorph[morphIndex];
+        return PackedMorph[morphIndex];
     }
 
     public Matrix4x4 GetBaseTransform(int animHash)
     {
-        int index = this.GetBoneIndex(animHash);
+        int index = GetBoneIndex(animHash);
         if (index == -1) return Matrix4x4.Identity;
-        Vector4 pos = this.PackedPosition[index].Value;
-        Vector4 rot = this.PackedRotation[index].Value;
-        Vector4 sx = this.PackedScale[index].Value;
+        Vector4 pos = PackedPosition[index].Value;
+        Vector4 rot = PackedRotation[index].Value;
+        Vector4 sx = PackedScale[index].Value;
 
         Vector3? translation = new Vector3(pos.X, pos.Y, pos.Z);
         Quaternion quaternion = new Quaternion(rot.X, rot.Y, rot.Z, rot.W);
@@ -399,30 +399,30 @@ public class RAnimation: Resource
 
     private void Cache()
     {
-        if (this.cachedFrameData == null)
+        if (cachedFrameData == null)
         {
-            this.cachedFrameData = new RpsAnimData[this.NumFrames];
-            for (int i = 0; i < this.NumFrames; ++i)
-                this.cachedFrameData[i] = this.GetAnimDataForFrame(i);
+            cachedFrameData = new RpsAnimData[NumFrames];
+            for (int i = 0; i < NumFrames; ++i)
+                cachedFrameData[i] = GetAnimDataForFrame(i);
         }
     }
 
     public float[] GetFrameWeights(int frame, float position, bool looped)
     {
-        this.Cache();
-        return this.cachedFrameData[this.GetLoopedFrame(frame, looped)].Morph;
+        Cache();
+        return cachedFrameData[GetLoopedFrame(frame, looped)].Morph;
     }
 
     public float[] GetBlendedFrameWeights(int frame, float position, bool looped)
     {
-        this.Cache();
+        Cache();
 
-        float lastTime = frame * (1.0f / this.NumFrames);
-        float nextTime = (frame + 1) * (1.0f / this.NumFrames);
+        float lastTime = frame * (1.0f / NumFrames);
+        float nextTime = (frame + 1) * (1.0f / NumFrames);
         float scaleFactor = (position - lastTime) / (nextTime - lastTime);
 
-        RpsAnimData data = this.cachedFrameData[this.GetLoopedFrame(frame, looped)];
-        RpsAnimData next = this.cachedFrameData[this.GetLoopedFrame(frame + 1, looped)];
+        RpsAnimData data = cachedFrameData[GetLoopedFrame(frame, looped)];
+        RpsAnimData next = cachedFrameData[GetLoopedFrame(frame + 1, looped)];
 
         float[] weights = new float[data.Morph.Length];
         for (int i = 0; i < weights.Length; i++)
@@ -433,23 +433,23 @@ public class RAnimation: Resource
 
     public RpsAnimData GetFrameData(int frame, float position, bool looped)
     {
-        this.Cache();
-        return this.cachedFrameData[this.GetLoopedFrame(frame, looped)];
+        Cache();
+        return cachedFrameData[GetLoopedFrame(frame, looped)];
     }
 
     public Matrix4x4? GetBlendedFrameMatrix(int animHash, int frame, float position, bool looped)
     {
-        float lastTime = frame * (1.0f / this.NumFrames);
-        float nextTime = (frame + 1) * (1.0f / this.NumFrames);
+        float lastTime = frame * (1.0f / NumFrames);
+        float nextTime = (frame + 1) * (1.0f / NumFrames);
         float scaleFactor = (position - lastTime) / (nextTime - lastTime);
 
-        this.Cache();
+        Cache();
 
-        int index = this.GetBoneIndex(animHash);
+        int index = GetBoneIndex(animHash);
         if (index == -1) return null;
 
-        RpsAnimData data = this.cachedFrameData[this.GetLoopedFrame(frame, looped)];
-        RpsAnimData next = this.cachedFrameData[this.GetLoopedFrame(frame + 1, looped)];
+        RpsAnimData data = cachedFrameData[GetLoopedFrame(frame, looped)];
+        RpsAnimData next = cachedFrameData[GetLoopedFrame(frame + 1, looped)];
 
         Vector4 pos = data.Pos[index].Value.Lerp(next.Pos[index].Value, scaleFactor);
         Vector4 scale = data.Scale[index].Value.Lerp(next.Scale[index].Value, scaleFactor);
@@ -470,13 +470,13 @@ public class RAnimation: Resource
 
     public Matrix4x4? GetFrameMatrix(int animHash, int frame, float position, bool looped)
     {
-        this.Cache();
+        Cache();
 
-        int index = this.GetBoneIndex(animHash);
+        int index = GetBoneIndex(animHash);
         if (index == -1) return null;
 
 
-        RpsAnimData data = this.cachedFrameData[this.GetLoopedFrame(frame, looped)];
+        RpsAnimData data = cachedFrameData[GetLoopedFrame(frame, looped)];
 
         Vector3 scale = new Vector3(data.Scale[index].Value.X, data.Scale[index].Value.Y,
             data.Scale[index].Value.Z);
@@ -491,8 +491,8 @@ public class RAnimation: Resource
 
     public Matrix4x4 GetFrameMatrix(int frame, int index)
     {
-        this.Cache();
-        RpsAnimData data = this.cachedFrameData[frame];
+        Cache();
+        RpsAnimData data = cachedFrameData[frame];
         Vector3 scale = new Vector3(data.Scale[index].Value.X, data.Scale[index].Value.Y,
             data.Scale[index].Value.Z);
         return Matrix4x4.Identity.TranslationRotationScale(
@@ -505,14 +505,14 @@ public class RAnimation: Resource
 
     public Matrix4x4 GetWorldPosition(int frame, int index)
     {
-        this.Cache();
+        Cache();
         List<Matrix4x4> sequence = [];
-        sequence.Add(this.GetFrameMatrix(frame, index));
-        index = this.Bones[index].parent;
+        sequence.Add(GetFrameMatrix(frame, index));
+        index = Bones[index].parent;
         while (index != -1)
         {
-            sequence.Add(this.GetFrameMatrix(frame, index));
-            index = this.Bones[index].parent;
+            sequence.Add(GetFrameMatrix(frame, index));
+            index = Bones[index].parent;
         }
         Matrix4x4 wpos = new Matrix4x4();
         for (int i = sequence.Count - 1; i >= 0; i--)
@@ -522,30 +522,30 @@ public class RAnimation: Resource
 
     public void ToZUp()
     {
-        this.Cache();
+        Cache();
 
-        Quaternion f = this.GetFrameMatrix(0, 2).GetUnnormalizedRotation();
-        Matrix4x4[] matrices = new Matrix4x4[this.Bones.Length];
-        for (int i = 0; i < this.Bones.Length; i++)
-            matrices[i] = this.GetWorldPosition(0, i);
+        Quaternion f = GetFrameMatrix(0, 2).GetUnnormalizedRotation();
+        Matrix4x4[] matrices = new Matrix4x4[Bones.Length];
+        for (int i = 0; i < Bones.Length; i++)
+            matrices[i] = GetWorldPosition(0, i);
         // matrices[0].rotateX((float) Math.toRadians(90.0f));
         // matrices[0].mapXZY();
 
-        for (int i = 0; i < this.Bones.Length; i++)
+        for (int i = 0; i < Bones.Length; i++)
         {
             Matrix4x4 frame = matrices[i];
-            if (this.Bones[i].parent != -1)
+            if (Bones[i].parent != -1)
             {
-                Matrix4x4 parent = matrices[this.Bones[i].parent];
+                Matrix4x4 parent = matrices[Bones[i].parent];
                 frame = parent.Invert() * frame;
             }
 
             Matrix4x4 myRot =
-                this.GetFrameMatrix(0, i).GetUnnormalizedRotation().GetMatrix();
-            if (this.Bones[i].parent != -1)
+                GetFrameMatrix(0, i).GetUnnormalizedRotation().GetMatrix();
+            if (Bones[i].parent != -1)
             {
                 Matrix4x4 p =
-                    this.GetFrameMatrix(0, this.Bones[i].parent).GetUnnormalizedRotation().GetMatrix();
+                    GetFrameMatrix(0, Bones[i].parent).GetUnnormalizedRotation().GetMatrix();
                 myRot = p.Invert() * (myRot);
             }
 
@@ -554,15 +554,15 @@ public class RAnimation: Resource
 
             Vector3 pos = frame.GetTranslation();
 
-            this.PackedPosition[i] = new Vector4(pos, 1.0f);
-            this.PackedRotation[i] = new Vector4(rot.X, rot.Y, rot.Z, rot.W);
-            this.PackedScale[i] = new Vector4(frame.GetScale(), 1.0f);
+            PackedPosition[i] = new Vector4(pos, 1.0f);
+            PackedRotation[i] = new Vector4(rot.X, rot.Y, rot.Z, rot.W);
+            PackedScale[i] = new Vector4(frame.GetScale(), 1.0f);
         }
 
-        for (int i = 1; i < this.NumFrames; i++)
+        for (int i = 1; i < NumFrames; i++)
         {
-            for (int b = 0; b < this.Bones.Length; b++)
-                matrices[b] = this.GetWorldPosition(i, b);
+            for (int b = 0; b < Bones.Length; b++)
+                matrices[b] = GetWorldPosition(i, b);
 
 
         }
@@ -572,17 +572,17 @@ public class RAnimation: Resource
 
     public float[] GetBaseWeights()
     {
-        float[] weights = new float[this.MorphCount];
-        Array.Copy(this.PackedMorph, 0, weights, 0, this.MorphCount);
+        float[] weights = new float[MorphCount];
+        Array.Copy(PackedMorph, 0, weights, 0, MorphCount);
         return weights;
     }
 
     public int GetBoneIndex(int animHash)
     {
         if (animHash == 0) return 0;
-        for (int i = 0; i < this.Bones.Length; ++i)
+        for (int i = 0; i < Bones.Length; ++i)
         {
-            AnimBone bone = this.Bones[i];
+            AnimBone bone = Bones[i];
             if (bone.animHash == animHash)
                 return i;
         }
@@ -591,28 +591,28 @@ public class RAnimation: Resource
 
     public bool IsAnimated(int morph)
     {
-        return this.MorphsAnimated.Any(index => index == morph);
+        return MorphsAnimated.Any(index => index == morph);
     }
 
     public bool IsAnimatedAtAll(int animHash)
     {
-        byte index = (byte) this.GetBoneIndex(animHash);
-        if (this.PosBonesAnimated.Any(animated => animated == index))
+        byte index = (byte) GetBoneIndex(animHash);
+        if (PosBonesAnimated.Any(animated => animated == index))
         {
             return true;
         }
-        return this.RotBonesAnimated.Any(animated => animated == index) || this.ScaledBonesAnimated.Any(animated => animated == index);
+        return RotBonesAnimated.Any(animated => animated == index) || ScaledBonesAnimated.Any(animated => animated == index);
     }
 
     public bool IsAnimated(AnimBone bone, AnimationType type)
     {
         if (bone == null) return false;
-        return this.IsAnimated(bone.animHash, type);
+        return IsAnimated(bone.animHash, type);
     }
 
     public bool IsAnimated(int animHash, AnimationType type)
     {
-        return this.GetAnimationIndex(animHash, type) != -1;
+        return GetAnimationIndex(animHash, type) != -1;
     }
 
     public int GetAnimationIndex(int animHash, AnimationType type)
@@ -621,18 +621,18 @@ public class RAnimation: Resource
         switch (type)
         {
             case AnimationType.ROTATION:
-                indices = this.RotBonesAnimated;
+                indices = RotBonesAnimated;
                 break;
             case AnimationType.POSITION:
-                indices = this.PosBonesAnimated;
+                indices = PosBonesAnimated;
                 break;
             case AnimationType.SCALE:
-                indices = this.ScaledBonesAnimated;
+                indices = ScaledBonesAnimated;
                 break;
         }
 
         if (indices == null) return -1;
-        int boneIndex = this.GetBoneIndex(animHash);
+        int boneIndex = GetBoneIndex(animHash);
         if (boneIndex == -1) return -1;
 
         for (int i = 0; i < indices.Length; ++i)
@@ -647,54 +647,54 @@ public class RAnimation: Resource
 
     public Vector3 GetTranslationFrame(int animHash, int frame)
     {
-        int index = this.GetBoneIndex(animHash);
+        int index = GetBoneIndex(animHash);
         if (index == -1) return new Vector3();
         Vector4 translation;
-        int animIndex = this.GetAnimationIndex(animHash, AnimationType.POSITION);
-        if (frame == 0 || animIndex == -1) translation = this.PackedPosition[index].Value;
+        int animIndex = GetAnimationIndex(animHash, AnimationType.POSITION);
+        if (frame == 0 || animIndex == -1) translation = PackedPosition[index].Value;
         else
             translation =
-                this.PackedPosition[this.Bones.Length + ((frame - 1) * this.PosBonesAnimated.Length) + animIndex].Value;
+                PackedPosition[Bones.Length + ((frame - 1) * PosBonesAnimated.Length) + animIndex].Value;
 
         return new Vector3(translation.X, translation.Y, translation.Z);
     }
 
     public Quaternion GetRotationFrame(int animHash, int frame)
     {
-        int index = this.GetBoneIndex(animHash);
+        int index = GetBoneIndex(animHash);
         if (index == -1) return new Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
         Vector4 rotation;
-        int animIndex = this.GetAnimationIndex(animHash, AnimationType.ROTATION);
+        int animIndex = GetAnimationIndex(animHash, AnimationType.ROTATION);
         if (frame == 0 || animIndex == -1)
-            rotation = this.PackedRotation[index].Value;
+            rotation = PackedRotation[index].Value;
         else
             rotation =
-                this.PackedRotation[this.Bones.Length + ((frame - 1) * this.RotBonesAnimated.Length) + animIndex].Value;
+                PackedRotation[Bones.Length + ((frame - 1) * RotBonesAnimated.Length) + animIndex].Value;
 
         return new Quaternion(rotation.X, rotation.Y, rotation.Z, rotation.W);
     }
 
     public Vector3 GetScaleFrame(int animHash, int frame)
     {
-        int index = this.GetBoneIndex(animHash);
+        int index = GetBoneIndex(animHash);
         if (index == -1) return new Vector3(1.0f, 1.0f, 1.0f);
         Vector4 scale;
-        int animIndex = this.GetAnimationIndex(animHash, AnimationType.SCALE);
+        int animIndex = GetAnimationIndex(animHash, AnimationType.SCALE);
         if (frame == 0 || animIndex == -1)
-            scale = this.PackedScale[index].Value;
+            scale = PackedScale[index].Value;
         else
             scale =
-                this.PackedScale[this.Bones.Length + ((frame - 1) * this.ScaledBonesAnimated.Length) + animIndex].Value;
+                PackedScale[Bones.Length + ((frame - 1) * ScaledBonesAnimated.Length) + animIndex].Value;
 
         return new Vector3(scale.X, scale.Y, scale.Z);
     }
 
     private Vector4[] GetFrames(int animHash, AnimationType type)
     {
-        int animIndex = this.GetAnimationIndex(animHash, type);
+        int animIndex = GetAnimationIndex(animHash, type);
         if (animIndex == -1) return null;
 
-        int boneIndex = this.GetBoneIndex(animHash);
+        int boneIndex = GetBoneIndex(animHash);
         if (boneIndex == -1) return null;
 
         Vector4?[] pack = null;
@@ -703,72 +703,72 @@ public class RAnimation: Resource
         {
             case AnimationType.ROTATION:
             {
-                pack = this.PackedRotation;
-                animated = this.RotBonesAnimated.Length;
+                pack = PackedRotation;
+                animated = RotBonesAnimated.Length;
                 break;
             }
             case AnimationType.POSITION:
             {
-                pack = this.PackedPosition;
-                animated = this.PosBonesAnimated.Length;
+                pack = PackedPosition;
+                animated = PosBonesAnimated.Length;
                 break;
             }
             case AnimationType.SCALE:
             {
-                pack = this.PackedScale;
-                animated = this.ScaledBonesAnimated.Length;
+                pack = PackedScale;
+                animated = ScaledBonesAnimated.Length;
                 break;
             }
             default:
                 return null;
         }
 
-        Vector4[] frames = new Vector4[this.NumFrames];
+        Vector4[] frames = new Vector4[NumFrames];
         frames[0] = pack[boneIndex].Value;
-        for (int i = 1; i < this.NumFrames; ++i)
-            frames[i] = pack[this.Bones.Length + ((i - 1) * animated) + animIndex].Value;
+        for (int i = 1; i < NumFrames; ++i)
+            frames[i] = pack[Bones.Length + ((i - 1) * animated) + animIndex].Value;
 
         return frames;
     }
 
     public Vector4[] GetRotationFrames(AnimBone bone)
     {
-        return this.GetRotationFrames(bone.animHash);
+        return GetRotationFrames(bone.animHash);
     }
 
     public Vector4[] GetRotationFrames(int animHash)
     {
-        return this.GetFrames(animHash, AnimationType.ROTATION);
+        return GetFrames(animHash, AnimationType.ROTATION);
     }
 
     public Vector4[] GetPositionFrames(AnimBone bone)
     {
-        return this.GetPositionFrames(bone.animHash);
+        return GetPositionFrames(bone.animHash);
     }
 
     public Vector4[] GetPositionFrames(int animHash)
     {
-        return this.GetFrames(animHash, AnimationType.POSITION);
+        return GetFrames(animHash, AnimationType.POSITION);
     }
 
     public Vector4[] GetScaleFrames(AnimBone bone)
     {
-        return this.GetScaleFrames(bone.animHash);
+        return GetScaleFrames(bone.animHash);
     }
 
     public Vector4[] GetScaleFrames(int animHash)
     {
-        return this.GetFrames(animHash, AnimationType.SCALE);
+        return GetFrames(animHash, AnimationType.SCALE);
     }
 
     public float[] GetMorphFrames(int index)
     {
-        if (index < 0 || index >= this.MorphCount || !this.IsAnimated(index)) return null;
-        float[] frames = new float[this.NumFrames];
-        frames[0] = this.PackedMorph[index];
-        for (int i = 1; i < this.NumFrames; ++i)
+        if (index < 0 || index >= MorphCount || !IsAnimated(index)) return null;
+        float[] frames = new float[NumFrames];
+        frames[0] = PackedMorph[index];
+        for (int i = 1; i < NumFrames; ++i)
             frames[i] =
-                this.PackedMorph[this.MorphCount + ((i - 1) * this.MorphsAnimated.Length) + index];
+                PackedMorph[MorphCount + ((i - 1) * MorphsAnimated.Length) + index];
         return frames;
 
     }
@@ -776,7 +776,7 @@ public class RAnimation: Resource
     
     public override SerializationData Build(Revision revision, byte compressionFlags)
     {
-        Serializer serializer = new Serializer(this.GetAllocatedSize(), revision,
+        Serializer serializer = new Serializer(GetAllocatedSize(), revision,
             compressionFlags);
         serializer.Struct(this);
         return new SerializationData(
@@ -793,16 +793,16 @@ public class RAnimation: Resource
     public override int GetAllocatedSize()
     {
         int size = BaseAllocationSize;
-        if (this.Bones != null) size += (this.Bones.Length * AnimBone.BASE_ALLOCATION_SIZE);
-        if (this.RotBonesAnimated != null) size += (this.RotBonesAnimated.Length * 2);
-        if (this.PosBonesAnimated != null) size += (this.PosBonesAnimated.Length * 2);
-        if (this.ScaledBonesAnimated != null) size += (this.ScaledBonesAnimated.Length * 2);
-        if (this.MorphsAnimated != null) size += (this.MorphsAnimated.Length * 2);
-        if (this.PackedRotation != null) size += (this.PackedRotation.Length * 0x10);
-        if (this.PackedPosition != null) size += (this.PackedPosition.Length * 0x10);
-        if (this.PackedScale != null) size += (this.PackedScale.Length * 0x10);
-        if (this.PackedMorph != null) size += (this.PackedMorph.Length * 0x4);
-        if (this.Locators != null) size += this.Locators.Sum(locator => (locator.GetAllocatedSize()));
+        if (Bones != null) size += (Bones.Length * AnimBone.BASE_ALLOCATION_SIZE);
+        if (RotBonesAnimated != null) size += (RotBonesAnimated.Length * 2);
+        if (PosBonesAnimated != null) size += (PosBonesAnimated.Length * 2);
+        if (ScaledBonesAnimated != null) size += (ScaledBonesAnimated.Length * 2);
+        if (MorphsAnimated != null) size += (MorphsAnimated.Length * 2);
+        if (PackedRotation != null) size += (PackedRotation.Length * 0x10);
+        if (PackedPosition != null) size += (PackedPosition.Length * 0x10);
+        if (PackedScale != null) size += (PackedScale.Length * 0x10);
+        if (PackedMorph != null) size += (PackedMorph.Length * 0x4);
+        if (Locators != null) size += Locators.Sum(locator => (locator.GetAllocatedSize()));
         return size;
     }
 

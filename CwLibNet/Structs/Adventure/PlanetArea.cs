@@ -62,11 +62,11 @@ namespace CwLibNet.Structs.Adventure
 
         public int GetAllocatedSize()
         {
-            int size = PlanetArea.BaseAllocationSize;
-            if (this.Spritelights != null)
-                size += (this.Spritelights.Length * 0x4);
-            if (this.SpritelightPositions != null)
-                size += (this.SpritelightPositions.Length * 0x10);
+            int size = BaseAllocationSize;
+            if (Spritelights != null)
+                size += (Spritelights.Length * 0x4);
+            if (SpritelightPositions != null)
+                size += (SpritelightPositions.Length * 0x10);
             return size;
         }
     }

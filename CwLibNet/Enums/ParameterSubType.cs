@@ -27,7 +27,7 @@ namespace CwLibNet.Enums
 
         public ParameterSubType getValue()
         {
-            return this.value;
+            return value;
         }
 
         public static ParameterSubBody

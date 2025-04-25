@@ -1,5 +1,5 @@
 using CwLibNet.Types.Data;
-using static CwLibNet.IO.ValueEnum<int>;
+using static CwLibNet.IO.IValueEnum<int>;
 using CwLibNet.Types;
 namespace CwLibNet.Enums
 {
@@ -131,7 +131,7 @@ namespace CwLibNet.Enums
         public InvObjectBody(InventoryObjectType value)
         {
             this.value = value;
-            this.flags = (int)(GameVersion.LBP1 | GameVersion.LBP2 | GameVersion.LBP3);
+            flags = (int)(GameVersion.LBP1 | GameVersion.LBP2 | GameVersion.LBP3);
         }
 
         public InvObjectBody(InventoryObjectType value, int flags)
@@ -149,7 +149,7 @@ namespace CwLibNet.Enums
 
         public bool Has(int flags)
         {
-            return (flags & (int)this.value) != 0;
+            return (flags & (int)value) != 0;
         }
 
         public static string GetPrimaryName(HashSet<InventoryObjectType> set)

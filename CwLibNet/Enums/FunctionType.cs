@@ -23,7 +23,7 @@ namespace CwLibNet.Enums
 
         public FunctionType getValue()
         {
-            return this.value;
+            return value;
         }
 
         public static FunctionBody fromValue(int value)

@@ -173,10 +173,10 @@ public class PCheckpoint: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = PCheckpoint.BASE_ALLOCATION_SIZE;
-        if (this.SpawningList != null) size += (this.SpawningList.Length * 4);
-        if (this.Name != null) size += (this.Name.Length * 2);
-        if (this.Unk2 != null) size += (this.Unk2.Length * 2);
+        int size = BASE_ALLOCATION_SIZE;
+        if (SpawningList != null) size += (SpawningList.Length * 4);
+        if (Name != null) size += (Name.Length * 2);
+        if (Unk2 != null) size += (Unk2.Length * 2);
         return size;
     }
 }

@@ -475,7 +475,7 @@ namespace CwLibNet.Enums
 
         public InstructionType getType()
         {
-            return this.type;
+            return type;
         }
 
         public static InstructionBody

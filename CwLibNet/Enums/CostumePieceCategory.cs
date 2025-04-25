@@ -1,4 +1,4 @@
-using static CwLibNet.IO.ValueEnum<int>;
+using static CwLibNet.IO.IValueEnum<int>;
 
 namespace CwLibNet.Enums
 {
@@ -46,12 +46,12 @@ namespace CwLibNet.Enums
 
         public CostumePieceCategory getIndex()
         {
-            return this.index;
+            return index;
         }
 
         public CostumePieceCategory getFlag()
         {
-            return this.flag;
+            return flag;
         }
 
         public static CostumePieceCategory GetFlags(CostumePieceBodyMembers set)

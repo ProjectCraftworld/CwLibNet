@@ -1,8 +1,6 @@
-namespace CwLibNet.IO
-{
-    public interface ValueEnum<E>
-    {
-        E GetValue();
-    }
+namespace CwLibNet.IO;
 
+public interface IValueEnum<out TE>
+{
+    TE GetValue();
 }

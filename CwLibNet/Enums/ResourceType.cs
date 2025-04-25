@@ -91,20 +91,20 @@ namespace CwLibNet.Enums
     
         public ResourceType(string? magic, int value, Type type, string folder, string extension)
         {
-            this.Header = magic;
-            this.Value = value;
-            this.Folder = folder;
-            this.Compressable = type;
-            this.Extension = extension;
+            Header = magic;
+            Value = value;
+            Folder = folder;
+            Compressable = type;
+            Extension = extension;
         }
 
         public ResourceType(string? magic, int value, string folder, string extension)
         {
-            this.Header = magic;
-            this.Value = value;
-            this.Compressable = null;
-            this.Folder = folder;
-            this.Extension = extension;
+            Header = magic;
+            Value = value;
+            Compressable = null;
+            Folder = folder;
+            Extension = extension;
         }
 
         /**
@@ -113,7 +113,7 @@ namespace CwLibNet.Enums
          * @param value Magic header
          * @return Resource type
          */
-        public static ResourceType FromMagic(string value)
+        public static ResourceType FromMagic(string? value)
         {
             if (value.Length > 3)
                 value = value[..3];

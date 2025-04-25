@@ -114,19 +114,19 @@ public class SoftbodyClusterData: ISerializable, IEnumerable<SoftbodyCluster>
     
     public int GetAllocatedSize()
     {
-        return BASE_ALLOCATION_SIZE + (this.Clusters.Count * SoftbodyCluster.BASE_ALLOCATION_SIZE);
+        return BASE_ALLOCATION_SIZE + (Clusters.Count * SoftbodyCluster.BASE_ALLOCATION_SIZE);
     }
 
 
     IEnumerator<SoftbodyCluster> IEnumerable<SoftbodyCluster>.GetEnumerator()
     {
-        return this.Clusters.GetEnumerator();
+        return Clusters.GetEnumerator();
 
     }
 
 
     public IEnumerator GetEnumerator()
     {
-        return this.Clusters.GetEnumerator();
+        return Clusters.GetEnumerator();
     }
 }

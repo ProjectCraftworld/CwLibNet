@@ -43,14 +43,14 @@ public class RFontFace
 
     public GlyphInfo? GetGlyph(char c)
     {
-        return Glyphs.FirstOrDefault(info => info.character == c);
+        return Glyphs.FirstOrDefault(info => info.Character == c);
     }
 
     public SKBitmap GetGlyphImage(GlyphInfo info)
     {
         byte[]? glyph = GetGlyphData(info);
-        int w = info.boxW & 0xFF;
-        int h = info.boxH & 0xFF;
+        int w = info.BoxW & 0xFF;
+        int h = info.BoxH & 0xFF;
         SKBitmap image = new SKBitmap(w, h,
             SKColorType.Rgba8888, SKAlphaType.Premul); // Corrected constructor
         var pixels = image.Pixels;
@@ -82,16 +82,16 @@ public class RFontFace
 
     public byte[]? GetGlyphData(GlyphInfo info)
     {
-        int imageSize = info.boxW * info.boxH;
+        int imageSize = info.BoxW * info.BoxH;
 
         if (IsCompressed)
         {
-            int size = (Data[info.offset] << 8) | Data[info.offset + 1];
-            byte[]? stream = Data.Skip(info.offset + 2).Take(size).ToArray();
+            int size = (Data[info.Offset] << 8) | Data[info.Offset + 1];
+            byte[]? stream = Data.Skip(info.Offset + 2).Take(size).ToArray();
             return Compressor.InflateData(stream, imageSize);
         }
 
-        return Data.Skip(info.offset).Take(imageSize * 2).ToArray();
+        return Data.Skip(info.Offset).Take(imageSize * 2).ToArray();
     }
 
     public bool Export(string path)
@@ -110,11 +110,11 @@ public class RFontFace
                 x = 0;
             }
 
-            info.cacheX = x;
-            info.cacheY = y;
+            info.CacheX = x;
+            info.CacheY = y;
 
-            int sh = info.boxH & 0xff;
-            int sw = info.boxW & 0xff;
+            int sh = info.BoxH & 0xff;
+            int sw = info.BoxW & 0xff;
 
             if ((x + sw) > w) w = (x + sw);
             if ((y + sh) > h) h = (y + sh);
@@ -123,7 +123,7 @@ public class RFontFace
                 maxHeightInRow = sh;
 
             col++;
-            x += (info.boxW & 0xff);
+            x += (info.BoxW & 0xff);
         }
 
         using var image = new SKBitmap(w, h);
@@ -133,7 +133,7 @@ public class RFontFace
         foreach (var info in Glyphs)
         {
             SKBitmap glyph = GetGlyphImage(info);
-            canvas.DrawBitmap(glyph, info.cacheX, info.cacheY);
+            canvas.DrawBitmap(glyph, info.CacheX, info.CacheY);
         }
 
         using var imageStream = File.OpenWrite(path);

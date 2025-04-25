@@ -1,4 +1,4 @@
-using static CwLibNet.IO.ValueEnum<int>;
+using static CwLibNet.IO.IValueEnum<int>;
 
 namespace CwLibNet.Enums
 {
@@ -27,28 +27,28 @@ namespace CwLibNet.Enums
         {
             this.name = (DatabaseType)Enum.Parse(typeof(DatabaseType), name);
             this.extension = (DatabaseType)Enum.Parse(typeof(DatabaseType), name);
-            this.hasGUIDs = hasKeys;
-            this.containsData = hasData;
+            hasGUIDs = hasKeys;
+            containsData = hasData;
         }
 
         public String getName()
         {
-            return this.name.ToString();
+            return name.ToString();
         }
 
         public String getExtension()
         {
-            return this.extension.ToString();
+            return extension.ToString();
         }
 
         public DatabaseType HasGUIDs
         {
-            get {return this.HasGUIDs;}
+            get {return HasGUIDs;}
         }
 
         public DatabaseType ContainsData
         {
-            get {return this.ContainsData;}
+            get {return ContainsData;}
         }
     }
 }

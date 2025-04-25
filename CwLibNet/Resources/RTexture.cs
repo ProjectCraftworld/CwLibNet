@@ -39,7 +39,7 @@ public class RTexture
             case 0x89504e47:
                 try
                 {
-                    this.cached = SKBitmap.Decode(data);
+                    cached = SKBitmap.Decode(data);
                 }
                 catch (IOException ex)
                 {
@@ -49,20 +49,20 @@ public class RTexture
 
                 return;
             case 0x44445320:
-                this.cached = Images.FromDds(data);
+                cached = Images.FromDds(data);
                 return;
         }
 
-        this.process(new SerializedResource(data));
+        process(new SerializedResource(data));
     }
 
     private void process(SerializedResource resource)
     {
-        this.info = resource.getTextureInfo();
+        info = resource.getTextureInfo();
         ResourceType type = resource.getResourceType();
         if (type.Value != ResourceType.Texture.Value && type.Value != ResourceType.GtfTexture.Value)
             throw new SerializationException("Invalid resource provided to RTexture");
-        this.data = resource.getStream().GetBuffer();
+        data = resource.getStream().GetBuffer();
         switch (resource.getSerializationType().GetValue())
         {
             case " ":
@@ -70,9 +70,9 @@ public class RTexture
                 {
                     // ResourceSystem.println("Texture", "Detected COMPRESSED_TEXTURE,
                     // decompressing to DDS");
-                    this.cached = Images.FromDds(this.data);
+                    cached = Images.FromDds(data);
 
-                    byte[]? footer = this.data.Skip(this.data.Length - 4).Take(4).ToArray();
+                    byte[]? footer = data.Skip(data.Length - 4).Take(4).ToArray();
                     if (Bytes.ToIntegerBE(footer) == 0x42554D50)
                         noSRGB = true;
                 }
@@ -81,7 +81,7 @@ public class RTexture
                     // ResourceSystem.println("Texture", "Detected GTF_TEXTURE,
                     // generating DDS
                     // header");
-                    this.parseGTF();
+                    parseGTF();
                 }
                 break;
             case "s":
@@ -91,29 +91,29 @@ public class RTexture
                                                      "swizzled " +
                                                      "load");
                 // ResourceSystem.println("Texture", "Converting GXT texture to DDS.");
-                this.parseGXT();
+                parseGXT();
                 break;
             default:
                 throw new SerializationException("Invalid serialization type in RTexture " +
                                                  "resource!");
         }
 
-        if (this.info != null && this.info.IsBumpTexture())
+        if (info != null && info.IsBumpTexture())
             noSRGB = true;
     }
 
     public void parseGXT()
     {
-        this.unswizzleCompressed();
-        byte[] header = this.getDDSHeader();
-        byte[]? gtf = this.data;
+        unswizzleCompressed();
+        byte[] header = getDDSHeader();
+        byte[]? gtf = data;
 
         byte[]? DDS = new byte[gtf.Length + header.Length];
         Array.Copy(header, 0, DDS, 0, header.Length);
         Array.Copy(gtf, 0, DDS, header.Length, gtf.Length);
 
-        this.data = DDS;
-        this.cached = this.getImage();
+        data = DDS;
+        cached = getImage();
     }
 
     /**
@@ -121,21 +121,21 @@ public class RTexture
      */
     public void parseGTF()
     {
-        byte[] header = this.getDDSHeader();
-        byte[]? gtf = this.data;
+        byte[] header = getDDSHeader();
+        byte[]? gtf = data;
 
         byte[]? DDS = new byte[gtf.Length + header.Length];
         Array.Copy(header, 0, DDS, 0, header.Length);
         Array.Copy(gtf, 0, DDS, header.Length, gtf.Length);
 
-        this.data = DDS;
+        data = DDS;
 
-        CellGcmEnumForGtf format = this.info.GetFormat();
+        CellGcmEnumForGtf format = info.GetFormat();
         if (format == CellGcmEnumForGtf.A8R8G8B8 || format == CellGcmEnumForGtf.B8 ||
-            this.info.GetMethod() == SerializationType.GTF_SWIZZLED ||
-            this.info.GetMethod() == SerializationType.GXT_SWIZZLED)
-            this.unswizzle();
-        else this.cached = this.getImage();
+            info.GetMethod() == SerializationType.GTF_SWIZZLED ||
+            info.GetMethod() == SerializationType.GXT_SWIZZLED)
+            unswizzle();
+        else cached = getImage();
     }
 
     private int getMortonNumber(int x, int y, int width, int height)
@@ -162,22 +162,22 @@ public class RTexture
      */
     private void unswizzleCompressed()
     {
-        byte[]? pixels = new byte[this.data.Length];
+        byte[]? pixels = new byte[data.Length];
 
         int blockWidth = 4, blockHeight = 4;
         int bpp = 4;
-        if (this.info.GetFormat().Equals(CellGcmEnumForGtf.DXT5))
+        if (info.GetFormat().Equals(CellGcmEnumForGtf.DXT5))
             bpp = 8;
 
         int _base = 0;
 
-        int width = Math.Max(this.info.GetWidth(), blockWidth);
-        int height = Math.Max(this.info.GetHeight(), blockHeight);
+        int width = Math.Max(info.GetWidth(), blockWidth);
+        int height = Math.Max(info.GetHeight(), blockHeight);
 
         int log2width = 1 << (31 - Longs.NumberOfLeadingZeros(width + (width - 1)));
         int log2height = 1 << (31 - Longs.NumberOfLeadingZeros(height + (height - 1)));
 
-        for (int i = 0; i < this.info.GetMipCount(); ++i)
+        for (int i = 0; i < info.GetMipCount(); ++i)
         {
             int w = ((width + blockWidth - 1) / blockWidth);
             int h = ((height + blockHeight - 1) / blockHeight);
@@ -198,7 +198,7 @@ public class RTexture
                 for (int x = 0; x < w; ++x)
                 {
                     int offset = _base + ((ox + oy) * pixelSize);
-                    Array.Copy(this.data, offset, pixels, tgt, pixelSize);
+                    Array.Copy(data, offset, pixels, tgt, pixelSize);
                     tgt += pixelSize;
                     ox = (ox - mx) & mx;
                 }
@@ -214,7 +214,7 @@ public class RTexture
             log2height = log2height > blockHeight ? log2height / 2 : blockHeight;
         }
 
-        this.data = pixels;
+        data = pixels;
     }
 
     /**
@@ -222,8 +222,8 @@ public class RTexture
      */
     private void unswizzle()
     {
-        int[] pixels = DDSReader.Read(this.data, DDSReader.ARGB, 0);
-        pixels = DDS.unswizzle(pixels, this.info.GetHeight(), this.info.GetWidth());
+        int[] pixels = DDSReader.Read(data, DDSReader.ARGB, 0);
+        pixels = DDS.unswizzle(pixels, info.GetHeight(), info.GetWidth());
 
         for (int i = 0; i < pixels.Length; ++i)
         {
@@ -232,11 +232,11 @@ public class RTexture
                 (pixel & 0xff) << 24 | (pixel & 0xff00) << 8 | (pixel & 0xff0000) >> 8 | (pixel >> 24) & 0xff;
         }
 
-        this.cached = new SKBitmap(this.info.GetWidth(), this.info.GetHeight(), SKColorType.Argb4444, SKAlphaType.Opaque);
-        if (this.cached != null)
-            for (int i = 0; i < this.info.GetHeight(); ++i)
-                for (int j = 0; j < this.info.GetWidth(); ++j)
-                    this.cached.SetPixel(j, i, new SKColor((uint)pixels[j*i]));
+        cached = new SKBitmap(info.GetWidth(), info.GetHeight(), SKColorType.Argb4444, SKAlphaType.Opaque);
+        if (cached != null)
+            for (int i = 0; i < info.GetHeight(); ++i)
+                for (int j = 0; j < info.GetWidth(); ++j)
+                    cached.SetPixel(j, i, new SKColor((uint)pixels[j*i]));
     }
 
     /**
@@ -246,9 +246,9 @@ public class RTexture
      */
     public SKBitmap getImage()
     {
-        if (this.cached != null)
-            return this.cached;
-        return Images.FromDds(this.data);
+        if (cached != null)
+            return cached;
+        return Images.FromDds(data);
     }
 
     /**
@@ -258,7 +258,7 @@ public class RTexture
      */
     public SKBitmap getImageIcon()
     {
-        return this.getImageIcon(320, 320);
+        return getImageIcon(320, 320);
     }
 
     /**
@@ -270,7 +270,7 @@ public class RTexture
      */
     public SKBitmap getImageIcon(int width, int height)
     {
-        cached ??= this.getImage();
+        cached ??= getImage();
         return cached != null ? cached.Resize(new SKSizeI(width, height), SKSamplingOptions.Default) : null;
     }
 
@@ -291,11 +291,11 @@ public class RTexture
 
     public CellGcmTexture getInfo()
     {
-        return this.info;
+        return info;
     }
 
     public byte[]? getData()
     {
-        return this.data;
+        return data;
     }
 }

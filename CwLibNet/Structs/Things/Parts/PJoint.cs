@@ -176,15 +176,15 @@ public class PJoint: ISerializable
 
     public PJoint(Thing? a, Thing? b)
     {
-        this.A = a;
-        this.B = b;
+        A = a;
+        B = b;
     }
 
     public int GetAllocatedSize()
     {
-        int size = PJoint.BaseAllocationSize;
-        if (this.RailKnotVector != null) size += (this.RailKnotVector.Length * 0xC);
-        if (this.BoneIdx != null) size += (this.BoneIdx.Length * 0x4);
+        int size = BaseAllocationSize;
+        if (RailKnotVector != null) size += (RailKnotVector.Length * 0xC);
+        if (BoneIdx != null) size += (BoneIdx.Length * 0x4);
         return size;
     }
 }

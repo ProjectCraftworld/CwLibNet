@@ -69,15 +69,15 @@ public class MaterialParameterAnimation: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = MaterialParameterAnimation.BaseAllocationSize;
-        if (this.Keys != null)
-            size += (this.Keys.Length * 0x10);
+        int size = BaseAllocationSize;
+        if (Keys != null)
+            size += (Keys.Length * 0x10);
         return size;
     }
 
     public String GetName()
     {
-        return this.name;
+        return name;
     }
 
     public void SetName(String name)

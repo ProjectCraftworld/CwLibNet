@@ -37,10 +37,10 @@ public class PoppetShapeOverride: ISerializable
     public int GetAllocatedSize()
     {
         int size = BaseAllocationSize;
-        if (this.Polygon != null)
-            size += (this.Polygon.Length * 0xC);
-        if (this.Loops != null)
-            size += (this.Loops.Length * 0x4);
+        if (Polygon != null)
+            size += (Polygon.Length * 0xC);
+        if (Loops != null)
+            size += (Loops.Length * 0x4);
         return size;
     }
 }

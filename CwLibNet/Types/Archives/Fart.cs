@@ -48,9 +48,9 @@ public abstract class Fart: IEnumerable<Fat>
         if (type == null)
             throw new NullReferenceException("Archive type cannot be null!");
         this.type = type;
-        this.File = file;
-        if (this.File != null)
-            this.LastModified = new DateTimeOffset(System.IO.File.GetLastWriteTime(this.File)).ToUnixTimeSeconds();
+        File = file;
+        if (File != null)
+            LastModified = new DateTimeOffset(System.IO.File.GetLastWriteTime(File)).ToUnixTimeSeconds();
     }
 
     /**
@@ -65,10 +65,10 @@ public abstract class Fart: IEnumerable<Fat>
             throw new NullReferenceException("Can't search for null hash in archive!");
 
         // Grab the resource from the queue if it exists
-        if (this.Queue.TryGetValue(sha1, out var extract1))
+        if (Queue.TryGetValue(sha1, out var extract1))
             return extract1;
 
-        return this.Lookup.ContainsKey(sha1) ? this.Extract(this.Lookup[sha1]) : null;
+        return Lookup.ContainsKey(sha1) ? Extract(Lookup[sha1]) : null;
     }
 
     /**
@@ -85,7 +85,7 @@ public abstract class Fart: IEnumerable<Fat>
             throw new ArgumentException("This entry does not belong to this archive!");
         try
         {
-            using var fileStream = new FileStream(this.File, FileMode.Open, FileAccess.Read);
+            using var fileStream = new FileStream(File, FileMode.Open, FileAccess.Read);
             byte[]? buffer = new byte[fat.getSize()];
             fileStream.Seek(fat.getOffset(), SeekOrigin.Begin);
             fileStream.Read(buffer, 0, buffer.Length);
@@ -104,7 +104,7 @@ public abstract class Fart: IEnumerable<Fat>
     {
         if (sha1 == null)
             throw new NullReferenceException("Can't search for null hash in archive!");
-        return this.Lookup.ContainsKey(sha1) || this.Queue.ContainsKey(sha1);
+        return Lookup.ContainsKey(sha1) || Queue.ContainsKey(sha1);
     }
 
     /**
@@ -120,9 +120,9 @@ public abstract class Fart: IEnumerable<Fat>
         SHA1 sha1 = SHA1.FromBuffer(data);
 
         // Already exists, no point adding it to the queue.
-        if (this.Exists(sha1)) return sha1;
+        if (Exists(sha1)) return sha1;
 
-        this.Queue.Add(sha1, data);
+        Queue.Add(sha1, data);
 
         return sha1;
     }
@@ -139,10 +139,10 @@ public abstract class Fart: IEnumerable<Fat>
         foreach (Fat fat in fart.Entries)
         {
             SHA1 sha1 = fat.getSHA1();
-            if (this.Exists(sha1))
+            if (Exists(sha1))
                 continue;
             // Don't use the add method since it hashes the data again.
-            this.Queue.Add(sha1, fart.Extract(fat));
+            Queue.Add(sha1, fart.Extract(fat));
             hashes.Add(sha1);
         }
         return hashes.ToArray();
@@ -157,12 +157,12 @@ public abstract class Fart: IEnumerable<Fat>
 
     public ArchiveType GetArchiveType()
     {
-        return this.type;
+        return type;
     }
 
     public string GetFile()
     {
-        return this.File;
+        return File;
     }
 
     /**
@@ -172,7 +172,7 @@ public abstract class Fart: IEnumerable<Fat>
      */
     public long GetQueueSize()
     {
-        return this.Queue.Values
+        return Queue.Values
             .Select(data => data.Length)
             .Aggregate(0, (p, c) => p + c);
     }
@@ -184,7 +184,7 @@ public abstract class Fart: IEnumerable<Fat>
      */
     public List<SHA1> GetQueueHashes()
     {
-        return [..this.Queue.Keys];
+        return [..Queue.Keys];
     }
 
     /**
@@ -215,7 +215,7 @@ public abstract class Fart: IEnumerable<Fat>
      */
     public T? LoadResource<T>(SHA1 hash) where T: ISerializable
     {
-        byte[]? data = this.Extract(hash);
+        byte[]? data = Extract(hash);
         if (data == null) return default;
         SerializedResource resource = new SerializedResource(data);
         return resource.loadResource<T>();
@@ -229,9 +229,9 @@ public abstract class Fart: IEnumerable<Fat>
      */
     public bool WasModified()
     {
-        if (this.File == null) return true;
-        if (!System.IO.File.Exists(this.File)) return true;
-        return new DateTimeOffset(System.IO.File.GetLastAccessTime(this.File)).ToUnixTimeSeconds() != this.LastModified;
+        if (File == null) return true;
+        if (!System.IO.File.Exists(File)) return true;
+        return new DateTimeOffset(System.IO.File.GetLastAccessTime(File)).ToUnixTimeSeconds() != LastModified;
     }
 
     /**
@@ -241,15 +241,15 @@ public abstract class Fart: IEnumerable<Fat>
      */
     public int Validate()
     {
-        List<Fat> entries = new(this.Entries.Length);
-        foreach (Fat fat in this.Entries)
+        List<Fat> entries = new(Entries.Length);
+        foreach (Fat fat in Entries)
         {
             SHA1 sha1 = SHA1.FromBuffer(fat.extract());
             if (sha1.Equals(fat.getSHA1()))
                 entries.Add(fat);
         }
-        int missing = this.Entries.Length - entries.Count;
-        this.Entries = entries.ToArray();
+        int missing = Entries.Length - entries.Count;
+        Entries = entries.ToArray();
         return missing;
     }
 
@@ -260,7 +260,7 @@ public abstract class Fart: IEnumerable<Fat>
      */
     public bool ShouldSave()
     {
-        return this.Queue.Count != 0;
+        return Queue.Count != 0;
     }
 
     /**
@@ -270,16 +270,16 @@ public abstract class Fart: IEnumerable<Fat>
      */
     public int GetEntryCount()
     {
-        return this.Entries.Length;
+        return Entries.Length;
     }
 
     public IEnumerator GetEnumerator()
     {
-        return this.Entries.GetEnumerator();
+        return Entries.GetEnumerator();
     }
 
     IEnumerator<Fat> IEnumerable<Fat>.GetEnumerator()
     {
-        return (IEnumerator<Fat>)this.Entries.GetEnumerator();
+        return (IEnumerator<Fat>)Entries.GetEnumerator();
     }
 }

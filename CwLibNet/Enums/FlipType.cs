@@ -52,7 +52,7 @@ namespace CwLibNet.Enums
 
         public FlipType getValue()
         {
-            return this.value;
+            return value;
         }
 
         public static FlipBody fromValue(int value)

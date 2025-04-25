@@ -1,5 +1,5 @@
 using CwLibNet.IO;
-using static CwLibNet.IO.ValueEnum<int>;
+using static CwLibNet.IO.IValueEnum<int>;
 
 namespace CwLibNet.Enums
 {
@@ -50,7 +50,7 @@ namespace CwLibNet.Enums
 
         public BuiltinType getType()
         {
-            return this.type;
+            return type;
         }
 
         public static BuiltinBodyMembers fromValue(int type)

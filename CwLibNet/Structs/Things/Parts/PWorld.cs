@@ -149,11 +149,11 @@ public class PWorld: ISerializable
     public bool MpSeparateScreen;
     
     public PWorld() {
-        this.CurrGlobalSettingsBlendFactors = new float[12];
-        this.GlobalSettingsThingUiDs = new int[12];
-        this.GlobalSettingsThingPriority = new int[12];
+        CurrGlobalSettingsBlendFactors = new float[12];
+        GlobalSettingsThingUiDs = new int[12];
+        GlobalSettingsThingPriority = new int[12];
         for (int i = 0; i < 12; ++i)
-            this.CurrGlobalSettingsBlendFactors[i] = 1.0f;
+            CurrGlobalSettingsBlendFactors[i] = 1.0f;
     }
 
     public void Serialize(Serializer serializer) {

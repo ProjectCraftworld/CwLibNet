@@ -32,7 +32,7 @@ namespace CwLibNet.Structs.StaticMesh
 
         public int GetAllocatedSize()
         {
-            return StaticPrimitive.BASE_ALLOCATION_SIZE;
+            return BASE_ALLOCATION_SIZE;
         }
     }
 }

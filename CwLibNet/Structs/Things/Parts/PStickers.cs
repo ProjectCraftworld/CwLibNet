@@ -35,7 +35,7 @@ public class PStickers
 
     public PStickers(ResourceDescriptor sticker)
     {
-        this.decals = new Decal[] { new Decal(sticker) };
+        decals = new Decal[] { new Decal(sticker) };
     }
 
     
@@ -64,13 +64,13 @@ public class PStickers
         int size = BASE_ALLOCATION_SIZE;
         if (this.decals != null)
             size += (this.decals.Length * Decal.BaseAllocationSize);
-        foreach (Decal[] decals in this.costumeDecals)
+        foreach (Decal[] decals in costumeDecals)
         if (decals != null)
             size += (decals.Length * Decal.BaseAllocationSize);
-        if (this.paintControl != null)
-            size += (this.paintControl.Length * PaintControlPoint.BASE_ALLOCATION_SIZE);
-        if (this.eyetoyData != null)
-            size += (this.eyetoyData.Length * EyetoyData.BaseAllocationSize);
+        if (paintControl != null)
+            size += (paintControl.Length * PaintControlPoint.BASE_ALLOCATION_SIZE);
+        if (eyetoyData != null)
+            size += (eyetoyData.Length * EyetoyData.BaseAllocationSize);
         return size;
     }
 

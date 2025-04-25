@@ -36,7 +36,7 @@ namespace CwLibNet.Enums
 
         public GameplayPartType getType()
         {
-            return this.type;
+            return type;
         }
 
         public static GameplayBody

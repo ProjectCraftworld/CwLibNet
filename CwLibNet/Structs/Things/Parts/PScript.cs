@@ -15,7 +15,7 @@ public class PScript: ISerializable
 
     public PScript(ResourceDescriptor script)
     {
-        this.Instance.Script = script;
+        Instance.Script = script;
     }
 
     public bool Is(GUID guid)
@@ -36,7 +36,7 @@ public class PScript: ISerializable
     
     public int GetAllocatedSize()
     {
-        return PScript.BaseAllocationSize;
+        return BaseAllocationSize;
     }
 
 

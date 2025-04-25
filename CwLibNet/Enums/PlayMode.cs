@@ -25,7 +25,7 @@ namespace CwLibNet.Enums
 
         public PlayMode getValue()
         {
-            return this.value;
+            return value;
         }
 
         public static PlayBody fromValue(int value)

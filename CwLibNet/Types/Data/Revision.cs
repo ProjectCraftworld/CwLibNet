@@ -23,9 +23,9 @@ namespace CwLibNet.Types
          */
         public Revision(int revision, int branchDescription)
         {
-            this.Head = revision;
-            this.BranchId = (short) (branchDescription >> 0x10);
-            this.BranchRevision = (short) (branchDescription & 0xFFFF);
+            Head = revision;
+            BranchId = (short) (branchDescription >> 0x10);
+            BranchRevision = (short) (branchDescription & 0xFFFF);
         }
 
         /**
@@ -35,9 +35,9 @@ namespace CwLibNet.Types
          */
         public Revision(int revision)
         {
-            this.Head = revision;
-            this.BranchId = 0;
-            this.BranchRevision = 0;
+            Head = revision;
+            BranchId = 0;
+            BranchRevision = 0;
         }
 
         /**
@@ -49,64 +49,64 @@ namespace CwLibNet.Types
          */
         public Revision(int revision, int branchId, int branchRevision)
         {
-            this.Head = revision;
-            this.BranchId = (short) branchId;
-            this.BranchRevision = (short) branchRevision;
+            Head = revision;
+            BranchId = (short) branchId;
+            BranchRevision = (short) branchRevision;
         }
 
         public bool IsLbp1()
         {
-            return this.Head <= Lbp1FinalRevision;
+            return Head <= Lbp1FinalRevision;
         }
 
         public bool IsLbp2()
         {
-            return !this.IsLbp1() && !this.IsLbp3() && !this.IsVita();
+            return !IsLbp1() && !IsLbp3() && !IsVita();
         }
 
         public bool IsLbp3()
         {
-            return this.Head >> 0x10 != 0;
+            return Head >> 0x10 != 0;
         }
 
         public bool IsLeerdammer()
         {
-            return this.Is(Branch.Leerdammer);
+            return Is(Branch.Leerdammer);
         }
 
         public bool IsVita()
         {
-            int version = this.GetVersion();
-            return this.BranchId == Branch.Double11.Id && version is >= 0x3c1 and <= 0x3e2;
+            int version = GetVersion();
+            return BranchId == Branch.Double11.Id && version is >= 0x3c1 and <= 0x3e2;
         }
 
         public bool IsToolkit()
         {
-            return this.Is(Branch.Mizuki);
+            return Is(Branch.Mizuki);
         }
 
         public bool Is(Branch branch)
         {
-            if (branch == Branch.Double11) return this.IsVita();
-            return this.BranchId == branch.Id && this.Head == branch.Head;
+            if (branch == Branch.Double11) return IsVita();
+            return BranchId == branch.Id && Head == branch.Head;
         }
 
         public bool Has(Branch branch, int revision)
         {
-            if (!this.Is(branch)) return false;
-            return this.BranchRevision >= revision;
+            if (!Is(branch)) return false;
+            return BranchRevision >= revision;
         }
 
         public bool After(Branch branch, int revision)
         {
-            if (!this.Is(branch)) return false;
-            return this.BranchRevision > revision;
+            if (!Is(branch)) return false;
+            return BranchRevision > revision;
         }
 
         public bool Before(Branch branch, int revision)
         {
-            if (!this.Is(branch)) return false;
-            return this.BranchRevision < revision;
+            if (!Is(branch)) return false;
+            return BranchRevision < revision;
         }
 
         /**
@@ -116,7 +116,7 @@ namespace CwLibNet.Types
          */
         public int GetSubVersion()
         {
-            return (this.Head >>> 16) & 0xFFFF;
+            return (Head >>> 16) & 0xFFFF;
         }
 
         /**
@@ -126,13 +126,13 @@ namespace CwLibNet.Types
          */
         public int GetVersion()
         {
-            return this.Head & 0xFFFF;
+            return Head & 0xFFFF;
         }
     
         public override string ToString()
         {
-            if (this.BranchId != 0) return $"Revision: (r{this.Head:D}, b{this.BranchId:X4}:{this.BranchRevision:X4})";
-            return $"Revision: (r{this.Head:D})";
+            if (BranchId != 0) return $"Revision: (r{Head:D}, b{BranchId:X4}:{BranchRevision:X4})";
+            return $"Revision: (r{Head:D})";
         }
 
         public static explicit operator int(Revision v)

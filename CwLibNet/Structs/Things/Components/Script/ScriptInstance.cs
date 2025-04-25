@@ -118,12 +118,12 @@ public class ScriptInstance: ISerializable
         FieldLayoutDetails field = new FieldLayoutDetails();
         field.Modifiers.Add(ModifierType.PUBLIC);
         field.Name = name;
-        field.InstanceOffset = this.InstanceLayout.InstanceSize;
+        field.InstanceOffset = InstanceLayout.InstanceSize;
         field.FishType = BuiltinType.GUID;
         field.MachineType = MachineType.S32;
         field.Value = (int) value.Value;
-        this.InstanceLayout.InstanceSize += 4;
-        this.InstanceLayout.Fields.Add(field);
+        InstanceLayout.InstanceSize += 4;
+        InstanceLayout.Fields.Add(field);
     }
 
     public void AddField(string? name, Thing? value)
@@ -131,12 +131,12 @@ public class ScriptInstance: ISerializable
         FieldLayoutDetails field = new FieldLayoutDetails();
         field.Modifiers.Add(ModifierType.PUBLIC);
         field.Name = name;
-        field.InstanceOffset = this.InstanceLayout.InstanceSize;
+        field.InstanceOffset = InstanceLayout.InstanceSize;
         field.FishType = BuiltinType.VOID;
         field.MachineType = MachineType.SAFE_PTR;
         field.Value = value;
-        this.InstanceLayout.InstanceSize += 4;
-        this.InstanceLayout.Fields.Add(field);
+        InstanceLayout.InstanceSize += 4;
+        InstanceLayout.Fields.Add(field);
     }
 
     public void UnsetField(String name)
@@ -162,7 +162,7 @@ public class ScriptInstance: ISerializable
 
     public FieldLayoutDetails GetField(string name)
     {
-        if (this.InstanceLayout == null) return null;
+        if (InstanceLayout == null) return null;
         foreach (FieldLayoutDetails details in InstanceLayout.Fields)
         {
             if (details.Name.Equals(name))
@@ -173,7 +173,7 @@ public class ScriptInstance: ISerializable
 
     public void SetField(string name, object? value)
     {
-        FieldLayoutDetails field = this.GetField(name);
+        FieldLayoutDetails field = GetField(name);
         if (field != null)
             field.Value = value;
     }
@@ -181,7 +181,7 @@ public class ScriptInstance: ISerializable
     
     public int GetAllocatedSize()
     {
-        return ScriptInstance.BaseAllocationSize;
+        return BaseAllocationSize;
     }
 
 

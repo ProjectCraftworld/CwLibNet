@@ -8,9 +8,9 @@ public class FileDBRow: FileEntry
     
     public FileDBRow(String path, long date, long size, SHA1 sha1, GUID guid): base(path, sha1, size)
     {
-        this.Path = path;
-        this.Date = date;
-        this.Key = guid;
+        Path = path;
+        Date = date;
+        Key = guid;
     }
 
     public void updateDate()
@@ -23,8 +23,8 @@ public class FileDBRow: FileEntry
         if (entry == null)
             throw new NullReferenceException("Entry cannot be null!");
         base.setDetails(entry);
-        this.Date = entry.Date;
-        this.Key = entry.GetGuid();
+        Date = entry.Date;
+        Key = entry.GetGuid();
     }
     
     public GUID GetGuid()

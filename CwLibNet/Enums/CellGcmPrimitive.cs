@@ -37,7 +37,7 @@ namespace CwLibNet.Enums
 
         public int getValue()
         {
-            return (int)this.value;
+            return (int)value;
         }
 
 

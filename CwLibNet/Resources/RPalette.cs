@@ -59,12 +59,12 @@ namespace CwLibNet.Resources
 
         public override int GetAllocatedSize()
         {
-            return BaseAllocationSize + (this.PlanList.Count * 0x24);
+            return BaseAllocationSize + (PlanList.Count * 0x24);
         }
 
         public override SerializationData Build(Revision revision, byte compressionFlags)
         {
-            Serializer serializer = new Serializer(this.GetAllocatedSize(), revision, compressionFlags);
+            Serializer serializer = new Serializer(GetAllocatedSize(), revision, compressionFlags);
             serializer.Struct(this);
         return new SerializationData(
             serializer.GetBuffer(),

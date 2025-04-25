@@ -12,8 +12,8 @@ public sealed class SHA1
     /// </summary>
     public SHA1()
     {
-        this.hashBytes = new byte[20];
-        this.hashString = BitConverter.ToString(this.hashBytes).Replace("-", "").ToLower();
+        hashBytes = new byte[20];
+        hashString = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
     }
 
     /// <summary>
@@ -27,8 +27,8 @@ public sealed class SHA1
         if (hash.Length != 40)
             throw new ArgumentException("SHA1 hash string must be 40 characters in length!");
 
-        this.hashString = hash.ToLower();
-        this.hashBytes = Enumerable.Range(0, hash.Length / 2)
+        hashString = hash.ToLower();
+        hashBytes = Enumerable.Range(0, hash.Length / 2)
                                    .Select(i => Convert.ToByte(hash.Substring(i * 2, 2), 16))
                                    .ToArray();
     }
@@ -44,8 +44,8 @@ public sealed class SHA1
         if (hash.Length != 20)
             throw new ArgumentException("SHA1 hash must be 20 bytes in length!");
 
-        this.hashBytes = hash;
-        this.hashString = BitConverter.ToString(this.hashBytes).Replace("-", "").ToLower();
+        hashBytes = hash;
+        hashString = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
     }
 
     /// <summary>
@@ -65,22 +65,22 @@ public sealed class SHA1
 
     public byte[]? GetHash()
     {
-        return this.hashBytes;
+        return hashBytes;
     }
 
     public override bool Equals(object? obj)
     {
         if (obj == this) return true;
-        return obj is SHA1 otherSHA1 && otherSHA1.ToString().Equals(this.ToString(), StringComparison.OrdinalIgnoreCase);
+        return obj is SHA1 otherSHA1 && otherSHA1.ToString().Equals(ToString(), StringComparison.OrdinalIgnoreCase);
     }
 
     public override int GetHashCode()
     {
-        return this.hashString.GetHashCode();
+        return hashString.GetHashCode();
     }
 
     public override string ToString()
     {
-        return this.hashString;
+        return hashString;
     }
 }

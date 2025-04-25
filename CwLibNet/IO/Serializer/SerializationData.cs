@@ -42,7 +42,7 @@ namespace CwLibNet.IO.Serializer
          */
         public SerializationData(byte[]? buffer)
         {
-            this.Buffer = buffer;
+            Buffer = buffer;
             Revision = null;
             CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_NO_COMPRESSION;
             Type = ResourceType.Texture;
@@ -60,7 +60,7 @@ namespace CwLibNet.IO.Serializer
          */
         public SerializationData(byte[] buffer, CellGcmTexture info)
         {
-            this.Buffer = buffer;
+            Buffer = buffer;
             Revision = null;
             CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_NO_COMPRESSION;
             Type = ResourceType.GtfTexture;
@@ -79,8 +79,8 @@ namespace CwLibNet.IO.Serializer
          */
         public SerializationData(byte[] buffer, Revision revision, StaticMeshInfo info)
         {
-            this.Buffer = buffer;
-            this.Revision = revision;
+            Buffer = buffer;
+            Revision = revision;
             CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_NO_COMPRESSION;
             Type = ResourceType.StaticMesh;
             Method = SerializationType.BINARY;

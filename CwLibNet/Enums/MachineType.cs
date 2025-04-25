@@ -64,7 +64,7 @@ namespace CwLibNet.Enums
 
         public MachineType getValue()
         {
-            return this.value;
+            return value;
         }
         public static MachineBody fromValue(int value)
         {

@@ -71,9 +71,9 @@ public class DLCFile: ISerializable
             int[]? guids = serializer.Intvector(null);
             if (guids != null)
             {
-                this.Guids = new List<GUID?>(guids.Length);
+                Guids = new List<GUID?>(guids.Length);
                 foreach (var t in guids)
-                    this.Guids.Add(new GUID(t));
+                    Guids.Add(new GUID(t));
             }
         }
 
@@ -83,16 +83,16 @@ public class DLCFile: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = DLCFile.BaseAllocationSize;
-        if (this.Directory != null) size += this.Directory.Length;
-        if (this.File != null) size += this.File.Length;
-        if (this.ContentId != null) size += this.ContentId.Length;
-        if (this.InGameCommerceId != null) size += this.InGameCommerceId.Length;
-        if (this.CategoryId != null) size += this.CategoryId.Length;
-        if (this.Guids != null)
-            size += this.Guids.Count * 0x4;
-        if (this.NonPlanGuids != null)
-            size += this.NonPlanGuids.Count * 0x4;
+        int size = BaseAllocationSize;
+        if (Directory != null) size += Directory.Length;
+        if (File != null) size += File.Length;
+        if (ContentId != null) size += ContentId.Length;
+        if (InGameCommerceId != null) size += InGameCommerceId.Length;
+        if (CategoryId != null) size += CategoryId.Length;
+        if (Guids != null)
+            size += Guids.Count * 0x4;
+        if (NonPlanGuids != null)
+            size += NonPlanGuids.Count * 0x4;
         return size;
     }
 }

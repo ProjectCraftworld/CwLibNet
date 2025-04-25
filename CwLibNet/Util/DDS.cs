@@ -53,7 +53,7 @@ public class DDS
      */
     public static byte[] getDDSHeader(CellGcmTexture texture)
     {
-        return DDS.getDDSHeader(
+        return getDDSHeader(
             texture.GetFormat(),
             texture.GetWidth(),
             texture.GetHeight(),
@@ -82,7 +82,7 @@ public class DDS
 
         header.Str("DDS ", 4);
         header.U32(0x7C); // dwSize
-        header.U32(DDS.DDS_HEADER_FLAGS_TEXTURE | ((mips != 1) ? DDS.DDS_HEADER_FLAGS_MIPMAP
+        header.U32(DDS_HEADER_FLAGS_TEXTURE | ((mips != 1) ? DDS_HEADER_FLAGS_MIPMAP
                                                        : 0));
         header.U32(height);
         header.U32(width);
@@ -95,20 +95,20 @@ public class DDS
         // DDS_PIXELFORMAT
         uint[] pixelFormat = format switch
         {
-            CellGcmEnumForGtf.B8 => DDS.DDSPF_B8,
-            CellGcmEnumForGtf.A1R5G5B5 => DDS.DDSPF_A1R5G5B5,
-            CellGcmEnumForGtf.A4R4G4B4 => DDS.DDSPF_A4R4G4B4,
-            CellGcmEnumForGtf.R5G6B5 => DDS.DDSPF_R5G6B5,
-            CellGcmEnumForGtf.A8R8G8B8 => DDS.DDSPF_A8R8G8B8,
-            CellGcmEnumForGtf.DXT1 => DDS.DDSPF_DXT1,
-            CellGcmEnumForGtf.DXT3 => DDS.DDSPF_DXT3,
-            CellGcmEnumForGtf.DXT5 => DDS.DDSPF_DXT5,
+            CellGcmEnumForGtf.B8 => DDSPF_B8,
+            CellGcmEnumForGtf.A1R5G5B5 => DDSPF_A1R5G5B5,
+            CellGcmEnumForGtf.A4R4G4B4 => DDSPF_A4R4G4B4,
+            CellGcmEnumForGtf.R5G6B5 => DDSPF_R5G6B5,
+            CellGcmEnumForGtf.A8R8G8B8 => DDSPF_A8R8G8B8,
+            CellGcmEnumForGtf.DXT1 => DDSPF_DXT1,
+            CellGcmEnumForGtf.DXT3 => DDSPF_DXT3,
+            CellGcmEnumForGtf.DXT5 => DDSPF_DXT5,
             _ => throw new NotImplementedException("Unknown or unimplemented DDS Type!")
         };
         foreach (int value in pixelFormat)
             header.U32(value);
 
-        uint caps1 = DDS.DDS_SURFACE_FLAGS_TEXTURE;
+        uint caps1 = DDS_SURFACE_FLAGS_TEXTURE;
         uint caps2 = 0;
 
         if (mips != 1)

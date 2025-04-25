@@ -49,8 +49,8 @@ public class EggLink: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = EggLink.BaseAllocationSize;
-        if (this.Details != null) size += this.Details.GetAllocatedSize();
+        int size = BaseAllocationSize;
+        if (Details != null) size += Details.GetAllocatedSize();
         return size;
     }
 }

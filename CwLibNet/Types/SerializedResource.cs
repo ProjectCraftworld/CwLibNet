@@ -67,7 +67,7 @@ public class SerializedResource
      */
     public SerializedResource(String path)
     {
-        this.process(new MemoryInputStream(path));
+        process(new MemoryInputStream(path));
     }
 
     /**
@@ -77,7 +77,7 @@ public class SerializedResource
      */
     public SerializedResource(byte[]? data)
     {
-        this.process(new MemoryInputStream(data));
+        process(new MemoryInputStream(data));
     }
 
     /**
@@ -88,11 +88,11 @@ public class SerializedResource
     private void process(MemoryInputStream stream)
     {
         if (stream == null || stream.GetLength() < 0xb) return;
-        this.type = ResourceType.FromMagic(stream.Str(3));
-        if (this.type.Value == ResourceType.Invalid.Value)
+        type = ResourceType.FromMagic(stream.Str(3));
+        if (type.Value == ResourceType.Invalid.Value)
             throw new SerializationException("Invalid Resource type!");
-        this.method = SerializationType.FromValue(stream.Str(1));
-        switch (this.method.GetValue())
+        method = SerializationType.FromValue(stream.Str(1));
+        switch (method.GetValue())
         {
             case "b":
             case "e":
@@ -101,10 +101,10 @@ public class SerializedResource
                 int dependencyTableOffset = -1;
                 if (head >= 0x109)
                 {
-                    dependencyTableOffset = this.processDependencies(stream);
+                    dependencyTableOffset = processDependencies(stream);
                     if (head >= 0x189)
                     {
-                        if (this.type.Value != ResourceType.StaticMesh.Value)
+                        if (type.Value != ResourceType.StaticMesh.Value)
                         {
                             if (head >= 0x271)
                             {
@@ -112,16 +112,16 @@ public class SerializedResource
                                 branchRevision = stream.I16();
                             }
                             if (head >= 0x297 || (head == Branch.Leerdammer.Head && branchID == Branch.Leerdammer.Id) && branchRevision >= (int)Revisions.LdResources)
-                                this.compressionFlags = stream.I8();
-                            this.isCompressed = stream.Boole();
+                                compressionFlags = stream.I8();
+                            isCompressed = stream.Boole();
                         }
                         else
-                            this.meshInfo =
+                            meshInfo =
                                 new Serializer(stream, new Revision(head)).Struct<StaticMeshInfo>(null);
                     }
                 }
 
-                if (this.method.Equals(SerializationType.ENCRYPTED_BINARY))
+                if (method.Equals(SerializationType.ENCRYPTED_BINARY))
                 {
                     int size = stream.I32(), padding = 0;
                     if (size % 4 != 0)
@@ -132,24 +132,24 @@ public class SerializedResource
                     stream.Seek(padding);
                 }
 
-                this.revision = new Revision(head, branchID, branchRevision);
+                revision = new Revision(head, branchID, branchRevision);
 
-                if (this.isCompressed)
-                    this.data = Compressor.DecompressData(stream, dependencyTableOffset);
+                if (isCompressed)
+                    data = Compressor.DecompressData(stream, dependencyTableOffset);
                 else if (dependencyTableOffset != -1)
-                    this.data = stream.Bytes(dependencyTableOffset - stream.GetOffset());
+                    data = stream.Bytes(dependencyTableOffset - stream.GetOffset());
                 else
-                    this.data = stream.Bytes(stream.GetLength() - stream.GetOffset());
+                    data = stream.Bytes(stream.GetLength() - stream.GetOffset());
                 break;
             case "t":
-                this.data = stream.Bytes(stream.GetLength() - stream.GetOffset());
+                data = stream.Bytes(stream.GetLength() - stream.GetOffset());
                 break;
             case " ":
             case "s":
             case "S":
-                if (this.type.Value != ResourceType.Texture.Value)
-                    this.textureInfo = new CellGcmTexture(stream, this.method);
-                this.data = Compressor.DecompressData(stream, stream.GetLength());
+                if (type.Value != ResourceType.Texture.Value)
+                    textureInfo = new CellGcmTexture(stream, method);
+                data = Compressor.DecompressData(stream, stream.GetLength());
                 break;
             case null:
                 throw new SerializationException("Invalid serialization method!");
@@ -163,8 +163,8 @@ public class SerializedResource
      */
     public Serializer getSerializer()
     {
-        Serializer serializer = new Serializer(this.data, this.revision, this.compressionFlags);
-        foreach (ResourceDescriptor descriptor in this.dependencies)
+        Serializer serializer = new Serializer(data, revision, compressionFlags);
+        foreach (ResourceDescriptor descriptor in dependencies)
             serializer.AddDependency(descriptor);
         return serializer;
     }
@@ -176,7 +176,7 @@ public class SerializedResource
      */
     public MemoryInputStream getStream()
     {
-        return new MemoryInputStream(this.data, this.compressionFlags);
+        return new MemoryInputStream(data, compressionFlags);
     }
 
     /**
@@ -188,7 +188,7 @@ public class SerializedResource
      */
     public T loadResource<T>() where T : ISerializable
     {
-        Serializer serializer = this.getSerializer();
+        Serializer serializer = getSerializer();
         return serializer.Struct<T>(default);
     }
 
@@ -205,7 +205,7 @@ public class SerializedResource
         stream.Seek(dependencyTableOffset, SeekMode.Begin);
 
         int count = stream.I32();
-        this.dependencies = new HashSet<ResourceDescriptor>(count);
+        dependencies = new HashSet<ResourceDescriptor>(count);
         for (int i = 0; i < count; ++i)
         {
             ResourceDescriptor descriptor = null;
@@ -222,7 +222,7 @@ public class SerializedResource
             descriptor = new ResourceDescriptor(guid, sha1,
                 ResourceType.FromType(stream.I32()));
             if (descriptor.IsValid())
-                this.dependencies.Add(descriptor);
+                dependencies.Add(descriptor);
         }
 
         stream.Seek(originalOffset, SeekMode.Begin);
@@ -242,7 +242,7 @@ public class SerializedResource
     public static byte[]? compress(Resource resource, Revision revision, byte compressionFlags
         , bool preferCompressed)
     {
-        return SerializedResource.compress(resource.Build(revision, compressionFlags),
+        return compress(resource.Build(revision, compressionFlags),
             preferCompressed);
     }
 
@@ -256,7 +256,7 @@ public class SerializedResource
      */
     public static byte[]? compress(Resource resource, Revision revision, byte compressionFlags)
     {
-        return SerializedResource.compress(resource.Build(revision, compressionFlags), true);
+        return compress(resource.Build(revision, compressionFlags), true);
     }
 
     /**
@@ -267,19 +267,19 @@ public class SerializedResource
      */
     public static byte[]? compress(SerializationData data)
     {
-        return SerializedResource.compress(data, true);
+        return compress(data, true);
     }
 
     public byte[]? compress(byte[]? data)
     {
-        return SerializedResource.compress(
+        return compress(
             new SerializationData(
                 data,
-                this.revision,
-                this.compressionFlags,
-                this.type,
-                this.method,
-                this.getDependencies()
+                revision,
+                compressionFlags,
+                type,
+                method,
+                getDependencies()
             ),
             true
         );
@@ -287,14 +287,14 @@ public class SerializedResource
 
     public byte[]? compress()
     {
-        return SerializedResource.compress(
+        return compress(
             new SerializationData(
-                this.data,
-                this.revision,
-                this.compressionFlags,
-                this.type,
-                this.method,
-                this.getDependencies()
+                data,
+                revision,
+                compressionFlags,
+                type,
+                method,
+                getDependencies()
             ),
             true
         );
@@ -460,14 +460,14 @@ public class SerializedResource
             return null;
         }
 
-        return SerializedResource.compress(compressable.Build(revision, compressionFlags));
+        return compress(compressable.Build(revision, compressionFlags));
     }
 
     public void replaceDependency(ResourceDescriptor oldDescriptor,
                                   ResourceDescriptor newDescriptor)
     {
         if (oldDescriptor.Equals(newDescriptor)) return;
-        if (!this.dependencies.Contains(oldDescriptor)) return;
+        if (!dependencies.Contains(oldDescriptor)) return;
 
         if (this.type.Value != ResourceType.StaticMesh.Value)
         {
@@ -484,25 +484,25 @@ public class SerializedResource
                 {
                     oldDescBuffer =
                         Bytes.GetIntegerBuffer(oldDescriptor.GetGUID().Value.Value,
-                            this.compressionFlags);
+                            compressionFlags);
                     newDescBuffer =
                         Bytes.GetIntegerBuffer(newDescriptor.GetGUID().Value.Value,
-                            this.compressionFlags);
+                            compressionFlags);
                 }
                 else return;
             }
             else
             {
-                oldDescBuffer = Bytes.GetResourceReference(oldDescriptor, this.revision,
-                    this.compressionFlags);
-                newDescBuffer = Bytes.GetResourceReference(newDescriptor, this.revision,
-                    this.compressionFlags);
+                oldDescBuffer = Bytes.GetResourceReference(oldDescriptor, revision,
+                    compressionFlags);
+                newDescBuffer = Bytes.GetResourceReference(newDescriptor, revision,
+                    compressionFlags);
             }
 
 
             if (this.type.Value == ResourceType.Plan.Value)
             {
-                RPlan plan = this.loadResource<RPlan>();
+                RPlan plan = loadResource<RPlan>();
                 plan.ThingData = Bytes.Replace(plan.ThingData, oldDescBuffer,
                     newDescBuffer);
                 if (isFSB && plan.InventoryData != null)
@@ -510,61 +510,61 @@ public class SerializedResource
                     if (oldDescriptor.GetGUID().Equals(plan.InventoryData.HighlightSound))
                         plan.InventoryData.HighlightSound = newDescriptor.GetGUID();
                 }
-                this.data = plan.Build(this.revision, this.compressionFlags).Buffer;
+                data = plan.Build(revision, compressionFlags).Buffer;
             }
 
-            this.data = Bytes.Replace(this.data, oldDescBuffer, newDescBuffer);
+            data = Bytes.Replace(data, oldDescBuffer, newDescBuffer);
         }
         else
         {
-            if (this.meshInfo.fallmap.Equals(oldDescriptor))
-                this.meshInfo.fallmap = newDescriptor;
-            if (this.meshInfo.lightmap.Equals(oldDescriptor))
-                this.meshInfo.lightmap = newDescriptor;
-            if (this.meshInfo.risemap.Equals(oldDescriptor))
-                this.meshInfo.risemap = newDescriptor;
-            foreach (StaticPrimitive primitive in this.meshInfo.primitives)
+            if (meshInfo.fallmap.Equals(oldDescriptor))
+                meshInfo.fallmap = newDescriptor;
+            if (meshInfo.lightmap.Equals(oldDescriptor))
+                meshInfo.lightmap = newDescriptor;
+            if (meshInfo.risemap.Equals(oldDescriptor))
+                meshInfo.risemap = newDescriptor;
+            foreach (StaticPrimitive primitive in meshInfo.primitives)
                 if (primitive.gmat.Equals(oldDescriptor))
                     primitive.gmat = newDescriptor;
         }
 
-        this.dependencies.Remove(oldDescriptor);
+        dependencies.Remove(oldDescriptor);
         if (newDescriptor != null)
-            this.dependencies.Add(newDescriptor);
+            dependencies.Add(newDescriptor);
     }
 
     public ResourceDescriptor[] getDependencies()
     {
-        return this.dependencies.ToArray();
+        return dependencies.ToArray();
     }
 
     public byte getCompressionFlags()
     {
-        return this.compressionFlags;
+        return compressionFlags;
     }
 
     public Revision getRevision()
     {
-        return this.revision;
+        return revision;
     }
 
     public ResourceType getResourceType()
     {
-        return this.type;
+        return type;
     }
 
     public SerializationType getSerializationType()
     {
-        return this.method;
+        return method;
     }
 
     public CellGcmTexture getTextureInfo()
     {
-        return this.textureInfo;
+        return textureInfo;
     }
 
     public StaticMeshInfo getMeshInfo()
     {
-        return this.meshInfo;
+        return meshInfo;
     }
 }

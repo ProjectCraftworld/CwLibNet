@@ -68,7 +68,7 @@ public class RJoint: Resource
     
     public override SerializationData Build(Revision revision, byte compressionFlags)
     {
-        Serializer serializer = new Serializer(this.GetAllocatedSize(), revision,
+        Serializer serializer = new Serializer(GetAllocatedSize(), revision,
             compressionFlags);
         serializer.Struct(this);
         return new SerializationData(

@@ -171,11 +171,11 @@ public static class Squish
             fit.Compress(block, colourBlock);
 
             // Compress alpha separately if necessary.
-            if (object.ReferenceEquals(type, CompressionType.DXT3))
+            if (ReferenceEquals(type, CompressionType.DXT3))
             {
                 CompressorAlpha.CompressAlphaDxt3(rgba, mask, block, alphaBlock);
             }
-            else if (object.ReferenceEquals(type, CompressionType.DXT5))
+            else if (ReferenceEquals(type, CompressionType.DXT5))
             {
                 CompressorAlpha.CompressAlphaDxt5(rgba, mask, block, alphaBlock);
             }
@@ -238,14 +238,14 @@ public static class Squish
             int alphaBlock = offset;
 
             // The fourth parameter indicates whether this is DXT1.
-            ColourBlock.DecompressColour(rgba, block, colourBlock, object.ReferenceEquals(type, CompressionType.DXT1));
+            ColourBlock.DecompressColour(rgba, block, colourBlock, ReferenceEquals(type, CompressionType.DXT1));
 
             // Decompress alpha separately if necessary.
-            if (object.ReferenceEquals(type, CompressionType.DXT3))
+            if (ReferenceEquals(type, CompressionType.DXT3))
             {
                 CompressorAlpha.DecompressAlphaDxt3(rgba, block, alphaBlock);
             }
-            else if (object.ReferenceEquals(type, CompressionType.DXT5))
+            else if (ReferenceEquals(type, CompressionType.DXT5))
             {
                 CompressorAlpha.DecompressAlphaDxt5(rgba, block, alphaBlock);
             }

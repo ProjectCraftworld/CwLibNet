@@ -29,7 +29,7 @@ namespace CwLibNet.Squish;
 
 public class CompressorSingleColour: CompressorColourFit
 {
-	static readonly int[][][] _lookup53 = [
+	static readonly int[][][] Lookup53 = [
 	[ [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] ],
 	[ [ 0, 0, 1 ], [ 0, 0, 1 ], [ 0, 0, 1 ], [ 0, 0, 0 ] ],
 	[ [ 0, 0, 2 ], [ 0, 0, 2 ], [ 0, 0, 2 ], [ 0, 0, 0 ] ],
@@ -288,7 +288,7 @@ public class CompressorSingleColour: CompressorColourFit
 	[ [ 31, 0, 0 ], [ 0, 31, 0 ], [ 31, 31, 0 ], [ 0, 0, 0 ] ]
 ];
 
-static readonly int[][][] _lookup63 = [
+static readonly int[][][] Lookup63 = [
 	[ [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] ],
 	[ [ 0, 0, 1 ], [ 0, 0, 1 ], [ 0, 1, 1 ], [ 0, 0, 0 ] ],
 	[ [ 0, 0, 2 ], [ 0, 0, 2 ], [ 0, 1, 0 ], [ 0, 0, 0 ] ],
@@ -547,7 +547,7 @@ static readonly int[][][] _lookup63 = [
 	[ [ 63, 0, 0 ], [ 0, 63, 0 ], [ 63, 63, 0 ], [ 0, 0, 0 ] ]
 ];
 	
-	static readonly int[][][] _lookup54 = [
+	static readonly int[][][] Lookup54 = [
 			[ [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] ],
 			[ [ 0, 0, 1 ], [ 0, 0, 1 ], [ 0, 1, 1 ], [ 1, 0, 1 ] ],
 			[ [ 0, 0, 2 ], [ 0, 0, 2 ], [ 0, 1, 0 ], [ 1, 0, 0 ] ],
@@ -806,7 +806,7 @@ static readonly int[][][] _lookup63 = [
 			[ [ 31, 0, 0 ], [ 0, 31, 0 ], [ 31, 31, 0 ], [ 31, 31, 0 ] ]
 	];
 
-	static readonly int[][][] _lookup64 = [
+	static readonly int[][][] Lookup64 = [
 			[ [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] ],
 			[ [ 0, 0, 1 ], [ 0, 0, 1 ], [ 0, 1, 0 ], [ 1, 0, 0 ] ],
 			[ [ 0, 0, 2 ], [ 0, 0, 2 ], [ 0, 2, 0 ], [ 0, 1, 0 ] ],
@@ -1065,16 +1065,16 @@ static readonly int[][][] _lookup63 = [
 			[ [ 63, 0, 0 ], [ 0, 63, 0 ], [ 63, 63, 0 ], [ 63, 63, 0 ] ]
 	];
 	
-    private static readonly int[] _indices = new int[16];
+    private static readonly int[] Indices = new int[16];
 
-	private static readonly int[][][][] _lookups = new int[3][][][];
+	private static readonly int[][][][] Lookups = new int[3][][][];
 
-	private static readonly int[][] _sources = new int[3][];
+	private static readonly int[][] Sources = new int[3][];
 
-	private static readonly Vec _start = new Vec();
-	private static readonly Vec _end = new Vec();
+	private static readonly Vec Start = new Vec();
+	private static readonly Vec End = new Vec();
 
-	private static readonly int[] _index = new int[1];
+	private static readonly int[] Index = new int[1];
 
 	private static int _bestError;
 
@@ -1082,95 +1082,92 @@ static readonly int[][][] _lookup63 = [
 
 	public CompressorSingleColour(ColourSet colours, Util.Squish.CompressionType type): base(colours, type) {
 
-		// grab the single colour
-		Vec colour = colours.GetPoints()[0];
-		this.colour[0] = (int)Math.Round(255.0f * colour.X);
-		this.colour[1] = (int)Math.Round(255.0f * colour.Y);
-		this.colour[2] = (int)Math.Round(255.0f * colour.Z);
+		// grab the single color
+		var point = colours.GetPoints()[0];
+		this.colour[0] = (int)Math.Round(255.0f * point.X);
+		this.colour[1] = (int)Math.Round(255.0f * point.Y);
+		this.colour[2] = (int)Math.Round(255.0f * point.Z);
 
-		// initialise the best error
+		// initialize the best error
 		_bestError = int.MaxValue;
 	}
 
 	public override void Compress3(byte[] block, int offset) {
 		// build the table of lookups
-		_lookups[0] = _lookup53;
-		_lookups[1] = _lookup63;
-		_lookups[2] = _lookup53;
+		Lookups[0] = Lookup53;
+		Lookups[1] = Lookup63;
+		Lookups[2] = Lookup53;
 
 		// find the best end-points and index
-		int error = ComputeEndPoints(3, _lookups);
+		var error = ComputeEndPoints(3, Lookups);
 
 		// build the block if we win
-		if ( error < _bestError ) {
-			// remap the indices
-			colours.RemapIndices(_index, _indices);
+		if (error >= _bestError) return;
+		// remap the indices
+		colours.RemapIndices(Index, Indices);
 
-			// save the block
-			ColourBlock.WriteColourBlock3(_start, _end, _indices, block, offset);
+		// save the block
+		ColourBlock.WriteColourBlock3(Start, End, Indices, block, offset);
 
-			// save the error
-			_bestError = error;
-		}
+		// save the error
+		_bestError = error;
 	}
 
 	public override void Compress4(byte[] block, int offset) {
 		// build the table of lookups
-		_lookups[0] = _lookup54;
-		_lookups[1] = _lookup64;
-		_lookups[2] = _lookup54;
+		Lookups[0] = Lookup54;
+		Lookups[1] = Lookup64;
+		Lookups[2] = Lookup54;
 
 		// find the best end-points and index
-		int error = ComputeEndPoints(4, _lookups);
+		var error = ComputeEndPoints(4, Lookups);
 
 		// build the block if we win
-		if ( error < _bestError ) {
-			// remap the indices
-			colours.RemapIndices(_index, _indices);
+		if (error >= _bestError) return;
+		// remap the indices
+		colours.RemapIndices(Index, Indices);
 
-			// save the block
-			ColourBlock.WriteColourBlock4(_start, _end, _indices, block, offset);
+		// save the block
+		ColourBlock.WriteColourBlock4(Start, End, Indices, block, offset);
 
-			// save the error
-			_bestError = error;
-		}
+		// save the error
+		_bestError = error;
 	}
 
 	private int ComputeEndPoints(int count, int[][][][] lookups) {
-		int[][] sources = CompressorSingleColour._sources;
+		var sources = Sources;
 
-		int bestError = CompressorSingleColour._bestError;
+		var bestError = _bestError;
 
 		// check each index combination
-		for ( int index = 0; index < count; ++index ) {
+		for ( var index = 0; index < count; ++index ) {
 			// check the error for this codebook index
-			int error = 0;
-			for ( int channel = 0; channel < 3; ++channel ) {
+			var error = 0;
+			for ( var channel = 0; channel < 3; ++channel ) {
 				// grab the lookup table and index for this channel
 				int[][][] lookup = lookups[channel];
-				int target = colour[channel];
+				var target = colour[channel];
 
 				// store a pointer to the source for this channel
 				sources[channel] = lookup[target][index];
 
 				// accumulate the error
-				int diff = sources[channel][2];
+				var diff = sources[channel][2];
 				error += diff * diff;
 			}
 
 			// keep it if the error is lower
-			if ( error < bestError ) {
-				_start.Set(sources[0][0] * GRID_X_RCP,
-						  sources[1][0] * GRID_Y_RCP,
-						  sources[2][0] * GRID_Z_RCP);
+			if (error >= bestError) continue;
+			Start.Set(sources[0][0] * GRID_X_RCP,
+				sources[1][0] * GRID_Y_RCP,
+				sources[2][0] * GRID_Z_RCP);
 
-				_end.Set(sources[0][1] * GRID_X_RCP,
-						sources[1][1] * GRID_Y_RCP,
-						sources[2][1] * GRID_Z_RCP);
+			End.Set(sources[0][1] * GRID_X_RCP,
+				sources[1][1] * GRID_Y_RCP,
+				sources[2][1] * GRID_Z_RCP);
 
-				CompressorSingleColour._index[0] = index;
-				bestError = error;
-			}
+			Index[0] = index;
+			bestError = error;
 		}
 
 		return bestError;

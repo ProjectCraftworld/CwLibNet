@@ -25,8 +25,8 @@ public class Locator: ISerializable
     public int GetAllocatedSize()
     {
         int size = BaseAllocationSize;
-        if (this.Name != null)
-            size += (this.Name.Length);
+        if (Name != null)
+            size += (Name.Length);
         return size;
     }
 

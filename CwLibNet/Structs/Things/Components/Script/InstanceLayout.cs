@@ -17,8 +17,8 @@ public class InstanceLayout: ISerializable
     public InstanceLayout(InstanceLayout? layout)
     {
         foreach (FieldLayoutDetails field in layout.Fields)
-            this.Fields.Add(new FieldLayoutDetails(field));
-        this.InstanceSize = layout.InstanceSize;
+            Fields.Add(new FieldLayoutDetails(field));
+        InstanceSize = layout.InstanceSize;
     }
 
     
@@ -35,7 +35,7 @@ public class InstanceLayout: ISerializable
                 foreach (FieldLayoutDetails field in reflectFields)
                 {
                     stream.Str(field.Name);
-                    stream.I32(this.Fields.IndexOf(field));
+                    stream.I32(Fields.IndexOf(field));
                 }
             }
             else
@@ -54,8 +54,8 @@ public class InstanceLayout: ISerializable
 
     public FieldLayoutDetails[] GetFieldsForReflection(bool reflectDivergent)
     {
-        List<FieldLayoutDetails> fields = new(this.Fields.Count);
-        foreach (FieldLayoutDetails field in this.Fields)
+        List<FieldLayoutDetails> fields = new(Fields.Count);
+        foreach (FieldLayoutDetails field in Fields)
         {
             if (field.Modifiers.Contains(ModifierType.DIVERGENT) && !reflectDivergent)
                 continue;
@@ -68,8 +68,8 @@ public class InstanceLayout: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = InstanceLayout.BaseAllocationSize;
-        if (this.Fields != null) size += this.Fields.Sum(details => (details.GetAllocatedSize() * 2));
+        int size = BaseAllocationSize;
+        if (Fields != null) size += Fields.Sum(details => (details.GetAllocatedSize() * 2));
         return size;
     }
 

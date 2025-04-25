@@ -75,21 +75,21 @@ public class InventoryItemDetails: ISerializable
         // ("_NAME"))
         //     this.translationTag = metadata.nameTranslationTag.split("_NAME")[0]; // LOL
 
-        this.TitleKey = metadata.TitleKey;
-        this.DescriptionKey = metadata.DescriptionKey;
-        this.Location = metadata.Location;
-        this.Category = metadata.Category;
+        TitleKey = metadata.TitleKey;
+        DescriptionKey = metadata.DescriptionKey;
+        Location = metadata.Location;
+        Category = metadata.Category;
 
-        this.LocationTag = metadata.LocationTag;
-        this.CategoryTag = metadata.CategoryTag;
+        LocationTag = metadata.LocationTag;
+        CategoryTag = metadata.CategoryTag;
 
-        this.PrimaryIndex = (short) metadata.PrimaryIndex;
-        this.FluffCost = metadata.FluffCost;
-        this.Type = metadata.Type;
-        this.SubType = metadata.SubType;
-        this.Icon = metadata.Icon;
+        PrimaryIndex = (short) metadata.PrimaryIndex;
+        FluffCost = metadata.FluffCost;
+        Type = metadata.Type;
+        SubType = metadata.SubType;
+        Icon = metadata.Icon;
 
-        this.AllowEmit = metadata.AllowEmit;
+        AllowEmit = metadata.AllowEmit;
     }
 
     public void Serialize(Serializer serializer)
@@ -318,35 +318,35 @@ public class InventoryItemDetails: ISerializable
     public int GetAllocatedSize()
     {
         int size = BaseAllocationSize;
-        if (this.TranslationTag != null)
-            size += (this.TranslationTag.Length * 2);
-        if (this.UserCreatedDetails != null)
-            size += this.UserCreatedDetails.GetAllocatedSize();
-        if (this.CreationHistory != null)
-            size += this.CreationHistory.GetAllocatedSize();
-        if (this.PhotoData != null)
-            size += this.PhotoData.GetAllocatedSize();
-        if (this.EyetoyData != null)
-            size += this.EyetoyData.GetAllocatedSize();
+        if (TranslationTag != null)
+            size += (TranslationTag.Length * 2);
+        if (UserCreatedDetails != null)
+            size += UserCreatedDetails.GetAllocatedSize();
+        if (CreationHistory != null)
+            size += CreationHistory.GetAllocatedSize();
+        if (PhotoData != null)
+            size += PhotoData.GetAllocatedSize();
+        if (EyetoyData != null)
+            size += EyetoyData.GetAllocatedSize();
         return size;
     }
 
     public SHA1 GenerateHashCode(Revision revision)
     {
         // I wonder how slow this is...
-        Serializer serializer = new Serializer(this.GetAllocatedSize(), revision, (byte) 0);
+        Serializer serializer = new Serializer(GetAllocatedSize(), revision, (byte) 0);
         serializer.Struct(this);
         return SHA1.FromBuffer(serializer.GetBuffer());
     }
 
     private void UpdateTranslations()
     {
-        if (!string.IsNullOrEmpty(this.TranslationTag))
+        if (!string.IsNullOrEmpty(TranslationTag))
         {
-            this.TitleKey =
-                RTranslationTable.MakeLamsKeyID(this.TranslationTag + "_NAME");
-            this.DescriptionKey =
-                RTranslationTable.MakeLamsKeyID(this.TranslationTag + "_DESC");
+            TitleKey =
+                RTranslationTable.MakeLamsKeyID(TranslationTag + "_NAME");
+            DescriptionKey =
+                RTranslationTable.MakeLamsKeyID(TranslationTag + "_DESC");
         }
 
         /* RTranslationTable lams = ResourceSystem.getLAMS();

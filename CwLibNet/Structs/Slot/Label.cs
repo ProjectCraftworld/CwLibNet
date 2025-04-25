@@ -14,8 +14,8 @@ namespace CwLibNet.Structs.Slot
 
         public Label(int key, int order)
         {
-            this.Key = key;
-            this.Order = order;
+            Key = key;
+            Order = order;
         }
 
         public void Serialize(Serializer serializer)
@@ -26,7 +26,7 @@ namespace CwLibNet.Structs.Slot
 
         public int GetAllocatedSize()
         {
-            return Label.BASE_ALLOCATION_SIZE;
+            return BASE_ALLOCATION_SIZE;
         }
 
     }

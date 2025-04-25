@@ -17,8 +17,8 @@ public class ScriptObject: ISerializable
 
     public ScriptObject(ScriptObjectType type, object? value)
     {
-        this.Type = type;
-        this.Value = value;
+        Type = type;
+        Value = value;
     }
 
     
@@ -48,7 +48,7 @@ public class ScriptObject: ISerializable
             object? value = serializer.GetPointer<object>(reference);
             if (value != null)
             {
-                this.Value = value;
+                Value = value;
                 return;
             }
         }

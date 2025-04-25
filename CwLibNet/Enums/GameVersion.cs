@@ -11,10 +11,10 @@ namespace CwLibNet.Enums
         public static int GetFlag(Revision revision)
         {
             if (revision.GetVersion() <= 0x332)
-                return GameVersion.LBP1;
+                return LBP1;
             if (revision.IsLbp3())
-                return GameVersion.LBP3;
-            return GameVersion.LBP2;
+                return LBP3;
+            return LBP2;
         }
     }
 }

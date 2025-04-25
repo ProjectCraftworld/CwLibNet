@@ -98,7 +98,7 @@ public class Images
 
         if (image.Width != width || image.Height != height)
             image = image.Resize(new SKSizeI(width, height), SKSamplingOptions.Default);
-        byte[] dds = Util.Squish.CompressImage(image.Bytes, width, height, null, _type);
+        byte[] dds = Squish.CompressImage(image.Bytes, width, height, null, _type);
         int mipCount = 1;
         if (generateMips)
         {
@@ -107,7 +107,7 @@ public class Images
                 width = ToNearest(width - 1);
                 height = ToNearest(height - 1);
                 image = image.ScaleFit(width, height);
-                dds = Bytes.Combine(dds, Util.Squish.CompressImage(image.Bytes, width, height, null, _type));
+                dds = Bytes.Combine(dds, Squish.CompressImage(image.Bytes, width, height, null, _type));
                 mipCount += 1;
                 if (width == 1 || height == 1) break;
             }

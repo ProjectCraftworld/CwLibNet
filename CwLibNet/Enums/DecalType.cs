@@ -1,4 +1,4 @@
-using static CwLibNet.IO.ValueEnum<int>;
+using static CwLibNet.IO.IValueEnum<int>;
 
 namespace CwLibNet.Enums
 {
@@ -23,7 +23,7 @@ namespace CwLibNet.Enums
 
         public DecalType getValue()
         {
-            return (DecalType)this.value;
+            return (DecalType)value;
         }
 
         public static DecalBody fromValue(byte value)

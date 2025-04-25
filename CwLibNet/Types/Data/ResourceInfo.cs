@@ -21,12 +21,12 @@ public class ResourceInfo
     public bool IsCompressedResource()
     {
         return IsResource() &&
-               (this.Method == SerializationType.BINARY || this.Method == SerializationType.ENCRYPTED_BINARY);
+               (Method == SerializationType.BINARY || Method == SerializationType.ENCRYPTED_BINARY);
     }
     
     public T GetResource<T>()
     {
-        return (T) this.Resource;
+        return (T) Resource;
     }
 
 }

@@ -40,7 +40,7 @@ public abstract class CompressorColourFit
     protected const float GRID_Y_RCP = 1.0f / GRID_Y;
     protected const float GRID_Z_RCP = 1.0f / GRID_Z;
 
-    public static readonly Matrix covariance = new Matrix();
+    public static readonly Matrix? covariance = new Matrix();
 
     protected readonly ColourSet colours;
     protected readonly Util.Squish.CompressionType type;

@@ -91,9 +91,9 @@ namespace CwLibNet.IO.Serializer
         public void Pad(int size)
         {
             if (isWriting)
-                output.Pad(size);
+                output?.Pad(size);
             else
-                input.Bytes(size);
+                input?.Bytes(size);
         }
 
         /// <summary>
@@ -103,13 +103,10 @@ namespace CwLibNet.IO.Serializer
         /// <returns>Bytes serialized</returns>
         public byte[]? Bytearray(byte[]? value)
         {
-            if (isWriting)
-            {
-                output.Bytearray(value);
-                return value;
-            }
+            if (!isWriting) return input?.Bytearray();
+            output?.Bytearray(value);
+            return value;
 
-            return input.Bytearray();
         }
 
         /// <summary>
@@ -120,13 +117,10 @@ namespace CwLibNet.IO.Serializer
         /// <returns>Bytes serialized</returns>
         public byte[]? Bytes(byte[]? value, int size)
         {
-            if (isWriting)
-            {
-                output.Bytes(value);
-                return value;
-            }
+            if (!isWriting) return input?.Bytes(size);
+            output?.Bytes(value);
+            return value;
 
-            return input.Bytes(size);
         }
 
         /// <summary>
@@ -136,13 +130,10 @@ namespace CwLibNet.IO.Serializer
         /// <returns>Boolean (de)serialized</returns>
         public bool Bool(bool value)
         {
-            if (isWriting)
-            {
-                output.Boole(value);
-                return value;
-            }
+            if (!isWriting) return input.Boole();
+            output?.Boole(value);
+            return value;
 
-            return input.Boole();
         }
 
         /// <summary>
@@ -152,13 +143,10 @@ namespace CwLibNet.IO.Serializer
         /// <returns>Boolean array (de)serialized</returns>
         public bool[] Boolarray(bool[] values)
         {
-            if (isWriting)
-            {
-                output.Boolarray(values);
-                return values;
-            }
+            if (!isWriting) return input.Boolarray();
+            output.Boolarray(values);
+            return values;
 
-            return input.Boolarray();
         }
 
         /// <summary>
@@ -232,13 +220,10 @@ namespace CwLibNet.IO.Serializer
         /// <returns>Ushort (de)serialized</returns>
         public ushort I16(ushort value)
         {
-            if (isWriting)
-            {
-                output.I16(value);
-                return value;
-            }
+            if (!isWriting) return (ushort)input.I16();
+            output.I16(value);
+            return value;
 
-            return (ushort)input.I16();
         }
 
         /// <summary>
@@ -248,13 +233,10 @@ namespace CwLibNet.IO.Serializer
         /// <returns>Short (de)serialized</returns>
         public int U16(int value)
         {
-            if (isWriting)
-            {
-                output.U16(value);
-                return value;
-            }
+            if (!isWriting) return input.U16();
+            output.U16(value);
+            return value;
 
-            return input.U16();
         }
 
         /// <summary>
@@ -264,13 +246,10 @@ namespace CwLibNet.IO.Serializer
         /// <returns>Integer (de)serialized</returns>
         public int U24(int value)
         {
-            if (isWriting)
-            {
-                output.U24(value);
-                return value;
-            }
+            if (!isWriting) return input.U24();
+            output?.U24(value);
+            return value;
 
-            return input.U24();
         }
 
         /// <summary>
@@ -281,13 +260,10 @@ namespace CwLibNet.IO.Serializer
         /// <returns>Integer (de)serialized</returns>
         public int I32(int value, bool force32)
         {
-            if (isWriting)
-            {
-                output.I32(value, force32);
-                return value;
-            }
+            if (!isWriting) return input.I32(force32);
+            output?.I32(value, force32);
+            return value;
 
-            return input.I32(force32);
         }
 
         /// <summary>
@@ -314,7 +290,7 @@ namespace CwLibNet.IO.Serializer
         /// depending on the flags.
         /// </summary>
         /// <param name="value">Integer to write</param>
-        /// <param name="force32">Whether or not to always write 32 bits regardless of compression flags.</param>
+        /// <param name="force32">Whether to always write 32 bits regardless of compression flags.</param>
         /// <returns>Integer (de)serialized</returns>
         public long U32(long value, bool force32)
         {
@@ -368,7 +344,7 @@ namespace CwLibNet.IO.Serializer
         /// (De)serializes a "signed" long to/from the stream, compressed depending on the flags.
         /// </summary>
         /// <param name="value">Long to write</param>
-        /// <param name="force64">Whether or not to always write 64 bits regardless of compression flags.</param>
+        /// <param name="force64">Whether to always write 64 bits regardless of compression flags.</param>
         /// <returns>Long (de)serialized</returns>
         public long S64(long value, bool force64)
         {
@@ -382,7 +358,7 @@ namespace CwLibNet.IO.Serializer
         /// (De)serializes a long to/from the stream, compressed depending on the flags.
         /// </summary>
         /// <param name="value">Long to write</param>
-        /// <param name="force64">Whether or not to always write 64 bits regardless of compression flags.</param>
+        /// <param name="force64">Whether to always write 64 bits regardless of compression flags.</param>
         /// <returns>Long (de)serialized</returns>
         public long U64(long value, bool force64)
         {
@@ -678,7 +654,7 @@ namespace CwLibNet.IO.Serializer
         /// <returns>Things (de)serialized</returns>
         public Thing[]? Thingarray(Thing[]? things)
         {
-            return this.Array(things, true);
+            return Array(things, true);
         }
 
         /// <summary>
@@ -688,7 +664,7 @@ namespace CwLibNet.IO.Serializer
         /// <returns>Things (de)serialized</returns>
         public List<Thing>? Thinglist(List<Thing>? things)
         {
-            return this.Arraylist(things, true);
+            return Arraylist(things, true);
         }
 
         public int AdventureCreatureReference(int value)
@@ -748,7 +724,7 @@ namespace CwLibNet.IO.Serializer
         /// <param name="cp">Flag toggle</param>
         /// <param name="t">Serialize resource type</param>
         /// <returns>Resource (de)serialized</returns>
-        public ResourceDescriptor? Resource(ResourceDescriptor? value, ResourceType type, bool isDescriptor, bool cp, bool t)
+        public ResourceDescriptor? Resource(ResourceDescriptor? value, ResourceType? type, bool isDescriptor, bool cp, bool t)
         {
             byte NONE = 0, HASH = 1, GUID = 2;
 
@@ -776,7 +752,9 @@ namespace CwLibNet.IO.Serializer
                     sha1 = input.Sha1();
                 if (t)
                     type = ResourceType.FromType(input.I32());
-                descriptor = new ResourceDescriptor(guid!.Value, sha1!, type);
+                descriptor = new ResourceDescriptor(guid!.Value, sha1!, type!.Value); // In this part of the code,
+                                                                                      // I can safely assume "type"
+                                                                                      // is not null.
                 if (!descriptor.IsValid())
                     return null;
                 descriptor.SetFlags(flags);
@@ -1068,7 +1046,7 @@ namespace CwLibNet.IO.Serializer
         /// <returns>(De)serialized array</returns>
         public List<T> Arraylist<T>(List<T>? values) where T: ISerializable
         {
-            return this.Arraylist(values, false);
+            return Arraylist(values, false);
         }
 
         /// <summary>
@@ -1092,9 +1070,9 @@ namespace CwLibNet.IO.Serializer
                 foreach (T serializable in values)
                 {
                     if (isReference)
-                        this.Reference(serializable);
+                        Reference(serializable);
                     else
-                        this.Struct(serializable);
+                        Struct(serializable);
                 }
 
                 return values;
@@ -1105,9 +1083,9 @@ namespace CwLibNet.IO.Serializer
             for (int i = 0; i < count; ++i)
             {
                 if (isReference)
-                    output.Add(this.Reference<T>(default));
+                    output.Add(Reference<T>(default));
                 else
-                    output.Add(this.Struct<T>(default));
+                    output.Add(Struct<T>(default));
             }
 
             return output;
@@ -1127,11 +1105,11 @@ namespace CwLibNet.IO.Serializer
             {
                 if (values == null)
                 {
-                    this.output.I32(0);
+                    output.I32(0);
                     return null;
                 }
 
-                this.output.I32(values.Length);
+                output.I32(values.Length);
                 foreach (T serializable in values)
                 {
                     if (isReference)
@@ -1144,33 +1122,29 @@ namespace CwLibNet.IO.Serializer
             }
 
             int count = input.I32();
-            T[] output = new T[count];
+            var serializables = new T[count];
             try
             {
                 for (int i = 0; i < count; ++i)
                 {
                     if (isReference)
-                        output[i] = Reference<T>(default);
+                        serializables[i] = Reference<T>(default);
                     else
-                        output[i] = Struct<T>(default);
+                        serializables[i] = Struct<T>(default);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new SerializationException("There was an error (de)serializing an array!");
             }
 
-            return output;
+            return serializables;
         }
-        
-        public long I64(long value) { return this.I64(value, false); }
-        
-        public long I64(long value, bool force64) {
-            if (this.isWriting) {
-                this.output.I64(value, force64);
-                return value;
-            }
-            return this.input.I64(force64);
+
+        public long I64(long value, bool force64 = false) {
+            if (!isWriting) return input.I64(force64);
+            output?.I64(value, force64);
+            return value;
         }
 
         /// <summary>
@@ -1179,50 +1153,38 @@ namespace CwLibNet.IO.Serializer
         /// <returns>The shrinked buffer</returns>
         public byte[]? GetBuffer()
         {
-            if (!isWriting)
-                return null;
-            return output.Shrink().GetBuffer();
+            return !isWriting ? null : output?.Shrink().GetBuffer();
         }
 
-        public MemoryInputStream GetInput()
-        {
-            return input;
-        }
+        public MemoryInputStream GetInput() => input;
 
-        public MemoryOutputStream GetOutput()
-        {
-            return output;
-        }
+        public MemoryOutputStream GetOutput() => output;
 
         public int GetOffset()
         {
-            if (isWriting)
-                return output.GetOffset();
-            return input.GetOffset();
+            return isWriting ? output.GetOffset() : input.GetOffset();
         }
 
         public int GetLength()
         {
-            if (isWriting)
-                return output.GetLength();
-            return input.GetLength();
+            return isWriting ? output.GetLength() : input.GetLength();
         }
 
         public virtual void Log(string message)
         {
-            this.Log(message, ResourceLogLevel.SERIALIZER_TRACE);
+            Log(message, ResourceLogLevel.SerializerTrace);
         }
 
         public virtual void Log(string message, int level)
         {
-            if (level > ResourceSystem.LOG_LEVEL)
+            if (level > ResourceSystem.LogLevel)
                 return;
             if (isWriting)
             {
-                Console.WriteLine("[WRITING] @ 0x" + CwLibNet.Util.Bytes.ToHex(CwLibNet.Util.Bytes.ToBytesBE(GetOffset())) + " -> " + message);
+                Console.WriteLine("[WRITING] @ 0x" + Util.Bytes.ToHex(Util.Bytes.ToBytesBE(GetOffset())) + " -> " + message);
             }
             else
-                Console.WriteLine("[READING] @ 0x" + CwLibNet.Util.Bytes.ToHex(CwLibNet.Util.Bytes.ToBytesBE(GetOffset())) + " -> " + message);
+                Console.WriteLine("[READING] @ 0x" + Util.Bytes.ToHex(Util.Bytes.ToBytesBE(GetOffset())) + " -> " + message);
         }
 
         /// <summary>

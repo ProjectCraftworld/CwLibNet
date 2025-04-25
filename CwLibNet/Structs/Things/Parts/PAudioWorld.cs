@@ -98,9 +98,9 @@ public class PAudioWorld: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = PAudioWorld.BaseAllocationSize;
-        if (this.SoundName != null)
-            size += (this.SoundName.Length);
+        int size = BaseAllocationSize;
+        if (SoundName != null)
+            size += (SoundName.Length);
         return size;
     }
 }

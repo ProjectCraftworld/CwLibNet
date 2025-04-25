@@ -32,22 +32,22 @@ public class Fat
 
     public SHA1 getSHA1()
     {
-        return this.sha1;
+        return sha1;
     }
 
     public long getOffset()
     {
-        return this.offset;
+        return offset;
     }
 
     public int getSize()
     {
-        return this.size;
+        return size;
     }
 
     public Fart getFileArchive()
     {
-        return this.archive;
+        return archive;
     }
 
     /**
@@ -57,12 +57,12 @@ public class Fat
      */
     public byte[]? extract()
     {
-        return this.archive.Extract(this);
+        return archive.Extract(this);
     }
 
     public override string ToString()
     {
         return String.Format("Fat (%h, offset=%d, size=%d)",
-            this.sha1, this.offset, this.size);
+            sha1, offset, size);
     }
 }
