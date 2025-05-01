@@ -2,27 +2,27 @@ using CwLibNet.Types.Data;
 
 namespace CwLibNet.Types.Databases;
 
-public class FileDBRow: FileEntry
+public class FileDbRow: FileEntry
 {
     public long Date;
     
-    public FileDBRow(String path, long date, long size, SHA1 sha1, GUID guid): base(path, sha1, size)
+    public FileDbRow(string path, long date, long size, SHA1 sha1, GUID guid): base(path, sha1, size)
     {
         Path = path;
         Date = date;
         Key = guid;
     }
 
-    public void updateDate()
+    public void UpdateDate()
     {
         Date = new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds();
     }
     
-    public void setDetails(FileDBRow entry)
+    public void SetDetails(FileDbRow entry)
     {
         if (entry == null)
             throw new NullReferenceException("Entry cannot be null!");
-        base.setDetails(entry);
+        base.SetDetails(entry);
         Date = entry.Date;
         Key = entry.GetGuid();
     }

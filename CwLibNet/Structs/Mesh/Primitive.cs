@@ -66,17 +66,21 @@ public class Primitive: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
+        var version = serializer.GetRevision().GetVersion();
 
         Material = serializer.Resource(Material,
             ResourceType.GfxMaterial);
 
-        if (version < 0x149)
-            serializer.Resource(null, ResourceType.GfxMaterial);
-
-        if (version >= (int)Revisions.MeshTextureAlternatives)
-            TextureAlternatives = serializer.Resource(TextureAlternatives,
-                ResourceType.TextureList);
+        switch (version)
+        {
+            case < 0x149:
+                serializer.Resource(null, ResourceType.GfxMaterial);
+                break;
+            case >= (int)Revisions.MESH_TEXTURE_ALTERNATIVES:
+                TextureAlternatives = serializer.Resource(TextureAlternatives,
+                    ResourceType.TextureList);
+                break;
+        }
 
         MinVert = serializer.I32(MinVert);
         MaxVert = serializer.I32(MaxVert);

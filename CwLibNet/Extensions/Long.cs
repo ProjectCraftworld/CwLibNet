@@ -7,8 +7,8 @@ public static class Longs
         if (value == 0)
             return 64;
 
-        int count = 0;
-        ulong unsignedValue = (ulong)value;
+        var count = 0;
+        var unsignedValue = (ulong)value;
 
         while ((unsignedValue & 0x8000000000000000) == 0)
         {
@@ -21,8 +21,8 @@ public static class Longs
     
     public static int CompareUnsigned(this long x, long y)
     {
-        ulong ux = (ulong)x;
-        ulong uy = (ulong)y;
+        var ux = (ulong)x;
+        var uy = (ulong)y;
         return ux.CompareTo(uy);
     }
 }

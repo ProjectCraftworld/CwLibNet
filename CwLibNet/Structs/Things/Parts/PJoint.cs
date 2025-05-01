@@ -2,10 +2,7 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
-using CwLibNet.Types.Things;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -36,7 +33,7 @@ public class PJoint: ISerializable
 
     public bool ModDriven;
 
-    public byte InteractPlayMode = 0, InteractEditMode = 2;
+    public byte InteractPlayMode, InteractEditMode = 2;
 
     public float RenderScale = 1.0f;
 
@@ -60,9 +57,9 @@ public class PJoint: ISerializable
     public bool OldJointOutputBehavior;
     public void Serialize(Serializer serializer)
     {
-        Revision revision = serializer.GetRevision();
-        int version = revision.GetVersion();
-        int subVersion = revision.GetSubVersion();
+        var revision = serializer.GetRevision();
+        var version = revision.GetVersion();
+        var subVersion = revision.GetSubVersion();
 
         A = serializer.Reference(A);
         B = serializer.Reference(B);
@@ -114,21 +111,22 @@ public class PJoint: ISerializable
         if (version > 0x169)
             JointSoundEnum = serializer.I32(JointSoundEnum);
 
-        if (version > 0x280)
+        switch (version)
         {
-            TweakTargetMaxLength = serializer.F32(TweakTargetMaxLength);
-            TweakTargetMinLength = serializer.F32(TweakTargetMinLength);
-        }
-        else if (version > 0x21c)
-        {
-            TweakTargetMaxLength = serializer.I32((int)Math.Round(TweakTargetMaxLength));
-            TweakTargetMinLength = serializer.I32((int)Math.Round(TweakTargetMinLength));
+            case > 0x280:
+                TweakTargetMaxLength = serializer.F32(TweakTargetMaxLength);
+                TweakTargetMinLength = serializer.F32(TweakTargetMinLength);
+                break;
+            case > 0x21c:
+                TweakTargetMaxLength = serializer.I32((int)Math.Round(TweakTargetMaxLength));
+                TweakTargetMinLength = serializer.I32((int)Math.Round(TweakTargetMinLength));
+                break;
         }
 
         if (version > 0x21e)
             CurrentlyEditing = serializer.Bool(CurrentlyEditing);
 
-        if (version > 0x22f && version < 0x2c4)
+        if (version is > 0x22f and < 0x2c4)
             ModScaleActive = serializer.Bool(ModScaleActive);
 
         if (version > 0x25c)
@@ -141,20 +139,20 @@ public class PJoint: ISerializable
         {
             if (serializer.IsWriting())
             {
-                MemoryOutputStream stream = serializer.GetOutput();
+                var stream = serializer.GetOutput();
                 if (RailKnotVector != null)
                 {
                     stream.I32(RailKnotVector.Length);
-                    foreach (Vector3 vector in RailKnotVector)
+                    foreach (var vector in RailKnotVector)
                         serializer.V3(vector);
                 }
                 else stream.I32(0);
             }
             else
             {
-                MemoryInputStream stream = serializer.GetInput();
+                var stream = serializer.GetInput();
                 RailKnotVector = new Vector3[stream.I32()];
-                for (int i = 0; i < RailKnotVector.Length; ++i)
+                for (var i = 0; i < RailKnotVector.Length; ++i)
                     RailKnotVector[i] = stream.V3();
             }
         }
@@ -182,9 +180,9 @@ public class PJoint: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
-        if (RailKnotVector != null) size += (RailKnotVector.Length * 0xC);
-        if (BoneIdx != null) size += (BoneIdx.Length * 0x4);
+        var size = BaseAllocationSize;
+        if (RailKnotVector != null) size += RailKnotVector.Length * 0xC;
+        if (BoneIdx != null) size += BoneIdx.Length * 0x4;
         return size;
     }
 }

@@ -4,7 +4,6 @@ using CwLibNet.EX;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Things.Components;
-using CwLibNet.Types.Things;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -34,8 +33,8 @@ public class PYellowHead: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
-        int subVersion = serializer.GetRevision().GetSubVersion();
+        var version = serializer.GetRevision().GetVersion();
+        var subVersion = serializer.GetRevision().GetSubVersion();
 
         Head = serializer.Thing(Head);
         if (version > 0x1fc)
@@ -52,8 +51,13 @@ public class PYellowHead: ISerializable
 
         if (version < 0x155) serializer.I32(0);
         if (version < 0x20c) serializer.Bool(false);
-        if (version < 0x161) serializer.Bool(false);
-        if (version == 0x170) serializer.Bool(false);
+        switch (version)
+        {
+            case < 0x161:
+            case 0x170:
+                serializer.Bool(false);
+                break;
+        }
 
         if (version is < 0x17f or > 0x184 and < 0x192 or > 0x1b5)
             Poppet = serializer.Reference(Poppet);
@@ -69,25 +73,31 @@ public class PYellowHead: ISerializable
         if (version < 0x3da)
             NewestSense = serializer.I32(NewestSense);
 
-        if (version >= 0x146 && version < 0x16b)
-            serializer.I32(0);
-
-        if (version >= 0x16b)
-            RequestedSuicide = serializer.Bool(RequestedSuicide);
+        switch (version)
+        {
+            case >= 0x146 and < 0x16b:
+                serializer.I32(0);
+                break;
+            case >= 0x16b:
+                RequestedSuicide = serializer.Bool(RequestedSuicide);
+                break;
+        }
 
         LegacyJetpack = serializer.Thing(LegacyJetpack);
 
-        if (version > 0x134 && version < 0x164)
+        switch (version)
         {
-            serializer.I32(0); // Primary
-            serializer.I32(0); // Secondary
-            serializer.I32(0); // Tertiary
+            case > 0x134 and < 0x164:
+                serializer.I32(0); // Primary
+                serializer.I32(0); // Secondary
+                serializer.I32(0); // Tertiary
+                break;
+            case > 0x193:
+                OnScreenCounter = serializer.F32(OnScreenCounter);
+                break;
         }
 
-        if (version > 0x193)
-            OnScreenCounter = serializer.F32(OnScreenCounter);
-
-        if (version > 0x1ba && version < 0x1fd)
+        if (version is > 0x1ba and < 0x1fd)
             serializer.I32(0);
 
         if (version > 0x1d0)
@@ -106,21 +116,20 @@ public class PYellowHead: ISerializable
         if (version > 0x359)
             LastTimeSlappedAPlayer = serializer.I32(LastTimeSlappedAPlayer);
 
-        if (subVersion >= 0x83 && subVersion < 0x8b) serializer.U8(0);
-        if (subVersion >= 0x88 && subVersion < 0xa3)
-            throw new SerializationException("Unknown serialization object in PYellowHead!");
-
-        if (subVersion > 0xa5)
-            AnimSetKey = serializer.I32(AnimSetKey);
+        if (subVersion is >= 0x83 and < 0x8b) serializer.U8(0);
+        AnimSetKey = subVersion switch
+        {
+            >= 0x88 and < 0xa3 => throw new SerializationException("Unknown serialization object in PYellowHead!"),
+            > 0xa5 => serializer.I32(AnimSetKey),
+            _ => AnimSetKey
+        };
 
         if (subVersion > 0xd2)
             MonstrousHeadScale = serializer.Bool(MonstrousHeadScale);
 
-        if (subVersion > 0x12a)
-        {
-            CreatureToSpawnAs = serializer.I32(CreatureToSpawnAs);
-            SpawnAsAlternateForm = serializer.Bool(SpawnAsAlternateForm);
-        }
+        if (subVersion <= 0x12a) return;
+        CreatureToSpawnAs = serializer.I32(CreatureToSpawnAs);
+        SpawnAsAlternateForm = serializer.Bool(SpawnAsAlternateForm);
     }
 
     public int GetAllocatedSize()

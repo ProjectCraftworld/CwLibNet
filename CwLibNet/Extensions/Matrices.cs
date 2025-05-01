@@ -6,16 +6,16 @@ public static class Matrices
 {
     public static Matrix4x4 Invert(this Matrix4x4 matrix)
     {
-        Matrix4x4.Invert(matrix, out Matrix4x4 result);
+        Matrix4x4.Invert(matrix, out var result);
         return result;
     }
 
     public static Matrix4x4 TranslationRotationScale(this Matrix4x4 matrix, Vector3 translation, Quaternion rotation,
         Vector3 scale)
     {
-        Matrix4x4 _a = Matrix4x4.CreateTranslation(translation) * matrix;
-        Matrix4x4 _b = Matrix4x4.Transform(_a, rotation);
-        Matrix4x4 _c = Matrix4x4.CreateScale(scale) * _b;
+        var _a = Matrix4x4.CreateTranslation(translation) * matrix;
+        var _b = Matrix4x4.Transform(_a, rotation);
+        var _c = Matrix4x4.CreateScale(scale) * _b;
         return _c;
     }
 
@@ -41,7 +41,7 @@ public static class Matrices
         q.Y = matrix.M21;
         q.Z = matrix.M31;
         
-        float t = 1f - (q.X * q.X + q.Y * q.Y + q.Z * q.Z);
+        var t = 1f - (q.X * q.X + q.Y * q.Y + q.Z * q.Z);
         q.W = (float)Math.Sqrt(t > 0f ? t : 0f);
         
         return q;
@@ -49,7 +49,7 @@ public static class Matrices
 
     public static float[] Linearize(this Matrix4x4 amatrix)
     {
-        Matrix4x4 matrix = Matrix4x4.Transpose(amatrix);
+        var matrix = Matrix4x4.Transpose(amatrix);
         return
         [
             matrix.M11, matrix.M12, matrix.M13, matrix.M14,
@@ -61,8 +61,8 @@ public static class Matrices
     
     public static Quaternion RotateLocalX(this Quaternion q, float angle)
     {
-        Quaternion localRotation = Quaternion.CreateFromAxisAngle(Vector3.UnitX, angle);
-        Quaternion result = q * localRotation;
+        var localRotation = Quaternion.CreateFromAxisAngle(Vector3.UnitX, angle);
+        var result = q * localRotation;
         return result;  // Quaternion.Normalize(result);
     }
     
@@ -72,7 +72,7 @@ public static class Matrices
         q.X = matrix.M11;
         q.Y = matrix.M21;
         q.Z = matrix.M31;
-        float t = 1f - (q.X * q.X + q.Y * q.Y + q.Z * q.Z);
+        var t = 1f - (q.X * q.X + q.Y * q.Y + q.Z * q.Z);
         q.W = (float)Math.Sqrt(t > 0f ? t : 0f);
         q = Quaternion.Normalize(q);
         return q;
@@ -80,47 +80,45 @@ public static class Matrices
     
     public static Matrix4x4 GetMatrix(this Quaternion q)
     {
-        float d = q.X * q.X + q.Y * q.Y + q.Z * q.Z + q.W * q.W;
-        float s = d == 0f ? 0f : 2f / d;
+        var d = q.X * q.X + q.Y * q.Y + q.Z * q.Z + q.W * q.W;
+        var s = d == 0f ? 0f : 2f / d;
         
-        float xs = q.X * s;
-        float ys = q.Y * s;
-        float zs = q.Z * s;
+        var xs = q.X * s;
+        var ys = q.Y * s;
+        var zs = q.Z * s;
         
-        float wx = q.W * xs;
-        float wy = q.W * ys;
-        float wz = q.W * zs;
+        var wx = q.W * xs;
+        var wy = q.W * ys;
+        var wz = q.W * zs;
         
-        float xx = q.X * xs;
-        float xy = q.X * ys;
-        float xz = q.X * zs;
+        var xx = q.X * xs;
+        var xy = q.X * ys;
+        var xz = q.X * zs;
         
-        float yy = q.Y * ys;
-        float yz = q.Y * zs;
-        float zz = q.Z * zs;
+        var yy = q.Y * ys;
+        var yz = q.Y * zs;
+        var zz = q.Z * zs;
         
-        Matrix4x4 m = new Matrix4x4();
-        
-        m.M11 = 1f - (yy + zz);
-        m.M12 = xy - wz;
-        m.M13 = xz + wy;
-        m.M14 = 0f;
-        
-        m.M21 = xy + wz;
-        m.M22 = 1f - (xx + zz);
-        m.M23 = yz - wx;
-        m.M24 = 0f;
-        
-        m.M31 = xz - wy;
-        m.M32 = yz + wx;
-        m.M33 = 1f - (xx + yy);
-        m.M34 = 0f;
-        
-        m.M41 = 0f;
-        m.M42 = 0f;
-        m.M43 = 0f;
-        m.M44 = 1f;
-        
+        var m = new Matrix4x4
+        {
+            M11 = 1f - (yy + zz),
+            M12 = xy - wz,
+            M13 = xz + wy,
+            M14 = 0f,
+            M21 = xy + wz,
+            M22 = 1f - (xx + zz),
+            M23 = yz - wx,
+            M24 = 0f,
+            M31 = xz - wy,
+            M32 = yz + wx,
+            M33 = 1f - (xx + yy),
+            M34 = 0f,
+            M41 = 0f,
+            M42 = 0f,
+            M43 = 0f,
+            M44 = 1f
+        };
+
         return m;
     }
 }

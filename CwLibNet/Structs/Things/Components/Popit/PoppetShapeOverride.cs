@@ -23,7 +23,7 @@ public class PoppetShapeOverride: ISerializable
             Polygon ??= [];
             serializer.GetOutput().I32(Polygon.Length);
         }
-        for (int i = 0; i < Polygon.Length; ++i)
+        for (var i = 0; i < Polygon.Length; ++i)
             Polygon[i] = serializer.V3(Polygon[i]);
         Loops = serializer.Intvector(Loops);
         Back = serializer.S32(Back);
@@ -36,11 +36,11 @@ public class PoppetShapeOverride: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         if (Polygon != null)
-            size += (Polygon.Length * 0xC);
+            size += Polygon.Length * 0xC;
         if (Loops != null)
-            size += (Loops.Length * 0x4);
+            size += Loops.Length * 0x4;
         return size;
     }
 }

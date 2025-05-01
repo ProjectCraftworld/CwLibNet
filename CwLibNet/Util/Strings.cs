@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using CwLibNet.Types.Data;
 
@@ -6,9 +5,9 @@ namespace CwLibNet.Util;
 
 public static class Strings
 {
-    private static readonly Regex Sha1Regex = new Regex("(h?)[a-fA-F0-9]{40}$", RegexOptions.Compiled);
-    private static readonly Regex GUIDRegex = new Regex("(g?)\\d+", RegexOptions.Compiled);
-    private static readonly Regex HexGUIDRegex = new Regex("(g?)(0x|0X)[a-fA-F0-9]+$", RegexOptions.Compiled);
+    private static readonly Regex Sha1Regex = new("(h?)[a-fA-F0-9]{40}$", RegexOptions.Compiled);
+    private static readonly Regex GUIDRegex = new("(g?)\\d+", RegexOptions.Compiled);
+    private static readonly Regex HexGUIDRegex = new("(g?)(0x|0X)[a-fA-F0-9]+$", RegexOptions.Compiled);
 
     /// <summary>
     /// Left pads the input with zeros.
@@ -56,7 +55,7 @@ public static class Strings
     /// </summary>
     public static GUID? GetGUID(string? number)
     {
-        long value = GetLong(number);
+        var value = GetLong(number);
         return value > 0 ? new GUID(value) : null;
     }
 
@@ -98,7 +97,7 @@ public static class Strings
     {
         if (extension.StartsWith("."))
             extension = extension[1..];
-        int index = path.LastIndexOf('.');
+        var index = path.LastIndexOf('.');
         if (index != -1)
             path = path[..index];
         return path + "." + extension;

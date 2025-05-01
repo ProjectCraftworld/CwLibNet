@@ -4,7 +4,7 @@ public static class Float
 {
     public static float ToRadians (this float angleIn10thofaDegree) {
         // Angle in 10th of a degree
-        return (float)((angleIn10thofaDegree * Math.PI)/1800); 
+        return (float)(angleIn10thofaDegree * Math.PI/1800); 
     }
 
     public static float IntBitsToFloat(this int value)

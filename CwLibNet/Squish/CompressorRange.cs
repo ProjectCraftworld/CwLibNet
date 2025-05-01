@@ -44,8 +44,8 @@ public class CompressorRange : CompressorColourFit
     }
 
     private readonly Util.Squish.CompressionMetric metric;
-    private readonly Vec start = new Vec();
-    private readonly Vec end = new Vec();
+    private readonly Vec start = new();
+    private readonly Vec end = new();
 
     private float bestError;
 
@@ -63,50 +63,47 @@ public class CompressorRange : CompressorColourFit
         // Compute the principal component from the covariance.
         var principle = Matrix.ComputePrincipleComponent(cov);
 
-        if (count > 0)
+        if (count <= 0) return;
+        float bX, bY, bZ;
+        float max;
+
+        // Initialize with the first point.
+        var aX = bX = points[0].X;
+        var aY = bY = points[0].Y;
+        var aZ = bZ = points[0].Z;
+        var min = max = points[0].Dot(principle);
+
+        // Find the points that have the minimum and maximum dot product with the principle.
+        for (var i = 1; i < count; ++i)
         {
-            float aX, aY, aZ;
-            float bX, bY, bZ;
-            float min, max;
-
-            // Initialize with the first point.
-            aX = bX = points[0].X;
-            aY = bY = points[0].Y;
-            aZ = bZ = points[0].Z;
-            min = max = points[0].Dot(principle);
-
-            // Find the points that have the minimum and maximum dot product with the principle.
-            for (var i = 1; i < count; ++i)
+            var p = points[i];
+            var val = p.Dot(principle);
+            if (val < min)
             {
-                var p = points[i];
-                var val = p.Dot(principle);
-                if (val < min)
-                {
-                    aX = p.X;
-                    aY = p.Y;
-                    aZ = p.Z;
-                    min = val;
-                }
-                else if (val > max)
-                {
-                    bX = p.X;
-                    bY = p.Y;
-                    bZ = p.Z;
-                    max = val;
-                }
+                aX = p.X;
+                aY = p.Y;
+                aZ = p.Z;
+                min = val;
             }
-
-            // Clamp the endpoints to the grid and [0,1] range.
-            aX = Clamp(aX, GRID_X, GRID_X_RCP);
-            aY = Clamp(aY, GRID_Y, GRID_Y_RCP);
-            aZ = Clamp(aZ, GRID_Z, GRID_Z_RCP);
-            start.Set(aX, aY, aZ);
-
-            bX = Clamp(bX, GRID_X, GRID_X_RCP);
-            bY = Clamp(bY, GRID_Y, GRID_Y_RCP);
-            bZ = Clamp(bZ, GRID_Z, GRID_Z_RCP);
-            end.Set(bX, bY, bZ);
+            else if (val > max)
+            {
+                bX = p.X;
+                bY = p.Y;
+                bZ = p.Z;
+                max = val;
+            }
         }
+
+        // Clamp the endpoints to the grid and [0,1] range.
+        aX = Clamp(aX, GRID_X, GRID_X_RCP);
+        aY = Clamp(aY, GRID_Y, GRID_Y_RCP);
+        aZ = Clamp(aZ, GRID_Z, GRID_Z_RCP);
+        start.Set(aX, aY, aZ);
+
+        bX = Clamp(bX, GRID_X, GRID_X_RCP);
+        bY = Clamp(bY, GRID_Y, GRID_Y_RCP);
+        bZ = Clamp(bZ, GRID_Z, GRID_Z_RCP);
+        end.Set(bX, bY, bZ);
     }
 
     // Implements the 3–code compression method.

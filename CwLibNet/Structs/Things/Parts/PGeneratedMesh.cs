@@ -2,7 +2,6 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
 namespace CwLibNet.Structs.Things.Parts;
@@ -96,9 +95,9 @@ public class PGeneratedMesh : ISerializable
 
     public void Serialize(Serializer serializer)
     {
-        Revision revision = serializer.GetRevision();
-        int version = revision.GetVersion();
-        int subVersion = revision.GetSubVersion();
+        var revision = serializer.GetRevision();
+        var version = revision.GetVersion();
+        var subVersion = revision.GetSubVersion();
 
         GfxMaterial = serializer.Resource(GfxMaterial, ResourceType.GfxMaterial);
         Bevel = serializer.Resource(Bevel, ResourceType.Bevel);
@@ -142,13 +141,17 @@ public class PGeneratedMesh : ISerializable
             Sharded = serializer.Bool(Sharded);
         if (subVersion >= 0x13d)
             IncludeSides = serializer.Bool(IncludeSides);
-        if (subVersion >= 0x155)
-            SlideImpactDamping = serializer.I8(SlideImpactDamping);
-        if (subVersion >= 0x13d)
+        switch (subVersion)
         {
-            SlideSteer = serializer.I8(SlideSteer);
-            SlideSpeed = serializer.I8(SlideSpeed);
+            case >= 0x155:
+                SlideImpactDamping = serializer.I8(SlideImpactDamping);
+                break;
+            case < 0x13d:
+                return;
         }
+
+        SlideSteer = serializer.I8(SlideSteer);
+        SlideSpeed = serializer.I8(SlideSpeed);
     }
 
     public int GetAllocatedSize()

@@ -3,7 +3,6 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
-using CwLibNet.Types.Things;
 using CwLibNet.Util;
 
 namespace CwLibNet.Structs.Things.Parts;
@@ -19,10 +18,10 @@ public class PRenderMesh: ISerializable
     public Thing[]? BoneThings = [];
     public Matrix4x4[] BoneModels = [];
     public ResourceDescriptor? Anim;
-    public float AnimPos = 0.0f, AnimSpeed = 1.0f;
+    public float AnimPos, AnimSpeed = 1.0f;
     public float AnimPosOld = -1.0f;
     public bool AnimLoop = true;
-    public float LoopStart = 0.0f, LoopEnd = 1.0f;
+    public float LoopStart, LoopEnd = 1.0f;
     public int EditorColor = -1;
     public ShadowType CastShadows = ShadowType.ALWAYS;
     public bool RttEnable;
@@ -33,7 +32,7 @@ public class PRenderMesh: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
+        var version = serializer.GetRevision().GetVersion();
 
         Mesh = serializer.Resource(Mesh, ResourceType.Mesh);
 
@@ -51,7 +50,7 @@ public class PRenderMesh: ISerializable
             if (serializer.IsWriting())
                 serializer.GetOutput().V4(Colors.FromARGB(EditorColor));
             else {
-                Vector4 color = serializer.GetInput().V4();
+                var color = serializer.GetInput().V4();
                 EditorColor = Colors.GetARGB(color);
             }
         }
@@ -80,8 +79,8 @@ public class PRenderMesh: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
-        if (BoneThings != null) size += (BoneThings.Length * 0x4);
+        var size = BaseAllocationSize;
+        if (BoneThings != null) size += BoneThings.Length * 0x4;
         return size;
     }
 }

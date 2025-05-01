@@ -17,7 +17,7 @@ public class QuestTracker: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        int subVersion = serializer.GetRevision().GetSubVersion();
+        var subVersion = serializer.GetRevision().GetSubVersion();
 
         if (subVersion > 0xeb)
         {
@@ -39,7 +39,7 @@ public class QuestTracker: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         if (QuestId != null)
             size += QuestId.GetAllocatedSize();
         if (ObjectiveId != null)

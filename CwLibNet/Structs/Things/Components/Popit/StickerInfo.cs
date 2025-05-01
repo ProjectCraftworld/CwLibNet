@@ -21,10 +21,10 @@ public class StickerInfo: ISerializable
     
     public ResourceDescriptor? Plan;
 
-    public EyetoyData EyetoyData = new EyetoyData();
+    public EyetoyData EyetoyData = new();
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
+        var version = serializer.GetRevision().GetVersion();
 
         Up = serializer.V4(Up);
         Across = serializer.V4(Across);

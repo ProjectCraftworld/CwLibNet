@@ -39,13 +39,13 @@ public class SlotID: ISerializable
 
     public override int GetHashCode()
     {
-        int result = (int) (SlotNumber ^ (SlotNumber >>> 32));
+        var result = (int) (SlotNumber ^ (SlotNumber >>> 32));
         result = 31 * result + SlotType.GetHashCode();
         return result; 
     }
 
     public override string ToString()
     {
-        return String.Format("SlotID: SlotType={0}, SlotNumber={1}", SlotType, SlotNumber);
+        return $"SlotID: SlotType={SlotType}, SlotNumber={SlotNumber}";
     }
 }

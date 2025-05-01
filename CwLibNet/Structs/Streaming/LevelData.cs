@@ -22,7 +22,7 @@ public class LevelData : ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        int subVersion = serializer.GetRevision().GetSubVersion();
+        var subVersion = serializer.GetRevision().GetSubVersion();
 
         if (subVersion > 0x92)
             LevelSlot = serializer.Struct(LevelSlot);

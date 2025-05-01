@@ -26,7 +26,7 @@ public class Decoration: ISerializable
     
     public bool HasShadow = true;
     
-    public bool IsQuest = false;
+    public bool IsQuest;
     
     public int PlayModeFrame;
     
@@ -37,9 +37,9 @@ public class Decoration: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        Revision revision = serializer.GetRevision();
-        int version = revision.GetVersion();
-        int subVersion = revision.GetSubVersion();
+        var revision = serializer.GetRevision();
+        var version = revision.GetVersion();
+        var subVersion = revision.GetSubVersion();
 
         RenderMesh = serializer.Reference(RenderMesh);
 
@@ -78,7 +78,7 @@ public class Decoration: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         if (RenderMesh != null)
             size += RenderMesh.GetAllocatedSize();
         return size;

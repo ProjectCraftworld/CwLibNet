@@ -2,7 +2,6 @@ using System.Numerics;
 using CwLibNet.Extensions;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
 
 namespace CwLibNet.Structs.Gmat;
 
@@ -13,7 +12,7 @@ public class MaterialParameterAnimation: ISerializable
 
     public Vector4 BaseValue;
     public Vector4[] Keys;
-    private String name = "";
+    private string name = "";
     public byte ComponentsAnimated;
 
     
@@ -23,18 +22,18 @@ public class MaterialParameterAnimation: ISerializable
 
         if (serializer.IsWriting())
         {
-            MemoryOutputStream stream = serializer.GetOutput();
+            var stream = serializer.GetOutput();
             ComponentsAnimated = CalculateComponentsAnimated();
             if (Keys == null || Keys.Length == 0) stream.I32(0);
             else
             {
-                int count = GetNumberOfComponentsAnimated() * Keys.Length;
+                var count = GetNumberOfComponentsAnimated() * Keys.Length;
                 stream.I32(count);
-                for (int i = 0; i < 4; ++i)
+                for (var i = 0; i < 4; ++i)
                 {
                     if ((ComponentsAnimated & (1 << i)) != 0)
                     {
-                        foreach (Vector4 key in Keys) stream.F32(key.GetComponent(i));
+                        foreach (var key in Keys) stream.F32(key.GetComponent(i));
                     }
                 }
             }
@@ -45,22 +44,22 @@ public class MaterialParameterAnimation: ISerializable
         }
         else
         {
-            MemoryInputStream stream = serializer.GetInput();
-            float[] components = stream.Floatarray();
+            var stream = serializer.GetInput();
+            var components = stream.Floatarray();
             name = stream.Str(stream.I32());
             ComponentsAnimated = stream.I8();
             if (components.Length == 0) return;
 
-            int numKeys = components.Length / GetNumberOfComponentsAnimated();
+            var numKeys = components.Length / GetNumberOfComponentsAnimated();
             Keys = new Vector4[numKeys];
-            for (int i = 0; i < Keys.Length; ++i) Keys[i] = BaseValue;
+            for (var i = 0; i < Keys.Length; ++i) Keys[i] = BaseValue;
 
-            int offset = 0;
-            for (int i = 0; i < 4; ++i)
+            var offset = 0;
+            for (var i = 0; i < 4; ++i)
             {
                 if ((ComponentsAnimated & (1 << i)) != 0)
                 {
-                    foreach (Vector4 key in Keys) key.SetComponent(i, components[offset++]);
+                    foreach (var key in Keys) key.SetComponent(i, components[offset++]);
                 }
             }
         }
@@ -69,18 +68,18 @@ public class MaterialParameterAnimation: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         if (Keys != null)
-            size += (Keys.Length * 0x10);
+            size += Keys.Length * 0x10;
         return size;
     }
 
-    public String GetName()
+    public string GetName()
     {
         return name;
     }
 
-    public void SetName(String name)
+    public void SetName(string name)
     {
         if (name == null)
             throw new NullReferenceException("Name cannot be null!");
@@ -91,7 +90,7 @@ public class MaterialParameterAnimation: ISerializable
 
     public int GetNumberOfComponentsAnimated()
     {
-        int count = 0;
+        var count = 0;
         if ((ComponentsAnimated & 1) != 0) count++;
         if ((ComponentsAnimated & 2) != 0) count++;
         if ((ComponentsAnimated & 4) != 0) count++;
@@ -101,7 +100,6 @@ public class MaterialParameterAnimation: ISerializable
 
     public bool IsComponentAnimated(int c)
     {
-        if (Keys == null) return false;
         return Keys.Any(key => key.GetComponent(c) != BaseValue.GetComponent(c));
     }
 

@@ -20,7 +20,7 @@ public class StreamingID: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         if (Name != null)
             size += Name.Length * 0x2;
         return size;

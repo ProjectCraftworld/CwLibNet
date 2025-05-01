@@ -1,7 +1,6 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
 
 namespace CwLibNet.Structs.Things.Components.Script;
 
@@ -16,7 +15,7 @@ public class InstanceLayout: ISerializable
 
     public InstanceLayout(InstanceLayout? layout)
     {
-        foreach (FieldLayoutDetails field in layout.Fields)
+        foreach (var field in layout.Fields)
             Fields.Add(new FieldLayoutDetails(field));
         InstanceSize = layout.InstanceSize;
     }
@@ -29,10 +28,10 @@ public class InstanceLayout: ISerializable
         {
             if (serializer.IsWriting())
             {
-                MemoryOutputStream stream = serializer.GetOutput();
+                var stream = serializer.GetOutput();
                 FieldLayoutDetails[] reflectFields = GetFieldsForReflection(false);
                 stream.I32(reflectFields.Length);
-                foreach (FieldLayoutDetails field in reflectFields)
+                foreach (var field in reflectFields)
                 {
                     stream.Str(field.Name);
                     stream.I32(Fields.IndexOf(field));
@@ -40,9 +39,9 @@ public class InstanceLayout: ISerializable
             }
             else
             {
-                MemoryInputStream stream = serializer.GetInput();
-                int count = stream.I32();
-                for (int i = 0; i < count; ++i)
+                var stream = serializer.GetInput();
+                var count = stream.I32();
+                for (var i = 0; i < count; ++i)
                 {
                     stream.Str(); // fieldName
                     stream.I32(); // fieldIndex
@@ -55,21 +54,15 @@ public class InstanceLayout: ISerializable
     public FieldLayoutDetails[] GetFieldsForReflection(bool reflectDivergent)
     {
         List<FieldLayoutDetails> fields = new(Fields.Count);
-        foreach (FieldLayoutDetails field in Fields)
-        {
-            if (field.Modifiers.Contains(ModifierType.DIVERGENT) && !reflectDivergent)
-                continue;
-            fields.Add(field);
-        }
-
+        fields.AddRange(Fields.Where(field => !field.Modifiers.Contains(ModifierType.DIVERGENT) || reflectDivergent));
         return fields.ToArray();
     }
 
     
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
-        if (Fields != null) size += Fields.Sum(details => (details.GetAllocatedSize() * 2));
+        var size = BaseAllocationSize;
+        if (Fields != null) size += Fields.Sum(details => details.GetAllocatedSize() * 2);
         return size;
     }
 

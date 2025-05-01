@@ -1,9 +1,8 @@
-namespace CwLibNet.Enums
+namespace CwLibNet.Enums;
+
+public static class BoneFlag
 {
-    public static class BoneFlag
-    {
-        public const int NONE = 0x0;
-        public const int CAMERA = 0x1;
-        public const int DUMMY = 0x2;
-    }
+    public const int None = 0x0;
+    public const int Camera = 0x1;
+    public const int Dummy = 0x2;
 }

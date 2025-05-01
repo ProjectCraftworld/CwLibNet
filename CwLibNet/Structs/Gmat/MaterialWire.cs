@@ -35,7 +35,7 @@ public class MaterialWire: ISerializable
         BoxTo = serializer.S32(BoxTo);
         PortFrom = serializer.I8(PortFrom);
         PortTo = serializer.I8(PortTo);
-        for (int i = 0; i < SwizzleElementCount; ++i)
+        for (var i = 0; i < SwizzleElementCount; ++i)
             Swizzle[i] = serializer.I8(Swizzle[i]);
     }
 

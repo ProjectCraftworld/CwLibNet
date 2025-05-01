@@ -35,23 +35,23 @@ public class PStickers
 
     public PStickers(ResourceDescriptor sticker)
     {
-        decals = new Decal[] { new Decal(sticker) };
+        decals = [new Decal(sticker)];
     }
 
     
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
+        var version = serializer.GetRevision().GetVersion();
 
         decals = serializer.Array(decals);
 
         if (!serializer.IsWriting())
             costumeDecals = new Decal[serializer.GetInput().I32()][];
         else serializer.GetOutput().I32(costumeDecals.Length);
-        for (int i = 0; i < costumeDecals.Length; ++i)
+        for (var i = 0; i < costumeDecals.Length; ++i)
             costumeDecals[i] = serializer.Array(costumeDecals[i]);
 
-        if (version >= 0x158 && version <= 0x3ba)
+        if (version is >= 0x158 and <= 0x3ba)
             paintControl = serializer.Array(paintControl);
 
         if (version >= 0x15d)
@@ -61,16 +61,14 @@ public class PStickers
     
     public int GetAllocatedSize()
     {
-        int size = BASE_ALLOCATION_SIZE;
+        var size = BASE_ALLOCATION_SIZE;
         if (this.decals != null)
-            size += (this.decals.Length * Decal.BaseAllocationSize);
-        foreach (Decal[] decals in costumeDecals)
-        if (decals != null)
-            size += (decals.Length * Decal.BaseAllocationSize);
+            size += this.decals.Length * Decal.BaseAllocationSize;
+        size += costumeDecals.Sum(decals => decals.Length * Decal.BaseAllocationSize);
         if (paintControl != null)
-            size += (paintControl.Length * PaintControlPoint.BASE_ALLOCATION_SIZE);
+            size += paintControl.Length * PaintControlPoint.BASE_ALLOCATION_SIZE;
         if (eyetoyData != null)
-            size += (eyetoyData.Length * EyetoyData.BaseAllocationSize);
+            size += eyetoyData.Length * EyetoyData.BaseAllocationSize;
         return size;
     }
 

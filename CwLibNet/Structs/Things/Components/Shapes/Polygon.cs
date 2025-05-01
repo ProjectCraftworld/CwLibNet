@@ -1,7 +1,6 @@
 using System.Numerics;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
 
 namespace CwLibNet.Structs.Things.Components.Shapes;
 
@@ -30,7 +29,7 @@ public class Polygon: ISerializable
      * Controls which parts of the polygon are "loops",
      * if two loops intersect with each other, it counts as a cut.
      */
-    public int[]? Loops = { 4 };
+    public int[]? Loops = [4];
 
     
     public void Serialize(Serializer serializer)
@@ -46,7 +45,7 @@ public class Polygon: ISerializable
             }
             else Vertices = new Vector3?[serializer.GetInput().I32()];
             if (Vertices != null)
-                for (int i = 0; i < Vertices.Length; ++i)
+                for (var i = 0; i < Vertices.Length; ++i)
                     Vertices[i] = serializer.V3(Vertices[i]);
             Loops = serializer.Intvector(Loops);
             return;
@@ -54,7 +53,7 @@ public class Polygon: ISerializable
 
         if (serializer.IsWriting())
         {
-            MemoryOutputStream _stream = serializer.GetOutput();
+            var _stream = serializer.GetOutput();
             if (Vertices != null && Vertices.Length != 0)
             {
                 _stream.I32(Vertices.Length);
@@ -75,12 +74,12 @@ public class Polygon: ISerializable
             return;
         }
 
-        MemoryInputStream stream = serializer.GetInput();
+        var stream = serializer.GetInput();
         Vertices = new Vector3?[stream.I32()];
         RequiresZ = stream.Boole();
         if (Vertices.Length != 0)
         {
-            for (int i = 0; i < Vertices.Length; ++i)
+            for (var i = 0; i < Vertices.Length; ++i)
             {
                 var vertex = RequiresZ ? stream.V3() : new Vector3(stream.F32(), stream.F32(), 0.0f);
                 Vertices[i] = vertex;
@@ -93,11 +92,11 @@ public class Polygon: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         if (Vertices != null)
-            size += (Vertices.Length * 0xC);
+            size += Vertices.Length * 0xC;
         if (Loops != null)
-            size += (Loops.Length * 0x4);
+            size += Loops.Length * 0x4;
         return size;
     }
 

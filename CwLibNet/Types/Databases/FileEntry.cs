@@ -1,21 +1,20 @@
-using CwLibNet.Enums;
 using CwLibNet.Types.Data;
 
 namespace CwLibNet.Types.Databases;
 
-public class FileEntry
+public class FileEntry(string path, SHA1 sha1, long size)
 {
-    public string Path;
+    public string Path = path;
 
     /**
      * Size of the associated data buffer.
      */
-    public long Size;
+    public long Size = size;
 
     /**
      * SHA1 signature of data.
      */
-    public SHA1 Sha1;
+    public SHA1 Sha1 = sha1;
 
     /**
      * Unique key for data
@@ -25,28 +24,21 @@ public class FileEntry
     /**
      * Resource metadata
      */
-    public ResourceInfo Info;
+    public ResourceInfo? Info;
 
     /**
      * Map of resources assigned to this entry.
      */
     private readonly object?[] resources = new object[10];
 
-    public FileEntry(string path, SHA1 sha1, long size)
-    {
-        Size = size;
-        Sha1 = sha1;
-        Path = path;
-    }
-    
     public T? GetResource<T>(int key)
     {
-        object? value = resources[key];
+        var value = resources[key];
         if (value == null) return default;
         return (T) value;
     }
 
-    public void setDetails(FileEntry entry)
+    public void SetDetails(FileEntry entry)
     {
         Path = entry.Path;
         Size = entry.Size;

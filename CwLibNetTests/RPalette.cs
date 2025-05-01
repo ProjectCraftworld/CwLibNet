@@ -24,7 +24,7 @@ public class RPaletteTests
     {
         RPalette palette = new RPalette
         {
-            PlanList = _plans.Select((guid => new ResourceDescriptor(guid, ResourceType.Plan))).ToList()!,
+            PlanList = _plans.Select(guid => new ResourceDescriptor(guid, ResourceType.Plan)).ToList()!,
             Location = 0,
             Description = 0
         };

@@ -22,7 +22,7 @@ public class DLCFile: ISerializable
         
     public void Serialize(Serializer serializer)
     {
-        Revision revision = serializer.GetRevision();
+        var revision = serializer.GetRevision();
 
         Directory = serializer.Str(Directory);
         File = serializer.Str(File);
@@ -36,39 +36,39 @@ public class DLCFile: ISerializable
         {
             if (serializer.IsWriting())
             {
-                int[] output = new int[NonPlanGuids.Count];
-                for (int i = 0; i < output.Length; ++i)
+                var output = new int[NonPlanGuids.Count];
+                for (var i = 0; i < output.Length; ++i)
                 {
-                    GUID? guid = NonPlanGuids[i];
+                    var guid = NonPlanGuids[i];
                     output[i] = guid == null ? 0 : (int) guid?.Value!;
                 }
                 serializer.Intvector(output);
             }
             else
             {
-                int[]? guids = serializer.Intvector(null);
+                var guids = serializer.Intvector(null);
                 if (guids != null)
                 {
                     NonPlanGuids = new List<GUID?>(guids.Length);
-                    for (int i = 0; i < guids.Length; ++i)
-                        NonPlanGuids.Add(new GUID(guids[i]));
+                    foreach (var t in guids)
+                        NonPlanGuids.Add(new GUID(t));
                 }
             }
         }
 
         if (serializer.IsWriting())
         {
-            int[] output = new int[Guids.Count];
-            for (int i = 0; i < output.Length; ++i)
+            var output = new int[Guids.Count];
+            for (var i = 0; i < output.Length; ++i)
             {
-                GUID? guid = Guids[i];
+                var guid = Guids[i];
                 output[i] = guid == null ? 0 : (int) guid?.Value!;
             }
             serializer.Intvector(output);
         }
         else
         {
-            int[]? guids = serializer.Intvector(null);
+            var guids = serializer.Intvector(null);
             if (guids != null)
             {
                 Guids = new List<GUID?>(guids.Length);
@@ -83,7 +83,7 @@ public class DLCFile: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         if (Directory != null) size += Directory.Length;
         if (File != null) size += File.Length;
         if (ContentId != null) size += ContentId.Length;

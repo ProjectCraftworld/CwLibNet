@@ -2,7 +2,6 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
-using CwLibNet.Types.Things;
 
 namespace CwLibNet.Structs.Things.Components.Popit;
 
@@ -21,7 +20,7 @@ public class DecorationInfo: ISerializable
     public ResourceDescriptor? Plan;
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
+        var version = serializer.GetRevision().GetVersion();
 
         Angle = serializer.F32(Angle);
         LastDecoration = serializer.I32(LastDecoration);

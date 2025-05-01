@@ -9,7 +9,7 @@ public class Locator: ISerializable
     public const int BaseAllocationSize = 0x12;
 
     public Vector3? Position;
-    public String Name;
+    public string Name;
     public byte Looping, Type;
 
     
@@ -24,9 +24,9 @@ public class Locator: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         if (Name != null)
-            size += (Name.Length);
+            size += Name.Length;
         return size;
     }
 

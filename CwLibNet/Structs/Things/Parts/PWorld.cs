@@ -9,7 +9,6 @@ using CwLibNet.Structs.Things.Components;
 using CwLibNet.Structs.Things.Components.World;
 using CwLibNet.Types;
 using CwLibNet.Types.Data;
-using CwLibNet.Types.Things;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -18,7 +17,7 @@ public class PWorld: ISerializable
     public ResourceDescriptor[] Materials;
     public float BackdropOffsetX, BackdropOffsetY, BackdropOffsetZ;
     public bool BackdropOffsetZAuto;
-    public String OverrideBackdropAmbience;
+    public string OverrideBackdropAmbience;
     
     public StreamingManager StreamingManager;
     public List<Thing> Things = [];
@@ -49,7 +48,7 @@ public class PWorld: ISerializable
     public float GlobalSettingsBlendFactor;
     public bool HasLevelLightingBeenSetup;
     public int GlobalSettingsThingUid;
-    public CameraSettings CameraSettings = new CameraSettings();
+    public CameraSettings CameraSettings = new();
     public float WaterLevel, TargetWaterLevel;
     
     
@@ -93,12 +92,12 @@ public class PWorld: ISerializable
     public float CurrWavePos = 0.0186706f;
 
 
-    public int GameMode = 0;
-    public int GameModeRequested = 0;
+    public int GameMode;
+    public int GameModeRequested;
 
     public int NextSackbotPlayerNumber = -2;
-    public CutsceneCameraManager CutsceneCameraManager = new CutsceneCameraManager();
-    public GlobalAudioSettings GlobalAudioSettings = new GlobalAudioSettings();
+    public CutsceneCameraManager CutsceneCameraManager = new();
+    public GlobalAudioSettings GlobalAudioSettings = new();
     public ResourceDescriptor BackdropPlan, BackdropNewPlan;
     public bool SubLevel;
     public bool ScoreLocked;
@@ -119,7 +118,7 @@ public class PWorld: ISerializable
     public bool EnableSackpocket;
     public bool ShowQuestLog;
     public SlotID ScoreboardUnlockLevelSlot;
-    public String ProgressBoardLevelLinkStartPoint;
+    public string ProgressBoardLevelLinkStartPoint;
     public bool IsLbp3World;
 
     /* Vita Fields */
@@ -152,14 +151,14 @@ public class PWorld: ISerializable
         CurrGlobalSettingsBlendFactors = new float[12];
         GlobalSettingsThingUiDs = new int[12];
         GlobalSettingsThingPriority = new int[12];
-        for (int i = 0; i < 12; ++i)
+        for (var i = 0; i < 12; ++i)
             CurrGlobalSettingsBlendFactors[i] = 1.0f;
     }
 
     public void Serialize(Serializer serializer) {
-        Revision revision = serializer.GetRevision();
-        int version = revision.GetVersion();
-        int subVersion = revision.GetSubVersion();
+        var revision = serializer.GetRevision();
+        var version = revision.GetVersion();
+        var subVersion = revision.GetSubVersion();
 
         if (subVersion >= 0x6d) {
             BackdropOffsetX = serializer.F32(BackdropOffsetX);
@@ -167,7 +166,7 @@ public class PWorld: ISerializable
             BackdropOffsetZ = serializer.F32(BackdropOffsetZ);
         }
 
-        if (subVersion >= 0x72 && subVersion <= 0x73) {
+        if (subVersion is >= 0x72 and <= 0x73) {
             serializer.F32(0);
             serializer.F32(0);
             serializer.F32(0);
@@ -184,7 +183,7 @@ public class PWorld: ISerializable
             if (serializer.IsWriting()) serializer.GetOutput().I32(0);
             else {
                 Materials = new ResourceDescriptor[serializer.GetInput().I32()];
-                for (int i = 0; i < Materials.Length; ++i)
+                for (var i = 0; i < Materials.Length; ++i)
                     Materials[i] = serializer.Resource(null, ResourceType.Material);
             }
         }
@@ -192,7 +191,7 @@ public class PWorld: ISerializable
         if (subVersion >= 0x3f)
             StreamingManager = serializer.Reference(StreamingManager);
         
-        if (!revision.IsToolkit() || revision.Before(Branch.Mizuki, (int)Revisions.MzSceneGraph)) {
+        if (!revision.IsToolkit() || revision.Before(Branch.Mizuki, (int)Revisions.MZ_SCENE_GRAPH)) {
             Things = serializer.Arraylist(Things, true);
             serializer.Log("END OF WORLD THINGS");
 
@@ -222,7 +221,7 @@ public class PWorld: ISerializable
                 serializer.Array<Thing>(null);
         }
 
-        if (!revision.IsToolkit() || revision.Before(Branch.Mizuki, (int)Revisions.MzSceneGraph)) {
+        if (!revision.IsToolkit() || revision.Before(Branch.Mizuki, (int)Revisions.MZ_SCENE_GRAPH)) {
             Selections = serializer.Array(Selections, true);
 
             Backdrop = serializer.Reference(Backdrop);
@@ -305,19 +304,22 @@ public class PWorld: ISerializable
                 EnforceMinMaxPlayers = serializer.Bool(EnforceMinMaxPlayers);
         }
 
-        if (0x16e < version && version < 0x1bf) {
+        if (version is > 0x16e and < 0x1bf) {
             serializer.I32(0);
             serializer.I32(0);
             serializer.I32(0);
         }
 
-        if (0x1a3 < version && version < 0x1d1)
-            throw new SerializationException("CGameCamera serialization unsupported!");
+        switch (version)
+        {
+            case > 0x1a3 and < 0x1d1:
+                throw new SerializationException("CGameCamera serialization unsupported!");
+            case > 0x1bd and < 0x213:
+                serializer.I32(0);
+                break;
+        }
 
-        if (0x1bd < version && version < 0x213)
-            serializer.I32(0);
-
-        if (version >= 0x1c2 && version < 0x36e)
+        if (version is >= 0x1c2 and < 0x36e)
             DeathCount = serializer.I32(DeathCount);
         if (version >= 0x1c4)
             MaxNumPlayers = serializer.I32(MaxNumPlayers);
@@ -327,7 +329,7 @@ public class PWorld: ISerializable
             OldDissolvingThings = serializer.Array(OldDissolvingThings, true);
         }
 
-        if (version >= 0x1de && version < 0x345)
+        if (version is >= 0x1de and < 0x345)
             IsTutorialLevel = serializer.Bool(IsTutorialLevel);
 
         if (version >= 0x22e) {
@@ -348,7 +350,7 @@ public class PWorld: ISerializable
 
         if (version >= 0x26f) {
             WaterLevel = serializer.F32(WaterLevel);
-            if (version >= 0x278 || revision.Has(Branch.Leerdammer, (int)Revisions.LdWaterWave))
+            if (version >= 0x278 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_WATER_WAVE))
                 FromWaterLevel = serializer.F32(FromWaterLevel);
             TargetWaterLevel = serializer.F32(TargetWaterLevel);
         }
@@ -385,7 +387,7 @@ public class PWorld: ISerializable
             TargetWaterMurkiness = serializer.F32(TargetWaterMurkiness);
         }
 
-        if (version >= 0x2b4 || revision.Has(Branch.Leerdammer, (int)Revisions.LdWaterBits)) {
+        if (version >= 0x2b4 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_WATER_BITS)) {
             WaterBits = serializer.F32(WaterBits);
             FromWaterBits = serializer.F32(FromWaterBits);
             TargetWaterBits = serializer.F32(TargetWaterBits);
@@ -415,7 +417,7 @@ public class PWorld: ISerializable
             TargetWaterHintColorTwo = serializer.I32(TargetWaterHintColorTwo);
         }
 
-        if (subVersion >= 0xf8 && subVersion < 0x189)
+        if (subVersion is >= 0xf8 and < 0x189)
             serializer.Bool(false);
 
         if (subVersion >= 0x182) {
@@ -423,55 +425,57 @@ public class PWorld: ISerializable
             CurrBackdropEnabled = serializer.Bool(CurrBackdropEnabled);
         }
 
-        if (version >= 0x29c || revision.Has(Branch.Leerdammer, (int)Revisions.LdWaterWave))
+        if (version >= 0x29c || revision.Has(Branch.Leerdammer, (int)Revisions.LD_WATER_WAVE))
             CurrWavePos = serializer.F32(CurrWavePos);
         
 
-        if ((version > 0x288 && version < 0x29c) || (revision.IsLeerdammer() && revision.Before(Branch.Leerdammer, (int)Revisions.LdWaterWave))) {
+        if (version is > 0x288 and < 0x29c || (revision.IsLeerdammer() && revision.Before(Branch.Leerdammer, (int)Revisions.LD_WATER_WAVE))) {
             serializer.F32(0);
             serializer.Bool(false);
         }
 
-        // CBreadLoaf
-        if (0x281 < version && version < 0x287) {
-            if (serializer.I32(0) != 0)
-                throw new SerializationException("CBreadLoaf serialization not supported!");
-
+        switch (version)
+        {
+            // CBreadLoaf
             // serializer.I32(0); // loafAlloc.numHandles
             // serializer.I32(0); // loafAlloc.freehead
             // serializer.I32(0); // loafAlloc.numUsed
             // // handles?
-
             // // reflect array 2, loafMin floats
             // serializer.I32(0); // loafSize
             // serializer.u16(0); // maxDepth
             // serializer.u16(0); // first
-
             // // reflect array, x via numHandles float
             // // reflect array, y via numHandles float
             // // reflect 4 LoafHandle's short?
             // // firstcrumb short
             // // depth, bytearray?
+            case > 0x281 and < 0x287 when serializer.I32(0) != 0:
+                throw new SerializationException("CBreadLoaf serialization not supported!");
+            case >= 0x2a3:
+                GameMode = serializer.I32(GameMode);
+                break;
         }
 
-        if (version >= 0x2a3) GameMode = serializer.I32(GameMode);
-    
         if (subVersion >= 0x218) 
             GameModeRequested = serializer.I32(GameModeRequested);
 
         if (version >= 0x2b0) 
             NextSackbotPlayerNumber = serializer.S32(NextSackbotPlayerNumber);
 
-        if (0x2d3 < version && version < 0x2f3)
-            throw new SerializationException("Unsupported structure in serialization");
-
-        if (version >= 0x2ee)
-            CutsceneCameraManager = serializer.Struct(CutsceneCameraManager);
+        switch (version)
+        {
+            case > 0x2d3 and < 0x2f3:
+                throw new SerializationException("Unsupported structure in serialization");
+            case >= 0x2ee:
+                CutsceneCameraManager = serializer.Struct(CutsceneCameraManager);
+                break;
+        }
 
         if (version >= 0x30c)
             GlobalAudioSettings = serializer.Struct(GlobalAudioSettings);
         
-        if ((version >= 0x321 && !revision.IsToolkit()) || revision.Before(Branch.Mizuki, (int)Revisions.MzSceneGraph)) {
+        if ((version >= 0x321 && !revision.IsToolkit()) || revision.Before(Branch.Mizuki, (int)Revisions.MZ_SCENE_GRAPH)) {
             BackdropPlan = serializer.Resource(BackdropPlan, ResourceType.Plan, true);
             BackdropNewPlan = serializer.Resource(BackdropNewPlan, ResourceType.Plan, true);
         }
@@ -513,7 +517,7 @@ public class PWorld: ISerializable
             if (vita >= 0x18) 
                 PortraitMode = serializer.Bool(PortraitMode);
 
-            if (vita >= 0x28 && vita < 0x47) {
+            if (vita is >= 0x28 and < 0x47) {
                 if (serializer.U8(0) > 1 && !serializer.IsWriting())
                     SharedScreen = true;
             }
@@ -541,15 +545,19 @@ public class PWorld: ISerializable
         if (subVersion >= 0x5d)
             ManualJumpDown = serializer.I32(ManualJumpDown);
 
-        if (subVersion >= 0x98 && subVersion < 0xe5)
+        if (subVersion is >= 0x98 and < 0xe5)
             serializer.Thingarray(null);
-        if (subVersion >= 0xc3 && subVersion < 0xe5)
+        if (subVersion is >= 0xc3 and < 0xe5)
             serializer.Thingarray(null);
-        if (subVersion >= 0x98 && subVersion < 0xe5)
-            serializer.Thingarray(null);
-
-        if (subVersion >= 0xe5)
-            DeferredDestroys = serializer.Array(DeferredDestroys, true);
+        switch (subVersion)
+        {
+            case >= 0x98 and < 0xe5:
+                serializer.Thingarray(null);
+                break;
+            case >= 0xe5:
+                DeferredDestroys = serializer.Array(DeferredDestroys, true);
+                break;
+        }
 
         if (subVersion >= 0xcf) {
             GlobalDofFront = serializer.F32(GlobalDofFront);

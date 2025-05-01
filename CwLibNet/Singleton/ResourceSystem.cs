@@ -46,12 +46,12 @@ public static class ResourceSystem
 
     private static FileEntry? Get(SHA1 hash)
     {
-        return _fileDBs.Select(file => file.Get(hash)).OfType<FileDBRow>().FirstOrDefault();
+        return _fileDBs.Select(file => file.Get(hash)).OfType<FileDbRow>().FirstOrDefault();
     }
 
     private static FileEntry? Get(GUID guid)
     {
-        return _fileDBs.Select(file => file.Get(guid)).OfType<FileDBRow>().FirstOrDefault();
+        return _fileDBs.Select(file => file.Get(guid)).OfType<FileDbRow>().FirstOrDefault();
     }
 
     public static byte[]? Extract(ResourceDescriptor resource)

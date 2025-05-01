@@ -2,7 +2,7 @@ using XSHA1 = System.Security.Cryptography.SHA1;
 
 public sealed class SHA1
 {
-    public static readonly SHA1 EMPTY = new SHA1();
+    public static readonly SHA1 EMPTY = new();
 
     private readonly byte[]? hashBytes;
     private readonly string hashString;
@@ -58,8 +58,8 @@ public sealed class SHA1
         if (buffer == null)
             throw new ArgumentNullException(nameof(buffer), "Data buffer provided to SHA1 hasher cannot be null!");
 
-        using XSHA1 sha1 = XSHA1.Create();
-        byte[]? hash = sha1.ComputeHash(buffer);
+        using var sha1 = XSHA1.Create();
+        var hash = sha1.ComputeHash(buffer);
         return new SHA1(hash);
     }
 

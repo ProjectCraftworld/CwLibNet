@@ -22,8 +22,8 @@ public class MaterialBox: ISerializable
     private int[] @params = new int[ParameterCount];
     public float X, Y, W, H;
     public int SubType;
-    public MaterialParameterAnimation Anim = new MaterialParameterAnimation();
-    public MaterialParameterAnimation Anim2 = new MaterialParameterAnimation();
+    public MaterialParameterAnimation Anim = new();
+    public MaterialParameterAnimation Anim2 = new();
 
     /**
      * Creates an output node
@@ -74,9 +74,9 @@ public class MaterialBox: ISerializable
     {
         if (Type != BoxType.TEXTURE_SAMPLE || SubType != 1) return 0.0f;
 
-        Vector2 col0 = new Vector2(@params[0].IntBitsToFloat(),
+        var col0 = new Vector2(@params[0].IntBitsToFloat(),
             @params[1].IntBitsToFloat());
-        col0 /= (col0.Length());
+        col0 /= col0.Length();
         return (float) Math.Acos(col0.X);
     }
 
@@ -94,9 +94,9 @@ public class MaterialBox: ISerializable
         }
         else
         {
-            Vector2 col0 = new Vector2(@params[0].IntBitsToFloat(),
+            var col0 = new Vector2(@params[0].IntBitsToFloat(),
                 @params[1].IntBitsToFloat());
-            Vector2 col1 = new Vector2(@params[3].IntBitsToFloat(),
+            var col1 = new Vector2(@params[3].IntBitsToFloat(),
                 @params[6].IntBitsToFloat());
             return new Vector4(col0.Length(), col1.Length(),
                 @params[2].IntBitsToFloat(),
@@ -109,18 +109,18 @@ public class MaterialBox: ISerializable
     {
         Type = serializer.I32(Type);
 
-        int head = serializer.GetRevision().GetVersion();
+        var head = serializer.GetRevision().GetVersion();
 
         if (!serializer.IsWriting()) @params = new int[ParameterCount];
         if (head < 0x2a4)
         {
-            for (int i = 0; i < LegacyParameterCount; ++i)
+            for (var i = 0; i < LegacyParameterCount; ++i)
                 @params[i] = serializer.I32(@params[i]);
         }
         else
         {
             serializer.I32(ParameterCount);
-            for (int i = 0; i < ParameterCount; ++i)
+            for (var i = 0; i < ParameterCount; ++i)
                 @params[i] = serializer.I32(@params[i]);
         }
 
@@ -141,7 +141,7 @@ public class MaterialBox: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         size += Anim.GetAllocatedSize();
         size += Anim2.GetAllocatedSize();
         return size;

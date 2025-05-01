@@ -27,7 +27,7 @@ public class PScriptName : ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         if (Name != null)
             size += Name.Length;
         return size;

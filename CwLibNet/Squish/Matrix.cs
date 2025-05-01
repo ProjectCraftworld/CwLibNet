@@ -44,11 +44,11 @@ public class Matrix {
 			values[i] = a;
 	}
 
-	float Get(int index) {
+	private float Get(int index) {
 		return values[index];
 	}
 
-	public static Matrix? ComputeWeightedCovariance(ColourSet mColours, Matrix? covariance) {
+	public static Matrix ComputeWeightedCovariance(ColourSet mColours, Matrix? covariance) {
 		var count = mColours.GetCount();
 		var points = mColours.GetPoints();
 		var weights = mColours.GetWeights();
@@ -175,50 +175,57 @@ public class Matrix {
 		var c2 = m[0] + m[3] + m[5];
 
 		// compute the quadratic coefficients
-		var a = c1 - (1.0f / 3.0f) * c2 * c2;
-		var b = (-2.0f / 27.0f) * c2 * c2 * c2 + (1.0f / 3.0f) * c1 * c2 - c0;
+		var a = c1 - 1.0f / 3.0f * c2 * c2;
+		var b = -2.0f / 27.0f * c2 * c2 * c2 + 1.0f / 3.0f * c1 * c2 - c0;
 
 		// compute the root count check
-		var q = 0.25f * b * b + (1.0f / 27.0f) * a * a * a;
+		var q = 0.25f * b * b + 1.0f / 27.0f * a * a * a;
 
-		// test the multiplicity
-		if ( FltEpsilon < q ) {
-			// only one root, which implies we have a multiple of the identity
-			return new Vec(1.0f);
-		} else if ( q < -FltEpsilon ) {
-			// three distinct roots
-			var theta = (float)Math.Atan2(Math.Sqrt(-q), -0.5f * b);
-			var rho = (float)Math.Sqrt(0.25f * b * b - q);
+		switch (q)
+		{
+			// test the multiplicity
+			case > FltEpsilon:
+				// only one root, which implies we have a multiple of the identity
+				return new Vec(1.0f);
+			case < -FltEpsilon:
+			{
+				// three distinct roots
+				var theta = (float)Math.Atan2(Math.Sqrt(-q), -0.5f * b);
+				var rho = (float)Math.Sqrt(0.25f * b * b - q);
 
-			var rt = (float)Math.Pow(rho, 1.0f / 3.0f);
-			var ct = (float)Math.Cos(theta / 3.0f);
-			var st = (float)Math.Sin(theta / 3.0f);
+				var rt = (float)Math.Pow(rho, 1.0f / 3.0f);
+				var ct = (float)Math.Cos(theta / 3.0f);
+				var st = (float)Math.Sin(theta / 3.0f);
 
-			var l1 = (1.0f / 3.0f) * c2 + 2.0f * rt * ct;
-			var l2 = (1.0f / 3.0f) * c2 - rt * (ct + (float)Math.Sqrt(3.0f) * st);
-			var l3 = (1.0f / 3.0f) * c2 - rt * (ct - (float)Math.Sqrt(3.0f) * st);
+				var l1 = 1.0f / 3.0f * c2 + 2.0f * rt * ct;
+				var l2 = 1.0f / 3.0f * c2 - rt * (ct + (float)Math.Sqrt(3.0f) * st);
+				var l3 = 1.0f / 3.0f * c2 - rt * (ct - (float)Math.Sqrt(3.0f) * st);
 
-			// pick the larger
-			if ( Math.Abs(l2) > Math.Abs(l1) )
-				l1 = l2;
-			if ( Math.Abs(l3) > Math.Abs(l1) )
-				l1 = l3;
+				// pick the larger
+				if ( Math.Abs(l2) > Math.Abs(l1) )
+					l1 = l2;
+				if ( Math.Abs(l3) > Math.Abs(l1) )
+					l1 = l3;
 
-			// get the eigenvector
-			return GetMultiplicity1Evector(matrix, l1);
-		} else { // if( -FLT_EPSILON <= Q && Q <= FLT_EPSILON )
-			// two roots
-			float rt;
-			if ( b < 0.0f )
-				rt = (float)-Math.Pow(-0.5f * b, 1.0f / 3.0f);
-			else
-				rt = (float)Math.Pow(0.5f * b, 1.0f / 3.0f);
+				// get the eigenvector
+				return GetMultiplicity1Evector(matrix, l1);
+			}
+			default:
+			{
+				// if( -FLT_EPSILON <= Q && Q <= FLT_EPSILON )
+				// two roots
+				float rt;
+				if ( b < 0.0f )
+					rt = (float)-Math.Pow(-0.5f * b, 1.0f / 3.0f);
+				else
+					rt = (float)Math.Pow(0.5f * b, 1.0f / 3.0f);
 
-			var l1 = (1.0f / 3.0f) * c2 + rt;		// repeated
-			var l2 = (1.0f / 3.0f) * c2 - 2.0f * rt;
+				var l1 = 1.0f / 3.0f * c2 + rt;		// repeated
+				var l2 = 1.0f / 3.0f * c2 - 2.0f * rt;
 
-			// get the eigenvector
-			return Math.Abs(l1) > Math.Abs(l2) ? GetMultiplicity2Evector(matrix, l1) : GetMultiplicity1Evector(matrix, l2);
+				// get the eigenvector
+				return Math.Abs(l1) > Math.Abs(l2) ? GetMultiplicity2Evector(matrix, l1) : GetMultiplicity1Evector(matrix, l2);
+			}
 		}
 	}
 

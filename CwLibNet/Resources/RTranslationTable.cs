@@ -20,18 +20,18 @@ public class RTranslationTable : Resource
     {
         tag ??= "";
         long v0 = 0, v1 = 0xC8509800L;
-        for (int i = 32; i > 0; --i) {
+        for (var i = 32; i > 0; --i) {
             long c = 0x20;
-            if ((i - 1) < tag.Length)
+            if (i - 1 < tag.Length)
                 c = tag[i - 1];
             v0 = v0 * 0x1b + c;
         }
         
         if (tag.Length > 32) {
             v1 = 0;
-            for (int i = 64; i > 32; --i) {
+            for (var i = 64; i > 32; --i) {
                 long c = 0x20;
-                if ((i - 1) < tag.Length)
+                if (i - 1 < tag.Length)
                     c = tag[i - 1];
                 v1 = v1 * 0x1b + c;
             }
@@ -48,40 +48,40 @@ public class RTranslationTable : Resource
     public RTranslationTable(byte[]? data)
     {
         // Legacy RTranslationTable is just a text file.
-        if (Bytes.ToShortBE(data) == ((ushort) 0xFEFF)) {
+        if (Bytes.ToShortBE(data) == 0xFEFF) {
             string?[] lines = Encoding.Unicode.GetString(data).Split('\n');
-            for (int i = 0; i < lines.Length; i+=2)
+            for (var i = 0; i < lines.Length; i+=2)
             {
                 lookup.Add(MakeLamsKeyID(lines[i]), lines[i + 1]);
             }
             return;
         }
         
-        MemoryInputStream stream = new MemoryInputStream(data);
-        int dataLength = stream.GetLength();
+        var stream = new MemoryInputStream(data);
+        var dataLength = stream.GetLength();
 
-        int count = stream.I32();
+        var count = stream.I32();
 
-        int tableOffset = 0x4 + (count * 0x8);
+        var tableOffset = 0x4 + count * 0x8;
         lookup = new Dictionary<long, string?>(count);
-        for (int i = 0; i < count; ++i) {
-            long key = stream.U32();
-            int stringStart = stream.I32();
+        for (var i = 0; i < count; ++i) {
+            var key = stream.U32();
+            var stringStart = stream.I32();
 
-            int oldOffset = stream.GetOffset();
+            var oldOffset = stream.GetOffset();
 
             stream.Seek(tableOffset + stringStart + 2, SeekMode.Begin);
             while (stream.GetOffset() != dataLength)
                 if (stream.U16() == 0xFEFF)
                     break;
             
-            int stringEnd = stream.GetOffset();
+            var stringEnd = stream.GetOffset();
             if (stringEnd != dataLength)
                 stringEnd -= 2;
             
             stream.Seek(tableOffset + stringStart, SeekMode.Begin);
 
-            string? text = Encoding.BigEndianUnicode.GetString(stream.Bytes(stringEnd - stream.GetOffset())).Trim((char)0xFEFF);
+            var text = Encoding.BigEndianUnicode.GetString(stream.Bytes(stringEnd - stream.GetOffset())).Trim((char)0xFEFF);
             lookup.Add(key, text);
 
             stream.Seek(oldOffset, SeekMode.Begin);
@@ -90,7 +90,7 @@ public class RTranslationTable : Resource
         
     private Dictionary<long, string?> lookup = new();
         
-    public string? Translate(String tag) {
+    public string? Translate(string tag) {
         return Translate(MakeLamsKeyID(tag));
     }
         
@@ -98,14 +98,14 @@ public class RTranslationTable : Resource
         
     public string? Translate(long key)
     {
-        return lookup.ContainsKey(key) ? lookup[key] : null;
+        return lookup.GetValueOrDefault(key);
     }
         
-    public void Add(String key, String value) { 
+    public void Add(string key, string value) { 
         lookup.Add(MakeLamsKeyID(key), value);
     }
 
-    public void Add(long key, String value) {
+    public void Add(long key, string value) {
         lookup.Add(key, value);
     }
 
@@ -127,28 +127,28 @@ public class RTranslationTable : Resource
 
     public SerializationData Build()
     {
-        int stringTableSize = lookup.Values
+        var stringTableSize = lookup.Values
             .Select(element => (Encoding.BigEndianUnicode.GetBytes(element).Length + 1) * 2)
             .Aggregate(0, (total, element) => total + element) - 2;
 
         Dictionary<string, int> offsets = new Dictionary<string, int>();
-        MemoryOutputStream stringTable = new MemoryOutputStream(stringTableSize);
-        MemoryOutputStream keyTable = new MemoryOutputStream((lookup.Count * 8) + 4);
+        var stringTable = new MemoryOutputStream(stringTableSize);
+        var keyTable = new MemoryOutputStream(lookup.Count * 8 + 4);
         keyTable.I32(lookup.Count);
 
-        List<long> keys = lookup.Keys.ToList();
+        var keys = lookup.Keys.ToList();
         keys.Sort((a, z) => a.CompareUnsigned(z));
-        foreach (long key in keys)
+        foreach (var key in keys)
         {
-            string? value = lookup[key];
+            var value = lookup[key];
             keyTable.U32(key);
-            if (offsets.ContainsKey(value))
+            if (offsets.TryGetValue(value, out var offset1))
             {
-                keyTable.I32(offsets[value]);
+                keyTable.I32(offset1);
                 continue;
             }
 
-            int offset = stringTable.GetOffset();
+            var offset = stringTable.GetOffset();
             offsets.Add(value, offset);
 
             keyTable.I32(offset);

@@ -1,18 +1,15 @@
-using CwLibNet.IO;
+namespace CwLibNet.Enums;
 
-namespace CwLibNet.Enums
+public enum SwitchLogicType
 {
-    public enum SwitchLogicType
-    {
-        // AND(0)
-        AND,
-        // OR(1)
-        OR,
-        // XOR(2)
-        XOR,
-        // NOT(3)
-        NOT,
-        // NOP(4)
-        NOP
-    }
+    // AND(0)
+    AND,
+    // OR(1)
+    OR,
+    // XOR(2)
+    XOR,
+    // NOT(3)
+    NOT,
+    // NOP(4)
+    NOP
 }

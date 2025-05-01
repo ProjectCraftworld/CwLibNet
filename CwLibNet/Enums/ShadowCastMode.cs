@@ -1,14 +1,11 @@
-using CwLibNet.IO;
+namespace CwLibNet.Enums;
 
-namespace CwLibNet.Enums
+public enum ShadowCastMode
 {
-    public enum ShadowCastMode
-    {
-        // OFF(0x0)
-        OFF,
-        // ON(0x1)
-        ON,
-        // ALPHA(0x2)
-        ALPHA
-    }
+    // OFF(0x0)
+    OFF,
+    // ON(0x1)
+    ON,
+    // ALPHA(0x2)
+    ALPHA
 }

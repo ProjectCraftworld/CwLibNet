@@ -26,18 +26,18 @@ public class Skeleton: ISerializable
         Mirror = serializer.Shortarray(Mirror);
         MirrorType = serializer.Enumarray(MirrorType);
         CullBones = serializer.Array(CullBones);
-        if (serializer.GetRevision().Before(Branch.Mizuki, (int)Revisions.MzBstRemoveSk))
+        if (serializer.GetRevision().Before(Branch.Mizuki, (int)Revisions.MZ_BST_REMOVE_SK))
             type = serializer.Enum8(type);
     }
 
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         if (Bones != null) size += Bones.Sum(bone => bone.GetAllocatedSize());
-        if (Mirror != null) size += (Mirror.Length * 0x2);
-        if (MirrorType != null) size += (MirrorType.Length * 0x2);
+        if (Mirror != null) size += Mirror.Length * 0x2;
+        if (MirrorType != null) size += MirrorType.Length * 0x2;
         if (CullBones != null)
-            size += (CullBones.Length * CullBone.BaseAllocationSize);
+            size += CullBones.Length * CullBone.BaseAllocationSize;
         return size;
     }
 

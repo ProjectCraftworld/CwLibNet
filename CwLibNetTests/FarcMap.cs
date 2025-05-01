@@ -55,7 +55,7 @@ public class FarcMap
     {
         File.WriteAllBytes(".dump.map", map);
         FileDb db = new FileDb(".dump.map");
-        FileDBRow entry = db.Get(1441793);
+        FileDbRow entry = db.Get(1441793);
         File.Delete(".dump.map");
         Assert.Equal(new SHA1("56f121f87e48332a203545b34b0fb37158e59560"), entry.Sha1);
     }
@@ -67,7 +67,7 @@ public class FarcMap
         FileDb db = new FileDb(".dump.map");
         db.Save();
         FileDb db2 = new FileDb(".dump.map");
-        FileDBRow entry = db2.Get(1441793);
+        FileDbRow entry = db2.Get(1441793);
         File.Delete(".dump.map");
         Assert.Equal(new SHA1("56f121f87e48332a203545b34b0fb37158e59560"), entry.Sha1);
     }

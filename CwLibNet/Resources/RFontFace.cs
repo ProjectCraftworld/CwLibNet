@@ -19,7 +19,7 @@ public class RFontFace
 
     public RFontFace(byte[]? data)
     {
-        MemoryInputStream stream = new MemoryInputStream(data, CompressionFlags.USE_NO_COMPRESSION);
+        var stream = new MemoryInputStream(data, CompressionFlags.USE_NO_COMPRESSION);
             
         if (stream.I32() != 0x464E5462) 
             throw new Exception("Not a supported RFontFace file.");
@@ -28,7 +28,7 @@ public class RFontFace
         stream.I32();
         stream.I32();
 
-        Serializer serializer = new Serializer(stream, new Revision(Revision));
+        var serializer = new Serializer(stream, new Revision(Revision));
         GlyphIndex = serializer.Shortarray(GlyphIndex);
         GlyphPageUsed = serializer.Intarray(GlyphPageUsed);
 
@@ -48,28 +48,28 @@ public class RFontFace
 
     public SKBitmap GetGlyphImage(GlyphInfo info)
     {
-        byte[]? glyph = GetGlyphData(info);
-        int w = info.BoxW & 0xFF;
-        int h = info.BoxH & 0xFF;
-        SKBitmap image = new SKBitmap(w, h,
+        var glyph = GetGlyphData(info);
+        var w = info.BoxW & 0xFF;
+        var h = info.BoxH & 0xFF;
+        var image = new SKBitmap(w, h,
             SKColorType.Rgba8888, SKAlphaType.Premul); // Corrected constructor
         var pixels = image.Pixels;
-        for (int y = 0; y < h; y++)
+        for (var y = 0; y < h; y++)
         {
-            for (int x = 0; x < w; x++)
+            for (var x = 0; x < w; x++)
             {
-                int i = y * w + x;
+                var i = y * w + x;
                 SKColor color;
 
                 if (IsCompressed)
                 {
-                    int value = glyph[i] & 0xFF;
+                    var value = glyph[i] & 0xFF;
                     color = new SKColor((byte)value, (byte)value, (byte)value, 255);
                 }
                 else
                 {
-                    int green = glyph[i * 2] & 0xFF;
-                    int blue = glyph[(i * 2) + 1] & 0xFF;
+                    var green = glyph[i * 2] & 0xFF;
+                    var blue = glyph[i * 2 + 1] & 0xFF;
                     color = new SKColor(0, (byte)green, (byte)blue, 255);
                 }
 
@@ -80,23 +80,20 @@ public class RFontFace
         return image;
     }
 
-    public byte[]? GetGlyphData(GlyphInfo info)
+    public byte[] GetGlyphData(GlyphInfo info)
     {
-        int imageSize = info.BoxW * info.BoxH;
+        var imageSize = info.BoxW * info.BoxH;
 
-        if (IsCompressed)
-        {
-            int size = (Data[info.Offset] << 8) | Data[info.Offset + 1];
-            byte[]? stream = Data.Skip(info.Offset + 2).Take(size).ToArray();
-            return Compressor.InflateData(stream, imageSize);
-        }
+        if (!IsCompressed) return Data.Skip(info.Offset).Take(imageSize * 2).ToArray();
+        var size = (Data[info.Offset] << 8) | Data[info.Offset + 1];
+        var stream = Data.Skip(info.Offset + 2).Take(size).ToArray();
+        return Compressor.InflateData(stream, imageSize);
 
-        return Data.Skip(info.Offset).Take(imageSize * 2).ToArray();
     }
 
     public bool Export(string path)
     {
-        int maxColumns = (int)Math.Floor(Math.Sqrt(Glyphs.Length));
+        var maxColumns = (int)Math.Floor(Math.Sqrt(Glyphs.Length));
         int col = 0, x = 0, y = 0, maxHeightInRow = 0;
         int w = 0, h = 0;
 
@@ -113,17 +110,17 @@ public class RFontFace
             info.CacheX = x;
             info.CacheY = y;
 
-            int sh = info.BoxH & 0xff;
-            int sw = info.BoxW & 0xff;
+            var sh = info.BoxH & 0xff;
+            var sw = info.BoxW & 0xff;
 
-            if ((x + sw) > w) w = (x + sw);
-            if ((y + sh) > h) h = (y + sh);
+            if (x + sw > w) w = x + sw;
+            if (y + sh > h) h = y + sh;
 
             if (sh > maxHeightInRow)
                 maxHeightInRow = sh;
 
             col++;
-            x += (info.BoxW & 0xff);
+            x += info.BoxW & 0xff;
         }
 
         using var image = new SKBitmap(w, h);
@@ -132,7 +129,7 @@ public class RFontFace
 
         foreach (var info in Glyphs)
         {
-            SKBitmap glyph = GetGlyphImage(info);
+            var glyph = GetGlyphImage(info);
             canvas.DrawBitmap(glyph, info.CacheX, info.CacheY);
         }
 

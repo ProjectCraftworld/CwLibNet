@@ -8,35 +8,35 @@ public class SoftbodyCluster
     public static readonly int QUAD_DYADIC_SUM_LENGTH = 81;
 
     public static readonly int BASE_ALLOCATION_SIZE =
-        MAX_CLUSTER_NAME_LENGTH + (QUAD_DYADIC_SUM_LENGTH * 0x4) + 0x60;
+        MAX_CLUSTER_NAME_LENGTH + QUAD_DYADIC_SUM_LENGTH * 0x4 + 0x60;
 
-    public String name;
-    public Vector4 restCenterOfMass;
-    public Matrix4x4 restDyadicSum;
-    public float[] restQuadraticDyadicSum = new float[QUAD_DYADIC_SUM_LENGTH];
+    public string Name;
+    public Vector4 RestCenterOfMass;
+    public Matrix4x4 RestDyadicSum;
+    public float[] RestQuadraticDyadicSum = new float[QUAD_DYADIC_SUM_LENGTH];
 
     public SoftbodyCluster()
     {
         // float9x9
-        for (int i = 0; i < QUAD_DYADIC_SUM_LENGTH; ++i)
+        for (var i = 0; i < QUAD_DYADIC_SUM_LENGTH; ++i)
             if (i % 10 == 0)
-                restQuadraticDyadicSum[i] = 1.0f;
+                RestQuadraticDyadicSum[i] = 1.0f;
     }
 
-    public void setName(String name)
+    public void SetName(string name)
     {
         if (name != null && name.Length > MAX_CLUSTER_NAME_LENGTH)
             throw new ArgumentException("Cluster name cannot be longer than 32 " +
                                         "characters.");
-        this.name = name;
+        Name = name;
     }
 
-    public void setRestQuadraticDyadicSum(float[] sum)
+    public void SetRestQuadraticDyadicSum(float[] sum)
     {
         if (sum == null || sum.Length != QUAD_DYADIC_SUM_LENGTH)
             throw new ArgumentException("Rest quadratic dyadic sum array length must" +
                                         " be " +
                                         "81!");
-        restQuadraticDyadicSum = sum;
+        RestQuadraticDyadicSum = sum;
     }
 }

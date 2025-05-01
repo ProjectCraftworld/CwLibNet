@@ -16,9 +16,9 @@ public static class Squish
                 BlockOffset = blockSize - 8;
             }
 
-            public static readonly CompressionType DXT1 = new CompressionType(8);
-            public static readonly CompressionType DXT3 = new CompressionType(16);
-            public static readonly CompressionType DXT5 = new CompressionType(16);
+            public static readonly CompressionType DXT1 = new(8);
+            public static readonly CompressionType DXT3 = new(16);
+            public static readonly CompressionType DXT5 = new(16);
         }
 
         // Conversion of Java's enum CompressionMetric into a sealed class.
@@ -35,8 +35,8 @@ public static class Squish
                 B = b;
             }
 
-            public static readonly CompressionMetric Perceptual = new CompressionMetric(0.2126f, 0.7152f, 0.0722f);
-            public static readonly CompressionMetric Uniform = new CompressionMetric(1.0f, 1.0f, 1.0f);
+            public static readonly CompressionMetric Perceptual = new(0.2126f, 0.7152f, 0.0722f);
+            public static readonly CompressionMetric Uniform = new(1.0f, 1.0f, 1.0f);
 
             public float Dot(float x, float y, float z)
             {
@@ -70,7 +70,7 @@ public static class Squish
         }
 
         // A shared static instance of ColourSet (assuming this is defined elsewhere)
-        private static readonly ColourSet colours = new ColourSet();
+        private static readonly ColourSet colours = new();
 
         // Calculate storage requirements for a given image width, height, and compression type.
         public static int GetStorageRequirements(int width, int height, CompressionType type)
@@ -78,7 +78,7 @@ public static class Squish
             if (width <= 0 || height <= 0)
                 throw new ArgumentException($"Invalid image dimensions specified: {width} x {height}");
 
-            int blockCount = ((width + 3) / 4) * ((height + 3) / 4);
+            var blockCount = (width + 3) / 4 * ((height + 3) / 4);
             return blockCount * type.BlockSize;
         }
 
@@ -99,27 +99,27 @@ public static class Squish
                                            CompressionType type, CompressionMethod method, CompressionMetric metric, bool weightAlpha)
         {
             blocks = CheckCompressInput(rgba, width, height, blocks, type);
-            byte[] sourceRGBA = new byte[16 * 4]; // 4x4 block of pixels (each pixel has 4 bytes)
+            var sourceRGBA = new byte[16 * 4]; // 4x4 block of pixels (each pixel has 4 bytes)
 
-            int targetBlock = 0;
-            for (int y = 0; y < height; y += 4)
+            var targetBlock = 0;
+            for (var y = 0; y < height; y += 4)
             {
-                for (int x = 0; x < width; x += 4)
+                for (var x = 0; x < width; x += 4)
                 {
-                    int targetPixel = 0;
-                    int mask = 0;
-                    for (int py = 0; py < 4; ++py)
+                    var targetPixel = 0;
+                    var mask = 0;
+                    for (var py = 0; py < 4; ++py)
                     {
-                        int sy = y + py;
-                        for (int px = 0; px < 4; ++px)
+                        var sy = y + py;
+                        for (var px = 0; px < 4; ++px)
                         {
-                            int sx = x + px;
+                            var sx = x + px;
                             if (sx < width && sy < height)
                             {
-                                int sourcePixel = 4 * (width * sy + sx);
-                                for (int i = 0; i < 4; ++i)
+                                var sourcePixel = 4 * (width * sy + sx);
+                                for (var i = 0; i < 4; ++i)
                                     sourceRGBA[targetPixel++] = rgba[sourcePixel++];
-                                mask |= (1 << (4 * py + px));
+                                mask |= 1 << (4 * py + px);
                             }
                             else
                             {
@@ -137,9 +137,9 @@ public static class Squish
 
         private static byte[] CheckCompressInput(byte[] rgba, int width, int height, byte[] blocks, CompressionType type)
         {
-            int storageSize = GetStorageRequirements(width, height, type);
+            var storageSize = GetStorageRequirements(width, height, type);
 
-            if (rgba == null || rgba.Length < (width * height * 4))
+            if (rgba == null || rgba.Length < width * height * 4)
                 throw new ArgumentException("Invalid source image data specified.");
 
             if (blocks == null || blocks.Length < storageSize)
@@ -152,22 +152,15 @@ public static class Squish
                                      CompressionType type, CompressionMethod method, CompressionMetric metric, bool weightAlpha)
         {
             // Determine block positions
-            int colourBlock = offset + type.BlockOffset;
-            int alphaBlock = offset;
+            var colourBlock = offset + type.BlockOffset;
+            var alphaBlock = offset;
 
             // Initialize the minimal point set
             colours.Init(rgba, mask, type, weightAlpha);
 
             // Choose the compressor based on the number of colours.
             CompressorColourFit fit;
-            if (colours.GetCount() == 1)
-            {
-                fit = new CompressorSingleColour(colours, type);
-            }
-            else
-            {
-                fit = method.GetCompressor(colours, type, metric);
-            }
+            fit = colours.GetCount() == 1 ? new CompressorSingleColour(colours, type) : method.GetCompressor(colours, type, metric);
             fit.Compress(block, colourBlock);
 
             // Compress alpha separately if necessary.
@@ -184,26 +177,26 @@ public static class Squish
         public static byte[] DecompressImage(byte[] rgba, int width, int height, byte[] blocks, CompressionType type)
         {
             rgba = CheckDecompressInput(rgba, width, height, blocks, type);
-            byte[] targetRGBA = new byte[16 * 4];
+            var targetRGBA = new byte[16 * 4];
 
-            int sourceBlock = 0;
-            for (int y = 0; y < height; y += 4)
+            var sourceBlock = 0;
+            for (var y = 0; y < height; y += 4)
             {
-                for (int x = 0; x < width; x += 4)
+                for (var x = 0; x < width; x += 4)
                 {
                     Decompress(targetRGBA, blocks, sourceBlock, type);
 
-                    int sourcePixel = 0;
-                    for (int py = 0; py < 4; ++py)
+                    var sourcePixel = 0;
+                    for (var py = 0; py < 4; ++py)
                     {
-                        for (int px = 0; px < 4; ++px)
+                        for (var px = 0; px < 4; ++px)
                         {
-                            int sx = x + px;
-                            int sy = y + py;
+                            var sx = x + px;
+                            var sy = y + py;
                             if (sx < width && sy < height)
                             {
-                                int targetPixel = 4 * (width * sy + sx);
-                                for (int i = 0; i < 4; ++i)
+                                var targetPixel = 4 * (width * sy + sx);
+                                for (var i = 0; i < 4; ++i)
                                     rgba[targetPixel++] = targetRGBA[sourcePixel++];
                             }
                             else
@@ -221,12 +214,12 @@ public static class Squish
 
         private static byte[] CheckDecompressInput(byte[] rgba, int width, int height, byte[] blocks, CompressionType type)
         {
-            int storageSize = GetStorageRequirements(width, height, type);
+            var storageSize = GetStorageRequirements(width, height, type);
 
             if (blocks == null || blocks.Length < storageSize)
                 throw new ArgumentException("Invalid source image data specified.");
 
-            if (rgba == null || rgba.Length < (width * height * 4))
+            if (rgba == null || rgba.Length < width * height * 4)
                 rgba = new byte[width * height * 4];
 
             return rgba;
@@ -234,8 +227,8 @@ public static class Squish
 
         private static void Decompress(byte[] rgba, byte[] block, int offset, CompressionType type)
         {
-            int colourBlock = offset + type.BlockOffset;
-            int alphaBlock = offset;
+            var colourBlock = offset + type.BlockOffset;
+            var alphaBlock = offset;
 
             // The fourth parameter indicates whether this is DXT1.
             ColourBlock.DecompressColour(rgba, block, colourBlock, ReferenceEquals(type, CompressionType.DXT1));

@@ -1,5 +1,4 @@
 using System.Numerics;
-using CwLibNet.IO;
 
 namespace CwLibNet.Structs.Mesh;
 

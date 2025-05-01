@@ -1,6 +1,5 @@
 using CwLibNet.Enums;
 using CwLibNet.EX;
-using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Things.Components;
 using CwLibNet.Types;
@@ -22,16 +21,16 @@ public class PLevelSettings: LevelSettings
     
     public override void Serialize(Serializer serializer)
     {
-        Revision revision = serializer.GetRevision();
-        int version = revision.GetVersion();
-        int subVersion = revision.GetSubVersion();
+        var revision = serializer.GetRevision();
+        var version = revision.GetVersion();
+        var subVersion = revision.GetSubVersion();
 
         base.Serialize(serializer);
 
         if (version >= 0x153)
             Presets = serializer.Arraylist(Presets);
 
-        if (0x152 < version && version < 0x15a)
+        if (version is > 0x152 and < 0x15a)
             serializer.F32(0);
 
         if (revision.Has(Branch.Double11, 0x78))
@@ -50,12 +49,16 @@ public class PLevelSettings: LevelSettings
 
         BackdropAmbience = serializer.Str(BackdropAmbience);
 
-        if (version < 0x156)
-            serializer.Resource(null, ResourceType.Texture);
-
-        if (version >= 0x2f3)
-            BackdropMesh = serializer.Resource(BackdropMesh,
-                ResourceType.StaticMesh);
+        switch (version)
+        {
+            case < 0x156:
+                serializer.Resource(null, ResourceType.Texture);
+                break;
+            case >= 0x2f3:
+                BackdropMesh = serializer.Resource(BackdropMesh,
+                    ResourceType.StaticMesh);
+                break;
+        }
 
         if (subVersion >= 0xaf)
         {

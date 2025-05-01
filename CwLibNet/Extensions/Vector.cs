@@ -20,10 +20,10 @@ public static class Vector
     {
         return index switch
         {
-            0 => new Vector4(value, v.Y, v.Z, v.W),
-            1 => new Vector4(v.X, value, v.Z, v.W),
-            2 => new Vector4(v.X, v.Y, value, v.W),
-            3 => new Vector4(v.X, v.Y, v.Z, value),
+            0 => v with { X = value },
+            1 => v with { Y = value },
+            2 => v with { Z = value },
+            3 => v with { W = value },
             _ => throw new IndexOutOfRangeException()
         };
     }

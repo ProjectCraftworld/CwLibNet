@@ -2,7 +2,6 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
 using CwLibNet.Structs.Things.Components.Shapes;
 using CwLibNet.Types;
 using CwLibNet.Types.Data;
@@ -17,13 +16,12 @@ public class PShape: ISerializable
     /**
      * Polygon defining the collision of this Thing.
      */
-    public Polygon Polygon = new Polygon();
+    public Polygon Polygon = new();
 
     /**
      * Physical properties of this shape.
      */
-    public ResourceDescriptor Material =
-        new ResourceDescriptor(10724, ResourceType.Material);
+    public ResourceDescriptor Material = new(10724, ResourceType.Material);
 
     /**
      * Old physical properties of this shape.
@@ -74,7 +72,7 @@ public class PShape: ISerializable
     public short Flags = (short)ShapeFlags.DEFAULT_FLAGS;
 
     
-    public ContactCache ContactCache = new ContactCache();
+    public ContactCache ContactCache = new();
 
     
     public byte Stickiness, Grabbability, GrabFilter;
@@ -133,7 +131,7 @@ public class PShape: ISerializable
     public PShape(Vector3?[] vertices)
     {
         Polygon.Vertices = vertices;
-        Polygon.Loops = new int[] { vertices.Length };
+        Polygon.Loops = [vertices.Length];
         Polygon.RequiresZ = true;
     }
 
@@ -146,17 +144,21 @@ public class PShape: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        Revision revision = serializer.GetRevision();
-        int version = revision.GetVersion();
-        int subVersion = revision.GetSubVersion();
+        var revision = serializer.GetRevision();
+        var version = revision.GetVersion();
+        var subVersion = revision.GetSubVersion();
 
         Polygon = serializer.Struct(Polygon);
         Material = serializer.Resource(Material, ResourceType.Material);
-        if (version >= 0x15c)
-            OldMaterial = serializer.Resource(OldMaterial, ResourceType.Material);
-
-        if (version < 0x13c)
-            serializer.U8(0);
+        switch (version)
+        {
+            case >= 0x15c:
+                OldMaterial = serializer.Resource(OldMaterial, ResourceType.Material);
+                break;
+            case < 0x13c:
+                serializer.U8(0);
+                break;
+        }
 
         Thickness = serializer.F32(Thickness);
         if (version >= 0x227)
@@ -168,17 +170,21 @@ public class PShape: ISerializable
                 serializer.GetOutput().V4(Colors.FromARGB((int)Color));
             else
             {
-                Vector4 color = serializer.GetInput().V4();
+                var color = serializer.GetInput().V4();
                 Color = (uint)Colors.GetARGB(color);
             }
         }
         else Color = (uint)serializer.I32((int)Color);
 
-        if (version < 0x13c)
-            serializer.Resource(null, ResourceType.Texture);
-
-        if (version >= 0x301)
-            Brightness = serializer.F32(Brightness);
+        switch (version)
+        {
+            case < 0x13c:
+                serializer.Resource(null, ResourceType.Texture);
+                break;
+            case >= 0x301:
+                Brightness = serializer.F32(Brightness);
+                break;
+        }
 
         BevelSize = serializer.F32(BevelSize);
 
@@ -206,7 +212,7 @@ public class PShape: ISerializable
                     serializer.GetOutput().V4(Colors.FromARGB(ColorOff));
                 else
                 {
-                    Vector4 color = serializer.GetInput().V4();
+                    var color = serializer.GetInput().V4();
                     ColorOff = Colors.GetARGB(color);
                 }
             }
@@ -220,14 +226,14 @@ public class PShape: ISerializable
         {
             if (serializer.IsWriting())
                 serializer.GetOutput().I16((short)LethalType);
-            else LethalType = (LethalType)(serializer.GetInput().U16());
+            else LethalType = (LethalType)serializer.GetInput().U16();
         }
 
         if (version < 0x2b5)
         {
             if (!serializer.IsWriting())
             {
-                MemoryInputStream stream = serializer.GetInput();
+                var stream = serializer.GetInput();
                 Flags = 0;
                 if (stream.Boole()) Flags |= (short)ShapeFlags.COLLIDABLE_GAME;
                 if (version >= 0x224 && stream.Boole())
@@ -236,7 +242,7 @@ public class PShape: ISerializable
             }
             else
             {
-                MemoryOutputStream stream = serializer.GetOutput();
+                var stream = serializer.GetOutput();
                 stream.Boole((Flags & ShapeFlags.COLLIDABLE_GAME) != 0);
                 if (version >= 0x224)
                     stream.Boole((Flags & ShapeFlags.COLLIDABLE_POPPET) != 0);
@@ -253,7 +259,7 @@ public class PShape: ISerializable
 
         SoundEnumOverride = serializer.I32(SoundEnumOverride);
 
-        if (version >= 0x29d && version < 0x30c)
+        if (version is >= 0x29d and < 0x30c)
         {
             serializer.F32(0); // restitution
             if (version < 0x2b5)
@@ -270,10 +276,7 @@ public class PShape: ISerializable
 
         if (version >= 0x2b5)
         {
-            if (version <= 0x345)
-                Flags = serializer.I8((byte) (Flags));
-            else
-                Flags = serializer.I16(Flags);
+            Flags = version <= 0x345 ? serializer.I8((byte) Flags) : serializer.I16(Flags);
         }
 
         if (version >= 0x307)
@@ -340,21 +343,23 @@ public class PShape: ISerializable
             CameraExcluderIsSticky = serializer.Bool(CameraExcluderIsSticky);
         }
 
-        if (subVersion >= 0x19a)
-            Ethereal = serializer.Bool(Ethereal);
-
-        // Unknown value
-        if (subVersion is >= 0x120 and < 0x135)
-            serializer.U8(0);
+        switch (subVersion)
+        {
+            case >= 0x19a:
+                Ethereal = serializer.Bool(Ethereal);
+                break;
+            // Unknown value
+            case >= 0x120 and < 0x135:
+                serializer.U8(0);
+                break;
+        }
 
         if (subVersion >= 0x149)
             ZBias = serializer.I8(ZBias);
 
-        if (subVersion >= 0x14c)
-        {
-            FireDensity = serializer.I8(FireDensity);
-            FireLifetime = serializer.I8(FireLifetime);
-        }
+        if (subVersion < 0x14c) return;
+        FireDensity = serializer.I8(FireDensity);
+        FireLifetime = serializer.I8(FireLifetime);
     }
 
     

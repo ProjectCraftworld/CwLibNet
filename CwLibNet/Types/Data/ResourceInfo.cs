@@ -5,7 +5,7 @@ namespace CwLibNet.Types.Data;
 public class ResourceInfo
 {
     private const int MaxDependencyDepth = 2;
-    private Object Resource;
+    private object Resource;
     public Revision Revision;
     public ResourceType Type = ResourceType.Invalid;
     public SerializationType Method = SerializationType.UNKNOWN;

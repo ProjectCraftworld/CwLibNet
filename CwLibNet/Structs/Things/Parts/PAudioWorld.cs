@@ -35,8 +35,8 @@ public class PAudioWorld: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
-        int subVersion = serializer.GetRevision().GetSubVersion();
+        var version = serializer.GetRevision().GetVersion();
+        var subVersion = serializer.GetRevision().GetSubVersion();
 
         SoundName = serializer.Str(SoundName);
 
@@ -49,19 +49,24 @@ public class PAudioWorld: ISerializable
 
         if (version < 0x2c4)
         {
-            bool triggerByFalloff = PlayMode == PlayMode.TRIGGER_BY_FALLOFF;
-            bool triggerByImpact = PlayMode == PlayMode.TRIGGER_BY_IMPACT;
-            bool triggerByDestroy = PlayMode == PlayMode.TRIGGER_BY_DESTROY;
+            var triggerByFalloff = PlayMode == PlayMode.TRIGGER_BY_FALLOFF;
+            var triggerByImpact = PlayMode == PlayMode.TRIGGER_BY_IMPACT;
+            var triggerByDestroy = PlayMode == PlayMode.TRIGGER_BY_DESTROY;
 
             triggerByFalloff = serializer.Bool(triggerByFalloff);
             triggerByImpact = serializer.Bool(triggerByImpact);
             if (version < 0x165)
                 serializer.Bool(false); // unk
             TriggerBySwitch = serializer.Bool(TriggerBySwitch);
-            if (version < 0x165)
-                serializer.Bool(false);
-            if (version >= 0x1ad)
-                triggerByDestroy = serializer.Bool(triggerByDestroy);
+            switch (version)
+            {
+                case < 0x165:
+                    serializer.Bool(false);
+                    break;
+                case >= 0x1ad:
+                    triggerByDestroy = serializer.Bool(triggerByDestroy);
+                    break;
+            }
 
             if (!serializer.IsWriting())
             {
@@ -98,9 +103,9 @@ public class PAudioWorld: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         if (SoundName != null)
-            size += (SoundName.Length);
+            size += SoundName.Length;
         return size;
     }
 }

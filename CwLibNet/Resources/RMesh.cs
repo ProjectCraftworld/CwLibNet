@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.Extensions;
@@ -252,13 +251,13 @@ public class RMesh: Resource
         // Validate the vertex streams, we won't check
         // if the data in the streams are valid, because that's
         // the user's problem!
-        int size = streams[0].Length;
-        foreach (byte[] stream in streams)
+        var size = streams[0].Length;
+        foreach (var stream in streams)
         {
             if (stream.Length != size)
                 throw new ArgumentException("All vertex streams must be the same " +
                                                    "size!");
-            if ((stream.Length % 0x10) != 0)
+            if (stream.Length % 0x10 != 0)
                 throw new ArgumentException("All vertex streams must be divisible " +
                                                    "by 0x10!");
         }
@@ -284,9 +283,9 @@ public class RMesh: Resource
         {
             // A single attribute stream should consist of
             // UV0 (8 bytes per vertex).
-            int attributeSize = NumVerts * 0x8;
+            var attributeSize = NumVerts * 0x8;
 
-            if ((attributes.Length % attributeSize) != 0)
+            if (attributes.Length % attributeSize != 0)
                 throw new ArgumentException("Attribute buffer doesn't match vertex" +
                                                    " count!");
 
@@ -299,32 +298,34 @@ public class RMesh: Resource
         if (bones != null)
         {
             MirrorBones = new short[bones.Length];
-            for (int i = 0; i < MirrorBones.Length; ++i)
+            for (var i = 0; i < MirrorBones.Length; ++i)
                 MirrorBones[i] = (short) i;
             MirrorBoneFlipTypes = new FlipType[bones.Length];
             Array.Fill(MirrorBoneFlipTypes, FlipType.MAX);
         }
         Bones = bones;
         CullBones = new CullBone[Bones.Length];
-        for (int i = 0; i < Bones.Length; ++i)
+        for (var i = 0; i < Bones.Length; ++i)
         {
-            CullBone bone = new CullBone();
-            bone.BoundBoxMax = Bones[i].boundBoxMax;
-            bone.BoundBoxMin = Bones[i].boundBoxMin;
-            bone.InvSkinPoseMatrix = Bones[i].invSkinPoseMatrix;
+            var bone = new CullBone
+            {
+                BoundBoxMax = Bones[i].BoundBoxMax,
+                BoundBoxMin = Bones[i].BoundBoxMin,
+                InvSkinPoseMatrix = Bones[i].InvSkinPoseMatrix
+            };
             CullBones[i] = bone;
         }
 
         VertexColors = new uint[NumVerts];
-        for (int i = 0; i < NumVerts; ++i)
+        for (var i = 0; i < NumVerts; ++i)
             VertexColors[i] = 0xFFFFFFFF;
     }
 
     public override void Serialize(Serializer serializer)
     {
-        Revision revision = serializer.GetRevision();
-        int version = revision.GetVersion();
-        int subVersion = revision.GetSubVersion();
+        var revision = serializer.GetRevision();
+        var version = revision.GetVersion();
+        var subVersion = revision.GetSubVersion();
 
         NumVerts = serializer.I32(NumVerts);
         NumIndices = serializer.I32(NumIndices);
@@ -336,10 +337,10 @@ public class RMesh: Resource
 
         if (!serializer.IsWriting())
             MorphNames = new string[MaxMorphs];
-        for (int i = 0; i < MaxMorphs; ++i)
+        for (var i = 0; i < MaxMorphs; ++i)
             MorphNames[i] = serializer.Str(MorphNames[i], 0x10);
 
-        if (version >= (int)Revisions.MeshMinmaxUv)
+        if (version >= (int)Revisions.MESH_MINMAX_UV)
         {
             MinUv = serializer.Floatarray(MinUv);
             MaxUv = serializer.Floatarray(MaxUv);
@@ -348,34 +349,34 @@ public class RMesh: Resource
 
         if (serializer.IsWriting())
         {
-            int offset = 0;
-            MemoryOutputStream stream = serializer.GetOutput();
+            var offset = 0;
+            var stream = serializer.GetOutput();
             stream.I32(offset);
-            for (int i = 0; i < Streams.Length; ++i)
+            for (var i = 0; i < Streams.Length; ++i)
             {
                 offset += Streams[i].Length;
                 stream.I32(offset);
             }
             stream.I32(offset);
-            foreach (byte[] vertexStream in Streams)
+            foreach (var vertexStream in Streams)
                 stream.Bytes(vertexStream);
         }
         else
         {
-            MemoryInputStream stream = serializer.GetInput();
+            var stream = serializer.GetInput();
             // We're skipping source stream offsets.
-            for (int i = 0; i < StreamCount + 1; ++i)
+            for (var i = 0; i < StreamCount + 1; ++i)
                 stream.I32();
             stream.I32();
 
             Streams = new byte[StreamCount][];
-            for (int i = 0; i < StreamCount; ++i)
+            for (var i = 0; i < StreamCount; ++i)
                 Streams[i] = stream.Bytes(NumVerts * 0x10);
         }
 
         Attributes = serializer.Bytearray(Attributes);
         Indices = serializer.Bytearray(Indices);
-        if (subVersion >= (int)Revisions.Fuzz)
+        if (subVersion >= (int)Revisions.FUZZ)
             TriangleAdjacencyInfos = serializer.Bytearray(TriangleAdjacencyInfos);
 
         Primitives = serializer.Arraylist(Primitives);
@@ -404,7 +405,7 @@ public class RMesh: Resource
         if (!serializer.IsWriting())
             ClusterImplicitEllipsoids = new Matrix4x4[serializer.GetInput().I32()];
         else serializer.GetOutput().I32(ClusterImplicitEllipsoids.Length);
-        for (int i = 0; i < ClusterImplicitEllipsoids.Length; ++i)
+        for (var i = 0; i < ClusterImplicitEllipsoids.Length; ++i)
             ClusterImplicitEllipsoids[i] =
                 serializer.M44(ClusterImplicitEllipsoids[i])!.Value;
 
@@ -429,28 +430,28 @@ public class RMesh: Resource
         BevelVertexCount = serializer.I32(BevelVertexCount);
         ImplicitBevelSprings = serializer.Bool(ImplicitBevelSprings);
 
-        if (revision.Has(Branch.Double11, (int)Revisions.D1VertexColors))
+        if (revision.Has(Branch.Double11, (int)Revisions.D1_VERTEX_COLORS))
         {
             if (!serializer.IsWriting())
                 VertexColors = new uint[serializer.GetInput().I32()];
             else serializer.GetOutput().I32(VertexColors.Length);
-            for (int i = 0; i < VertexColors.Length; ++i)
+            for (var i = 0; i < VertexColors.Length; ++i)
                 VertexColors[i] = (uint)serializer.I32((int)VertexColors[i], true);
         }
         else if (!serializer.IsWriting())
         {
             VertexColors = new uint[NumVerts];
-            for (int i = 0; i < NumVerts; ++i)
+            for (var i = 0; i < NumVerts; ++i)
                 VertexColors[i] = 0xFFFFFFFF;
         }
 
-        if (subVersion >= (int)Revisions.MeshSkeletonType)
+        if (subVersion >= (int)Revisions.MESH_SKELETON_TYPE)
             SkeletonType = serializer.Enum8(SkeletonType);
     }
 
     public override int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
 
         if (Streams != null) size += Streams.Sum(stream => stream.Length);
         if (Attributes != null) size += Attributes.Length;
@@ -458,40 +459,40 @@ public class RMesh: Resource
         if (TriangleAdjacencyInfos != null) size += TriangleAdjacencyInfos.Length;
 
         if (Primitives != null)
-            size += (Primitives.Count * Primitive.BaseAllocationSize);
+            size += Primitives.Count * Primitive.BaseAllocationSize;
 
         if (Bones != null)
-            foreach (Bone bone in Bones)
+            foreach (var bone in Bones)
                 size += bone.GetAllocatedSize();
 
-        if (MirrorBones != null) size += (MirrorBones.Length * 2);
+        if (MirrorBones != null) size += MirrorBones.Length * 2;
         if (MirrorBoneFlipTypes != null) size += MirrorBoneFlipTypes.Length;
-        if (MirrorMorphs != null) size += (MirrorMorphs.Length * 2);
+        if (MirrorMorphs != null) size += MirrorMorphs.Length * 2;
         if (SoftbodyCluster != null) size += SoftbodyCluster.GetAllocatedSize();
         if (SoftbodySprings != null)
-            size += (SoftbodySprings.Length * SoftbodySpring.BaseAllocationSize);
+            size += SoftbodySprings.Length * SoftbodySpring.BaseAllocationSize;
         if (SoftbodyEquivs != null)
-            size += (SoftbodyEquivs.Length * SoftbodyVertEquivalence.BaseAllocationSize);
-        if (Mass != null) size += (Mass.Length * 4);
+            size += SoftbodyEquivs.Length * SoftbodyVertEquivalence.BaseAllocationSize;
+        if (Mass != null) size += Mass.Length * 4;
         if (ImplicitEllipsoids != null)
-            size += (ImplicitEllipsoids.Length * ImplicitEllipsoid.BaseAllocationSize);
+            size += ImplicitEllipsoids.Length * ImplicitEllipsoid.BaseAllocationSize;
         if (ClusterImplicitEllipsoids != null)
-            size += (ClusterImplicitEllipsoids.Length * 0x40);
+            size += ClusterImplicitEllipsoids.Length * 0x40;
         if (InsideImplicitEllipsoids != null)
-            size += (InsideImplicitEllipsoids.Length * ImplicitEllipsoid.BaseAllocationSize);
+            size += InsideImplicitEllipsoids.Length * ImplicitEllipsoid.BaseAllocationSize;
         if (ImplicitPlanes != null)
-            size += (ImplicitPlanes.Length * ImplicitPlane.BaseAllocationSize);
-        if (SpringyTriIndices != null) size += (SpringyTriIndices.Length * 2);
+            size += ImplicitPlanes.Length * ImplicitPlane.BaseAllocationSize;
+        if (SpringyTriIndices != null) size += SpringyTriIndices.Length * 2;
         if (CullBones != null)
-            size += (CullBones.Length * CullBone.BaseAllocationSize);
-        if (RegionIDsToHide != null) size += (RegionIDsToHide.Length * 0x8);
+            size += CullBones.Length * CullBone.BaseAllocationSize;
+        if (RegionIDsToHide != null) size += RegionIDsToHide.Length * 0x8;
 
         return size;
     }
     
     public override SerializationData Build(Revision revision, byte compressionFlags)
     {
-        Serializer serializer = new Serializer(GetAllocatedSize() + 0x8000, revision,
+        var serializer = new Serializer(GetAllocatedSize() + 0x8000, revision,
             compressionFlags);
         serializer.Struct(this);
         return new SerializationData(
@@ -692,7 +693,7 @@ public class RMesh: Resource
         if (Mass == null || Mass.Length != NumVerts)
         {
             Mass = new float[NumVerts];
-            for (int i = 0; i < NumVerts; ++i)
+            for (var i = 0; i < NumVerts; ++i)
                 Mass[i] = 1.0f;
         }
 
@@ -710,9 +711,9 @@ public class RMesh: Resource
     public Primitive[][] GetSubmeshes()
     {
         Dictionary<int, List<Primitive>> meshes = new();
-        foreach (Primitive primitive in Primitives)
+        foreach (var primitive in Primitives)
         {
-            int region = primitive.Region;
+            var region = primitive.Region;
             if (!meshes.ContainsKey(region))
             {
                 List<Primitive> primitives =
@@ -726,7 +727,7 @@ public class RMesh: Resource
 
         Primitive[][] submeshes = new Primitive[meshes.Values.Count][];
 
-        int index = 0;
+        var index = 0;
         foreach (List<Primitive> primitiveList in meshes.Values)
         {
             submeshes[index] = primitiveList.ToArray();
@@ -745,10 +746,10 @@ public class RMesh: Resource
      */
     public Vector3[] GetVertices(int start, int count)
     {
-        MemoryInputStream stream = new MemoryInputStream(GetVertexStream());
+        var stream = new MemoryInputStream(GetVertexStream());
         stream.Seek(start * 0x10);
-        Vector3[] vertices = new Vector3[count];
-        for (int i = 0; i < count; ++i)
+        var vertices = new Vector3[count];
+        for (var i = 0; i < count; ++i)
         {
             vertices[i] = stream.V3();
 
@@ -771,13 +772,13 @@ public class RMesh: Resource
      */
     public float[] GetSoftbodyWeights(int start, int count)
     {
-        MemoryInputStream stream = new MemoryInputStream(GetVertexStream());
+        var stream = new MemoryInputStream(GetVertexStream());
         stream.Seek(start * 0x10);
-        float[] weights = new float[count];
-        for (int i = 0; i < count; ++i)
+        var weights = new float[count];
+        for (var i = 0; i < count; ++i)
         {
             stream.Seek(0xC + 0x3);
-            float c = ((float) stream.U8()) / ((float) 0xff);
+            var c = stream.U8() / (float) 0xff;
             weights[i] = c;
         }
         return weights;
@@ -785,10 +786,10 @@ public class RMesh: Resource
 
     public byte[][] GetBlendIndices(int start, int count)
     {
-        MemoryInputStream stream = new MemoryInputStream(GetVertexStream());
+        var stream = new MemoryInputStream(GetVertexStream());
         stream.Seek(start * 0x10);
         byte[][] vertices = new byte[count][];
-        for (int i = 0; i < count; ++i)
+        for (var i = 0; i < count; ++i)
         {
             stream.V3();
 
@@ -810,7 +811,7 @@ public class RMesh: Resource
     {
         return GetVertices(
             primitive.MinVert,
-            (primitive.MaxVert - primitive.MinVert) + 1
+            primitive.MaxVert - primitive.MinVert + 1
         );
     }
 
@@ -826,12 +827,12 @@ public class RMesh: Resource
 
     public void SwapUv01()
     {
-        for (int i = 0; i < NumVerts; i++)
+        for (var i = 0; i < NumVerts; i++)
         {
-            int uv0 = (AttributeCount * 0x8 * i);
-            int uv1 = uv0 + 0x8;
+            var uv0 = AttributeCount * 0x8 * i;
+            var uv1 = uv0 + 0x8;
 
-            byte[] tmp = Attributes.Skip(uv0).Take(0x8).ToArray(); // copy uv0 into tmp
+            var tmp = Attributes.Skip(uv0).Take(0x8).ToArray(); // copy uv0 into tmp
             Array.Copy(Attributes, uv1, Attributes, uv0, 0x8);
             Array.Copy(tmp, 0, Attributes, uv1, 0x8);
         }
@@ -849,13 +850,13 @@ public class RMesh: Resource
     {
         if (Attributes == null)
             throw new InvalidOperationException("This mesh doesn't have texture coordinates!");
-        if (channel < 0 || (channel + 1 > AttributeCount))
+        if (channel < 0 || channel + 1 > AttributeCount)
             throw new ArgumentException("Invalid UV channel!");
-        MemoryInputStream stream = new MemoryInputStream(Attributes);
-        Vector2[] uVs = new Vector2[count];
-        for (int i = 0; i < count; ++i)
+        var stream = new MemoryInputStream(Attributes);
+        var uVs = new Vector2[count];
+        for (var i = 0; i < count; ++i)
         {
-            stream.Seek(start + (AttributeCount * 0x8 * i) + (0x8 * channel),
+            stream.Seek(start + AttributeCount * 0x8 * i + 0x8 * channel,
                 SeekMode.Begin);
             uVs[i] = stream.V2();
         }
@@ -874,7 +875,7 @@ public class RMesh: Resource
     {
         return GetUVs(
             primitive.MinVert,
-            (primitive.MaxVert - primitive.MinVert) + 1,
+            primitive.MaxVert - primitive.MinVert + 1,
             channel
         );
     }
@@ -899,11 +900,11 @@ public class RMesh: Resource
      */
     public Vector3[] GetNormals(int start, int count)
     {
-        MemoryInputStream stream = new MemoryInputStream(GetSkinningStream());
-        Vector3[] normals = new Vector3[count];
-        for (int i = 0; i < count; ++i)
+        var stream = new MemoryInputStream(GetSkinningStream());
+        var normals = new Vector3[count];
+        for (var i = 0; i < count; ++i)
         {
-            stream.Seek((start * 0x10) + (i * 0x10) + 0x4, SeekMode.Begin);
+            stream.Seek(start * 0x10 + i * 0x10 + 0x4, SeekMode.Begin);
             normals[i] = Bytes.UnpackNormal24(stream.U24());
         }
         return normals;
@@ -929,7 +930,7 @@ public class RMesh: Resource
     {
         return GetNormals(
             primitive.MinVert,
-            (primitive.MaxVert - primitive.MinVert) + 1
+            primitive.MaxVert - primitive.MinVert + 1
         );
     }
 
@@ -952,12 +953,12 @@ public class RMesh: Resource
      */
     public Vector4[] GetTangents(int start, int count)
     {
-        MemoryInputStream stream = new MemoryInputStream(GetSkinningStream());
-        Vector4[] tangents = new Vector4[count];
-        for (int i = 0; i < count; ++i)
+        var stream = new MemoryInputStream(GetSkinningStream());
+        var tangents = new Vector4[count];
+        for (var i = 0; i < count; ++i)
         {
-            stream.Seek((start * 0x10) + (i * 0x10) + 0x8, SeekMode.Begin);
-            Vector3 tangent = Bytes.UnpackNormal24(stream.U24());
+            stream.Seek(start * 0x10 + i * 0x10 + 0x8, SeekMode.Begin);
+            var tangent = Bytes.UnpackNormal24(stream.U24());
             tangents[i] = new Vector4(tangent, 1.0f);
         }
         return tangents;
@@ -973,7 +974,7 @@ public class RMesh: Resource
     {
         return GetTangents(
             primitive.MinVert,
-            (primitive.MaxVert - primitive.MinVert) + 1
+            primitive.MaxVert - primitive.MinVert + 1
         );
     }
 
@@ -986,11 +987,11 @@ public class RMesh: Resource
      */
     public Vector3[] GetSmoothNormals(int start, int count)
     {
-        MemoryInputStream stream = new MemoryInputStream(GetSkinningStream());
-        Vector3[] normals = new Vector3[count];
-        for (int i = 0; i < count; ++i)
+        var stream = new MemoryInputStream(GetSkinningStream());
+        var normals = new Vector3[count];
+        for (var i = 0; i < count; ++i)
         {
-            stream.Seek((start * 0x10) + (i * 0x10) + 0xC, SeekMode.Begin);
+            stream.Seek(start * 0x10 + i * 0x10 + 0xC, SeekMode.Begin);
             normals[i] = Bytes.UnpackNormal24(stream.U24());
         }
         return normals;
@@ -1016,7 +1017,7 @@ public class RMesh: Resource
     {
         return GetSmoothNormals(
             primitive.MinVert,
-            (primitive.MaxVert - primitive.MinVert) + 1
+            primitive.MaxVert - primitive.MinVert + 1
         );
     }
 
@@ -1029,12 +1030,12 @@ public class RMesh: Resource
      */
     public byte[][] GetJoints(int start, int count)
     {
-        MemoryInputStream stream = new MemoryInputStream(GetSkinningStream());
+        var stream = new MemoryInputStream(GetSkinningStream());
         stream.Seek(start * 0x10);
         byte[][] joints = new byte[count][];
-        for (int i = 0; i < count; ++i)
+        for (var i = 0; i < count; ++i)
         {
-            byte[] buffer = stream.Bytes(0x10);
+            var buffer = stream.Bytes(0x10);
             joints[i] =
             [
                 buffer[3], buffer[7], buffer[0xB], buffer[0xF]
@@ -1053,7 +1054,7 @@ public class RMesh: Resource
     {
         return GetJoints(
             primitive.MinVert,
-            (primitive.MaxVert - primitive.MinVert) + 1
+            primitive.MaxVert - primitive.MinVert + 1
         );
     }
 
@@ -1077,18 +1078,18 @@ public class RMesh: Resource
      */
     public Vector4[] GetWeights(int start, int count)
     {
-        MemoryInputStream stream =
+        var stream =
             new MemoryInputStream(GetSkinningStream());
         stream.Seek(start * 0x10);
-        Vector4[] weights = new Vector4[count];
-        for (int i = 0; i < count; ++i)
+        var weights = new Vector4[count];
+        for (var i = 0; i < count; ++i)
         {
-            byte[] buffer = stream.Bytes(0x10);
+            var buffer = stream.Bytes(0x10);
             float[] rawWeights =
             [
-                (float) ((int) buffer[2] & 0xFF),
-                (float) ((int) buffer[1] & 0xFF),
-                (float) ((int) buffer[0] & 0xFF),
+                buffer[2] & 0xFF,
+                buffer[1] & 0xFF,
+                buffer[0] & 0xFF,
                 0
             ];
 
@@ -1119,7 +1120,7 @@ public class RMesh: Resource
     {
         return GetWeights(
             primitive.MinVert,
-            (primitive.MaxVert - primitive.MinVert) + 1
+            primitive.MaxVert - primitive.MinVert + 1
         );
     }
 
@@ -1144,12 +1145,12 @@ public class RMesh: Resource
             throw new InvalidOperationException("Can't get morphs from mesh that has no morph " +
                                                 "data!");
         Morph[] morphs = new Morph[MorphCount];
-        for (int i = 0; i < MorphCount; ++i)
+        for (var i = 0; i < MorphCount; ++i)
         {
-            MemoryInputStream stream = new MemoryInputStream(Streams[i + 2]);
-            Vector3[] offsets = new Vector3[NumVerts];
-            Vector3[] normals = new Vector3[NumVerts];
-            for (int j = 0; j < NumVerts; ++j)
+            var stream = new MemoryInputStream(Streams[i + 2]);
+            var offsets = new Vector3[NumVerts];
+            var normals = new Vector3[NumVerts];
+            for (var j = 0; j < NumVerts; ++j)
             {
                 offsets[j] = stream.V3();
                 normals[j] = Bytes.UnpackNormal32(stream.U32(true));
@@ -1172,14 +1173,14 @@ public class RMesh: Resource
             throw new InvalidOperationException("Can't get triangles from mesh without index " +
                                                 "buffer!");
 
-        int[] faces = new int[count];
-        short[] stream = SpringyTriIndices;
-        for (int i = start; i < count; ++i)
+        var faces = new int[count];
+        var stream = SpringyTriIndices;
+        for (var i = start; i < count; ++i)
             faces[i] = stream[i] & 0xffff;
 
         if (!SpringTrisStripped) return faces;
 
-        List<int> triangles = new List<int>(NumVerts * 0x3);
+        var triangles = new List<int>(NumVerts * 0x3);
         triangles.AddRange([faces[0], faces[1], faces[2]]);
         for (int i = 3, j = 1; i < faces.Length; ++i, ++j)
         {
@@ -1211,10 +1212,10 @@ public class RMesh: Resource
             throw new InvalidOperationException("Can't get triangles from mesh without index " +
                                                 "buffer!");
 
-        int[] faces = new int[count];
-        MemoryInputStream stream = new MemoryInputStream(Indices);
+        var faces = new int[count];
+        var stream = new MemoryInputStream(Indices);
         stream.Seek(start * 0x2);
-        for (int i = 0; i < count; ++i)
+        for (var i = 0; i < count; ++i)
             faces[i] = stream.U16();
 
         if (!IsStripped()) return faces;
@@ -1274,30 +1275,30 @@ public class RMesh: Resource
 
     public void FixupSkinForExport()
     {
-        Vector4[] weights = GetWeights();
+        var weights = GetWeights();
         int[] modulo = [0x3, 0x7, 0xb, 0xf];
-        for (int i = 0; i < NumVerts; ++i)
+        for (var i = 0; i < NumVerts; ++i)
         {
-            byte[] stream = GetSkinningStream();
-            for (int j = 0; j < 4; ++j)
+            var stream = GetSkinningStream();
+            for (var j = 0; j < 4; ++j)
             {
                 if (weights[i].GetComponent(j) == 0.0f)
-                    stream[(i * 0x10) + modulo[j]] = 0;
+                    stream[i * 0x10 + modulo[j]] = 0;
             }
 
-            for (int j = 0; j < 4; ++j)
+            for (var j = 0; j < 4; ++j)
             {
-                int joint = ((int) stream[(i * 0x10) + modulo[j]]) - 1;
+                var joint = stream[i * 0x10 + modulo[j]] - 1;
                 if (joint == -1) joint = 0;
-                stream[(i * 0x10) + modulo[j]] = (byte) (joint);
+                stream[i * 0x10 + modulo[j]] = (byte) joint;
             }
         }
 
-        foreach (Bone bone in Bones)
+        foreach (var bone in Bones)
         {
-            Matrix4x4 inverse = bone.invSkinPoseMatrix.Value;
+            var inverse = bone.InvSkinPoseMatrix.Value;
             inverse.M14 = 0.0f;
-            inverse.M24 =(0.0f);
+            inverse.M24 =0.0f;
             inverse.M34 = 0.0f;
             inverse.M44 = 1.0f;
         }
@@ -1306,25 +1307,27 @@ public class RMesh: Resource
     public Submesh[] FindAllMeshes()
     {
         List<Submesh> meshes = [];
-        for (int boneIndex = 0; boneIndex < Bones.Length; ++boneIndex)
+        for (var boneIndex = 0; boneIndex < Bones.Length; ++boneIndex)
         {
-            Bone bone = Bones[boneIndex];
-            if (bone.parent != -1) continue;
+            var bone = Bones[boneIndex];
+            if (bone.Parent != -1) continue;
 
-            Submesh mesh = new Submesh();
-            mesh.Transform = bone.skinPoseMatrix;
-            mesh.Locator = boneIndex;
-            mesh.Skinned = bone.firstChild != -1;
+            var mesh = new Submesh
+            {
+                Transform = bone.SkinPoseMatrix,
+                Locator = boneIndex,
+                Skinned = bone.FirstChild != -1
+            };
 
             List<Primitive> primitives = [];
-            byte[] stream = GetSkinningStream();
-            foreach (Primitive primitive in Primitives)
+            var stream = GetSkinningStream();
+            foreach (var primitive in Primitives)
             {
                 // Test the first vertex of each primitive to see
                 // if they belong to this subthis.
-                Bone joint = Bones[stream[(primitive.MinVert * 0x10) + 0x3]];
-                while (joint.parent != -1)
-                    joint = Bones[joint.parent];
+                var joint = Bones[stream[primitive.MinVert * 0x10 + 0x3]];
+                while (joint.Parent != -1)
+                    joint = Bones[joint.Parent];
 
                 if (joint == bone)
                     primitives.Add(primitive);
@@ -1344,14 +1347,14 @@ public class RMesh: Resource
      */
     public void CalculateBoundBoxes(bool setObb)
     {
-        Vector3[] vertices = GetVertices();
-        Vector4[] weights = GetWeights();
+        var vertices = GetVertices();
+        var weights = GetWeights();
         byte[][] joints = GetJoints();
 
         Dictionary<Bone, Vector3> minVert = new();
         Dictionary<Bone, Vector3> maxVert = new();
 
-        foreach (Bone bone in Bones)
+        foreach (var bone in Bones)
         {
             minVert.Add(bone, new Vector3(float.PositiveInfinity, float.PositiveInfinity,
                 float.PositiveInfinity));
@@ -1359,17 +1362,17 @@ public class RMesh: Resource
                 float.NegativeInfinity));
         }
 
-        for (int i = 0; i < vertices.Length; ++i)
+        for (var i = 0; i < vertices.Length; ++i)
         {
-            Vector3 v = vertices[i];
-            Vector4 weightCache = weights[i];
-            byte[] jointCache = joints[i];
+            var v = vertices[i];
+            var weightCache = weights[i];
+            var jointCache = joints[i];
 
-            for (int j = 0; j < 4; ++j)
+            for (var j = 0; j < 4; ++j)
             {
                 if (weightCache.GetComponent(j) == 0.0f) continue;
-                Vector3 max = maxVert[Bones[jointCache[j]]];
-                Vector3 min = minVert[Bones[jointCache[j]]];
+                var max = maxVert[Bones[jointCache[j]]];
+                var min = minVert[Bones[jointCache[j]]];
 
 
                 if (v.X > max.X) max.X = v.X;
@@ -1382,48 +1385,44 @@ public class RMesh: Resource
             }
         }
 
-        int index = 0;
-        foreach (Bone bone in Bones)
+        var index = 0;
+        foreach (var bone in Bones)
         {
-            Vector4 max = new Vector4(maxVert[bone], 1.0f);
-            Vector4 min = new Vector4(minVert[bone], 1.0f);
+            var max = new Vector4(maxVert[bone], 1.0f);
+            var min = new Vector4(minVert[bone], 1.0f);
 
-            if (float.IsPositiveInfinity(min.X)) min = new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-            else min = Vector4.Transform(min, bone.invSkinPoseMatrix.Value);
+            min = float.IsPositiveInfinity(min.X) ? new Vector4(0.0f, 0.0f, 0.0f, 1.0f) : Vector4.Transform(min, bone.InvSkinPoseMatrix.Value);
 
 
-            if (float.IsNegativeInfinity(max.X)) max = new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-            else max = Vector4.Transform(max, bone.invSkinPoseMatrix.Value);
+            max = float.IsNegativeInfinity(max.X) ? new Vector4(0.0f, 0.0f, 0.0f, 1.0f) : Vector4.Transform(max, bone.InvSkinPoseMatrix.Value);
 
-            for (int c = 0; c < 3; ++c)
+            for (var c = 0; c < 3; ++c)
             {
-                if (min.GetComponent(c) > max.GetComponent(c))
-                {
-                    float u = min.GetComponent(c);
-                    float l = max.GetComponent(c);
-                    min.SetComponent(c, l);
-                    max.SetComponent(c, u);
-                }
+                if (!(min.GetComponent(c) > max.GetComponent(c))) continue;
+                var u = min.GetComponent(c);
+                var l = max.GetComponent(c);
+                min.SetComponent(c, l);
+                max.SetComponent(c, u);
             }
 
-            bone.boundBoxMax = max;
-            bone.boundBoxMin = min;
+            bone.BoundBoxMax = max;
+            bone.BoundBoxMin = min;
             if (setObb)
             {
-                bone.obbMax = bone.boundBoxMax;
-                bone.obbMin = bone.boundBoxMin;
+                bone.ObbMax = bone.BoundBoxMax;
+                bone.ObbMin = bone.BoundBoxMin;
             }
 
-            Vector4 center = (max + (min)) / (2.0f);
-            float minDist = Math.Abs(Vector4.Distance(center, min));
-            float maxDist = Math.Abs(Vector4.Distance(center,(max)));
-            center.W = (minDist > maxDist) ? minDist : maxDist;
-            bone.boundSphere = center;
+            var center = (max + min) / 2.0f;
+            var minDist = Math.Abs(Vector4.Distance(center, min));
+            var maxDist = Math.Abs(Vector4.Distance(center,max));
+            center.W = minDist > maxDist ? minDist : maxDist;
+            bone.BoundSphere = center;
 
-            CullBone culler = CullBones[index++];
-            culler.BoundBoxMax = bone.boundBoxMax;
-            culler.BoundBoxMin = bone.boundBoxMin;
-            culler.InvSkinPoseMatrix = bone.invSkinPoseMatrix;
+            var culler = CullBones[index++];
+            culler.BoundBoxMax = bone.BoundBoxMax;
+            culler.BoundBoxMin = bone.BoundBoxMin;
+            culler.InvSkinPoseMatrix = bone.InvSkinPoseMatrix;
         }
     }
 }

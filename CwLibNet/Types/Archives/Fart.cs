@@ -1,5 +1,4 @@
 using System.Collections;
-using System.ComponentModel;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Streams;
@@ -40,7 +39,7 @@ public abstract class Fart: IEnumerable<Fat>
      */
     protected Dictionary<SHA1, Fat> Lookup = new();
 
-    protected Fart(String file, ArchiveType type)
+    protected Fart(string file, ArchiveType type)
     {
         // Only save archives can have null paths
         if (file == null && type != ArchiveType.SAVE)
@@ -81,17 +80,17 @@ public abstract class Fart: IEnumerable<Fat>
     {
         if (fat == null)
             throw new NullReferenceException("Can't search for null entry in archive!");
-        if (fat.getFileArchive() != this)
+        if (fat.GetFileArchive() != this)
             throw new ArgumentException("This entry does not belong to this archive!");
         try
         {
             using var fileStream = new FileStream(File, FileMode.Open, FileAccess.Read);
-            byte[]? buffer = new byte[fat.getSize()];
-            fileStream.Seek(fat.getOffset(), SeekOrigin.Begin);
+            var buffer = new byte[fat.GetSize()];
+            fileStream.Seek(fat.GetOffset(), SeekOrigin.Begin);
             fileStream.Read(buffer, 0, buffer.Length);
             return buffer;
         }
-        catch (IOException ex) { return null; }
+        catch (IOException) { return null; }
     }
 
     /**
@@ -117,7 +116,7 @@ public abstract class Fart: IEnumerable<Fat>
     {
         if (data == null)
             throw new NullReferenceException("Can't add null buffer to archive!");
-        SHA1 sha1 = SHA1.FromBuffer(data);
+        var sha1 = SHA1.FromBuffer(data);
 
         // Already exists, no point adding it to the queue.
         if (Exists(sha1)) return sha1;
@@ -136,9 +135,9 @@ public abstract class Fart: IEnumerable<Fat>
     public SHA1[] Add(Fart fart)
     {
         List<SHA1> hashes = new(fart.Entries.Length);
-        foreach (Fat fat in fart.Entries)
+        foreach (var fat in fart.Entries)
         {
-            SHA1 sha1 = fat.getSHA1();
+            var sha1 = fat.GetSha1();
             if (Exists(sha1))
                 continue;
             // Don't use the add method since it hashes the data again.
@@ -195,12 +194,12 @@ public abstract class Fart: IEnumerable<Fat>
      */
     protected static byte[] GenerateFat(Fat[] fat)
     {
-        MemoryOutputStream stream = new MemoryOutputStream(fat.Length * 0x1c);
-        foreach (Fat entry in fat)
+        var stream = new MemoryOutputStream(fat.Length * 0x1c);
+        foreach (var entry in fat)
         {
-            stream.Sha1(entry.getSHA1());
-            stream.U32(entry.getOffset());
-            stream.I32(entry.getSize());
+            stream.Sha1(entry.GetSha1());
+            stream.U32(entry.GetOffset());
+            stream.I32(entry.GetSize());
         }
         return stream.GetBuffer();
     }
@@ -215,10 +214,10 @@ public abstract class Fart: IEnumerable<Fat>
      */
     public T? LoadResource<T>(SHA1 hash) where T: ISerializable
     {
-        byte[]? data = Extract(hash);
+        var data = Extract(hash);
         if (data == null) return default;
-        SerializedResource resource = new SerializedResource(data);
-        return resource.loadResource<T>();
+        var resource = new SerializedResource(data);
+        return resource.LoadResource<T>();
     }
 
     /**
@@ -242,13 +241,13 @@ public abstract class Fart: IEnumerable<Fat>
     public int Validate()
     {
         List<Fat> entries = new(Entries.Length);
-        foreach (Fat fat in Entries)
+        foreach (var fat in Entries)
         {
-            SHA1 sha1 = SHA1.FromBuffer(fat.extract());
-            if (sha1.Equals(fat.getSHA1()))
+            var sha1 = SHA1.FromBuffer(fat.Extract());
+            if (sha1.Equals(fat.GetSha1()))
                 entries.Add(fat);
         }
-        int missing = Entries.Length - entries.Count;
+        var missing = Entries.Length - entries.Count;
         Entries = entries.ToArray();
         return missing;
     }

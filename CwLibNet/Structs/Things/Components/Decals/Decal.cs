@@ -91,23 +91,22 @@ public class Decal: ISerializable
         U = u;
         V = v;
 
-        float sx = scale;
-        float sy = scale;
+        var sx = scale;
         if (flipped)
             sx = -sx;
 
         Xvecu = (float) (sx * Math.Cos(angle));
         Xvecv = (float) (sx * Math.Sin(angle));
 
-        Yvecu = (float) (-sy * Math.Sin(angle));
-        Yvecv = (float) (sy * Math.Cos(angle));
+        Yvecu = (float) (-scale * Math.Sin(angle));
+        Yvecv = (float) (scale * Math.Cos(angle));
     }
 
     
     public void Serialize(Serializer serializer)
     {
-        Revision revision = serializer.GetRevision();
-        int version = revision.GetVersion();
+        var revision = serializer.GetRevision();
+        var version = revision.GetVersion();
 
         Texture = serializer.Resource(Texture, ResourceType.Texture);
         U = serializer.F32(U);
@@ -117,30 +116,37 @@ public class Decal: ISerializable
         Yvecu = serializer.F32(Yvecu);
         Yvecv = serializer.F32(Yvecv);
 
-        if (version >= 0x14e && version < 0x25c)
+        switch (version)
         {
-            if (serializer.IsWriting())
+            case >= 0x14e and < 0x25c:
             {
-                serializer.GetOutput().I32(
-                    (int)((((Color & 0xffff) << 5) & 0xfc00) |
-                          ((Color & 0xffff) << 8 & 0xf80000) |
-                          ((Color & 0x1f) << 3) |
-                          0xff000000)
-                );
-            }
-            else
-            {
-                int color = serializer.GetInput().I32();
-                color = (short) (
-                    (((color >>> 10) & 0x3f) << 5) |
-                    (((color >>> 0x13) & 0x1f) << 0xb) |
-                    ((color >>> 3) & 0x1f)
-                );
-            }
-        }
+                if (serializer.IsWriting())
+                {
+                    serializer.GetOutput().I32(
+                        (int)((((Color & 0xffff) << 5) & 0xfc00) |
+                              ((Color & 0xffff) << 8 & 0xf80000) |
+                              ((Color & 0x1f) << 3) |
+                              0xff000000)
+                    );
+                }
+                else
+                {
+                    var color = serializer.GetInput().I32();
+/*
+                    color = (short) (
+                        (((color >>> 10) & 0x3f) << 5) |
+                        (((color >>> 0x13) & 0x1f) << 0xb) |
+                        ((color >>> 3) & 0x1f)
+                    );
+*/
+                }
 
-        if (version >= 0x260)
-            Color = (ushort)serializer.I16((short)Color);
+                break;
+            }
+            case >= 0x260:
+                Color = (ushort)serializer.I16((short)Color);
+                break;
+        }
 
         if (version >= 0x158)
         {
@@ -158,21 +164,27 @@ public class Decal: ISerializable
         if (version >= 0x219)
             ScorchMark = serializer.Bool(ScorchMark);
 
-        if (version >= 0x34c)
-            Plan = serializer.Resource(Plan, ResourceType.Plan, true);
-        else if (version >= 0x25b)
+        switch (version)
         {
-            if (serializer.IsWriting())
+            case >= 0x34c:
+                Plan = serializer.Resource(Plan, ResourceType.Plan, true);
+                break;
+            case >= 0x25b:
             {
-                if (Plan == null || Plan.IsHash())
-                    serializer.GetOutput().I32(0);
-                else if (Plan.IsGUID())
-                    serializer.GetOutput().Guid(Plan.GetGUID());
-            }
-            else
-            {
-                GUID? guid = serializer.GetInput().Guid();
-                Plan = guid == null ? null : new ResourceDescriptor(guid.Value, ResourceType.Plan);
+                if (serializer.IsWriting())
+                {
+                    if (Plan == null || Plan.IsHash())
+                        serializer.GetOutput().I32(0);
+                    else if (Plan.IsGUID())
+                        serializer.GetOutput().Guid(Plan.GetGUID());
+                }
+                else
+                {
+                    var guid = serializer.GetInput().Guid();
+                    Plan = guid == null ? null : new ResourceDescriptor(guid.Value, ResourceType.Plan);
+                }
+
+                break;
             }
         }
 

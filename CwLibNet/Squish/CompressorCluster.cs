@@ -53,7 +53,7 @@ public class CompressorCluster: CompressorColourFit
 
 	private static int[] _unordered = new int[16];
 
-	private static Vec _xxSum = new Vec();
+	private static Vec _xxSum = new();
 
 	private static float _bestError;
 

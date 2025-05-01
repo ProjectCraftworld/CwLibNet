@@ -1,8 +1,7 @@
-namespace CwLibNet.Enums
+namespace CwLibNet.Enums;
+
+public enum ArchiveType
 {
-    public enum ArchiveType
-    {
-        FARC,
-        SAVE
-    }
+    FARC,
+    SAVE
 }

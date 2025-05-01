@@ -3,8 +3,8 @@ using CwLibNet.Enums;
 using CwLibNet.EX;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
 using CwLibNet.Types.Data;
-using CwLibNet.Types.Things;
 
 namespace CwLibNet.Structs.Streaming;
 
@@ -27,7 +27,7 @@ public class StreamingManager: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        int subVersion = serializer.GetRevision().GetSubVersion();
+        var subVersion = serializer.GetRevision().GetSubVersion();
 
         EditingThingsList = subVersion switch
         {
@@ -66,11 +66,15 @@ public class StreamingManager: ISerializable
 
         if (subVersion > 0x76)
             NumIslands = serializer.I32(NumIslands);
-        if (subVersion > 0x1ff)
-            NumPendingIslands = serializer.I32(NumPendingIslands);
-
-        if (subVersion is >= 0x4e and <= 0x7e)
-            serializer.V3(null);
+        switch (subVersion)
+        {
+            case > 0x1ff:
+                NumPendingIslands = serializer.I32(NumPendingIslands);
+                break;
+            case >= 0x4e and <= 0x7e:
+                serializer.V3(null);
+                break;
+        }
 
         if (subVersion >= 0x89)
             FartDesc = serializer.Resource(FartDesc, ResourceType.FileOfBytes,

@@ -43,7 +43,7 @@ public class Value: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         if (Name != null) size += Name.Length;
         if (Location != null) size += Location.Length;
         if (Category != null) size += Category.Length;

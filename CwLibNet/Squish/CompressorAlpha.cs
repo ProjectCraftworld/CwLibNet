@@ -68,7 +68,7 @@ public class CompressorAlpha
 		// unpack the alpha values pairwise
 		for ( var i = 0; i < 8; ++i ) {
 			// quantise down to 4 bits
-			var quant = (block[offset + i] & 0xFF);
+			var quant = block[offset + i] & 0xFF;
 
 			// unpack the values
 			var lo = quant & 0x0f;
@@ -93,7 +93,7 @@ public class CompressorAlpha
 			}
 
 			// find the least error and corresponding index
-			var value = (rgba[4 * i + 3] & 0xFF);
+			var value = rgba[4 * i + 3] & 0xFF;
 			var least = int.MaxValue;
 			var index = 0;
 			for ( var j = 0; j < 8; ++j ) {
@@ -130,7 +130,7 @@ public class CompressorAlpha
 			var value = 0;
 			for ( var j = 0; j < 8; ++j ) {
 				var index = indices[src++];
-				value |= (index << 3 * j);
+				value |= index << 3 * j;
 			}
 
 			// store in 3 bytes
@@ -145,16 +145,24 @@ public class CompressorAlpha
 
 		if ( alpha0 > alpha1 ) {
 			// swap the indices
-			for ( var i = 0; i < 16; ++i ) {
+			for ( var i = 0; i < 16; ++i )
+			{
 				var index = indices[i];
-				if ( index == 0 )
-					swapped[i] = 1;
-				else if ( index == 1 )
-					swapped[i] = 0;
-				else if ( index <= 5 )
-					swapped[i] = 7 - index;
-				else
-					swapped[i] = index;
+				switch (index)
+				{
+					case 0:
+						swapped[i] = 1;
+						break;
+					case 1:
+						swapped[i] = 0;
+						break;
+					case <= 5:
+						swapped[i] = 7 - index;
+						break;
+					default:
+						swapped[i] = index;
+						break;
+				}
 			}
 
 			// write the block
@@ -171,14 +179,21 @@ public class CompressorAlpha
 
 		if ( alpha0 < alpha1 ) {
 			// swap the indices
-			for ( var i = 0; i < 16; ++i ) {
+			for ( var i = 0; i < 16; ++i )
+			{
 				var index = indices[i];
-				if ( index == 0 )
-					swapped[i] = 1;
-				else if ( index == 1 )
-					swapped[i] = 0;
-				else
-					swapped[i] = 9 - index;
+				switch (index)
+				{
+					case 0:
+						swapped[i] = 1;
+						break;
+					case 1:
+						swapped[i] = 0;
+						break;
+					default:
+						swapped[i] = 9 - index;
+						break;
+				}
 			}
 
 			// write the block
@@ -202,7 +217,7 @@ public class CompressorAlpha
 				continue;
 
 			// incorporate into the min/max
-			var value = (rgba[4 * i + 3] & 0xFF);
+			var value = rgba[4 * i + 3] & 0xFF;
 			if ( value < min7 )
 				min7 = value;
 			if ( value > max7 )
@@ -261,8 +276,8 @@ public class CompressorAlpha
 
 	public static void DecompressAlphaDxt5(byte[] rgba, byte[] block, int offset) {
 		// get the two alpha values
-		var alpha0 = (block[offset + 0] & 0xFF);
-		var alpha1 = (block[offset + 1] & 0xFF);
+		var alpha0 = block[offset + 0] & 0xFF;
+		var alpha1 = block[offset + 1] & 0xFF;
 
 		// compare the values to build the codebook
 		var codes = _codes;
@@ -290,8 +305,8 @@ public class CompressorAlpha
 			// grab 3 bytes
 			var value = 0;
 			for ( var j = 0; j < 3; ++j ) {
-				var b = (block[offset + src++] & 0xFF);
-				value |= (b << 8 * j);
+				var b = block[offset + src++] & 0xFF;
+				value |= b << 8 * j;
 			}
 
 			// unpack 8 3-bit values from it

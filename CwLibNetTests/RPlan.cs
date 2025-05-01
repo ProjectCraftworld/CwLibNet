@@ -1,4 +1,3 @@
-using CwLibNet.Enums;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Resources;
 using CwLibNet.Types;

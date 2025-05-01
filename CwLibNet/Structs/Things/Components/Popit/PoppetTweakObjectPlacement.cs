@@ -3,7 +3,6 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
-using CwLibNet.Types.Things;
 
 namespace CwLibNet.Structs.Things.Components.Popit;
 
@@ -29,7 +28,7 @@ public class PoppetTweakObjectPlacement: ISerializable
     public int LastGridMoveFrame, LastGridRotateFrame, LastGridScaleFrame;
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
+        var version = serializer.GetRevision().GetVersion();
 
         ObjectList = serializer.Thingarray(ObjectList);
         StartMatrix = serializer.M44(StartMatrix);
@@ -46,12 +45,10 @@ public class PoppetTweakObjectPlacement: ISerializable
         Rotate = serializer.F32(Rotate);
         Scale = serializer.F32(Scale);
 
-        if (version > 0x26b)
-        {
-            LastGridMoveFrame = serializer.I32(LastGridMoveFrame);
-            LastGridRotateFrame = serializer.I32(LastGridRotateFrame);
-            LastGridScaleFrame = serializer.I32(LastGridScaleFrame);
-        }
+        if (version <= 0x26b) return;
+        LastGridMoveFrame = serializer.I32(LastGridMoveFrame);
+        LastGridRotateFrame = serializer.I32(LastGridRotateFrame);
+        LastGridScaleFrame = serializer.I32(LastGridScaleFrame);
     }
 
     public int GetAllocatedSize()

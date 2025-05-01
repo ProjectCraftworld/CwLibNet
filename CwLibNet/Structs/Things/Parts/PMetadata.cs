@@ -36,15 +36,15 @@ public class PMetadata: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        Revision revision = serializer.GetRevision();
-        int version = revision.GetVersion();
+        var revision = serializer.GetRevision();
+        var version = revision.GetVersion();
 
-        bool hasDepreciatedValue = (version < 0x297 && !revision.IsLeerdammer()) || (revision.IsLeerdammer() && !revision.Has(Branch.Leerdammer, (int)Revisions.LdResources));
+        var hasDepreciatedValue = (version < 0x297 && !revision.IsLeerdammer()) || (revision.IsLeerdammer() && !revision.Has(Branch.Leerdammer, (int)Revisions.LD_RESOURCES));
 
         if (hasDepreciatedValue)
             Value = serializer.Struct(Value);
         
-        if (revision.Has(Branch.Leerdammer, (int)Revisions.LdLamsKeys) || version > 0x2ba) {
+        if (revision.Has(Branch.Leerdammer, (int)Revisions.LD_LAMS_KEYS) || version > 0x2ba) {
             TitleKey = serializer.U32(TitleKey);
             DescriptionKey = serializer.U32(DescriptionKey);
             Location = serializer.U32(Location);
@@ -101,7 +101,7 @@ public class PMetadata: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         if (NameTranslationTag != null) size += NameTranslationTag.Length;
         if (DescTranslationTag != null) size += DescTranslationTag.Length;
         if (LocationTag != null) size += LocationTag.Length;

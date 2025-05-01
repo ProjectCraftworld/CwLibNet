@@ -17,7 +17,7 @@ public class StreamingCheckpoint : ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        int subVersion = serializer.GetRevision().GetSubVersion();
+        var subVersion = serializer.GetRevision().GetSubVersion();
 
         if (subVersion > 0x72)
         {
@@ -42,7 +42,7 @@ public class StreamingCheckpoint : ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         if (StartPointName != null)
             size += StartPointName.GetAllocatedSize();
         return size;

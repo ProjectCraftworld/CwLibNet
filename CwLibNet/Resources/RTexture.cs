@@ -14,7 +14,7 @@ public class RTexture
 {
     private CellGcmTexture info;
     private byte[]? data;
-    public bool noSRGB = false;
+    public bool NoSrgb;
 
     private SKBitmap? cached;
 
@@ -31,7 +31,7 @@ public class RTexture
             return;
         }
 
-        uint magic = (uint)Bytes.ToIntegerBE(data);
+        var magic = (uint)Bytes.ToIntegerBE(data);
         this.data = data;
         switch (magic)
         {
@@ -41,7 +41,7 @@ public class RTexture
                 {
                     cached = SKBitmap.Decode(data);
                 }
-                catch (IOException ex)
+                catch (IOException)
                 {
                     throw new SerializationException("An error occured reading " +
                                                      "BufferedImage");
@@ -53,17 +53,17 @@ public class RTexture
                 return;
         }
 
-        process(new SerializedResource(data));
+        Process(new SerializedResource(data));
     }
 
-    private void process(SerializedResource resource)
+    private void Process(SerializedResource resource)
     {
-        info = resource.getTextureInfo();
-        ResourceType type = resource.getResourceType();
+        info = resource.GetTextureInfo();
+        var type = resource.GetResourceType();
         if (type.Value != ResourceType.Texture.Value && type.Value != ResourceType.GtfTexture.Value)
             throw new SerializationException("Invalid resource provided to RTexture");
-        data = resource.getStream().GetBuffer();
-        switch (resource.getSerializationType().GetValue())
+        data = resource.GetStream().GetBuffer();
+        switch (resource.GetSerializationType().GetValue())
         {
             case " ":
                 if (type.Value == ResourceType.Texture.Value)
@@ -72,16 +72,16 @@ public class RTexture
                     // decompressing to DDS");
                     cached = Images.FromDds(data);
 
-                    byte[]? footer = data.Skip(data.Length - 4).Take(4).ToArray();
+                    var footer = data.Skip(data.Length - 4).Take(4).ToArray();
                     if (Bytes.ToIntegerBE(footer) == 0x42554D50)
-                        noSRGB = true;
+                        NoSrgb = true;
                 }
                 else
                 {
                     // ResourceSystem.println("Texture", "Detected GTF_TEXTURE,
                     // generating DDS
                     // header");
-                    parseGTF();
+                    ParseGtf();
                 }
                 break;
             case "s":
@@ -91,7 +91,7 @@ public class RTexture
                                                      "swizzled " +
                                                      "load");
                 // ResourceSystem.println("Texture", "Converting GXT texture to DDS.");
-                parseGXT();
+                ParseGxt();
                 break;
             default:
                 throw new SerializationException("Invalid serialization type in RTexture " +
@@ -99,60 +99,60 @@ public class RTexture
         }
 
         if (info != null && info.IsBumpTexture())
-            noSRGB = true;
+            NoSrgb = true;
     }
 
-    public void parseGXT()
+    public void ParseGxt()
     {
-        unswizzleCompressed();
-        byte[] header = getDDSHeader();
-        byte[]? gtf = data;
+        UnswizzleCompressed();
+        var header = GetDdsHeader();
+        var gtf = data;
 
-        byte[]? DDS = new byte[gtf.Length + header.Length];
-        Array.Copy(header, 0, DDS, 0, header.Length);
-        Array.Copy(gtf, 0, DDS, header.Length, gtf.Length);
+        var dds = new byte[gtf.Length + header.Length];
+        Array.Copy(header, 0, dds, 0, header.Length);
+        Array.Copy(gtf, 0, dds, header.Length, gtf.Length);
 
-        data = DDS;
-        cached = getImage();
+        data = dds;
+        cached = GetImage();
     }
 
     /**
      * Assigns the properties of this class from the GTF resource header.
      */
-    public void parseGTF()
+    public void ParseGtf()
     {
-        byte[] header = getDDSHeader();
-        byte[]? gtf = data;
+        var header = GetDdsHeader();
+        var gtf = data;
 
-        byte[]? DDS = new byte[gtf.Length + header.Length];
-        Array.Copy(header, 0, DDS, 0, header.Length);
-        Array.Copy(gtf, 0, DDS, header.Length, gtf.Length);
+        var dds = new byte[gtf.Length + header.Length];
+        Array.Copy(header, 0, dds, 0, header.Length);
+        Array.Copy(gtf, 0, dds, header.Length, gtf.Length);
 
-        data = DDS;
+        data = dds;
 
-        CellGcmEnumForGtf format = info.GetFormat();
+        var format = info.GetFormat();
         if (format == CellGcmEnumForGtf.A8R8G8B8 || format == CellGcmEnumForGtf.B8 ||
             info.GetMethod() == SerializationType.GTF_SWIZZLED ||
             info.GetMethod() == SerializationType.GXT_SWIZZLED)
-            unswizzle();
-        else cached = getImage();
+            Unswizzle();
+        else cached = GetImage();
     }
 
-    private int getMortonNumber(int x, int y, int width, int height)
+    private int GetMortonNumber(int x, int y, int width, int height)
     {
-        int logW = 31 - Longs.NumberOfLeadingZeros(width);
-        int logH = 31 - Longs.NumberOfLeadingZeros(height);
+        var logW = 31 - Longs.NumberOfLeadingZeros(width);
+        var logH = 31 - Longs.NumberOfLeadingZeros(height);
 
-        int d = Math.Min(logW, logH);
-        int m = 0;
+        var d = Math.Min(logW, logH);
+        var m = 0;
 
-        for (int i = 0; i < d; ++i)
+        for (var i = 0; i < d; ++i)
             m |= ((x & (1 << i)) << (i + 1)) | ((y & (1 << i)) << i);
 
         if (width < height)
-            m |= ((y & ~(width - 1)) << d);
+            m |= (y & ~(width - 1)) << d;
         else
-            m |= ((x & ~(height - 1)) << d);
+            m |= (x & ~(height - 1)) << d;
 
         return m;
     }
@@ -160,44 +160,45 @@ public class RTexture
     /**
      * Unswizzles each DXT1/5 compressed block in a Vita GXT texture.
      */
-    private void unswizzleCompressed()
+    private void UnswizzleCompressed()
     {
-        byte[]? pixels = new byte[data.Length];
+        var pixels = new byte[data.Length];
 
-        int blockWidth = 4, blockHeight = 4;
-        int bpp = 4;
+        const int blockWidth = 4;
+        const int blockHeight = 4;
+        var bpp = 4;
         if (info.GetFormat().Equals(CellGcmEnumForGtf.DXT5))
             bpp = 8;
 
-        int _base = 0;
+        var @base = 0;
 
-        int width = Math.Max(info.GetWidth(), blockWidth);
-        int height = Math.Max(info.GetHeight(), blockHeight);
+        var width = Math.Max(info.GetWidth(), blockWidth);
+        var height = Math.Max(info.GetHeight(), blockHeight);
 
-        int log2width = 1 << (31 - Longs.NumberOfLeadingZeros(width + (width - 1)));
-        int log2height = 1 << (31 - Longs.NumberOfLeadingZeros(height + (height - 1)));
+        var log2Width = 1 << (31 - Longs.NumberOfLeadingZeros(width + (width - 1)));
+        var log2Height = 1 << (31 - Longs.NumberOfLeadingZeros(height + (height - 1)));
 
-        for (int i = 0; i < info.GetMipCount(); ++i)
+        for (var i = 0; i < info.GetMipCount(); ++i)
         {
-            int w = ((width + blockWidth - 1) / blockWidth);
-            int h = ((height + blockHeight - 1) / blockHeight);
-            int blockSize = bpp * blockWidth * blockHeight;
+            var w = (width + blockWidth - 1) / blockWidth;
+            var h = (height + blockHeight - 1) / blockHeight;
+            var blockSize = bpp * blockWidth * blockHeight;
 
-            int log2w = 1 << (31 - Longs.NumberOfLeadingZeros(w + (w - 1)));
-            int log2h = 1 << (31 - Longs.NumberOfLeadingZeros(h + (h - 1)));
+            var log2W = 1 << (31 - Longs.NumberOfLeadingZeros(w + (w - 1)));
+            var log2H = 1 << (31 - Longs.NumberOfLeadingZeros(h + (h - 1)));
 
-            int mx = getMortonNumber(log2w - 1, 0, log2w, log2h);
-            int my = getMortonNumber(0, log2h - 1, log2w, log2h);
+            var mx = GetMortonNumber(log2W - 1, 0, log2W, log2H);
+            var my = GetMortonNumber(0, log2H - 1, log2W, log2H);
 
-            int pixelSize = blockSize / 8;
+            var pixelSize = blockSize / 8;
 
-            int oy = 0, tgt = _base;
-            for (int y = 0; y < h; ++y)
+            int oy = 0, tgt = @base;
+            for (var y = 0; y < h; ++y)
             {
-                int ox = 0;
-                for (int x = 0; x < w; ++x)
+                var ox = 0;
+                for (var x = 0; x < w; ++x)
                 {
-                    int offset = _base + ((ox + oy) * pixelSize);
+                    var offset = @base + (ox + oy) * pixelSize;
                     Array.Copy(data, offset, pixels, tgt, pixelSize);
                     tgt += pixelSize;
                     ox = (ox - mx) & mx;
@@ -205,13 +206,13 @@ public class RTexture
                 oy = (oy - my) & my;
             }
 
-            _base += ((bpp * log2width * log2height) / 8);
+            @base += bpp * log2Width * log2Height / 8;
 
             width = width > blockWidth ? width / 2 : blockWidth;
             height = height > blockHeight ? height / 2 : blockHeight;
 
-            log2width = log2width > blockWidth ? log2width / 2 : blockWidth;
-            log2height = log2height > blockHeight ? log2height / 2 : blockHeight;
+            log2Width = log2Width > blockWidth ? log2Width / 2 : blockWidth;
+            log2Height = log2Height > blockHeight ? log2Height / 2 : blockHeight;
         }
 
         data = pixels;
@@ -220,22 +221,22 @@ public class RTexture
     /**
      * Unswizzles the texture's pixel data
      */
-    private void unswizzle()
+    private void Unswizzle()
     {
-        int[] pixels = DDSReader.Read(data, DDSReader.ARGB, 0);
-        pixels = DDS.unswizzle(pixels, info.GetHeight(), info.GetWidth());
+        var pixels = DdsReader.Read(data, DdsReader.ARGB, 0);
+        pixels = Dds.Unswizzle(pixels, info.GetHeight(), info.GetWidth());
 
-        for (int i = 0; i < pixels.Length; ++i)
+        for (var i = 0; i < pixels.Length; ++i)
         {
-            int pixel = pixels[i];
+            var pixel = pixels[i];
             pixels[i] =
                 (pixel & 0xff) << 24 | (pixel & 0xff00) << 8 | (pixel & 0xff0000) >> 8 | (pixel >> 24) & 0xff;
         }
 
         cached = new SKBitmap(info.GetWidth(), info.GetHeight(), SKColorType.Argb4444, SKAlphaType.Opaque);
         if (cached != null)
-            for (int i = 0; i < info.GetHeight(); ++i)
-                for (int j = 0; j < info.GetWidth(); ++j)
+            for (var i = 0; i < info.GetHeight(); ++i)
+                for (var j = 0; j < info.GetWidth(); ++j)
                     cached.SetPixel(j, i, new SKColor((uint)pixels[j*i]));
     }
 
@@ -244,7 +245,7 @@ public class RTexture
      *
      * @return Converted texture
      */
-    public SKBitmap getImage()
+    public SKBitmap? GetImage()
     {
         if (cached != null)
             return cached;
@@ -256,9 +257,9 @@ public class RTexture
      *
      * @return 320x320 ImageIcon of Texture
      */
-    public SKBitmap getImageIcon()
+    public SKBitmap GetImageIcon()
     {
-        return getImageIcon(320, 320);
+        return GetImageIcon(320, 320);
     }
 
     /**
@@ -268,9 +269,9 @@ public class RTexture
      * @param height Desired height
      * @return Scaled ImageIcon of Texture
      */
-    public SKBitmap getImageIcon(int width, int height)
+    public SKBitmap GetImageIcon(int width, int height)
     {
-        cached ??= getImage();
+        cached ??= GetImage();
         return cached != null ? cached.Resize(new SKSizeI(width, height), SKSamplingOptions.Default) : null;
     }
 
@@ -279,7 +280,7 @@ public class RTexture
      *
      * @return Generated DDS header
      */
-    public byte[] getDDSHeader()
+    public byte[] GetDdsHeader()
     {
         //System.out.println(String.format("DDS Type: %s (%s)", Bytes.toHex(this.info
         // .getFormat()
@@ -289,12 +290,12 @@ public class RTexture
         return null; // DDS.getDDSHeader(this.info);
     }
 
-    public CellGcmTexture getInfo()
+    public CellGcmTexture GetInfo()
     {
         return info;
     }
 
-    public byte[]? getData()
+    public byte[]? GetData()
     {
         return data;
     }

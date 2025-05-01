@@ -77,17 +77,17 @@ public class ColourSet {
 					// add the point
 					points[count].Set(r, g, b);
 					// ensure there is always non-zero weight even for zero alpha
-					weights[count] = (weightAlpha ? ((rgba[4 * i + 3] & 0xFF) + 1) / 256.0f : 1.0f);
+					weights[count] = weightAlpha ? ((rgba[4 * i + 3] & 0xFF) + 1) / 256.0f : 1.0f;
 					remap[i] = count++; // advance
 					break;
 				}
 
 				// check for a match
 				var oldbit = 1 << j;
-				var match = ((mask & oldbit) != 0)
-				            && (rgba[4 * i] == rgba[4 * j])
-				            && (rgba[4 * i + 1] == rgba[4 * j + 1])
-				            && (rgba[4 * i + 2] == rgba[4 * j + 2])
+				var match = (mask & oldbit) != 0
+				            && rgba[4 * i] == rgba[4 * j]
+				            && rgba[4 * i + 1] == rgba[4 * j + 1]
+				            && rgba[4 * i + 2] == rgba[4 * j + 2]
 				            && (rgba[4 * j + 3] >= 128 || !isDxt1);
 
 				if ( match ) {
@@ -96,7 +96,7 @@ public class ColourSet {
 
 					// ensure there is always non-zero weight even for zero alpha
 					// map to this point and increase the weight
-					weights[index] += (weightAlpha ? ((rgba[4 * i + 3] & 0xFF) + 1) / 256.0f : 1.0f);
+					weights[index] += weightAlpha ? ((rgba[4 * i + 3] & 0xFF) + 1) / 256.0f : 1.0f;
 					remap[i] = index;
 					break;
 				}

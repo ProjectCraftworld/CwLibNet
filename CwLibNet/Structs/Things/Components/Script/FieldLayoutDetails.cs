@@ -37,19 +37,19 @@ public class FieldLayoutDetails: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
+        var version = serializer.GetRevision().GetVersion();
 
         Name = serializer.Str(Name);
 
         if (serializer.IsWriting())
         {
-            short flags = ModifierBody.GetFlags(Modifiers);
+            var flags = ModifierBody.GetFlags(Modifiers);
             if (version >= 0x3d9) serializer.GetOutput().I16(flags);
             else serializer.GetOutput().I32(flags);
         }
         else
         {
-            int flags = (version >= 0x3d9) ? serializer.GetInput().I16() :
+            var flags = version >= 0x3d9 ? serializer.GetInput().I16() :
                 serializer.GetInput().I32();
             Modifiers = ModifierBody.fromValue(flags);
         }
@@ -67,8 +67,8 @@ public class FieldLayoutDetails: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
-        if (Name != null) size += (Name.Length);
+        var size = BaseAllocationSize;
+        if (Name != null) size += Name.Length;
         return size;
     }
 

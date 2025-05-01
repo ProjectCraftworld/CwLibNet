@@ -29,7 +29,7 @@ namespace CwLibNet.Squish;
 
 public class CompressorSingleColour: CompressorColourFit
 {
-	static readonly int[][][] Lookup53 = [
+	private static readonly int[][][] Lookup53 = [
 	[ [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] ],
 	[ [ 0, 0, 1 ], [ 0, 0, 1 ], [ 0, 0, 1 ], [ 0, 0, 0 ] ],
 	[ [ 0, 0, 2 ], [ 0, 0, 2 ], [ 0, 0, 2 ], [ 0, 0, 0 ] ],
@@ -288,7 +288,7 @@ public class CompressorSingleColour: CompressorColourFit
 	[ [ 31, 0, 0 ], [ 0, 31, 0 ], [ 31, 31, 0 ], [ 0, 0, 0 ] ]
 ];
 
-static readonly int[][][] Lookup63 = [
+	private static readonly int[][][] Lookup63 = [
 	[ [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] ],
 	[ [ 0, 0, 1 ], [ 0, 0, 1 ], [ 0, 1, 1 ], [ 0, 0, 0 ] ],
 	[ [ 0, 0, 2 ], [ 0, 0, 2 ], [ 0, 1, 0 ], [ 0, 0, 0 ] ],
@@ -546,8 +546,8 @@ static readonly int[][][] Lookup63 = [
 	[ [ 63, 0, 1 ], [ 0, 63, 1 ], [ 63, 63, 1 ], [ 0, 0, 0 ] ],
 	[ [ 63, 0, 0 ], [ 0, 63, 0 ], [ 63, 63, 0 ], [ 0, 0, 0 ] ]
 ];
-	
-	static readonly int[][][] Lookup54 = [
+
+	private static readonly int[][][] Lookup54 = [
 			[ [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] ],
 			[ [ 0, 0, 1 ], [ 0, 0, 1 ], [ 0, 1, 1 ], [ 1, 0, 1 ] ],
 			[ [ 0, 0, 2 ], [ 0, 0, 2 ], [ 0, 1, 0 ], [ 1, 0, 0 ] ],
@@ -806,7 +806,7 @@ static readonly int[][][] Lookup63 = [
 			[ [ 31, 0, 0 ], [ 0, 31, 0 ], [ 31, 31, 0 ], [ 31, 31, 0 ] ]
 	];
 
-	static readonly int[][][] Lookup64 = [
+	private static readonly int[][][] Lookup64 = [
 			[ [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ], [ 0, 0, 0 ] ],
 			[ [ 0, 0, 1 ], [ 0, 0, 1 ], [ 0, 1, 0 ], [ 1, 0, 0 ] ],
 			[ [ 0, 0, 2 ], [ 0, 0, 2 ], [ 0, 2, 0 ], [ 0, 1, 0 ] ],
@@ -1071,8 +1071,8 @@ static readonly int[][][] Lookup63 = [
 
 	private static readonly int[][] Sources = new int[3][];
 
-	private static readonly Vec Start = new Vec();
-	private static readonly Vec End = new Vec();
+	private static readonly Vec Start = new();
+	private static readonly Vec End = new();
 
 	private static readonly int[] Index = new int[1];
 
@@ -1084,9 +1084,9 @@ static readonly int[][][] Lookup63 = [
 
 		// grab the single color
 		var point = colours.GetPoints()[0];
-		this.colour[0] = (int)Math.Round(255.0f * point.X);
-		this.colour[1] = (int)Math.Round(255.0f * point.Y);
-		this.colour[2] = (int)Math.Round(255.0f * point.Z);
+		colour[0] = (int)Math.Round(255.0f * point.X);
+		colour[1] = (int)Math.Round(255.0f * point.Y);
+		colour[2] = (int)Math.Round(255.0f * point.Z);
 
 		// initialize the best error
 		_bestError = int.MaxValue;

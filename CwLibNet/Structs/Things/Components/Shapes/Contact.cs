@@ -21,7 +21,7 @@ public class Contact: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         if (Shape != null)
             size += Shape.GetAllocatedSize();
         return size;

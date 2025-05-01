@@ -20,7 +20,7 @@ public class PoppetMaterialOverride: ISerializable
     public bool HeadDucking;
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
+        var version = serializer.GetRevision().GetVersion();
 
         if (version >= 0x2ed)
             Plan = serializer.Resource(Plan, ResourceType.Plan, true);

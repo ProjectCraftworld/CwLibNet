@@ -1,12 +1,9 @@
-using CwLibNet.IO;
+namespace CwLibNet.Enums;
 
-namespace CwLibNet.Enums
+public enum SwitchKeyType
 {
-    public enum SwitchKeyType
-    {
-        // MAGNETIC(0)
-        MAGNETIC,
-        // IMPACT(1)
-        IMPACT
-    }
+    // MAGNETIC(0)
+    MAGNETIC,
+    // IMPACT(1)
+    IMPACT
 }

@@ -27,11 +27,11 @@ public class UserCreatedDetails: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         if (Name != null)
-            size += (Name.Length * 2);
+            size += Name.Length * 2;
         if (Description != null)
-            size += (Description.Length * 2);
+            size += Description.Length * 2;
         return size;
     }
 

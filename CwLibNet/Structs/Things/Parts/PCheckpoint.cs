@@ -3,7 +3,6 @@ using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Types;
 using CwLibNet.Types.Data;
-using CwLibNet.Types.Things;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -66,9 +65,9 @@ public class PCheckpoint: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        Revision revision = serializer.GetRevision();
-        int version = revision.GetVersion();
-        int subVersion = revision.GetSubVersion();
+        var revision = serializer.GetRevision();
+        var version = revision.GetVersion();
+        var subVersion = revision.GetSubVersion();
 
         if (subVersion > 0x101) ActiveFlags = serializer.I8(ActiveFlags);
         else
@@ -76,7 +75,7 @@ public class PCheckpoint: ISerializable
             if (serializer.IsWriting())
                 serializer.GetOutput().Boole((ActiveFlags & 0xf) != 0);
             else
-                ActiveFlags = (byte)(serializer.GetInput().Boole() ? (0xf) : ((byte) 0));
+                ActiveFlags = (byte)(serializer.GetInput().Boole() ? 0xf : (byte) 0);
         }
 
         ActivationFrame = serializer.I32(ActivationFrame);
@@ -107,7 +106,7 @@ public class PCheckpoint: ISerializable
         if (version >= 0x2ae && subVersion < 0x100)
             TeamFilter = serializer.I32(TeamFilter);
 
-        if (subVersion >= 0x1 && subVersion < 0x127)
+        if (subVersion is >= 0x1 and < 0x127)
             serializer.U8(0); // persistPoint
 
         if (subVersion >= 0x88)
@@ -138,7 +137,7 @@ public class PCheckpoint: ISerializable
         if (subVersion >= 0xd5)
             LinkVisibleOnPlanet = serializer.Bool(LinkVisibleOnPlanet);
 
-        if (subVersion >= 0x108 && subVersion < 0x129)
+        if (subVersion is >= 0x108 and < 0x129)
             serializer.U8(0);
 
         if (subVersion >= 0xcb)
@@ -154,7 +153,7 @@ public class PCheckpoint: ISerializable
             TeamFlags = serializer.I32(TeamFlags);
         }
 
-        if (revision.Has(Branch.Double11, (int)Revisions.D1CheckpointPlayAudio) || subVersion >= 0x15a)
+        if (revision.Has(Branch.Double11, (int)Revisions.D1_CHECKPOINT_PLAY_AUDIO) || subVersion >= 0x15a)
             EnableAudio = serializer.Bool(EnableAudio);
 
         if (subVersion >= 0x191)
@@ -173,10 +172,10 @@ public class PCheckpoint: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = BASE_ALLOCATION_SIZE;
-        if (SpawningList != null) size += (SpawningList.Length * 4);
-        if (Name != null) size += (Name.Length * 2);
-        if (Unk2 != null) size += (Unk2.Length * 2);
+        var size = BASE_ALLOCATION_SIZE;
+        if (SpawningList != null) size += SpawningList.Length * 4;
+        if (Name != null) size += Name.Length * 2;
+        if (Unk2 != null) size += Unk2.Length * 2;
         return size;
     }
 }

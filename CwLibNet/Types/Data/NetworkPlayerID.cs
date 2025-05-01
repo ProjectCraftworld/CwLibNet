@@ -5,17 +5,17 @@ namespace CwLibNet.Types.Data;
 
 public class NetworkPlayerID: ISerializable
 {
-    public const int BaseAllocationSize = NetworkOnlineID.BASE_ALLOCATION_SIZE + 0x10;
+    public const int BaseAllocationSize = NetworkOnlineId.BaseAllocationSize + 0x10;
 
-    private NetworkOnlineID handle = new NetworkOnlineID();
+    private NetworkOnlineId handle = new();
     private byte[]? opt = new byte[8];
     private byte[]? reserved = new byte[8];
 
     public NetworkPlayerID() { }
 
-    public NetworkPlayerID(String psid)
+    public NetworkPlayerID(string psid)
     {
-        handle = new NetworkOnlineID(psid);
+        handle = new NetworkOnlineId(psid);
     }
 
     
@@ -23,7 +23,7 @@ public class NetworkPlayerID: ISerializable
     {
         handle = serializer.Struct(handle);
 
-        bool lengthPrefixed = serializer.GetRevision().GetVersion() < 0x234;
+        var lengthPrefixed = serializer.GetRevision().GetVersion() < 0x234;
 
         if (lengthPrefixed) serializer.I32(8);
         opt = serializer.Bytes(opt, 8);
@@ -32,7 +32,7 @@ public class NetworkPlayerID: ISerializable
         reserved = serializer.Bytes(reserved, 8);
     }
 
-    public NetworkOnlineID GetHandle()
+    public NetworkOnlineId GetHandle()
     {
         return handle;
     }
@@ -47,15 +47,15 @@ public class NetworkPlayerID: ISerializable
     
     public NetworkPlayerID Clone()
     {
-        NetworkPlayerID id = new NetworkPlayerID();
-        id.handle = new NetworkOnlineID(id.handle.ToString());
+        var id = new NetworkPlayerID();
+        id.handle = new NetworkOnlineId(id.handle.ToString());
         id.opt = (byte[])opt.Clone();
         id.reserved = (byte[])reserved.Clone();
         return id;
     }
 
     
-    public override bool Equals(Object? other)
+    public override bool Equals(object? other)
     {
         if (other == this) return true;
         if (!(other is NetworkPlayerID otherId)) return false;
@@ -63,7 +63,7 @@ public class NetworkPlayerID: ISerializable
     }
 
     
-    public override String ToString()
+    public override string ToString()
     {
         return handle.ToString();
     }

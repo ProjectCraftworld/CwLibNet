@@ -6,10 +6,10 @@ using CwLibNet.Types.Data;
 
 namespace CwLibNet.Types.Databases;
 
-public class FileDb: IEnumerable<FileDBRow>
+public class FileDb: IEnumerable<FileDbRow>
 {
     private const int DefaultCapacity = 10;
-    public bool HasChanges = false;
+    public bool HasChanges;
 
     /**
      * Minimum set of GUIDs not used by any of the LittleBigPlanet games.
@@ -17,28 +17,28 @@ public class FileDb: IEnumerable<FileDBRow>
     private const long MinSafeGuid = 0x00180000;
 
     private int revision;
-    protected List<FileDBRow> Entries;
+    protected List<FileDbRow> Entries;
     public readonly DatabaseType Type;
-    private String? file;
+    private string? file;
 
 
-    protected Dictionary<long, FileDBRow> Lookup;
+    protected Dictionary<long, FileDbRow> Lookup;
     
-    protected FileDb(String? file, DatabaseType type, int revision)
+    protected FileDb(string? file, DatabaseType type, int revision)
     {
         this.file = file;
         Type = type;
         this.revision = revision;
-        Entries = new List<FileDBRow>(DefaultCapacity);
-        Lookup = new Dictionary<long, FileDBRow>(DefaultCapacity);
+        Entries = new List<FileDbRow>(DefaultCapacity);
+        Lookup = new Dictionary<long, FileDbRow>(DefaultCapacity);
     }
     
-    protected FileDb(String? file, DatabaseType type)
+    protected FileDb(string? file, DatabaseType type)
     {
         this.file = file;
         Type = type;
-        Entries = new List<FileDBRow>(DefaultCapacity);
-        Lookup = new Dictionary<long, FileDBRow>(DefaultCapacity);
+        Entries = new List<FileDbRow>(DefaultCapacity);
+        Lookup = new Dictionary<long, FileDbRow>(DefaultCapacity);
     }
 
     
@@ -48,11 +48,11 @@ public class FileDb: IEnumerable<FileDBRow>
         if (capacity < 0)
             throw new ArgumentException("Cannot allocate entry array with negative " +
                                         "count!");
-        Entries = new List<FileDBRow>(capacity);
-        Lookup = new Dictionary<long, FileDBRow>(capacity);
+        Entries = new List<FileDbRow>(capacity);
+        Lookup = new Dictionary<long, FileDbRow>(capacity);
     }
 
-    public FileDb(String file): this(file, DatabaseType.FILE_DATABASE)
+    public FileDb(string file): this(file, DatabaseType.FILE_DATABASE)
     {
         Process(new MemoryInputStream(file));
     }
@@ -62,18 +62,18 @@ public class FileDb: IEnumerable<FileDBRow>
     protected void Process(MemoryInputStream stream)
     {
         revision = stream.I32();
-        bool isLbp3 = (revision >> 0x10) >= 0x148;
-        int count = stream.I32();
-        Entries = new List<FileDBRow>(count);
-        Lookup = new Dictionary<long, FileDBRow>(count);
+        var isLbp3 = revision >> 0x10 >= 0x148;
+        var count = stream.I32();
+        Entries = new List<FileDbRow>(count);
+        Lookup = new Dictionary<long, FileDbRow>(count);
 
-        for (int i = 0; i < count; ++i)
+        for (var i = 0; i < count; ++i)
         {
-            String path = stream.Str(isLbp3 ? stream.I16() : stream.I32());
-            long timestamp = isLbp3 ? stream.U32() : stream.S64();
-            long size = stream.U32();
-            SHA1 sha1 = stream.Sha1();
-            GUID guid = stream.Guid()!.Value;
+            var path = stream.Str(isLbp3 ? stream.I16() : stream.I32());
+            var timestamp = isLbp3 ? stream.U32() : stream.S64();
+            var size = stream.U32();
+            var sha1 = stream.Sha1();
+            var guid = stream.Guid()!.Value;
 
             // If a GUID is duplicated, skip it
             if (Lookup.ContainsKey(guid.Value))
@@ -83,11 +83,11 @@ public class FileDb: IEnumerable<FileDBRow>
                 only the extensions, so we'll use the hash of the resource in place of a name. */
             if (path.StartsWith("."))
             {
-                path = String.Format("data/{0}{1}{2}",
+                path = string.Format("data/{0}{1}{2}",
                     GetFolderFromExtension(path), sha1, path);
             }
 
-            FileDBRow entry = new FileDBRow(path, timestamp, size, sha1, guid);
+            var entry = new FileDbRow(path, timestamp, size, sha1, guid);
 
             Entries.Add(entry);
             Lookup.Add(guid.Value, entry);
@@ -104,22 +104,22 @@ public class FileDb: IEnumerable<FileDBRow>
         return Exists(guid.Value);
     }
 
-    public FileDBRow? Get(SHA1 sha1)
+    public FileDbRow? Get(SHA1 sha1)
     {
         return Entries.FirstOrDefault(row => row.Sha1.Equals(sha1));
     }
     
-    public FileDBRow? Get(long guid)
+    public FileDbRow? Get(long guid)
     {
         return Lookup.GetValueOrDefault(guid);
     }
     
-    public FileDBRow? Get(GUID guid)
+    public FileDbRow? Get(GUID guid)
     {
         return Get(guid.Value);
     }
     
-    public FileDBRow? Get(String path)
+    public FileDbRow? Get(string path)
     {
         if (path == null)
             throw new NullReferenceException("Can't find null path!");
@@ -127,27 +127,27 @@ public class FileDb: IEnumerable<FileDBRow>
         return Entries.FirstOrDefault(entry => entry.Path.ToLower().Contains(path));
     }
     
-    public FileDBRow NewFileDbRow(String path, GUID guid)
+    public FileDbRow NewFileDbRow(string path, GUID guid)
     {
         if (Lookup.ContainsKey(guid.Value))
             throw new ArgumentException("GUID already exists in database!");
-        FileDBRow entry = new FileDBRow( path, 0, 0, new SHA1(), guid);
-        entry.updateDate();
+        var entry = new FileDbRow( path, 0, 0, new SHA1(), guid);
+        entry.UpdateDate();
         Entries.Add(entry);
         Lookup.Add(guid.Value, entry);
         return entry;
     }
     
-    public FileDBRow NewFileDbRow(FileDBRow entry)
+    public FileDbRow NewFileDbRow(FileDbRow entry)
     {
-        FileDBRow newEntry = NewFileDbRow(entry.Path, entry.GetGuid());
-        newEntry.setDetails(entry);
+        var newEntry = NewFileDbRow(entry.Path, entry.GetGuid());
+        newEntry.SetDetails(entry);
         newEntry.Date = entry.Date;
         newEntry.Key = entry.Key;
         return newEntry;
     }
     
-    public static String GetFolderFromExtension(String extension)
+    public static string GetFolderFromExtension(string extension)
     {
         switch (extension.ToLower())
         {
@@ -205,16 +205,16 @@ public class FileDb: IEnumerable<FileDBRow>
     
     public void Remove(FileEntry entry)
     {
-        Entries.Remove((FileDBRow)entry);
+        Entries.Remove((FileDbRow)entry);
         Lookup.Remove(((GUID)entry.Key).Value);
     }
     
     public void Patch(FileDb patch)
     {
-        foreach (FileDBRow entry in patch)
+        foreach (var entry in patch)
         {
             if (Exists(entry.GetGuid()))
-                Get(entry.GetGuid())!.setDetails(entry);
+                Get(entry.GetGuid())!.SetDetails(entry);
             else
                 NewFileDbRow(entry);
         }
@@ -222,7 +222,7 @@ public class FileDb: IEnumerable<FileDBRow>
     
     public GUID GetNextGuid()
     {
-        long lastGuid = MinSafeGuid;
+        var lastGuid = MinSafeGuid;
         while (Lookup.ContainsKey(lastGuid)) lastGuid++;
         return new GUID(lastGuid);
     }
@@ -237,19 +237,19 @@ public class FileDb: IEnumerable<FileDBRow>
         // Just figure the GUIDs should be in ascending order.
         Entries.Sort((l, r) => l.GetGuid().Value.CompareUnsigned(r.GetGuid().Value));
 
-        int pathSize = Entries
+        var pathSize = Entries
             .Select(e => e.Path.Length)
             .Aggregate(0, (total, element) => total + element);
 
-        bool isLbp3 = (revision >> 0x10) >= 0x148;
-        int baseEntrySize = (isLbp3) ? 0x22 : 0x28;
-        MemoryOutputStream stream =
-            new MemoryOutputStream(0x8 + (baseEntrySize * Entries.Count) + pathSize);
+        var isLbp3 = revision >> 0x10 >= 0x148;
+        var baseEntrySize = isLbp3 ? 0x22 : 0x28;
+        var stream =
+            new MemoryOutputStream(0x8 + baseEntrySize * Entries.Count + pathSize);
         stream.I32(revision);
         stream.I32(Entries.Count);
-        foreach (FileDBRow entry in Entries)
+        foreach (var entry in Entries)
         {
-            int length = entry.Path.Length;
+            var length = entry.Path.Length;
             if (isLbp3)
                 stream.I16((short) length);
             else
@@ -267,14 +267,14 @@ public class FileDb: IEnumerable<FileDBRow>
         return stream.GetBuffer();
     }
 
-    public void Save(String? file = null)
+    public void Save(string? file = null)
     {
         file ??= this.file;
         File.WriteAllBytes(file!, Build());
         HasChanges = false;
     }
     
-    public IEnumerator<FileDBRow> GetEnumerator()
+    public IEnumerator<FileDbRow> GetEnumerator()
     {
         return Entries.GetEnumerator();
     }

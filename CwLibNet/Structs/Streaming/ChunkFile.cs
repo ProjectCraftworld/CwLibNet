@@ -9,7 +9,7 @@ namespace CwLibNet.Structs.Streaming;
 
 public class ChunkFile: ISerializable
 {
-    public const int BASE_ALLOCATION_SIZE = 0x100;
+    public const int BaseAllocationSize = 0x100;
 
     public SHA1 ChunkHash;
     public List<StreamingCheckpoint> CheckpointList = [];
@@ -24,12 +24,12 @@ public class ChunkFile: ISerializable
     public bool DeleteOtherThings;
     public bool AntiStreaming;
     public List<GUID?> Guids = [];
-    public List<SHA1> Hashes = [];
+    public List<SHA1>? Hashes = [];
 
     
     public void Serialize(Serializer serializer)
     {
-        int subVersion = serializer.GetRevision().GetSubVersion();
+        var subVersion = serializer.GetRevision().GetSubVersion();
 
         switch (subVersion)
         {
@@ -77,11 +77,11 @@ public class ChunkFile: ISerializable
 
         if (subVersion >= 0xde)
         {
-            int numItems = serializer.I32(UserResources != null ?
+            var numItems = serializer.I32(UserResources != null ?
                 UserResources.Count : 0);
             if (serializer.IsWriting())
             {
-                foreach (ResourceDescriptor? descriptor in UserResources)
+                foreach (var descriptor in UserResources)
                     serializer.Resource(descriptor, descriptor.GetResourceType(), true, false,
                         true);
             }
@@ -109,14 +109,13 @@ public class ChunkFile: ISerializable
         if (subVersion > 0x133)
             AntiStreaming = serializer.Bool(AntiStreaming);
 
-        if (subVersion > 0x169)
+        if (subVersion <= 0x169) return;
         {
-
             {
-                int numItems = serializer.I32(Guids != null ? Guids.Count : 0);
+                var numItems = serializer.I32(Guids != null ? Guids.Count : 0);
                 if (serializer.IsWriting())
                 {
-                    foreach (var guid in Guids)
+                    foreach (var guid in Guids!)
                         serializer.GetOutput().Guid(guid);
                 }
                 else
@@ -128,17 +127,17 @@ public class ChunkFile: ISerializable
             }
 
             {
-                int numItems = serializer.I32(Hashes != null ? Hashes.Count : 0);
+                var numItems = serializer.I32(Hashes?.Count ?? 0);
                 if (serializer.IsWriting())
                 {
-                    foreach (SHA1 sha1 in Hashes)
+                    foreach (var sha1 in Hashes!)
                         serializer.GetOutput().Sha1(sha1);
                 }
                 else
                 {
-                    Hashes = new(numItems);
-                    for (int i = 0; i < numItems; ++i)
-                        Hashes.Add(serializer.GetInput().Sha1());
+                    Hashes = new List<SHA1>(numItems);
+                    for (var i = 0; i < numItems; ++i)
+                        Hashes.Add(serializer.GetInput().Sha1()!);
                 }
             }
         }
@@ -147,7 +146,7 @@ public class ChunkFile: ISerializable
     
     public int GetAllocatedSize()
     {
-        return BASE_ALLOCATION_SIZE;
+        return BaseAllocationSize;
     }
 
 

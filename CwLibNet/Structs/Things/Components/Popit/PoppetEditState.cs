@@ -1,44 +1,43 @@
 using System.Numerics;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.Types.Things;
 
 namespace CwLibNet.Structs.Things.Components.Popit;
 
 public class PoppetEditState: ISerializable
 {
-    public static int BASE_ALLOCATION_SIZE = 0x20;
+    public static int BaseAllocationSize = 0x20;
 
-    public ObjectState[] editObjectList;
+    public ObjectState[] EditObjectList;
 
-    public int backZ, frontZ;
+    public int BackZ, FrontZ;
 
-    public Thing[] frozenList;
-    public float lerpFactor;
-    public StickerInfo sticker = new StickerInfo();
-    public DecorationInfo decoration = new DecorationInfo();
+    public Thing[] FrozenList;
+    public float LerpFactor;
+    public StickerInfo Sticker = new();
+    public DecorationInfo Decoration = new();
 
-    public Thing cursorDummy;
-    public Thing placementDummy;
-    public PlacementBodyState[] placementBodyState;
+    public Thing CursorDummy;
+    public Thing PlacementDummy;
+    public PlacementBodyState[] PlacementBodyState;
 
-    public Thing[] pauseList;
+    public Thing[] PauseList;
 
-    public Vector3 vertexCursor;
+    public Vector3 VertexCursor;
 
-    public float decorativeThingAngle;
+    public float DecorativeThingAngle;
 
-    public Thing switchConnectorRef, switchConnector;
+    public Thing SwitchConnectorRef, SwitchConnector;
 
-    public float decorativeThingScale;
+    public float DecorativeThingScale;
 
-    public PoppetShapeOverride overrideShape = new PoppetShapeOverride();
-    public PoppetMaterialOverride overrideMaterial = new PoppetMaterialOverride();
+    public PoppetShapeOverride OverrideShape = new();
+    public PoppetMaterialOverride OverrideMaterial = new();
 
-    public int lastGridMoveFrame;
-    public int lastGridRotateFrame, lastGridScaleFrame;
+    public int LastGridMoveFrame;
+    public int LastGridRotateFrame, LastGridScaleFrame;
 
-    public int switchConnectorUID;
+    public int SwitchConnectorUid;
     
     public void Serialize(Serializer serializer)
     {

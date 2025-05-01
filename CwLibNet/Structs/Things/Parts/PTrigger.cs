@@ -1,9 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
 using CwLibNet.Types;
-using CwLibNet.Types.Things;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -37,9 +35,9 @@ public class PTrigger: ISerializable
 
     public void Serialize(Serializer serializer)
     {
-        Revision revision = serializer.GetRevision();
-        int version = revision.GetVersion();
-        int subVersion = revision.GetSubVersion();
+        var revision = serializer.GetRevision();
+        var version = revision.GetVersion();
+        var subVersion = revision.GetSubVersion();
 
 
         TriggerType = serializer.Enum8(TriggerType);
@@ -48,11 +46,11 @@ public class PTrigger: ISerializable
         {
             if (serializer.IsWriting())
             {
-                MemoryOutputStream stream = serializer.GetOutput();
-                stream.I32(InThings != null ? InThings.Length : 0);
+                var stream = serializer.GetOutput();
+                stream.I32(InThings?.Length ?? 0);
                 if (InThings != null)
                 {
-                    foreach (Thing thing in InThings)
+                    foreach (var thing in InThings)
                     {
                         serializer.Thing(thing);
                         stream.S32(0);
@@ -61,11 +59,11 @@ public class PTrigger: ISerializable
             }
             else
             {
-                MemoryInputStream stream = serializer.GetInput();
+                var stream = serializer.GetInput();
                 InThings = new Thing[stream.I32()];
-                for (int i = 0; i < InThings.Length; ++i)
+                for (var i = 0; i < InThings.Length; ++i)
                 {
-                    InThings[i] = serializer.Thing(null);
+                    InThings[i] = serializer.Thing(null)!;
                     stream.S32(); // mThingAction
                 }
             }
@@ -100,11 +98,11 @@ public class PTrigger: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         // We'll actually calculate the size of these Things
         // in the Thing class to avoid circular dependencies.
         if (InThings != null)
-            size += (InThings.Length) * Thing.BaseAllocationSize;
+            size += InThings.Length * Thing.BaseAllocationSize;
         return size;
     }
 }

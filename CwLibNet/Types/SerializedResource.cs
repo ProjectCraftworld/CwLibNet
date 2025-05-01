@@ -6,8 +6,8 @@ using CwLibNet.IO.Streams;
 using CwLibNet.Resources;
 using CwLibNet.Structs.StaticMesh;
 using CwLibNet.Structs.Texture;
+using CwLibNet.Structs.Things;
 using CwLibNet.Types.Data;
-using CwLibNet.Types.Things;
 using CwLibNet.Util;
 using Xxtea;
 
@@ -53,7 +53,7 @@ public class SerializedResource
     /**
      * Decompressed data from this resource.
      */
-    private byte[]? data = null;
+    private byte[]? data;
 
     /**
      * Resources this resource depends on.
@@ -65,9 +65,9 @@ public class SerializedResource
      *
      * @param path Path to read resource from
      */
-    public SerializedResource(String path)
+    public SerializedResource(string path)
     {
-        process(new MemoryInputStream(path));
+        Process(new MemoryInputStream(path));
     }
 
     /**
@@ -77,7 +77,7 @@ public class SerializedResource
      */
     public SerializedResource(byte[]? data)
     {
-        process(new MemoryInputStream(data));
+        Process(new MemoryInputStream(data));
     }
 
     /**
@@ -85,7 +85,7 @@ public class SerializedResource
      *
      * @param stream Memory input stream to read from
      */
-    private void process(MemoryInputStream stream)
+    private void Process(MemoryInputStream stream)
     {
         if (stream == null || stream.GetLength() < 0xb) return;
         type = ResourceType.FromMagic(stream.Str(3));
@@ -96,22 +96,22 @@ public class SerializedResource
         {
             case "b":
             case "e":
-                int head = stream.I32();
-                short branchID = 0, branchRevision = 0;
-                int dependencyTableOffset = -1;
+                var head = stream.I32();
+                short branchId = 0, branchRevision = 0;
+                var dependencyTableOffset = -1;
                 if (head >= 0x109)
                 {
-                    dependencyTableOffset = processDependencies(stream);
+                    dependencyTableOffset = ProcessDependencies(stream);
                     if (head >= 0x189)
                     {
                         if (type.Value != ResourceType.StaticMesh.Value)
                         {
                             if (head >= 0x271)
                             {
-                                branchID = stream.I16();
+                                branchId = stream.I16();
                                 branchRevision = stream.I16();
                             }
-                            if (head >= 0x297 || (head == Branch.Leerdammer.Head && branchID == Branch.Leerdammer.Id) && branchRevision >= (int)Revisions.LdResources)
+                            if (head >= 0x297 || head == Branch.Leerdammer.Head && branchId == Branch.Leerdammer.Id && branchRevision >= (int)Revisions.LD_RESOURCES)
                                 compressionFlags = stream.I8();
                             isCompressed = stream.Boole();
                         }
@@ -125,14 +125,14 @@ public class SerializedResource
                 {
                     int size = stream.I32(), padding = 0;
                     if (size % 4 != 0)
-                        padding = 4 - (size % 4);
+                        padding = 4 - size % 4;
                     stream =
                         new MemoryInputStream(XXTEA.Decrypt(stream.Bytes(size + padding),
                             XXTEA.TEA_KEY()));
                     stream.Seek(padding);
                 }
 
-                revision = new Revision(head, branchID, branchRevision);
+                revision = new Revision(head, branchId, branchRevision);
 
                 if (isCompressed)
                     data = Compressor.DecompressData(stream, dependencyTableOffset);
@@ -161,10 +161,10 @@ public class SerializedResource
      *
      * @return Data deserializer from current resource data
      */
-    public Serializer getSerializer()
+    public Serializer GetSerializer()
     {
-        Serializer serializer = new Serializer(data, revision, compressionFlags);
-        foreach (ResourceDescriptor descriptor in dependencies)
+        var serializer = new Serializer(data, revision, compressionFlags);
+        foreach (var descriptor in dependencies)
             serializer.AddDependency(descriptor);
         return serializer;
     }
@@ -174,7 +174,7 @@ public class SerializedResource
      *
      * @return Data stream from current resource data
      */
-    public MemoryInputStream getStream()
+    public MemoryInputStream GetStream()
     {
         return new MemoryInputStream(data, compressionFlags);
     }
@@ -182,13 +182,13 @@ public class SerializedResource
     /**
      * Deserializes a resource from this instance.
      *
-     * @param <T>   Resource type that implements Serializable
+     * @param T   Resource type that implements Serializable
      * @param clazz Resource class reference that implements Serializable
      * @return Deserialized resource
      */
-    public T loadResource<T>() where T : ISerializable
+    public T LoadResource<T>() where T : ISerializable
     {
-        Serializer serializer = getSerializer();
+        var serializer = GetSerializer();
         return serializer.Struct<T>(default);
     }
 
@@ -198,18 +198,17 @@ public class SerializedResource
      * @param stream Memory input stream to read from
      * @return The offset of the dependency table
      */
-    private int processDependencies(MemoryInputStream stream)
+    private int ProcessDependencies(MemoryInputStream stream)
     {
-        int dependencyTableOffset = stream.I32();
-        int originalOffset = stream.GetOffset();
+        var dependencyTableOffset = stream.I32();
+        var originalOffset = stream.GetOffset();
         stream.Seek(dependencyTableOffset, SeekMode.Begin);
 
-        int count = stream.I32();
+        var count = stream.I32();
         dependencies = new HashSet<ResourceDescriptor>(count);
-        for (int i = 0; i < count; ++i)
+        for (var i = 0; i < count; ++i)
         {
-            ResourceDescriptor descriptor = null;
-            byte flags = stream.I8();
+            var flags = stream.I8();
 
             GUID? guid = null;
             SHA1? sha1 = null;
@@ -219,7 +218,7 @@ public class SerializedResource
             if ((flags & 1) != 0)
                 sha1 = stream.Sha1();
 
-            descriptor = new ResourceDescriptor(guid, sha1,
+            var descriptor = new ResourceDescriptor(guid, sha1,
                 ResourceType.FromType(stream.I32()));
             if (descriptor.IsValid())
                 dependencies.Add(descriptor);
@@ -236,13 +235,13 @@ public class SerializedResource
      * @param resource         Instance of compressible resource
      * @param revision         Revision of underlying resource stream.
      * @param compressionFlags Compression flags used during resource serialization
-     * @param preferCompressed Whether or not this resource should be compressed, if possible
+     * @param preferCompressed Whether this resource should be compressed, if possible
      * @return Resource container
      */
-    public static byte[]? compress(Resource resource, Revision revision, byte compressionFlags
+    public static byte[]? Compress(Resource resource, Revision revision, byte compressionFlags
         , bool preferCompressed)
     {
-        return compress(resource.Build(revision, compressionFlags),
+        return Compress(resource.Build(revision, compressionFlags),
             preferCompressed);
     }
 
@@ -254,9 +253,9 @@ public class SerializedResource
      * @param compressionFlags Compression flags used during resource serialization
      * @return Resource container
      */
-    public static byte[]? compress(Resource resource, Revision revision, byte compressionFlags)
+    public static byte[]? Compress(Resource resource, Revision revision, byte compressionFlags)
     {
-        return compress(resource.Build(revision, compressionFlags), true);
+        return Compress(resource.Build(revision, compressionFlags), true);
     }
 
     /**
@@ -265,36 +264,36 @@ public class SerializedResource
      * @param data Serialization data to wrap
      * @return Resource container
      */
-    public static byte[]? compress(SerializationData data)
+    public static byte[]? Compress(SerializationData data)
     {
-        return compress(data, true);
+        return Compress(data, true);
     }
 
-    public byte[]? compress(byte[]? data)
+    public byte[]? Compress(byte[]? data)
     {
-        return compress(
+        return Compress(
             new SerializationData(
                 data,
                 revision,
                 compressionFlags,
                 type,
                 method,
-                getDependencies()
+                GetDependencies()
             ),
             true
         );
     }
 
-    public byte[]? compress()
+    public byte[]? Compress()
     {
-        return compress(
+        return Compress(
             new SerializationData(
                 data,
                 revision,
                 compressionFlags,
                 type,
                 method,
-                getDependencies()
+                GetDependencies()
             ),
             true
         );
@@ -304,25 +303,25 @@ public class SerializedResource
      * Wraps a resource in a container, with optional compression.
      *
      * @param data             Serialization data to wrap
-     * @param preferCompressed Whether or not this resource should be compressed, if possible
+     * @param preferCompressed Whether this resource should be compressed, if possible
      * @return Resource container
      */
-    public static byte[]? compress(SerializationData data, bool preferCompressed)
+    public static byte[]? Compress(SerializationData data, bool preferCompressed)
     {
-        ResourceType? type = data.Type;
-        StaticMeshInfo meshInfo = data.StaticMeshInfo;
-        bool isStaticMesh = type.Value.Value == ResourceType.StaticMesh.Value;
+        var type = data.Type;
+        var meshInfo = data.StaticMeshInfo;
+        var isStaticMesh = type.Value.Value == ResourceType.StaticMesh.Value;
 
-        byte[]? buffer = data.Buffer;
+        var buffer = data.Buffer;
         ResourceDescriptor[]? dependencies = data.Dependencies;
 
-        int size = buffer.Length + 0x50;
+        var size = buffer.Length + 0x50;
         if (dependencies != null)
             size += dependencies.Length * 0x1c;
         if (data.TextureInfo != null) size += 0x24;
         else if (meshInfo != null) size += meshInfo.GetAllocatedSize();
 
-        MemoryOutputStream stream = new MemoryOutputStream(size);
+        var stream = new MemoryOutputStream(size);
 
         if (data.Method.GetValue() == SerializationType.TEXT.GetValue())
         {
@@ -346,11 +345,10 @@ public class SerializedResource
 
         stream.Str(type.Value.Header + data.Method.GetValue(), 4);
 
-        Revision? revision = data.Revision;
-        int head = revision.Value.Head;
+        var revision = data.Revision;
+        var head = revision!.Value.Head;
 
-        bool isCompressed = head < 0x189;
-        isCompressed = preferCompressed;
+        var isCompressed = preferCompressed;
 
         stream.I32(head);
         if (head >= 0x109 || isStaticMesh)
@@ -364,8 +362,8 @@ public class SerializedResource
                     stream.I16(revision.Value.BranchRevision);
                 }
 
-                if (head >= 0x297 || (revision.Value.Has(Branch.Leerdammer,
-                    (int)Revisions.LdResources)))
+                if (head >= 0x297 || revision.Value.Has(Branch.Leerdammer,
+                        (int)Revisions.LD_RESOURCES))
                     stream.I8(data.CompressionFlags.Value);
 
                 if (preferCompressed)
@@ -395,14 +393,14 @@ public class SerializedResource
         if (head >= 0x109 || isStaticMesh)
         {
             // Setting dependency table offset
-            int dependencyTableOffset = stream.GetOffset();
+            var dependencyTableOffset = stream.GetOffset();
             stream.Seek(8, SeekMode.Begin);
             stream.I32(dependencyTableOffset);
             stream.Seek(dependencyTableOffset, SeekMode.Begin);
 
             // Writing dependencies
             stream.I32(dependencies.Length);
-            foreach (ResourceDescriptor dependency in dependencies)
+            foreach (var dependency in dependencies)
             {
                 byte flags = 0;
 
@@ -429,41 +427,41 @@ public class SerializedResource
         return stream.GetBuffer();
     }
 
-    public static byte[]? changeRevision(byte[]? data, Revision revision)
+    public static byte[]? ChangeRevision(byte[]? data, Revision revision)
     {
-        int version = revision.GetVersion();
-        byte compressionFlags = CompressionFlags.USE_NO_COMPRESSION;
-        if (version >= 0x297 || (version == 0x272 && (revision.GetBranchRevision() == 0x4c44) && (revision.GetBranchRevision() > 1)))
+        var version = revision.GetVersion();
+        var compressionFlags = CompressionFlags.USE_NO_COMPRESSION;
+        if (version >= 0x297 || (version == 0x272 && revision.GetBranchRevision() == 0x4c44 && revision.GetBranchRevision() > 1))
             compressionFlags = CompressionFlags.USE_ALL_COMPRESSION;
 
-        Resource compressable = null;
+        Resource compressable;
         try
         {
-            SerializedResource resource = new SerializedResource(data);
-            Serializer serializer = resource.getSerializer();
+            var resource = new SerializedResource(data);
+            var serializer = resource.GetSerializer();
 //            Object _struct = serializer.Struct(null,
 //                resource.getResourceType().Compressable);
-            object? _struct = serializer.GetType().GetMethod("Struct")?.MakeGenericMethod(resource.getResourceType().Compressable).Invoke(serializer, null);
-            if (_struct is RPlan plan)
+            var @struct = serializer.GetType().GetMethod("Struct")?.MakeGenericMethod(resource.GetResourceType().Compressable).Invoke(serializer, null);
+            if (@struct is RPlan plan)
             {
-                Thing[]? things = null;
+                Thing[]? things;
                 try { things = plan.GetThings(); }
-                catch (Exception ex) { return null; }
+                catch (Exception) { return null; }
                 plan.Revision = revision;
                 plan.CompressionFlags = compressionFlags;
                 plan.SetThings(things);
             }
-            compressable = (Resource) _struct;
+            compressable = (Resource) @struct;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return null;
         }
 
-        return compress(compressable.Build(revision, compressionFlags));
+        return Compress(compressable.Build(revision, compressionFlags));
     }
 
-    public void replaceDependency(ResourceDescriptor oldDescriptor,
+    public void ReplaceDependency(ResourceDescriptor oldDescriptor,
                                   ResourceDescriptor newDescriptor)
     {
         if (oldDescriptor.Equals(newDescriptor)) return;
@@ -471,14 +469,14 @@ public class SerializedResource
 
         if (this.type.Value != ResourceType.StaticMesh.Value)
         {
-            ResourceType type = oldDescriptor.GetResourceType();
-            bool isFSB = type.Equals(ResourceType.Filename);
+            var type = oldDescriptor.GetResourceType();
+            var isFsb = type.Equals(ResourceType.Filename);
             byte[]? oldDescBuffer;
             byte[]? newDescBuffer;
 
             // Music dependencies are actually the GUID dependencies of a script,
             // so they don't have the same structure for referencing.
-            if (type.Equals(ResourceType.MusicSettings) || type.Equals(ResourceType.FileOfBytes) || type.Equals(ResourceType.Sample) || isFSB)
+            if (type.Equals(ResourceType.MusicSettings) || type.Equals(ResourceType.FileOfBytes) || type.Equals(ResourceType.Sample) || isFsb)
             {
                 if (oldDescriptor.IsGUID() && newDescriptor.IsGUID())
                 {
@@ -502,10 +500,10 @@ public class SerializedResource
 
             if (this.type.Value == ResourceType.Plan.Value)
             {
-                RPlan plan = loadResource<RPlan>();
+                var plan = LoadResource<RPlan>();
                 plan.ThingData = Bytes.Replace(plan.ThingData, oldDescBuffer,
                     newDescBuffer);
-                if (isFSB && plan.InventoryData != null)
+                if (isFsb && plan.InventoryData != null)
                 {
                     if (oldDescriptor.GetGUID().Equals(plan.InventoryData.HighlightSound))
                         plan.InventoryData.HighlightSound = newDescriptor.GetGUID();
@@ -517,15 +515,15 @@ public class SerializedResource
         }
         else
         {
-            if (meshInfo.fallmap.Equals(oldDescriptor))
-                meshInfo.fallmap = newDescriptor;
-            if (meshInfo.lightmap.Equals(oldDescriptor))
-                meshInfo.lightmap = newDescriptor;
-            if (meshInfo.risemap.Equals(oldDescriptor))
-                meshInfo.risemap = newDescriptor;
-            foreach (StaticPrimitive primitive in meshInfo.primitives)
-                if (primitive.gmat.Equals(oldDescriptor))
-                    primitive.gmat = newDescriptor;
+            if (meshInfo.Fallmap.Equals(oldDescriptor))
+                meshInfo.Fallmap = newDescriptor;
+            if (meshInfo.Lightmap.Equals(oldDescriptor))
+                meshInfo.Lightmap = newDescriptor;
+            if (meshInfo.Risemap.Equals(oldDescriptor))
+                meshInfo.Risemap = newDescriptor;
+            foreach (var primitive in meshInfo.Primitives)
+                if (primitive.Gmat.Equals(oldDescriptor))
+                    primitive.Gmat = newDescriptor;
         }
 
         dependencies.Remove(oldDescriptor);
@@ -533,37 +531,37 @@ public class SerializedResource
             dependencies.Add(newDescriptor);
     }
 
-    public ResourceDescriptor[] getDependencies()
+    public ResourceDescriptor[] GetDependencies()
     {
         return dependencies.ToArray();
     }
 
-    public byte getCompressionFlags()
+    public byte GetCompressionFlags()
     {
         return compressionFlags;
     }
 
-    public Revision getRevision()
+    public Revision GetRevision()
     {
         return revision;
     }
 
-    public ResourceType getResourceType()
+    public ResourceType GetResourceType()
     {
         return type;
     }
 
-    public SerializationType getSerializationType()
+    public SerializationType GetSerializationType()
     {
         return method;
     }
 
-    public CellGcmTexture getTextureInfo()
+    public CellGcmTexture GetTextureInfo()
     {
         return textureInfo;
     }
 
-    public StaticMeshInfo getMeshInfo()
+    public StaticMeshInfo GetMeshInfo()
     {
         return meshInfo;
     }

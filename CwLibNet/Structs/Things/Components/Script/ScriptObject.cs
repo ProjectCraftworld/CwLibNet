@@ -4,7 +4,6 @@ using CwLibNet.EX;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
-using CwLibNet.Types.Things;
 
 namespace CwLibNet.Structs.Things.Components.Script;
 
@@ -25,15 +24,16 @@ public class ScriptObject: ISerializable
     public void Serialize(Serializer serializer)
     {
         Type = serializer.Enum32(Type);
-        if (Type == ScriptObjectType.NULL) return;
-
-        if (Type == ScriptObjectType.INSTANCE)
+        switch (Type)
         {
-            Value = serializer.Reference((ScriptInstance) Value);
-            return;
+            case ScriptObjectType.NULL:
+                return;
+            case ScriptObjectType.INSTANCE:
+                Value = serializer.Reference((ScriptInstance) Value);
+                return;
         }
 
-        int reference = 0;
+        var reference = 0;
         if (serializer.IsWriting())
         {
             if (Value != null)
@@ -45,7 +45,7 @@ public class ScriptObject: ISerializable
 
         if (!serializer.IsWriting())
         {
-            object? value = serializer.GetPointer<object>(reference);
+            var value = serializer.GetPointer<object>(reference);
             if (value != null)
             {
                 Value = value;
@@ -79,9 +79,9 @@ public class ScriptObject: ISerializable
                 break;
             case ScriptObjectType.RESOURCE:
             {
-                ResourceDescriptor descriptor = (ResourceDescriptor) Value;
+                var descriptor = (ResourceDescriptor) Value;
 
-                ResourceType type = ResourceType.Invalid;
+                var type = ResourceType.Invalid;
                 if (serializer.IsWriting()) type = descriptor.GetResourceType();
                 type = ResourceType.FromType(serializer.I32(type.Value));
 
@@ -113,7 +113,7 @@ public class ScriptObject: ISerializable
                     serializer.SetPointer(reference, array);
                 }
                 else serializer.GetOutput().I32(array.Length);
-                for (int i = 0; i < array.Length; ++i)
+                for (var i = 0; i < array.Length; ++i)
                     array[i] = serializer.Struct(array[i]);
                 return;
             }

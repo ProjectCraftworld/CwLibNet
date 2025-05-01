@@ -37,7 +37,7 @@ public class ColourBlock {
 
 	private ColourBlock() {}
 
-	static int GammaColour(float colour, float scale) {
+	private static int GammaColour(float colour, float scale) {
 		//return round(scale * (float)Math.pow(colour, 1.0 / 2.2));
 		return (int)Math.Round(scale * colour);
 	}
@@ -78,13 +78,20 @@ public class ColourBlock {
 		} else {
 			// swap a and b
 			(a, b) = (b, a);
-			for ( var i = 0; i < 16; ++i ) {
-				if ( indices[i] == 0 )
-					_remapped[i] = 1;
-				else if ( indices[i] == 1 )
-					_remapped[i] = 0;
-				else
-					_remapped[i] = indices[i];
+			for ( var i = 0; i < 16; ++i )
+			{
+				switch (indices[i])
+				{
+					case 0:
+						_remapped[i] = 1;
+						break;
+					case 1:
+						_remapped[i] = 0;
+						break;
+					default:
+						_remapped[i] = indices[i];
+						break;
+				}
 			}
 		}
 
@@ -139,14 +146,14 @@ public class ColourBlock {
 
 		// fill in alpha for the intermediate values
 		codes[8 + 3] = 255;
-		codes[12 + 3] = (isDxt1 && a <= b) ? 0 : 255;
+		codes[12 + 3] = isDxt1 && a <= b ? 0 : 255;
 
 		// unpack the indices
 		var indices = _indices;
 
 		for ( var i = 0; i < 4; ++i ) {
 			var index = 4 * i;
-			var packed = (block[offset + 4 + i] & 0xFF);
+			var packed = block[offset + 4 + i] & 0xFF;
 
 			indices[index + 0] = packed & 0x3;
 			indices[index + 1] = (packed >> 2) & 0x3;

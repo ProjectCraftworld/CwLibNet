@@ -22,7 +22,7 @@ public class ResourceDescriptor
     {
         if (Strings.IsSHA1(resource))
         {
-            SHA1 sha1 = Strings.GetSHA1(resource)!;
+            var sha1 = Strings.GetSHA1(resource)!;
             this.sha1 = sha1.Equals(SHA1.EMPTY) ? null : sha1;
             guid = null;
         }

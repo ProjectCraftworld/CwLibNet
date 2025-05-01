@@ -6,7 +6,7 @@ namespace CwLibNet.Structs.Inventory;
 
 public class PhotoUser: ISerializable
 {
-    public const int BASE_ALLOCATION_SIZE = 0x30;
+    public const int BaseAllocationSize = 0x30;
 
     public string? PSID;
     public string? User;
@@ -32,9 +32,9 @@ public class PhotoUser: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = BASE_ALLOCATION_SIZE;
+        var size = BaseAllocationSize;
         if (User != null)
-            size += (User.Length * 2);
+            size += User.Length * 2;
         return size;
     }
 }
