@@ -16,7 +16,7 @@ public struct ResourceType
         GuidSubstitution = new("GSB", 6, "guid_subst/", ".gsub"),
         GfxMaterial = new("GMT", 7, typeof(RGfxMaterial), "gfx_materials/", ".gmat"),
         SpuElf = new(null, 8, "spu/", ".sbu"),
-        Level = new("LVL", 9, /* typeof(RLevel), */"levels/", ".bin"),
+        Level = new("LVL", 9, typeof(RLevel), "levels/", ".bin"),
         Filename =
             new(null, 10, "text/",
                 ".txt"), // Could be anything really, but generally will refer to either FSB or BIK

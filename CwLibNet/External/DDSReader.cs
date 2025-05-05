@@ -866,10 +866,10 @@ public sealed class DdsReader
         public int AlphaShift;
         public Order(int redShift, int greenShift, int blueShift, int alphaShift)
         {
-            this.RedShift = redShift;
-            this.GreenShift = greenShift;
-            this.BlueShift = blueShift;
-            this.AlphaShift = alphaShift;
+            RedShift = redShift;
+            GreenShift = greenShift;
+            BlueShift = blueShift;
+            AlphaShift = alphaShift;
         }
     }
 }

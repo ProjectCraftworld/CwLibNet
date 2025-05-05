@@ -68,7 +68,7 @@ public class InventoryItemDetails: ISerializable
 
     public InventoryItemDetails() { }
 
-    public InventoryItemDetails(PMetadata metadata)
+    public InventoryItemDetails(PMetadata? metadata)
     {
         // if (metadata.nameTranslationTag != null && metadata.nameTranslationTag.endsWith
         // ("_NAME"))

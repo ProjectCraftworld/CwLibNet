@@ -25,7 +25,7 @@ public class RPlan : Resource
         ThingData = [];
     }
 
-    public RPlan(Revision revision, byte compressionFlags, Thing thing, PMetadata metadata)
+    public RPlan(Revision revision, byte compressionFlags, Thing thing, PMetadata? metadata)
     {
         Revision = revision;
         CompressionFlags = compressionFlags;
@@ -34,7 +34,7 @@ public class RPlan : Resource
         ThingData = [];
     }
 
-    public RPlan(Revision revision, byte compressionFlags, Thing[]? things, PMetadata metadata)
+    public RPlan(Revision revision, byte compressionFlags, Thing[]? things, PMetadata? metadata)
     {
         Revision = revision;
         CompressionFlags = compressionFlags;

@@ -17,7 +17,7 @@ public class Thing : ISerializable
 
     public string? Name;
 
-    public int UID = 1;
+    public int Uid = 1;
     public Thing? World;
     public Thing? Parent;
     public Thing? GroupHead;
@@ -36,7 +36,7 @@ public class Thing : ISerializable
 
     public Thing(int uid)
     {
-        UID = uid;
+        Uid = uid;
     }
     
     public void Serialize(Serializer serializer)
@@ -74,11 +74,11 @@ public class Thing : ISerializable
         if (version < 0x27f)
         {
             Parent = serializer.Reference(Parent);
-            UID = serializer.I32(UID);
+            Uid = serializer.I32(Uid);
         }
         else
         {
-            UID = serializer.I32(UID);
+            Uid = serializer.I32(Uid);
             Parent = serializer.Reference(Parent);
         }
 
@@ -196,7 +196,7 @@ public class Thing : ISerializable
             serializer.Log(part.Name + " [END]");
         }
 
-        serializer.Log("THING " + Bytes.ToHex(UID) + " [END]");
+        serializer.Log("THING " + Bytes.ToHex(Uid) + " [END]");
     }
         
     public T? GetPart<T>(Part part) where T: ISerializable
@@ -204,7 +204,7 @@ public class Thing : ISerializable
         return (T?) parts[part.GetIndex()];
     }
 
-    public void SetPart<T>(Part part, T value) where T : ISerializable
+    public void SetPart<T>(Part part, T? value) where T: ISerializable
     {
         parts[part.GetIndex()] = value;
     }
@@ -218,4 +218,121 @@ public class Thing : ISerializable
     {
         return BaseAllocationSize;
     }
+    
+    public bool IsEnemyWard()
+    {
+        var enemyWardMeshKey = new GUID(43456);
+        var enemyWardPlanKey = new GUID(53114);
+
+        if (enemyWardPlanKey == PlanGuid) return true;
+        if (HasPart(Part.Parts["GROUP"]))
+        {
+            var group = GetPart<PGroup>(Part.Parts["GROUP"]);
+            if (group.PlanDescriptor != null && group.PlanDescriptor.IsGUID() && enemyWardPlanKey.Equals(group.PlanDescriptor.GetGUID()))
+                return true;
+        }
+
+        if (HasPart(Part.Parts["RENDER_MESH"]))
+        {
+            var mesh = GetPart<PRenderMesh>(Part.Parts["RENDER_MESH"]);
+            if (mesh.Mesh != null && mesh.Mesh.IsGUID())
+                return enemyWardMeshKey.Equals(mesh.Mesh.GetGUID());
+        }
+
+        return false;
+    }
+
+    public bool IsKey()
+    {
+        var data = GetPart<PGameplayData>(Part.Parts["GAMEPLAY_DATA"]);
+        if (data == null) return false;
+
+        if (data.GameplayType == GameplayPartType.LEVEL_KEY) return true;
+        if (data.KeyLink != null) return true;
+
+        var keyPlanGuid = new GUID(31738);
+        var keyMeshGuid = new GUID(3763);
+
+        if (keyPlanGuid.Equals(PlanGuid)) return true;
+        if (HasPart(Part.Parts["GROUP"]))
+        {
+            var group = GetPart<PGroup>(Part.Parts["GROUP"]);
+            if (group.PlanDescriptor != null && group.PlanDescriptor.IsGUID() && keyPlanGuid.Equals(group.PlanDescriptor.GetGUID()))
+                return true;
+        }
+
+        // Not entirely sure if having the mesh is entirely just criteria, but it's probably fine
+        if (HasPart(Part.Parts["RENDER_MESH"]))
+        {
+            var mesh = GetPart<PRenderMesh>(Part.Parts["RENDER_MESH"]);
+            if (mesh.Mesh != null && mesh.Mesh.IsGUID())
+                return keyMeshGuid.Equals(mesh.Mesh.GetGUID());
+        }
+
+        return false;
+    }
+
+    public bool IsScoreBubble()
+    {
+        var data = GetPart<PGameplayData>(Part.Parts["GAMEPLAY_DATA"]);
+        if (data == null) return false;
+
+        // This is only relevant in LBP2 onwards
+        if (data.GameplayType == GameplayPartType.SCORE_BUBBLE) return true;
+        if (data.EggLink != null) return false;
+
+        var scoreBubblePlanGuid = new GUID(31733);
+        var scoreBubbleMeshGuid = new GUID(3753);
+
+        if (scoreBubblePlanGuid.Equals(PlanGuid)) return true;
+        if (HasPart(Part.Parts["GROUP"]))
+        {
+            var group = GetPart<PGroup>(Part.Parts["GROUP"]);
+            if (group.PlanDescriptor != null && group.PlanDescriptor.IsGUID() && scoreBubblePlanGuid.Equals(group.PlanDescriptor.GetGUID()))
+                return true;
+        }
+
+        // Not entirely sure if having the mesh is entirely just criteria, but it's probably fine
+        if (HasPart(Part.Parts["RENDER_MESH"]))
+        {
+            var mesh = GetPart<PRenderMesh>(Part.Parts["RENDER_MESH"]);
+            if (mesh.Mesh != null && mesh.Mesh.IsGUID())
+                return scoreBubbleMeshGuid.Equals(mesh.Mesh.GetGUID());
+        }
+
+        return false;
+    }
+
+    public bool IsPrizeBubble()
+    {
+        var data = GetPart<PGameplayData>(Part.Parts["GAMEPLAY_DATA"]);
+        if (data == null) return false;
+
+        // This is only relevant in LBP2 onwards
+        if (data.GameplayType == GameplayPartType.PRIZE_BUBBLE) return true;
+        if (data.EggLink != null) return true;
+
+        var prizePlanGuid = new GUID(31743);
+        var prizeMeshGuid = new GUID(21180);
+
+        if (prizePlanGuid.Equals(PlanGuid)) return true;
+        if (HasPart(Part.Parts["GROUP"]))
+        {
+            var group = GetPart<PGroup>(Part.Parts["GROUP"]);
+            if (group.PlanDescriptor != null && group.PlanDescriptor.IsGUID() && prizePlanGuid.Equals(group.PlanDescriptor.GetGUID()))
+                return true;
+        }
+
+        // Not entirely sure if having the mesh is entirely just criteria, but it's probably fine
+        if (HasPart(Part.Parts["RENDER_MESH"]))
+        {
+            var mesh = GetPart<PRenderMesh>(Part.Parts["RENDER_MESH"]);
+            if (mesh.Mesh != null && mesh.Mesh.IsGUID())
+                return prizeMeshGuid.Equals(mesh.Mesh.GetGUID());
+        }
+
+        return false;
+    }
+
+
 }

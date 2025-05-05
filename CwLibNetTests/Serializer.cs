@@ -186,7 +186,7 @@ public class SerializerTests
         Serializer serializer = new Serializer(stream, new Revision((int)Revisions.LBP1_MAX));
         Thing? thing = null;
         thing = serializer.Thing(thing);
-        Assert.Equal(2171, thing!.UID);
+        Assert.Equal(2171, thing!.Uid);
     }
 
     [Fact]
@@ -229,7 +229,7 @@ public class SerializerTests
         MemoryInputStream stream = new MemoryInputStream(originalBytes);
         Serializer serializer = new Serializer(stream, new Revision((int)Revisions.LBP1_MAX));
         Thing? thing = serializer.Thing(null);
-        Assert.Equal(2171, thing!.UID);
+        Assert.Equal(2171, thing!.Uid);
         Assert.Equal(new Matrix4x4(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16),
             thing.GetPart<PPos>(Part.Parts["POS"])?.WorldPosition);
     }
