@@ -991,7 +991,7 @@ public class Serializer
         if (reference == 0)
             return default;
         if (referenceIDs.TryGetValue(reference, out var d))
-            return (T)d;
+            return (T?)d;
         T? strutt;
         try
         {
@@ -1013,7 +1013,7 @@ public class Serializer
     /// </summary>
     /// <param name="value">Structure to serialize</param>
     /// <returns>(De)serialized structure</returns>
-    public T Struct<T>(T? value)
+    public T Struct<T>(T? value) where T: ISerializable
     {
         if (!isWriting || value == null)
         {
@@ -1023,11 +1023,11 @@ public class Serializer
             }
             catch (Exception)
             {
-                throw new SerializationException("Failed to create class instance in " + "serializer!");
+                throw new SerializationException("Failed to create class instance in serializer!");
             }
         }
 
-        ((ISerializable)value).Serialize(this);
+        value.Serialize(this);
         return value;
     }
 
@@ -1091,9 +1091,8 @@ public class Serializer
     /// <summary>
     /// (De)serializes an array to/from the stream.
     /// </summary>
-    /// <param name="<T>">Generic serializable structure</param>
     /// <param name="values">Array to serialize</param>
-    /// <param name="clazz">Array base serializable type</param>
+    /// <param name="T">Array base serializable type</param>
     /// <param name="isReference">Whether the array base structure is a reference type</param>
     /// <returns>(De)serialized array</returns>
     public T[]? Array<T>(T[]? values, bool isReference) where T:ISerializable
@@ -1130,9 +1129,9 @@ public class Serializer
                     serializables[i] = Struct<T>(default);
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw new SerializationException("There was an error (de)serializing an array!");
+            throw new SerializationException("There was an error (de)serializing an array!", ex);
         }
 
         return serializables;

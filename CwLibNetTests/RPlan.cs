@@ -54,6 +54,15 @@ public class RPlanTest
     }
 
     [Fact]
+    public void CanGetThings()
+    {
+        Serializer serializer = new Serializer(EavLogoPlan, new Revision(Branch.Leerdammer.Head, Branch.Leerdammer.Id, 23), 7);
+        RPlan plan = new RPlan();
+        plan.Serialize(serializer);
+        Assert.NotNull(plan.GetThings());
+    }
+
+    [Fact]
     public void Reserialize()
     {
         Serializer serializer = new Serializer(EavLogoPlan, new Revision(Branch.Leerdammer.Head, Branch.Leerdammer.Id, 23), 7);

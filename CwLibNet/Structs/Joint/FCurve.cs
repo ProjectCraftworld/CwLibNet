@@ -1,10 +1,11 @@
 using System.Numerics;
 using CwLibNet.Enums;
+using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 
 namespace CwLibNet.Structs.Joint;
 
-public class FCurve
+public class FCurve: ISerializable
 {
     public const int BaseAllocationSize = 0x40;
 

@@ -1,3 +1,4 @@
+using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Inventory;
 using CwLibNet.Structs.Things.Components.Decals;
@@ -5,7 +6,7 @@ using CwLibNet.Types.Data;
 
 namespace CwLibNet.Structs.Things.Parts;
 
-public class PStickers
+public class PStickers: ISerializable
 {
     public static readonly int BASE_ALLOCATION_SIZE = 0x60;
 

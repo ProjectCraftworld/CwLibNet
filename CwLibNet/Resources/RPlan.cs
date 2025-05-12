@@ -145,9 +145,9 @@ public class RPlan : Resource
             foreach (var thing in things!)
             {
                 if (thing?.Parent == null) continue;
-                var pos = thing.GetPart<PPos>(Part.Parts["PPos"]);
+                var pos = thing.GetPart<PPos>(Part.Parts["POS"]);
                 if (pos == null) continue;
-                var parent = thing.Parent.GetPart<PPos>(Part.Parts["PPos"]);
+                var parent = thing.Parent.GetPart<PPos>(Part.Parts["POS"]);
                 if (parent == null) continue;
                 Matrix4x4.Invert(parent.WorldPosition!.Value, out var inv);
                 pos.LocalPosition = Matrix4x4.Multiply(inv, pos.WorldPosition!.Value);
