@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
-using CwLibNet.Structs.Inventory;
 using CwLibNet.Structs.Profile;
 using CwLibNet.Structs.Slot;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
 namespace CwLibNet.Resources
@@ -24,7 +19,7 @@ namespace CwLibNet.Resources
         /// <summary>
         /// Stores categories and locations referenced by items.
         /// </summary>
-        public StringLookupTable StringTable { get; set; } = new StringLookupTable();
+        public StringLookupTable StringTable { get; set; } = new();
 
         /// <summary>
         /// Whether or not this profile was from a production build.
@@ -65,7 +60,7 @@ namespace CwLibNet.Resources
 
         public SlotLink[]? OldDiscoveredLinks { get; set; }
         public SlotLink[]? PendingLinks { get; set; }
-        public SlotID LastPlayed { get; set; } = new SlotID();
+        public SlotID LastPlayed { get; set; } = new();
 
         public int[] Lbp1VideosPlayed { get; set; }
 
@@ -97,7 +92,7 @@ namespace CwLibNet.Resources
 
         public int OwnerUserId { get; set; }
 
-        public SHA1 EulaAgreed { get; set; }
+        public Sha1 EulaAgreed { get; set; }
 
         public NetworkPlayerID AcceptingPlayer { get; set; }
 
@@ -159,9 +154,9 @@ namespace CwLibNet.Resources
 
         public MysteryPodEventSeen[]? MysteryPodEventsSeen { get; set; }
 
-        public SHA1[] LastLegacyImportedProfileHashLBP1 { get; set; }
+        public Sha1[] LastLegacyImportedProfileHashLBP1 { get; set; }
 
-        public SHA1[] LastLegacyImportedProfileHashLBP2 { get; set; }
+        public Sha1[] LastLegacyImportedProfileHashLBP2 { get; set; }
 
         public bool PlayedLBP1 { get; set; }
 
@@ -309,7 +304,7 @@ namespace CwLibNet.Resources
         /// <summary>
         /// Online tutorials played (LBP3).
         /// </summary>
-        public SHA1[] OnlineTutorialsPlayed { get; set; }
+        public Sha1[] OnlineTutorialsPlayed { get; set; }
 
         /// <summary>
         /// Popit puzzles completed (LBP3).
@@ -343,9 +338,9 @@ namespace CwLibNet.Resources
 
         public override void Serialize(Serializer serializer)
         {
-            Revision revision = serializer.GetRevision();
-            int version = revision.GetVersion();
-            int subVersion = revision.GetSubVersion();
+            var revision = serializer.GetRevision();
+            var version = revision.GetVersion();
+            var subVersion = revision.GetSubVersion();
 
             if (version < 0x187)
             {
@@ -356,12 +351,14 @@ namespace CwLibNet.Resources
             Inventory = serializer.Arraylist(Inventory);
             StringTable = serializer.Struct<StringLookupTable>(StringTable);
 
-            if (version >= 0x3b6)
-                FromProductionBuild = serializer.Bool(FromProductionBuild);
-
-            if (version >= 0x133 && version < 0x1df)
+            switch (version)
             {
-                // SlotID[]
+                case >= 0x3b6:
+                    FromProductionBuild = serializer.Bool(FromProductionBuild);
+                    break;
+                case >= 0x133 and < 0x1df:
+                    // SlotID[]
+                    break;
             }
 
             if (version >= 0x1e4)
@@ -370,24 +367,23 @@ namespace CwLibNet.Resources
                 {
                     var keys = new List<TutorialLevel>();
                     var values = new List<TutorialState>();
-                    int count = serializer.GetInput().I32();
-                    for (int i = 0; i < count; ++i)
+                    var count = serializer.GetInput().I32();
+                    for (var i = 0; i < count; ++i)
                     {
                         keys.Add(serializer.GetInput().Enum32<TutorialLevel>());
                         values.Add(serializer.GetInput().Enum32<TutorialState>());
                     }
 
                     Lbp1TutorialStates = new Dictionary<TutorialLevel, TutorialState>();
-                    for (int i = 0; i < count; ++i)
+                    for (var i = 0; i < count; ++i)
                         Lbp1TutorialStates[keys[i]] = values[i];
                 }
                 else
                 {
                     var keys = new List<TutorialLevel>(Lbp1TutorialStates.Keys);
                     serializer.GetOutput().I32(keys.Count);
-                    for (int i = 0; i < keys.Count; ++i)
+                    foreach (var key in keys)
                     {
-                        TutorialLevel key = keys[i];
                         serializer.GetOutput().Enum32(key);
                         serializer.GetOutput().Enum32(Lbp1TutorialStates[key]);
                     }
@@ -416,9 +412,9 @@ namespace CwLibNet.Resources
             {
                 if (!serializer.IsWriting())
                 {
-                    int count = serializer.GetInput().I32();
+                    var count = serializer.GetInput().I32();
                     OldMyMoonSlots = new Dictionary<SlotID, Slot>(count);
-                    for (int i = 0; i < count; ++i)
+                    for (var i = 0; i < count; ++i)
                     {
                         OldMyMoonSlots[serializer.Struct<SlotID>(null)] =
                             serializer.Struct<Slot>(null);
@@ -465,7 +461,7 @@ namespace CwLibNet.Resources
                     OldTextSearches = new string[serializer.GetInput().I32()];
                 else
                     serializer.GetOutput().I32(OldTextSearches.Length);
-                for (int i = 0; i < OldTextSearches.Length; ++i)
+                for (var i = 0; i < OldTextSearches.Length; ++i)
                     OldTextSearches[i] = serializer.Str(OldTextSearches[i]);
             }
 
@@ -615,13 +611,13 @@ namespace CwLibNet.Resources
             if (subVersion >= 0x20d)
                 MysteryPodEventsSeen = serializer.Array<MysteryPodEventSeen>(MysteryPodEventsSeen);
 
-            if (version >= 0x35f && version < 0x3f9)
+            if (version is >= 0x35f and < 0x3f9)
             {
                 if (!serializer.IsWriting())
-                    LastLegacyImportedProfileHashLBP1 = new SHA1[serializer.GetInput().I32()];
+                    LastLegacyImportedProfileHashLBP1 = new Sha1[serializer.GetInput().I32()];
                 else 
                     serializer.GetOutput().I32(LastLegacyImportedProfileHashLBP1.Length);
-                for (int i = 0; i < LastLegacyImportedProfileHashLBP1.Length; ++i)
+                for (var i = 0; i < LastLegacyImportedProfileHashLBP1.Length; ++i)
                     LastLegacyImportedProfileHashLBP1[i] = serializer.Sha1(LastLegacyImportedProfileHashLBP1[i]);
             }
 
@@ -722,13 +718,13 @@ namespace CwLibNet.Resources
                 PlayChallengeTutorialSeen = serializer.Bool(PlayChallengeTutorialSeen);
             }
 
-            if (version >= 0x3f5 && version < 0x3f9)
+            if (version is >= 0x3f5 and < 0x3f9)
             {
                 if (!serializer.IsWriting())
-                    LastLegacyImportedProfileHashLBP2 = new SHA1[serializer.GetInput().I32()];
+                    LastLegacyImportedProfileHashLBP2 = new Sha1[serializer.GetInput().I32()];
                 else 
                     serializer.GetOutput().I32(LastLegacyImportedProfileHashLBP2.Length);
-                for (int i = 0; i < LastLegacyImportedProfileHashLBP2.Length; ++i)
+                for (var i = 0; i < LastLegacyImportedProfileHashLBP2.Length; ++i)
                     LastLegacyImportedProfileHashLBP2[i] = serializer.Sha1(LastLegacyImportedProfileHashLBP2[i]);
             }
 
@@ -763,10 +759,10 @@ namespace CwLibNet.Resources
             if (subVersion >= 0x1a1)
             {
                 if (!serializer.IsWriting())
-                    OnlineTutorialsPlayed = new SHA1[serializer.GetInput().I32()];
+                    OnlineTutorialsPlayed = new Sha1[serializer.GetInput().I32()];
                 else 
                     serializer.GetOutput().I32(OnlineTutorialsPlayed.Length);
-                for (int i = 0; i < OnlineTutorialsPlayed.Length; ++i)
+                for (var i = 0; i < OnlineTutorialsPlayed.Length; ++i)
                     OnlineTutorialsPlayed[i] = serializer.Sha1(OnlineTutorialsPlayed[i]);
 
                 PopitPuzzlesCompleted = serializer.Array<SlotID>(PopitPuzzlesCompleted);
@@ -790,14 +786,14 @@ namespace CwLibNet.Resources
 
         public override int GetAllocatedSize()
         {
-            int size = BASE_ALLOCATION_SIZE;
+            var size = BASE_ALLOCATION_SIZE;
             size += StringTable.GetAllocatedSize();
             return size;
         }
 
         public override SerializationData Build(Revision revision, byte compressionFlags)
         {
-            Serializer serializer = new Serializer(0xFFFF00 + (Inventory.Count * 0xC0),
+            var serializer = new Serializer(0xFFFF00 + (Inventory.Count * 0xC0),
                 revision, compressionFlags);
             serializer.Struct<RLocalProfile>(this);
             return new SerializationData(
@@ -819,35 +815,34 @@ namespace CwLibNet.Resources
         /// <returns>Added inventory item</returns>
         public InventoryItem AddItem(RPlan plan, ResourceDescriptor? descriptor, RTranslationTable table)
         {
-            InventoryItem existing = GetItem(descriptor);
+            var existing = GetItem(descriptor);
             if (existing != null) 
                 return existing;
 
-            InventoryItem item = new InventoryItem();
-            item.Plan = descriptor;
+            var item = new InventoryItem
+            {
+                Plan = descriptor
+            };
             if (descriptor.IsGUID())
                 item.Guid = descriptor.GetGUID() ?? default(GUID);
             
-            InventoryItemDetails details = plan.InventoryData;
+            var details = plan.InventoryData;
             details.DateAdded = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-            if (details.Icon == null)
-                details.Icon = new ResourceDescriptor(2551, ResourceType.Texture);
+            details.Icon ??= new ResourceDescriptor(2551, ResourceType.Texture);
 
             if (table != null)
             {
-                string category = "";
+                var category = "";
                 if (plan.InventoryData.Category != 0)
                     category = table.Translate(plan.InventoryData.Category);
                 
-                string location = "";
+                var location = "";
                 if (plan.InventoryData.Location != 0)
                     location = table.Translate(plan.InventoryData.Location);
                 
-                if (location == null)
-                    location = "";
-                if (category == null)
-                    category = "";
+                location ??= "";
+                category ??= "";
 
                 details.CategoryIndex = (short)StringTable.Add(category, (int)plan.InventoryData.Category);
                 details.LocationIndex = (short)StringTable.Add(location, (int)plan.InventoryData.Location);
@@ -883,7 +878,7 @@ namespace CwLibNet.Resources
             
             if (descriptor.IsGUID()) 
             {
-                GUID? guid = descriptor.GetGUID();
+                var guid = descriptor.GetGUID();
                 return guid.HasValue && HasItem(guid.Value);
             }
             else if (descriptor.IsHash()) 
@@ -897,14 +892,14 @@ namespace CwLibNet.Resources
         /// </summary>
         /// <param name="hash">SHA1 hash to check for</param>
         /// <returns>Whether the item exists in the inventory</returns>
-        public bool HasItem(SHA1 hash)
+        public bool HasItem(Sha1 hash)
         {
             if (hash == null)
                 return false;
                 
-            foreach (InventoryItem item in Inventory)
+            foreach (var item in Inventory)
             {
-                ResourceDescriptor plan = item.Plan;
+                var plan = item.Plan;
                 if (plan == null) 
                     continue;
                 

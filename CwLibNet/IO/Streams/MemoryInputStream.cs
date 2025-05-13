@@ -29,10 +29,8 @@ public class MemoryInputStream
      */
     public MemoryInputStream(byte[]? buffer)
     {
-        if (buffer == null)
-            throw new NullReferenceException("Buffer supplied to MemoryInputStream cannot be " +
-                                             "null!");
-        this.buffer = buffer;
+        this.buffer = buffer ?? throw new NullReferenceException("Buffer supplied to MemoryInputStream cannot be " +
+                                                                 "null!");
         length = buffer.Length;
     }
 
@@ -181,18 +179,15 @@ public class MemoryInputStream
     /**
      * Reads a 32-bit integer from the stream, compressed depending on flags.
      *
-     * @param force32 Whether or not to read as a 32-bit integer, regardless of compression flags.
+     * @param force32 Whether to read as a 32-bit integer, regardless of compression flags.
      * @return Integer read from the stream
      */
-    public int I32(bool force32)
+    public int I32(bool force32 = false)
     {
-        if (force32 || (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0)
-        {
-            var bytes = Bytes(4);
-            if (isLittleEndian) return Util.Bytes.ToIntegerLE(bytes);
-            return Util.Bytes.ToIntegerBE(bytes);
-        }
-        return (int)(Uleb128() & 0xFFFFFFFF);
+        if (!force32 && (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0)
+            return (int)(Uleb128() & 0xFFFFFFFF);
+        var bytes = Bytes(4);
+        return isLittleEndian ? Util.Bytes.ToIntegerLE(bytes) : Util.Bytes.ToIntegerBE(bytes);
     }
         
     public long I64(bool force64) {
@@ -239,7 +234,7 @@ public class MemoryInputStream
      * @param force64 Whether or not to read as a 32-bit integer, regardless of compression flags.
      * @return Unsigned integer read from the stream
      */
-    public long U32(bool force32)
+    public long U32(bool force32 = false)
     {
         if (force32 || (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0)
             return I32(true) & 0xFFFFFFFFL;
@@ -249,89 +244,46 @@ public class MemoryInputStream
     /**
      * Reads a long from the stream, compressed depending on flags.
      *
-     * @param force64 Whether or not to read as a 64-bit long, regardless of compression flags.
+     * @param force64 Whether to read as a 64-bit long, regardless of compression flags.
      * @return Long read from the stream
      */
-    public long U64(bool force64)
+    public long U64(bool force64 = false)
     {
-        if (force64 || (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0)
+        if (!force64 && (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0) return Uleb128();
+        var b = Bytes(8);
+        if (isLittleEndian)
         {
-            var b = Bytes(8);
-            if (isLittleEndian)
-            {
-                return (b[7] & 0xFF) << 56 |
-                       (b[6] & 0xFF) << 48 |
-                       (b[5] & 0xFF) << 40 |
-                       (b[4] & 0xFF) << 32 |
-                       (b[3] & 0xFF) << 24 |
-                       (b[2] & 0xFF) << 16 |
-                       (b[1] & 0xFF) << 8 |
-                       (b[0] & 0xFF) << 0;
-            }
-            return (b[0] & 0xFF) << 56 |
-                   (b[1] & 0xFF) << 48 |
-                   (b[2] & 0xFF) << 40 |
-                   (b[3] & 0xFF) << 32 |
-                   (b[4] & 0xFF) << 24 |
-                   (b[5] & 0xFF) << 16 |
-                   (b[6] & 0xFF) << 8 |
-                   (b[7] & 0xFF) << 0;
+            return (b[7] & 0xFF) << 56 |
+                   (b[6] & 0xFF) << 48 |
+                   (b[5] & 0xFF) << 40 |
+                   (b[4] & 0xFF) << 32 |
+                   (b[3] & 0xFF) << 24 |
+                   (b[2] & 0xFF) << 16 |
+                   (b[1] & 0xFF) << 8 |
+                   (b[0] & 0xFF) << 0;
         }
-        return Uleb128();
+        return (b[0] & 0xFF) << 56 |
+               (b[1] & 0xFF) << 48 |
+               (b[2] & 0xFF) << 40 |
+               (b[3] & 0xFF) << 32 |
+               (b[4] & 0xFF) << 24 |
+               (b[5] & 0xFF) << 16 |
+               (b[6] & 0xFF) << 8 |
+               (b[7] & 0xFF) << 0;
     }
 
     /**
      * Reads a "signed" long from the stream, compressed depending on flags.
      *
-     * @param force64 Whether or not to read as a 64-bit long, regardless of compression flags.
+     * @param force64 Whether to read as a 64-bit long, regardless of compression flags.
      * @return Long read from the stream
      */
-    public long S64(bool force64)
+    public long S64(bool force64 = false)
     {
         if (force64 || (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0)
             return U64(true);
         var v = Uleb128();
         return v >> 1 ^ -(v & 1L);
-    }
-
-    /**
-     * Reads an integer from the stream.
-     *
-     * @return Integer read from the stream
-     */
-    public int I32()
-    {
-        return I32(false);
-    }
-
-    /**
-     * Reads a long as an unsigned integer from the stream.
-     *
-     * @return Unsigned integer read from the stream
-     */
-    public long U32()
-    {
-        return U32(false);
-    }
-
-    /**
-     * Reads a long from the stream.
-     *
-     * @return Long read from the stream
-     */
-    public long U64()
-    {
-        return U64(false);
-    }
-
-    /**
-     * Reads a "signed" long from the stream.
-     *
-     * @return Long read from the stream
-     */
-    public long S64()
-    {
-        return S64(false);
     }
 
     /**
@@ -563,19 +515,9 @@ public class MemoryInputStream
      *
      * @return SHA1 hash read from the stream
      */
-    public SHA1 Sha1()
+    public Sha1 Sha1()
     {
-        return new SHA1(Bytes(0x14));
-    }
-
-    /**
-     * Reads a GUID (uint32_t) from the stream.
-     *
-     * @return GUID read from the stream
-     */
-    public GUID? Guid()
-    {
-        return Guid(false);
+        return new Sha1(Bytes(0x14));
     }
 
     /**
@@ -584,7 +526,7 @@ public class MemoryInputStream
      * @param force32 Whether or not to read as a 32 bit integer, regardless of compression flags.
      * @return GUID read from the stream
      */
-    public GUID? Guid(bool force32)
+    public GUID? Guid(bool force32 = false)
     {
         var number = U32(force32);
         if (number == 0) return null;
@@ -648,7 +590,7 @@ public class MemoryInputStream
     public T[] Enumarray<T>() where T: Enum
     {
         var count = I32();
-        T[] elements = new T[count];
+        var elements = new T[count];
         for (var i = 0; i < count; ++i)
             elements[i] = Enum8<T>();
         return elements;
@@ -660,7 +602,7 @@ public class MemoryInputStream
      * @param offset Offset relative to seek position
      * @param mode   Seek origin
      */
-    public void Seek(int offset, SeekMode mode)
+    public void Seek(int offset, SeekMode mode = SeekMode.Relative)
     {
         if (mode == null)
             throw new NullReferenceException("SeekMode cannot be null!");
@@ -692,16 +634,6 @@ public class MemoryInputStream
                 break;
             }
         }
-    }
-
-    /**
-     * Seeks ahead in stream relative to offset.
-     *
-     * @param offset Offset to go to
-     */
-    public void Seek(int offset)
-    {
-        Seek(offset, SeekMode.Relative);
     }
 
     public bool IsLittleEndian()

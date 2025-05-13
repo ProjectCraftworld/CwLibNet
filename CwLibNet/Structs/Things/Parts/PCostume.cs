@@ -3,96 +3,93 @@ using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Mesh;
 using CwLibNet.Structs.Things.Components;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
 namespace CwLibNet.Structs.Things.Parts;
 
 public class PCostume: ISerializable
 {
-    public static readonly int BASE_ALLOCATION_SIZE = 0x80;
+    public const int BaseAllocationSize = 0x80;
 
-    public ResourceDescriptor mesh;
-    public ResourceDescriptor material;
-
-    
-    public ResourceDescriptor materialPlan;
-
-    public List<int> meshPartsHidden = [];
-    public Primitive[] primitives;
+    public ResourceDescriptor? Mesh;
+    public ResourceDescriptor? Material;
 
     
-    public byte creatureFilter;
+    public ResourceDescriptor? MaterialPlan;
 
-    public CostumePiece[] costumePieces;
+    public List<int> MeshPartsHidden = [];
+    public Primitive[]? Primitives;
+
+    
+    public byte CreatureFilter;
+
+    public CostumePiece[]? CostumePieces;
 
     
     
-    public CostumePiece[] temporaryCostumePiece;
+    public CostumePiece[]? TemporaryCostumePiece;
 
     public PCostume()
     {
-        mesh = new ResourceDescriptor(1087, ResourceType.Mesh);
-        costumePieces = new CostumePiece[14];
-        for (int i = 0; i < costumePieces.Length; ++i)
-            costumePieces[i] = new CostumePiece();
-        costumePieces[(int)CostumePieceCategory.HEAD].Mesh =
+        Mesh = new ResourceDescriptor(1087, ResourceType.Mesh);
+        CostumePieces = new CostumePiece[14];
+        for (var i = 0; i < CostumePieces.Length; ++i)
+            CostumePieces[i] = new CostumePiece();
+        CostumePieces[(int)CostumePieceCategory.HEAD].Mesh =
             new ResourceDescriptor(9876, ResourceType.Mesh);
-        costumePieces[(int)CostumePieceCategory.TORSO].Mesh =
+        CostumePieces[(int)CostumePieceCategory.TORSO].Mesh =
             new ResourceDescriptor(9877, ResourceType.Mesh);
-        temporaryCostumePiece = new CostumePiece[] { new CostumePiece() };
+        TemporaryCostumePiece = [new CostumePiece()];
     }
 
     
     public void Serialize(Serializer serializer)
     {
-        Revision revision = serializer.GetRevision();
-        int version = revision.GetVersion();
-        int subVersion = revision.GetSubVersion();
+        var revision = serializer.GetRevision();
+        var version = revision.GetVersion();
+        var subVersion = revision.GetSubVersion();
 
-        mesh = serializer.Resource(mesh, ResourceType.Mesh);
-        material = serializer.Resource(material, ResourceType.GfxMaterial);
+        Mesh = serializer.Resource(Mesh, ResourceType.Mesh);
+        Material = serializer.Resource(Material, ResourceType.GfxMaterial);
 
         if (version >= 0x19a)
-            materialPlan = serializer.Resource(materialPlan, ResourceType.Plan,
+            MaterialPlan = serializer.Resource(MaterialPlan, ResourceType.Plan,
                 true);
 
         if (serializer.IsWriting())
         {
-            int[] vec = meshPartsHidden.ToArray();
+            var vec = MeshPartsHidden.ToArray();
             serializer.Intvector(vec);
         }
         else
         {
-            int[] vec = serializer.Intvector(null);
+            var vec = serializer.Intvector(null);
             if (vec != null)
             {
                 foreach (var v in vec)
-                    meshPartsHidden.Add(v);
+                    MeshPartsHidden.Add(v);
             }
         }
 
-        primitives = serializer.Array(primitives);
+        Primitives = serializer.Array(Primitives);
 
         if (subVersion >= 0xdb)
-            creatureFilter = serializer.I8(creatureFilter);
+            CreatureFilter = serializer.I8(CreatureFilter);
 
-        costumePieces = serializer.Array(costumePieces);
+        CostumePieces = serializer.Array(CostumePieces);
 
         if (version >= 0x2c5 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_TEMP_COSTUME))
-            temporaryCostumePiece = serializer.Array(temporaryCostumePiece);
+            TemporaryCostumePiece = serializer.Array(TemporaryCostumePiece);
     }
 
     
     public int GetAllocatedSize()
     {
-        int size = BASE_ALLOCATION_SIZE;
-        if (costumePieces != null)
-            foreach (CostumePiece piece in costumePieces)
-                size += piece.GetAllocatedSize();
-        if (primitives != null)
-            size += (primitives.Length * Primitive.BaseAllocationSize);
-        if (meshPartsHidden != null) size += (meshPartsHidden.Count() * 4);
+        var size = BaseAllocationSize;
+        if (CostumePieces != null) size += CostumePieces.Sum(piece => piece.GetAllocatedSize());
+        if (Primitives != null)
+            size += (Primitives.Length * Primitive.BaseAllocationSize);
+        if (MeshPartsHidden != null) size += (MeshPartsHidden.Count * 4);
         return size;
     }
 

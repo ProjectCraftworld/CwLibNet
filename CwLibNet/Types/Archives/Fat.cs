@@ -1,53 +1,52 @@
+using CwLibNet.Types.Data;
+
 namespace CwLibNet.Types.Archives;
 
 public class Fat
 {
-    private Fart archive;
+    private Fart _archive;
 
     /**
      * SHA1 signature of data.
      */
-    private readonly SHA1 sha1;
+    private readonly Sha1 _sha1;
 
     /**
      * Offset of the data in the archive.
      */
-    private readonly long offset;
+    private readonly long _offset;
 
     /**
      * Size of the associated data buffer.
      */
-    private readonly int size;
+    private readonly int _size;
 
-    public Fat(Fart archive, SHA1 sha1, long offset, int size)
+    public Fat(Fart archive, Sha1 sha1, long offset, int size)
     {
-        if (archive == null)
-            throw new NullReferenceException("File archive provided to Fat cannot be null!");
-
-        this.archive = archive;
-        this.sha1 = sha1 ?? throw new NullReferenceException("File SHA1 provided to Fat cannot be null!");
-        this.offset = offset;
-        this.size = size;
+        this._archive = archive ?? throw new NullReferenceException("File archive provided to Fat cannot be null!");
+        this._sha1 = sha1 ?? throw new NullReferenceException("File SHA1 provided to Fat cannot be null!");
+        this._offset = offset;
+        this._size = size;
     }
 
-    public SHA1 GetSha1()
+    public Sha1 GetSha1()
     {
-        return sha1;
+        return _sha1;
     }
 
     public long GetOffset()
     {
-        return offset;
+        return _offset;
     }
 
     public int GetSize()
     {
-        return size;
+        return _size;
     }
 
     public Fart GetFileArchive()
     {
-        return archive;
+        return _archive;
     }
 
     /**
@@ -57,12 +56,12 @@ public class Fat
      */
     public byte[]? Extract()
     {
-        return archive.Extract(this);
+        return _archive.Extract(this);
     }
 
     public override string ToString()
     {
         return string.Format("Fat (%h, offset=%d, size=%d)",
-            sha1, offset, size);
+            _sha1, _offset, _size);
     }
 }

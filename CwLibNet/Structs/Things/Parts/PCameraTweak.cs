@@ -110,8 +110,8 @@ public class PCameraTweak: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
-        int subVersion = serializer.GetRevision().GetSubVersion();
+        var version = serializer.GetRevision().GetVersion();
+        var subVersion = serializer.GetRevision().GetSubVersion();
 
         if (version < 0x37e)
         {
@@ -241,7 +241,7 @@ public class PCameraTweak: ISerializable
             // Fill in the LBP1 data with the first node if it exists
             if (!serializer.IsWriting() && Nodes is { Length: > 0 })
             {
-                CameraNode node = Nodes[0];
+                var node = Nodes[0];
                 PitchAngle = node.PitchAngle;
                 TargetBox = node.TargetBox;
                 ZoomDistance = node.ZoomDistance;
@@ -251,7 +251,7 @@ public class PCameraTweak: ISerializable
         else if (!serializer.IsWriting())
         {
             Nodes = new CameraNode[1];
-            CameraNode node = new CameraNode
+            var node = new CameraNode
             {
                 PitchAngle = PitchAngle,
                 TargetBox = TargetBox,

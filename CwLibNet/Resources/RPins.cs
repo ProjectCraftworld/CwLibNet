@@ -1,7 +1,7 @@
 ﻿using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.Types;
+using CwLibNet.Types.Data;
 using CwLibNet.Types.Profile;
 
 namespace CwLibNet.Resources;

@@ -106,7 +106,7 @@ public class ScriptObject: ISerializable
                 break;
             case ScriptObjectType.ARRAY_OBJECT_REF:
             {
-                ScriptObject[] array = (ScriptObject[]) Value;
+                var array = (ScriptObject[]) Value;
                 if (!serializer.IsWriting())
                 {
                     array = new ScriptObject[serializer.GetInput().I32()];

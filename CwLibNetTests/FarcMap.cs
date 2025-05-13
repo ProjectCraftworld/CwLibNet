@@ -1,4 +1,5 @@
 using CwLibNet.Types.Archives;
+using CwLibNet.Types.Data;
 using CwLibNet.Types.Databases;
 
 namespace CwLibNetTests;
@@ -29,7 +30,7 @@ public class FarcMap
         ];
         File.WriteAllBytes(".dump.farc", farc);
         FileArchive fileArchive = new FileArchive(".dump.farc");
-        byte[] output = fileArchive.Extract(new SHA1("56f121f87e48332a203545b34b0fb37158e59560"));
+        byte[] output = fileArchive.Extract(new Sha1("56f121f87e48332a203545b34b0fb37158e59560"));
         File.Delete(".dump.farc");
         Assert.Equal(testBytes, output);
     }
@@ -41,7 +42,7 @@ public class FarcMap
         FileArchive fileArchive = new FileArchive(".dump.farc");
         fileArchive.Save();
         FileArchive fileArchive2 = new FileArchive(".dump.farc");
-        byte[] output = fileArchive2.Extract(new SHA1("56f121f87e48332a203545b34b0fb37158e59560"));
+        byte[] output = fileArchive2.Extract(new Sha1("56f121f87e48332a203545b34b0fb37158e59560"));
         byte[] testBytes =
         [
             0x54, 0x75, 0x74, 0x74, 0x6f, 0x20, 0x62, 0x65, 0x6e, 0x65, 0x2c, 0x20, 0x74, 0x65, 0x3f, 0x0a
@@ -57,7 +58,7 @@ public class FarcMap
         FileDb db = new FileDb(".dump.map");
         FileDbRow entry = db.Get(1441793);
         File.Delete(".dump.map");
-        Assert.Equal(new SHA1("56f121f87e48332a203545b34b0fb37158e59560"), entry.Sha1);
+        Assert.Equal(new Sha1("56f121f87e48332a203545b34b0fb37158e59560"), entry.Sha1);
     }
 
     [Fact]
@@ -69,6 +70,6 @@ public class FarcMap
         FileDb db2 = new FileDb(".dump.map");
         FileDbRow entry = db2.Get(1441793);
         File.Delete(".dump.map");
-        Assert.Equal(new SHA1("56f121f87e48332a203545b34b0fb37158e59560"), entry.Sha1);
+        Assert.Equal(new Sha1("56f121f87e48332a203545b34b0fb37158e59560"), entry.Sha1);
     }
 }

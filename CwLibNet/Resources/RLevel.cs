@@ -18,7 +18,7 @@ public class RLevel: Resource
     public const int BaseAllocationSize = 0x8;
 
 
-    public SHA1?[] CrossPlayVitaDependencyHashes = [];
+    public Sha1?[] CrossPlayVitaDependencyHashes = [];
 
     public Thing? WorldThing;
 
@@ -88,7 +88,7 @@ public class RLevel: Resource
         if (version > 0x3e6)
         {
             if (!serializer.IsWriting())
-                CrossPlayVitaDependencyHashes = new SHA1?[serializer.GetInput().I32()];
+                CrossPlayVitaDependencyHashes = new Sha1?[serializer.GetInput().I32()];
             else
             {
                 CrossPlayVitaDependencyHashes ??= [];
@@ -513,7 +513,7 @@ public class RLevel: Resource
             if (metadata == null) continue;
             if (includeChildren)
             {
-                Thing[] things =
+                var things =
                     GetAllReferences([], thing).ToArray();
                 plans.Add(name + "_" + thing.Uid + ".plan", new RPlan(revision,
                     compressionFlags,

@@ -1,4 +1,4 @@
-namespace CwLibNet.Enums.ValueEnum;
+namespace CwLibNet.Enums;
 
 public enum CellGcmEnumForGtf
 {

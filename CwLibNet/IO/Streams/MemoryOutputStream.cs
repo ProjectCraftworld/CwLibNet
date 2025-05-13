@@ -182,7 +182,7 @@ public class MemoryOutputStream
      *                flags.
      * @return This output stream
      */
-    public MemoryOutputStream I32(int value, bool force32)
+    public MemoryOutputStream I32(int value, bool force32 = false)
     {
         if (!force32 && (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0)
             return Uleb128(value & 0xFFFFFFFFL);
@@ -224,7 +224,7 @@ public class MemoryOutputStream
      *                flags.
      * @return This output stream
      */
-    public MemoryOutputStream U64(long value, bool force64)
+    public MemoryOutputStream U64(long value, bool force64 = false)
     {
         if (!force64 && (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0)
             return Uleb128(value);
@@ -261,22 +261,11 @@ public class MemoryOutputStream
      *                flags.
      * @return This output stream
      */
-    public MemoryOutputStream S64(long value, bool force64)
+    public MemoryOutputStream S64(long value, bool force64 = false)
     {
         return !force64 && (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0
             ? Uleb128(value << 1 ^ (value >> 0x3f))
             : U64(value, true);
-    }
-
-    /**
-     * Writes an integer to the stream.
-     *
-     * @param value Integer to write
-     * @return This output stream
-     */
-    public MemoryOutputStream I32(int value)
-    {
-        return I32(value, false);
     }
 
     /**
@@ -290,28 +279,6 @@ public class MemoryOutputStream
         return U32(value, false);
     }
 
-    /**
-     * Writes a long to the stream.
-     *
-     * @param value Long to write
-     * @return This output stream
-     */
-    public MemoryOutputStream U64(long value)
-    {
-        return U64(value, false);
-    }
-
-    /**
-     * Writes a "signed" long to the stream.
-     *
-     * @param value Long to write
-     * @return This output stream
-     */
-    public MemoryOutputStream S64(long value)
-    {
-        return S64(value, false);
-    }
-        
     public MemoryOutputStream I64(long value, bool force64) {
         if (!force64 && (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0)
             return Uleb128(value);
@@ -662,7 +629,7 @@ public class MemoryOutputStream
      * @param value SHA1 hash to write
      * @return This output stream
      */
-    public MemoryOutputStream Sha1(SHA1? value)
+    public MemoryOutputStream Sha1(Sha1? value)
     {
         return value == null ? Pad(0x14) : Bytes(value.GetHash());
     }
@@ -674,20 +641,9 @@ public class MemoryOutputStream
      * @param force32 Whether to read as a 32-bit integer, regardless of compression flags.
      * @return This output stream
      */
-    public MemoryOutputStream Guid(GUID? value, bool force32)
+    public MemoryOutputStream Guid(GUID? value, bool force32 = false)
     {
         return value == null ? U32(0, force32) : U32(value?.Value, force32);
-    }
-
-    /**
-     * Writes a GUID (uint32_t) to the stream.
-     *
-     * @param value GUID to write
-     * @return This output stream
-     */
-    public MemoryOutputStream Guid(GUID? value)
-    {
-        return Guid(value, false);
     }
 
 
@@ -775,7 +731,7 @@ public class MemoryOutputStream
      * @param offset Offset relative to seek position
      * @param mode   Seek origin
      */
-    public void Seek(int off, SeekMode? mode)
+    public void Seek(int off, SeekMode? mode = SeekMode.Relative)
     {
         if (mode == null)
             throw new NullReferenceException("SeekMode cannot be null!");
@@ -807,16 +763,6 @@ public class MemoryOutputStream
                 break;
             }
         }
-    }
-
-    /**
-     * Seeks ahead in stream relative to offset.
-     *
-     * @param offset Offset to go to
-     */
-    public void Seek(int off)
-    {
-        Seek(off, SeekMode.Relative);
     }
 
     public byte[]? GetBuffer()

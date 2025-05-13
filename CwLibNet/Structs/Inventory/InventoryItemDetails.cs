@@ -4,9 +4,8 @@ using CwLibNet.IO.Serializer;
 using CwLibNet.Resources;
 using CwLibNet.Structs.Slot;
 using CwLibNet.Structs.Things.Parts;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
-using Branch = CwLibNet.Types.Branch;
+using Branch = CwLibNet.Enums.Branch;
 
 namespace CwLibNet.Structs.Inventory;
 
@@ -326,12 +325,12 @@ public class InventoryItemDetails: ISerializable
         return size;
     }
 
-    public SHA1 GenerateHashCode(Revision revision)
+    public Sha1 GenerateHashCode(Revision revision)
     {
         // I wonder how slow this is...
         var serializer = new Serializer(GetAllocatedSize(), revision, 0);
         serializer.Struct(this);
-        return SHA1.FromBuffer(serializer.GetBuffer());
+        return Sha1.FromBuffer(serializer.GetBuffer());
     }
 
     private void UpdateTranslations()

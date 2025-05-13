@@ -2,7 +2,6 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Things;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
 namespace CwLibNet.Resources
@@ -50,8 +49,8 @@ namespace CwLibNet.Resources
 
         public override void Serialize(Serializer serializer)
         {
-            int version = serializer.GetRevision().GetVersion();
-            int subVersion = serializer.GetRevision().GetSubVersion();
+            var version = serializer.GetRevision().GetVersion();
+            var subVersion = serializer.GetRevision().GetSubVersion();
 
             TimePlayed = serializer.I32(TimePlayed);
             SackboyAvatarWorld = serializer.Thing(SackboyAvatarWorld);
@@ -101,7 +100,7 @@ namespace CwLibNet.Resources
         {
             // 16MB buffer for generation of levels, since the allocated size will get
             // stuck in a recursive loop until I fix it.
-            Serializer serializer = new Serializer(0x1000000, revision, compressionFlags);
+            var serializer = new Serializer(0x1000000, revision, compressionFlags);
             serializer.Struct(this);
             return new SerializationData(
                 serializer.GetBuffer(),

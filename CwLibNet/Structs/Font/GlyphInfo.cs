@@ -1,8 +1,9 @@
+using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 
 namespace CwLibNet.Structs.Font;
 
-public class GlyphInfo
+public class GlyphInfo: ISerializable
 {
     public const int BaseAllocationSize = 0x10;
     public short Character;

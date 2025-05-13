@@ -104,7 +104,7 @@ public class FileDb: IEnumerable<FileDbRow>
         return Exists(guid.Value);
     }
 
-    public FileDbRow? Get(SHA1 sha1)
+    public FileDbRow? Get(Sha1 sha1)
     {
         return Entries.FirstOrDefault(row => row.Sha1.Equals(sha1));
     }
@@ -131,7 +131,7 @@ public class FileDb: IEnumerable<FileDbRow>
     {
         if (Lookup.ContainsKey(guid.Value))
             throw new ArgumentException("GUID already exists in database!");
-        var entry = new FileDbRow( path, 0, 0, new SHA1(), guid);
+        var entry = new FileDbRow( path, 0, 0, new Sha1(), guid);
         entry.UpdateDate();
         Entries.Add(entry);
         Lookup.Add(guid.Value, entry);

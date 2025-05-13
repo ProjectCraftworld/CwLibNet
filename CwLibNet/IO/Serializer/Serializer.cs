@@ -6,7 +6,6 @@ using CwLibNet.IO.Streams;
 using CwLibNet.Singleton;
 using CwLibNet.Structs.Font;
 using CwLibNet.Structs.Things;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
 namespace CwLibNet.IO.Serializer;
@@ -258,7 +257,7 @@ public class Serializer
     /// <param name="value">Integer to write</param>
     /// <param name="force32">Whether to always write 32 bits regardless of compression flags.</param>
     /// <returns>Integer (de)serialized</returns>
-    public int I32(int value, bool force32)
+    public int I32(int value, bool force32 = false)
     {
         if (!isWriting) return input.I32(force32);
         output?.I32(value, force32);
@@ -276,13 +275,10 @@ public class Serializer
     /// <returns>Integer (de)serialized</returns>
     public int S32(int value)
     {
-        if (isWriting)
-        {
-            output.S32(value);
-            return value;
-        }
+        if (!isWriting) return input.S32();
+        output.S32(value);
+        return value;
 
-        return input.S32();
     }
 
     /// <summary>
@@ -292,7 +288,7 @@ public class Serializer
     /// <param name="value">Integer to write</param>
     /// <param name="force32">Whether to always write 32 bits regardless of compression flags.</param>
     /// <returns>Integer (de)serialized</returns>
-    public long U32(long value, bool force32)
+    public long U32(long value, bool force32 = false)
     {
         if (!isWriting) return input.U32(force32);
         output.U32(value, force32);
@@ -301,52 +297,12 @@ public class Serializer
     }
 
     /// <summary>
-    /// (De)serializes a 32-bit integer to/from the stream.
-    /// </summary>
-    /// <param name="value">Integer to write</param>
-    /// <returns>Integer (de)serialized</returns>
-    public int I32(int value)
-    {
-        return I32(value, false);
-    }
-
-    /// <summary>
-    /// (De)serializes an unsigned 32-bit integer to/from the stream.
-    /// </summary>
-    /// <param name="value">Integer to write</param>
-    /// <returns>Integer (de)serialized</returns>
-    public long U32(long value)
-    {
-        return U32(value, false);
-    }
-
-    /// <summary>
-    /// (De)serializes a long to/from the stream.
-    /// </summary>
-    /// <param name="value">Long to write</param>
-    /// <returns>Long (de)serialized</returns>
-    public long U64(long value)
-    {
-        return U64(value, false);
-    }
-
-    /// <summary>
-    /// (De)serializes a "signed" long to/from the stream.
-    /// </summary>
-    /// <param name="value">Long to write</param>
-    /// <returns>Long (de)serialized</returns>
-    public long S64(long value)
-    {
-        return S64(value, false);
-    }
-
-    /// <summary>
     /// (De)serializes a "signed" long to/from the stream, compressed depending on the flags.
     /// </summary>
     /// <param name="value">Long to write</param>
     /// <param name="force64">Whether to always write 64 bits regardless of compression flags.</param>
     /// <returns>Long (de)serialized</returns>
-    public long S64(long value, bool force64)
+    public long S64(long value, bool force64 = false)
     {
         if (!isWriting) return input.S64(force64);
         output.S64(value, force64);
@@ -360,15 +316,12 @@ public class Serializer
     /// <param name="value">Long to write</param>
     /// <param name="force64">Whether to always write 64 bits regardless of compression flags.</param>
     /// <returns>Long (de)serialized</returns>
-    public long U64(long value, bool force64)
+    public long U64(long value, bool force64 = false)
     {
-        if (isWriting)
-        {
-            output.U64(value, force64);
-            return value;
-        }
+        if (!isWriting) return input.U64(force64);
+        output.U64(value, force64);
+        return value;
 
-        return input.U64(force64);
     }
 
     /// <summary>
@@ -378,13 +331,10 @@ public class Serializer
     /// <returns>Long (de)serialized</returns>
     public long Uleb128(long value)
     {
-        if (isWriting)
-        {
-            output.Uleb128(value);
-            return value;
-        }
+        if (!isWriting) return input.Uleb128();
+        output.Uleb128(value);
+        return value;
 
-        return input.Uleb128();
     }
 
     /// <summary>
@@ -439,13 +389,10 @@ public class Serializer
     /// <returns>Float (de)serialized</returns>
     public float F16(float value)
     {
-        if (isWriting)
-        {
-            output.F16(value);
-            return value;
-        }
+        if (!isWriting) return input.F16();
+        output.F16(value);
+        return value;
 
-        return input.F16();
     }
 
     /// <summary>
@@ -471,13 +418,10 @@ public class Serializer
     /// <returns>Float array (de)serialized</returns>
     public float[] Floatarray(float[] values)
     {
-        if (isWriting)
-        {
-            output.Floatarray(values);
-            return values;
-        }
+        if (!isWriting) return input.Floatarray();
+        output.Floatarray(values);
+        return values;
 
-        return input.Floatarray();
     }
 
     /// <summary>
@@ -526,13 +470,10 @@ public class Serializer
     /// <returns>Vector array (de)serialized</returns>
     public Vector4[]? Vectorarray(Vector4[]? values)
     {
-        if (isWriting)
-        {
-            output.Vectorarray(values);
-            return values;
-        }
+        if (!isWriting) return input.Vectorarray();
+        output.Vectorarray(values);
+        return values;
 
-        return input.Vectorarray();
     }
 
     /// <summary>
@@ -556,13 +497,10 @@ public class Serializer
     /// <returns>String (de)serialized</returns>
     public string? Str(string? value, int size)
     {
-        if (isWriting)
-        {
-            output.Str(value, size);
-            return value;
-        }
+        if (!isWriting) return input.Str(size);
+        output.Str(value, size);
+        return value;
 
-        return input.Str(size);
     }
 
     /// <summary>
@@ -572,13 +510,10 @@ public class Serializer
     /// <returns>String (de)serialized</returns>
     public string? Str(string? value)
     {
-        if (isWriting)
-        {
-            output.Str(value, value.Length);
-            return value;
-        }
+        if (!isWriting) return input.Str();
+        output.Str(value, value.Length);
+        return value;
 
-        return input.Str();
     }
 
     /// <summary>
@@ -588,13 +523,10 @@ public class Serializer
     /// <returns>String (de)serialized</returns>
     public string? Wstr(string? value)
     {
-        if (isWriting)
-        {
-            output.Wstr(value);
-            return value;
-        }
+        if (!isWriting) return input.Wstr();
+        output.Wstr(value);
+        return value;
 
-        return input.Wstr();
     }
 
     /// <summary>
@@ -602,27 +534,10 @@ public class Serializer
     /// </summary>
     /// <param name="value">SHA1 hash to write</param>
     /// <returns>SHA1 hash (de)serialized</returns>
-    public SHA1? Sha1(SHA1? value)
+    public Sha1? Sha1(Sha1? value)
     {
-        if (isWriting)
-        {
-            output.Sha1(value);
-            return value;
-        }
-
-        return input.Sha1();
-    }
-
-    /// <summary>
-    /// (De)serializes a GUID to/from the stream.
-    /// </summary>
-    /// <param name="value">GUID to write</param>
-    /// <param name="force32">Whether or not to force 32 bit, regardless of compression flags.</param>
-    /// <returns>GUID (de)serialized</returns>
-    public GUID? Guid(GUID? value, bool force32)
-    {
-        if (!isWriting) return input.Guid(force32);
-        output.Guid(value, force32);
+        if (!isWriting) return input.Sha1();
+        output.Sha1(value);
         return value;
 
     }
@@ -631,10 +546,14 @@ public class Serializer
     /// (De)serializes a GUID to/from the stream.
     /// </summary>
     /// <param name="value">GUID to write</param>
+    /// <param name="force32">Whether to force 32 bit, regardless of compression flags.</param>
     /// <returns>GUID (de)serialized</returns>
-    public GUID? Guid(GUID? value)
+    public GUID? Guid(GUID? value, bool force32 = false)
     {
-        return Guid(value, false);
+        if (!isWriting) return input.Guid(force32);
+        output.Guid(value, force32);
+        return value;
+
     }
 
     /// <summary>
@@ -745,7 +664,7 @@ public class Serializer
             if (guidHashFlag == NONE)
                 return null;
             GUID? guid = null;
-            SHA1? sha1 = null;
+            Sha1? sha1 = null;
             if ((guidHashFlag & GUID) != 0)
                 guid = input.Guid();
             if ((guidHashFlag & HASH) != 0)
@@ -915,13 +834,10 @@ public class Serializer
     /// <returns>(De)serialized enum value</returns>
     public T Enum32<T>(T value) where T: Enum
     {
-        if (isWriting)
-        {
-            output.Enum32(value);
-            return value;
-        }
+        if (!isWriting) return input.Enum32<T>();
+        output.Enum32(value);
+        return value;
 
-        return input.Enum32<T>();
     }
 
     /// <summary>
@@ -932,13 +848,10 @@ public class Serializer
     /// <returns>(De)serialized enum value</returns>
     public T Enum32<T>(T value, bool signed) where T: Enum
     {
-        if (isWriting)
-        {
-            output.Enum32(value, signed);
-            return value;
-        }
+        if (!isWriting) return input.Enum32<T>(signed);
+        output.Enum32(value, signed);
+        return value;
 
-        return input.Enum32<T>(signed);
     }
 
     /// <summary>
@@ -948,13 +861,10 @@ public class Serializer
     /// <returns>(De)serialized enum value</returns>
     public T[] Enumarray<T>(T[] values) where T: Enum
     {
-        if (isWriting)
-        {
-            output.Enumarray(values);
-            return values;
-        }
+        if (!isWriting) return input.Enumarray<T>();
+        output.Enumarray(values);
+        return values;
 
-        return input.Enumarray<T>();
     }
 
     /// <summary>
@@ -1040,22 +950,12 @@ public class Serializer
     public T[]? Array<T>(T[]? values) where T : ISerializable => Array(values, false);
 
     /// <summary>
-    /// (De)serializes an array to/from the stream.
-    /// </summary>
-    /// <param name="values">Array to serialize</param>
-    /// <returns>(De)serialized array</returns>
-    public List<T> Arraylist<T>(List<T>? values) where T: ISerializable
-    {
-        return Arraylist(values, false);
-    }
-
-    /// <summary>
     /// (De)serializes an arraylist to/from the stream.
     /// </summary>
     /// <param name="values">Array to serialize</param>
     /// <param name="isReference">Whether the array base structure is a reference type</param>
     /// <returns>(De)serialized array</returns>
-    public List<T>? Arraylist<T>(List<T>? values, bool isReference) where T : ISerializable
+    public List<T>? Arraylist<T>(List<T>? values, bool isReference = false) where T : ISerializable
     {
         var clazz = typeof(T);
         if (isWriting)
@@ -1248,10 +1148,5 @@ public class Serializer
     {
         ResourceDescriptor?[] descriptors = [.. dependencies];
         return descriptors;
-    }
-
-    internal GlyphInfo[] Array(GlyphInfo[]? glyphs, Type type)
-    {
-        throw new NotImplementedException();
     }
 }

@@ -96,7 +96,7 @@ public sealed class CostumePieceBodyMembers
 
     public static string GetPrimaryName(HashSet<CostumePieceCategory> set)
     {
-        if (set == null || set.Count == 0) return CostumePieceCategory.BEARD.ToString().ToLower(); // or any default value
+        if (set == null || set.Count == 0) return nameof(CostumePieceCategory.BEARD).ToLower(); // or any default value
         return set.First().ToString().ToLower();
     }
 }

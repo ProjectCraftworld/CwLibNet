@@ -2,7 +2,6 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.Types;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -136,9 +135,9 @@ public class PPhysicsTweak: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        Revision revision = serializer.GetRevision();
-        int version = revision.GetVersion();
-        int subVersion = revision.GetSubVersion();
+        var revision = serializer.GetRevision();
+        var version = revision.GetVersion();
+        var subVersion = revision.GetSubVersion();
 
         if (version < 0x2c4)
             Activation = serializer.F32(Activation);
@@ -192,7 +191,7 @@ public class PPhysicsTweak: ISerializable
         if (version > 0x278)
             Configuration = serializer.I32(Configuration);
 
-        if (version >= 0x27a && version < 0x327)
+        if (version is >= 0x27a and < 0x327)
             serializer.Thing(null);
 
         if (version > 0x282)
@@ -295,7 +294,7 @@ public class PPhysicsTweak: ISerializable
                 PlayerFilter = serializer.I8(PlayerFilter);
         }
 
-        if (subVersion >= 0x1 && subVersion < 0x17)
+        if (subVersion is >= 0x1 and < 0x17)
         {
             serializer.S32(0);
             serializer.S32(0);
@@ -308,7 +307,7 @@ public class PPhysicsTweak: ISerializable
             serializer.S32(0);
         }
 
-        if (subVersion >= 0x5 && subVersion < 0x17)
+        if (subVersion is >= 0x5 and < 0x17)
         {
             serializer.F32(0);
             serializer.U8(0);

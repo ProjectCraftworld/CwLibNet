@@ -2,7 +2,6 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Mesh;
-using CwLibNet.Types;
 
 namespace CwLibNet.Structs.Custom;
 

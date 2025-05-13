@@ -1,7 +1,6 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.Types;
 
 namespace CwLibNet.Structs.Things.Parts;
 

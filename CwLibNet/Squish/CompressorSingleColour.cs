@@ -1145,7 +1145,7 @@ public class CompressorSingleColour: CompressorColourFit
 			var error = 0;
 			for ( var channel = 0; channel < 3; ++channel ) {
 				// grab the lookup table and index for this channel
-				int[][][] lookup = lookups[channel];
+				var lookup = lookups[channel];
 				var target = colour[channel];
 
 				// store a pointer to the source for this channel

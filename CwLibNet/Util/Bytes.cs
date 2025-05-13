@@ -1,7 +1,6 @@
 ﻿using CwLibNet.Enums;
 using CwLibNet.IO.Streams;
 using CwLibNet.Types.Data;
-using CwLibNet.Types;
 using System.Numerics;
 using CwLibNet.IO.Serializer;
 

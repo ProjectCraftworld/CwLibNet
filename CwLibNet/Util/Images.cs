@@ -1,6 +1,5 @@
 using System.Text;
 using CwLibNet.Enums;
-using CwLibNet.Enums.ValueEnum;
 using CwLibNet.Extensions;
 using CwLibNet.External;
 using CwLibNet.IO.Serializer;

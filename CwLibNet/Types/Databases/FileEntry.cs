@@ -2,7 +2,7 @@ using CwLibNet.Types.Data;
 
 namespace CwLibNet.Types.Databases;
 
-public class FileEntry(string path, SHA1 sha1, long size)
+public class FileEntry(string path, Sha1 sha1, long size)
 {
     public string Path = path;
 
@@ -14,7 +14,7 @@ public class FileEntry(string path, SHA1 sha1, long size)
     /**
      * SHA1 signature of data.
      */
-    public SHA1 Sha1 = sha1;
+    public Sha1 Sha1 = sha1;
 
     /**
      * Unique key for data

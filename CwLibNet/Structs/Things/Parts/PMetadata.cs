@@ -4,7 +4,6 @@ using CwLibNet.IO.Serializer;
 using CwLibNet.Resources;
 using CwLibNet.Structs.Inventory;
 using CwLibNet.Structs.Things.Components;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
 namespace CwLibNet.Structs.Things.Parts;

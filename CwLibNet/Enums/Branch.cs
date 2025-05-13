@@ -1,6 +1,4 @@
-using CwLibNet.Enums;
-
-namespace CwLibNet.Types;
+namespace CwLibNet.Enums;
 
 public readonly struct Branch : IEquatable<Branch>
 {

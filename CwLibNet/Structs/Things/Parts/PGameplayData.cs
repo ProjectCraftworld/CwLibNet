@@ -3,7 +3,6 @@ using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Slot;
 using CwLibNet.Structs.Things.Components;
-using CwLibNet.Types;
 
 namespace CwLibNet.Structs.Things.Parts;
 

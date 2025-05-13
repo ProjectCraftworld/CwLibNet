@@ -1,7 +1,6 @@
 using CwLibNet.Enums;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Resources;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
 namespace CwLibNetTests;

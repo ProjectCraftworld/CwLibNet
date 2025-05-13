@@ -6,7 +6,6 @@ using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Inventory;
 using CwLibNet.Structs.Things;
 using CwLibNet.Structs.Things.Parts;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
 namespace CwLibNet.Resources;
@@ -139,7 +138,7 @@ public class RPlan : Resource
     public virtual Thing[]? GetThings()
     {
         var serializer = new Serializer(ThingData, Revision, CompressionFlags);
-        Thing[]? things = serializer.Array<Thing>(null, true);
+        var things = serializer.Array<Thing>(null, true);
         if (Revision.GetVersion() >= 0x341)
         {
             foreach (var thing in things!)
@@ -162,7 +161,7 @@ public class RPlan : Resource
         Serializer serializer = new(0x800000, Revision, CompressionFlags);
         serializer.Array(things, true);
         ThingData = serializer.GetBuffer();
-        ResourceDescriptor?[] dependencies = serializer.GetDependencies();
+        var dependencies = serializer.GetDependencies();
         DependencyCache.Clear();
         DependencyCache = [..dependencies];
     }
@@ -171,11 +170,11 @@ public class RPlan : Resource
     {
         Serializer serializer = new(0x800000, Revision, CompressionFlags);
         serializer.Reference(thing);
-        Thing[]? things = serializer.GetThings();
+        var things = serializer.GetThings();
         serializer = new Serializer(0x800000, Revision, CompressionFlags);
         serializer.Array(things, true);
         ThingData = serializer.GetBuffer();
-        ResourceDescriptor?[] dependencies = serializer.GetDependencies();
+        var dependencies = serializer.GetDependencies();
         DependencyCache.Clear();
         DependencyCache = [..dependencies];
     }

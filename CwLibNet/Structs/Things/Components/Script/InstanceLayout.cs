@@ -29,7 +29,7 @@ public class InstanceLayout: ISerializable
             if (serializer.IsWriting())
             {
                 var stream = serializer.GetOutput();
-                FieldLayoutDetails[] reflectFields = GetFieldsForReflection(false);
+                var reflectFields = GetFieldsForReflection(false);
                 stream.I32(reflectFields.Length);
                 foreach (var field in reflectFields)
                 {

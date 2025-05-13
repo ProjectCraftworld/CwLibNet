@@ -30,12 +30,12 @@ namespace CwLibNet.Types.Data
 
         public long GetHigh()
         {
-            return this.high;
+            return high;
         }
 
         public long GetLow()
         {
-            return this.low;
+            return low;
         }
     }
 }

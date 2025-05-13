@@ -4,7 +4,7 @@ using CwLibNet.IO.Serializer;
 using CwLibNet.IO.Streams;
 using CwLibNet.Structs.Things;
 using CwLibNet.Structs.Things.Parts;
-using CwLibNet.Types;
+using CwLibNet.Types.Data;
 
 namespace CwLibNetTests;
 

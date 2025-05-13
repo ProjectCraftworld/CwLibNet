@@ -14,7 +14,7 @@ public sealed class CompressionFlags
     // all of the above will take effect
     public static string ToString(int flags)
     {
-        List<string> components = new List<string>(3);
+        var components = new List<string>(3);
         if ((flags & USE_COMPRESSED_INTEGERS) != 0)
             components.Add("COMPRESSED_INTEGERS");
         if ((flags & USE_COMPRESSED_MATRICES) != 0)

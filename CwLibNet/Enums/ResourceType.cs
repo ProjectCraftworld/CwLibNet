@@ -3,7 +3,7 @@ using CwLibNet.Resources;
 
 namespace CwLibNet.Enums;
 
-public struct ResourceType
+public struct ResourceType : IEquatable<ResourceType>
 {
     public string? Header { get; }
     public int Value { get; }
@@ -134,5 +134,30 @@ public struct ResourceType
             .Where(p => p.FieldType == typeof(ResourceType))
             .Where(p => ((ResourceType)(p.GetValue(null) ?? Invalid)).Value == value).Select(e => e.GetValue(null))
             .FirstOrDefault() ?? Invalid);
+    }
+
+    public bool Equals(ResourceType other)
+    {
+        return Value == other.Value; // Value is the most efficient key to compare this enum-like since it is different in each item, it's significative, and it's lightweight (int)
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is ResourceType other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return Value;
+    }
+
+    public static bool operator ==(ResourceType left, ResourceType right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(ResourceType left, ResourceType right)
+    {
+        return !left.Equals(right);
     }
 }

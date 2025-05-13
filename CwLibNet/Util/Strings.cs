@@ -41,13 +41,13 @@ public static class Strings
     /// <summary>
     /// Gets a SHA1 from a string
     /// </summary>
-    public static SHA1? GetSHA1(string? hash)
+    public static Sha1? GetSHA1(string? hash)
     {
         if (string.IsNullOrEmpty(hash)) return null;
         hash = hash.Replace(" ", "");
         if (hash.StartsWith("h"))
             hash = hash[1..];
-        return IsSHA1(hash) ? new SHA1(hash) : null;
+        return IsSHA1(hash) ? new Sha1(hash) : null;
     }
 
     /// <summary>

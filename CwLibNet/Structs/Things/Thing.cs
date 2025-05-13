@@ -2,7 +2,6 @@
 using CwLibNet.Enums;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Things.Parts;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 using CwLibNet.Util;
 using ISerializable = CwLibNet.IO.ISerializable;

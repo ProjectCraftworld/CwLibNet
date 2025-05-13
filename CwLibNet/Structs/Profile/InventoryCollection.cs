@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
@@ -31,7 +25,7 @@ namespace CwLibNet.Structs.Profile
 
         public int GetAllocatedSize() 
         {
-            int size = BaseAllocationSize;
+            var size = BaseAllocationSize;
             if (InventoryPageInstances != null)
             {
                 size += InventoryPageInstances.Length * InventoryPage.BASE_ALLOCATION_SIZE;

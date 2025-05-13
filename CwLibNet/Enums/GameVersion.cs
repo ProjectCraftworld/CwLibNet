@@ -1,4 +1,4 @@
-using CwLibNet.Types;
+using CwLibNet.Types.Data;
 
 namespace CwLibNet.Enums;
 
@@ -11,8 +11,6 @@ public class GameVersion
     {
         if (revision.GetVersion() <= 0x332)
             return LBP1;
-        if (revision.IsLbp3())
-            return LBP3;
-        return LBP2;
+        return revision.IsLbp3() ? LBP3 : LBP2;
     }
 }

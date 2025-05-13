@@ -69,7 +69,7 @@ public static class Compressor
             return Bytes.Combine([0x00, 0x00, 0x00, 0x00], data);
         }
 
-        byte[][] chunks = Bytes.Split(data, 0x8000);
+        var chunks = Bytes.Split(data, 0x8000);
 
         var compressedSize = new short[chunks.Length];
         var uncompressedSize = new short[chunks.Length];

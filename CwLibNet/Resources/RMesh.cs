@@ -6,7 +6,6 @@ using CwLibNet.IO.Serializer;
 using CwLibNet.IO.Streams;
 using CwLibNet.Structs.Custom;
 using CwLibNet.Structs.Mesh;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 using CwLibNet.Util;
 
@@ -352,9 +351,9 @@ public class RMesh: Resource
             var offset = 0;
             var stream = serializer.GetOutput();
             stream.I32(offset);
-            for (var i = 0; i < Streams.Length; ++i)
+            foreach (var t in Streams)
             {
-                offset += Streams[i].Length;
+                offset += t.Length;
                 stream.I32(offset);
             }
             stream.I32(offset);
@@ -587,7 +586,7 @@ public class RMesh: Resource
      */
     public byte[][] GetMorphStreams()
     {
-        byte[][] streams = new byte[MorphCount][];
+        var streams = new byte[MorphCount][];
         if (StreamCount - 2 >= 0)
             Array.Copy(Streams, 2, streams, 0, StreamCount - 2);
         return streams;
@@ -725,10 +724,10 @@ public class RMesh: Resource
             else meshes[region].Add(primitive);
         }
 
-        Primitive[][] submeshes = new Primitive[meshes.Values.Count][];
+        var submeshes = new Primitive[meshes.Values.Count][];
 
         var index = 0;
-        foreach (List<Primitive> primitiveList in meshes.Values)
+        foreach (var primitiveList in meshes.Values)
         {
             submeshes[index] = primitiveList.ToArray();
             ++index;
@@ -788,7 +787,7 @@ public class RMesh: Resource
     {
         var stream = new MemoryInputStream(GetVertexStream());
         stream.Seek(start * 0x10);
-        byte[][] vertices = new byte[count][];
+        var vertices = new byte[count][];
         for (var i = 0; i < count; ++i)
         {
             stream.V3();
@@ -1032,7 +1031,7 @@ public class RMesh: Resource
     {
         var stream = new MemoryInputStream(GetSkinningStream());
         stream.Seek(start * 0x10);
-        byte[][] joints = new byte[count][];
+        var joints = new byte[count][];
         for (var i = 0; i < count; ++i)
         {
             var buffer = stream.Bytes(0x10);
@@ -1144,7 +1143,7 @@ public class RMesh: Resource
         if (MorphCount == 0)
             throw new InvalidOperationException("Can't get morphs from mesh that has no morph " +
                                                 "data!");
-        Morph[] morphs = new Morph[MorphCount];
+        var morphs = new Morph[MorphCount];
         for (var i = 0; i < MorphCount; ++i)
         {
             var stream = new MemoryInputStream(Streams[i + 2]);
@@ -1349,7 +1348,7 @@ public class RMesh: Resource
     {
         var vertices = GetVertices();
         var weights = GetWeights();
-        byte[][] joints = GetJoints();
+        var joints = GetJoints();
 
         Dictionary<Bone, Vector3> minVert = new();
         Dictionary<Bone, Vector3> maxVert = new();

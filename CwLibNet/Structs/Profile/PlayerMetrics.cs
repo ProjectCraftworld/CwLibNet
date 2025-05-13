@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
-using CwLibNet.Types;
-using CwLibNet.Types.Data;
 
 namespace CwLibNet.Structs.Profile 
 {
@@ -38,8 +32,8 @@ namespace CwLibNet.Structs.Profile
 
         public void Serialize(Serializer serializer)
         {
-            Revision revision = serializer.GetRevision();
-            int head = revision.GetVersion();
+            var revision = serializer.GetRevision();
+            var head = revision.GetVersion();
 
             if (head > 0x16f) 
             {
@@ -56,10 +50,10 @@ namespace CwLibNet.Structs.Profile
             {
                 if (serializer.IsWriting())
                 {
-                    MemoryOutputStream stream = serializer.GetOutput();
-                    HashSet<int> keys = new HashSet<int>(LevelTimesMap.Keys);
+                    var stream = serializer.GetOutput();
+                    var keys = new HashSet<int>(LevelTimesMap.Keys);
                     stream.I32(keys.Count);
-                    foreach (int key in keys)
+                    foreach (var key in keys)
                     {
                         stream.I32(key);
                         stream.I32(LevelTimesMap[key]);
@@ -67,10 +61,10 @@ namespace CwLibNet.Structs.Profile
                 }
                 else 
                 {
-                    MemoryInputStream stream = serializer.GetInput();
-                    int count = stream.I32();
+                    var stream = serializer.GetInput();
+                    var count = stream.I32();
                     LevelTimesMap = new Dictionary<int, int>(count);
-                    for (int i = 0; i < count; i++)
+                    for (var i = 0; i < count; i++)
                     {
                         LevelTimesMap.Add(stream.I32(), stream.I32());
                     }
@@ -94,7 +88,7 @@ namespace CwLibNet.Structs.Profile
             if (head > 0x1c9)
                 GamesWithRandomPlayersCount = serializer.I32(GamesWithRandomPlayersCount);
 
-            if (head > 0x1de && head < 0x2cb)
+            if (head is > 0x1de and < 0x2cb)
             {
                 if (!revision.IsLeerdammer() || revision.Before(Branch.Leerdammer, (int)Revisions.LD_REMOVED_ENEMY_STAT))
                 {
@@ -110,7 +104,7 @@ namespace CwLibNet.Structs.Profile
 
         public int GetAllocatedSize() 
         {
-            int size = BaseAllocationSize;
+            var size = BaseAllocationSize;
             if (Stats != null)
                 size += Stats.Length * 0x8;
             if (LevelTimesMap != null)

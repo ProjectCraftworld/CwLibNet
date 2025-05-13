@@ -1,5 +1,4 @@
 using CwLibNet.Enums;
-using CwLibNet.Enums.ValueEnum;
 using CwLibNet.EX;
 using CwLibNet.Extensions;
 using CwLibNet.External;
@@ -253,23 +252,13 @@ public class RTexture
     }
 
     /**
-     * Scales texture to 320x320 and creates an ImageIcon.
-     *
-     * @return 320x320 ImageIcon of Texture
-     */
-    public SKBitmap GetImageIcon()
-    {
-        return GetImageIcon(320, 320);
-    }
-
-    /**
      * Scales texture to specified W/H and creates an ImageIcon.
      *
      * @param width  Desired width
      * @param height Desired height
      * @return Scaled ImageIcon of Texture
      */
-    public SKBitmap GetImageIcon(int width, int height)
+    public SKBitmap GetImageIcon(int width = 320, int height = 320)
     {
         cached ??= GetImage();
         return cached != null ? cached.Resize(new SKSizeI(width, height), SKSamplingOptions.Default) : null;

@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
 using CwLibNet.Types.Data;
 using CwLibNet.Structs.Slot;
-using static CwLibNet.Structs.Slot.SlotID;
-using CwLibNet.Types;
 
 namespace CwLibNet.Structs.Profile 
 {
@@ -25,7 +19,7 @@ namespace CwLibNet.Structs.Profile
         public int[] Videos;
         public SlotID[]? LinkedLevels;
         public SlotID[]? SubLevels;
-        public SHA1 LevelHash;
+        public Sha1 LevelHash;
         public short Flags;
 
         // LBP3
@@ -43,9 +37,9 @@ namespace CwLibNet.Structs.Profile
 
         public void Serialize(Serializer serializer)
         {
-            Revision revision = serializer.GetRevision();
-            int version = revision.GetVersion();
-            int subVersion = revision.GetSubVersion();
+            var revision = serializer.GetRevision();
+            var version = revision.GetVersion();
+            var subVersion = revision.GetSubVersion();
 
             SlotId = serializer.Struct<SlotID>(SlotId);
             if (version > 0x1fd)
@@ -106,7 +100,7 @@ namespace CwLibNet.Structs.Profile
 
         public int GetAllocatedSize() 
         {
-            int size = BaseAllocationSize;
+            var size = BaseAllocationSize;
             if (LocalHighScore != null)
                 size += LocalHighScore.Length * 4;
             if (Collectables != null)

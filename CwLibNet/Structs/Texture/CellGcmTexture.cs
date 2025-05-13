@@ -1,5 +1,4 @@
-﻿using CwLibNet.Enums.ValueEnum;
-using CwLibNet.Enums;
+﻿using CwLibNet.Enums;
 using CwLibNet.External;
 using CwLibNet.IO.Streams;
 

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;

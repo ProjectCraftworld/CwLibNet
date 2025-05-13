@@ -3,7 +3,6 @@ using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
 using CwLibNet.Enums;
 using CwLibNet.Structs.Slot;
-using CwLibNet.Types;
 
 namespace CwLibNet.Resources;
 

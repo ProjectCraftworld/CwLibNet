@@ -68,7 +68,7 @@ public sealed class ModifierBody
 
     public static string ToModifierString(HashSet<ModifierType> set)
     {
-        string[] modifiers = new string[set.Count];
+        var modifiers = new string[set.Count];
         var i = 0;
         foreach (var value in set)
             modifiers[i++] = value.ToString().ToLower();

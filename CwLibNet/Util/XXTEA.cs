@@ -18,7 +18,7 @@ namespace Xxtea;
 using System;
 using System.Text;
 
-public sealed class XXTEA {
+public static class XXTEA {
     private static readonly UTF8Encoding utf8 = new();
 
     private const uint delta = 0x9E3779B9;
@@ -27,14 +27,9 @@ public sealed class XXTEA {
         return (z >> 5 ^ y << 2) + (y >> 3 ^ z << 4) ^ (sum ^ y) + (k[p & 3 ^ e] ^ z);
     }
 
-    private XXTEA() {
-    }
-
-    public static byte[]? Encrypt(byte[]? data, byte[]? key) {
-        if (data.Length == 0) {
-            return data;
-        }
-        return ToByteArray(Encrypt(ToUInt32Array(data, true), ToUInt32Array(FixKey(key), false)), false);
+    public static byte[]? Encrypt(byte[]? data, byte[]? key)
+    {
+        return data is { Length: 0 } ? data : ToByteArray(Encrypt(ToUInt32Array(data, true), ToUInt32Array(FixKey(key), false)), false);
     }
 
     public static byte[]? Encrypt(string data, byte[]? key) {
@@ -154,13 +149,13 @@ public sealed class XXTEA {
     }
 
     private static byte[] FixKey(byte[]? key) {
-        if (key.Length == 16) return key;
+        if (key is { Length: 16 }) return key;
         var fixedkey = new byte[16];
-        if (key.Length < 16) {
+        if (key is { Length: < 16 }) {
             key.CopyTo(fixedkey, 0);
         }
         else {
-            Array.Copy(key, 0, fixedkey, 0, 16);
+            Array.Copy(key ?? throw new ArgumentNullException(nameof(key)), 0, fixedkey, 0, 16);
         }
         return fixedkey;
     }

@@ -6,7 +6,7 @@ public class FileDbRow: FileEntry
 {
     public long Date;
     
-    public FileDbRow(string path, long date, long size, SHA1 sha1, GUID guid): base(path, sha1, size)
+    public FileDbRow(string path, long date, long size, Sha1 sha1, GUID guid): base(path, sha1, size)
     {
         Path = path;
         Date = date;

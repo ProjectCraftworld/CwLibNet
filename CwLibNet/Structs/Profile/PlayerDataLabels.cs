@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
 namespace CwLibNet.Structs.Profile 
@@ -19,8 +14,8 @@ namespace CwLibNet.Structs.Profile
 
         public void Serialize(Serializer serializer)
         {
-            Revision revision = serializer.GetRevision();
-            int head = revision.GetVersion();
+            var revision = serializer.GetRevision();
+            var head = revision.GetVersion();
 
             Values = serializer.Array(Values);
             if (revision.Has(Branch.Double11, (int)Revisions.D1_PROTECTED_LABELS) || head >= (int)Revisions.DATALABELS)
@@ -29,7 +24,7 @@ namespace CwLibNet.Structs.Profile
 
         public int GetAllocatedSize() 
         {
-            int size = BaseAllocationSize;
+            var size = BaseAllocationSize;
             if (Values != null) size += Values.Sum(value => value.GetAllocatedSize());
             if (ProtectedIDs != null)
                 size += ProtectedIDs.Length * NetworkOnlineId.BaseAllocationSize;

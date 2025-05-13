@@ -1,7 +1,6 @@
 ﻿using CwLibNet.Enums;
 using CwLibNet.Structs.StaticMesh;
 using CwLibNet.Structs.Texture;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
 namespace CwLibNet.IO.Serializer;
@@ -13,7 +12,7 @@ public class SerializationData
     public readonly byte? CompressionFlags;
     public readonly ResourceType? Type;
     public readonly SerializationType? Method;
-    public readonly ResourceDescriptor[]? Dependencies;
+    public readonly ResourceDescriptor?[] Dependencies;
     public readonly CellGcmTexture? TextureInfo;
     public readonly StaticMeshInfo? StaticMeshInfo;
 
@@ -47,7 +46,7 @@ public class SerializationData
         CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_NO_COMPRESSION;
         Type = ResourceType.Texture;
         Method = SerializationType.COMPRESSED_TEXTURE;
-        Dependencies = null;
+        Dependencies = [];
         TextureInfo = null;
         StaticMeshInfo = null;
     }
@@ -65,7 +64,7 @@ public class SerializationData
         CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_NO_COMPRESSION;
         Type = ResourceType.GtfTexture;
         Method = info.GetMethod();
-        Dependencies = null;
+        Dependencies = [];
         TextureInfo = info;
         StaticMeshInfo = null;
     }
@@ -89,7 +88,7 @@ public class SerializationData
         // serializing the data, can probably use reflection for it,
         // as to avoid serializing twice.
 
-        Serializer? serializer = new(info.GetAllocatedSize(), revision,
+        Serializer serializer = new(info.GetAllocatedSize(), revision,
             CwLibNet.Enums.CompressionFlags.USE_NO_COMPRESSION);
         serializer.Struct(info);
         Dependencies = serializer.GetDependencies();

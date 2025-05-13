@@ -11,7 +11,7 @@ public class ChunkFile: ISerializable
 {
     public const int BaseAllocationSize = 0x100;
 
-    public SHA1 ChunkHash;
+    public Sha1 ChunkHash;
     public List<StreamingCheckpoint> CheckpointList = [];
     public List<QuestTracker> QuestTrackerList = [];
     public List<QuestSwitch> QuestSwitchList = [];
@@ -24,7 +24,7 @@ public class ChunkFile: ISerializable
     public bool DeleteOtherThings;
     public bool AntiStreaming;
     public List<GUID?> Guids = [];
-    public List<SHA1>? Hashes = [];
+    public List<Sha1>? Hashes = [];
 
     
     public void Serialize(Serializer serializer)
@@ -48,7 +48,7 @@ public class ChunkFile: ISerializable
                     if (descriptor != null && descriptor.IsHash())
                         ChunkHash = descriptor.GetSHA1();
                     else
-                        ChunkHash = SHA1.EMPTY;
+                        ChunkHash = Sha1.Empty;
                 }
 
                 break;
@@ -135,7 +135,7 @@ public class ChunkFile: ISerializable
                 }
                 else
                 {
-                    Hashes = new List<SHA1>(numItems);
+                    Hashes = new List<Sha1>(numItems);
                     for (var i = 0; i < numItems; ++i)
                         Hashes.Add(serializer.GetInput().Sha1()!);
                 }

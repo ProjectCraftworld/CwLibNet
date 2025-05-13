@@ -56,7 +56,7 @@ public class CompressorRange : CompressorColourFit
         bestError = float.MaxValue;
 
         var count = colours.GetCount();
-        Vec[] points = colours.GetPoints();
+        var points = colours.GetPoints();
 
         // Compute the covariance matrix using a shared matrix from the base class.
         var cov = Matrix.ComputeWeightedCovariance(colours, covariance);
@@ -110,7 +110,7 @@ public class CompressorRange : CompressorColourFit
     public override void Compress3(byte[] block, int offset)
     {
         var count = colours.GetCount();
-        Vec[] points = colours.GetPoints();
+        var points = colours.GetPoints();
         var v = new Vec();
 
         // Create a codebook:
@@ -162,7 +162,7 @@ public class CompressorRange : CompressorColourFit
     public override void Compress4(byte[] block, int offset)
     {
         var count = colours.GetCount();
-        Vec[] points = colours.GetPoints();
+        var points = colours.GetPoints();
         var v = new Vec();
 
         // Create a codebook:

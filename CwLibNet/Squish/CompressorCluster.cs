@@ -269,7 +269,7 @@ public class CompressorCluster: CompressorColourFit
 	private bool ConstructOrdering(Vec axis, int iteration) {
 		// cache some values
 		var count = colours.GetCount();
-		Vec[] values = colours.GetPoints();
+		var values = colours.GetPoints();
 
 		var orders = _orders;
 
@@ -305,7 +305,7 @@ public class CompressorCluster: CompressorColourFit
 		}
 
 		// copy the ordering and weight all the points
-		Vec[] points = colours.GetPoints();
+		var points = colours.GetPoints();
 		var cWeights = colours.GetWeights();
 		_xxSum.Set(0.0f);
 

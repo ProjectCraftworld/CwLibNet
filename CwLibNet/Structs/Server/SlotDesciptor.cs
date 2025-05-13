@@ -1,4 +1,5 @@
 using System.Xml.Linq;
+using CwLibNet.Types.Data;
 
 namespace CwLibNet.Structs.Server;
 
@@ -10,7 +11,7 @@ public class SlotDescriptor
     public string? Root;
     public string? Icon;
     public int X, Y;
-    public SHA1[] Resources;
+    public Sha1[] Resources;
     public string[]? Labels;
     public bool Locked;
     public bool IsSubLevel;

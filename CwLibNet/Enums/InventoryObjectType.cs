@@ -1,4 +1,5 @@
-using CwLibNet.Types;
+using CwLibNet.Types.Data;
+
 namespace CwLibNet.Enums;
 
 public enum InventoryObjectType
@@ -140,7 +141,7 @@ public sealed class InvObjectBody(InventoryObjectType value, int flags)
         return (flags & (int)value) != 0;
     }
 
-    public static string GetPrimaryName(HashSet<InventoryObjectType> set)
+    public static string GetPrimaryName(HashSet<InventoryObjectType>? set)
     {
         if (set == null || set.Count == 0)
             return "none";

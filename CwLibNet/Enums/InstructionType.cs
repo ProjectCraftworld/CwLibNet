@@ -415,7 +415,7 @@ public enum InstructionType : byte
 
 public sealed class InstructionBody(int type)
 {
-    private static readonly InstructionClass[] InstructionClasses;
+    public static readonly InstructionClass[] InstructionClasses;
 
     static InstructionBody()
     {
@@ -462,7 +462,8 @@ public sealed class InstructionBody(int type)
         classList.AddRange(Enumerable.Repeat(InstructionClass.BINARY, 6));
         InstructionClasses = classList.ToArray();
     }
-    private readonly InstructionType type = (InstructionType)type;
+    
+    public readonly InstructionType Type = (InstructionType)type;
 
     public static InstructionBody
         FromValue(int type)

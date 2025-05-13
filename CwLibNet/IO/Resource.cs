@@ -1,5 +1,5 @@
 ﻿using CwLibNet.IO.Serializer;
-using CwLibNet.Types;
+using CwLibNet.Types.Data;
 
 namespace CwLibNet.IO;
 

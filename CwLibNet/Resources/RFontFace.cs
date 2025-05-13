@@ -3,7 +3,7 @@ using CwLibNet.Enums;
 using CwLibNet.IO.Serializer;
 using CwLibNet.IO.Streams;
 using CwLibNet.Structs.Font;
-using CwLibNet.Types;
+using CwLibNet.Types.Data;
 using CwLibNet.Util;
 
 namespace CwLibNet.Resources;
@@ -32,8 +32,8 @@ public class RFontFace
         GlyphIndex = serializer.Shortarray(GlyphIndex);
         GlyphPageUsed = serializer.Intarray(GlyphPageUsed);
 
-        // Deserialize array properly
-        Glyphs = serializer.Array(Glyphs, typeof(GlyphInfo));
+        // Deserialize the array properly
+        Glyphs = serializer.Array(Glyphs);
 
         if (Revision > 0x272)
             IsCompressed = stream.Boole();
@@ -43,7 +43,7 @@ public class RFontFace
 
     public GlyphInfo? GetGlyph(char c)
     {
-        return Glyphs.FirstOrDefault(info => info.Character == c);
+        return Glyphs?.FirstOrDefault(info => info.Character == c);
     }
 
     public SKBitmap GetGlyphImage(GlyphInfo info)

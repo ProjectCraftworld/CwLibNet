@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
-using CwLibNet.Types;
-using CwLibNet.Types.Data;
 
 namespace CwLibNet.Structs.Profile 
 {
@@ -28,9 +22,9 @@ namespace CwLibNet.Structs.Profile
 
         public void Serialize(Serializer serializer)
         {
-            Revision revision = serializer.GetRevision();
-            int version = revision.GetVersion();
-            int subVersion = revision.GetSubVersion();
+            var revision = serializer.GetRevision();
+            var version = revision.GetVersion();
+            var subVersion = revision.GetSubVersion();
 
             if (version >= (int)Revisions.PROFILE_PINS) 
             {
@@ -62,7 +56,7 @@ namespace CwLibNet.Structs.Profile
 
         public int GetAllocatedSize() 
         {
-            int size = BaseAllocationSize;
+            var size = BaseAllocationSize;
             if (PinAwards != null) 
             {
                 size += PinAwards.Count * PinAward.BASE_ALLOCATION_SIZE;

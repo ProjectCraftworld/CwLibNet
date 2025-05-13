@@ -39,7 +39,7 @@ public sealed class DatabaseBody
         return extension.ToString();
     }
 
-    public DatabaseType HasGUIDs => HasGUIDs;
+    public bool HasGUIDs => hasGUIDs;
 
-    public DatabaseType ContainsData => ContainsData;
+    public bool ContainsData => containsData;
 }

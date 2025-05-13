@@ -11,7 +11,7 @@ public class PSwitchKey: ISerializable
 
     public int ColorIndex;
     
-    public String Name;
+    public string? Name;
 
     
     public bool HideInPlayMode;
@@ -28,8 +28,8 @@ public class PSwitchKey: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
-        int subVersion = serializer.GetRevision().GetSubVersion();
+        var version = serializer.GetRevision().GetVersion();
+        var subVersion = serializer.GetRevision().GetSubVersion();
 
         ColorIndex = serializer.S32(ColorIndex);
         if (version >= 0x2dc)
@@ -40,13 +40,13 @@ public class PSwitchKey: ISerializable
             if (version < 0x3ed) HideInPlayMode = serializer.Bool(HideInPlayMode);
             else if (serializer.IsWriting())
             {
-                int flags = HideInPlayMode ? 0x80 : 0x0;
+                var flags = HideInPlayMode ? 0x80 : 0x0;
                 if (IsDummy) flags |= 0x40;
                 serializer.GetOutput().U8(flags);
             }
             else
             {
-                int flags = serializer.GetInput().U8();
+                var flags = serializer.GetInput().U8();
                 HideInPlayMode = (flags & 0x80) != 0;
                 IsDummy = (flags & 0x40) != 0;
             }
@@ -64,24 +64,24 @@ public class PSwitchKey: ISerializable
         {
             if (serializer.IsWriting())
             {
-                bool isActive = this.IsActive != null;
-                if (isActive) isActive = this.IsActive.Activation != 0.0f;
+                var isActive = IsActive != null;
+                if (isActive) isActive = IsActive is not { Activation: 0.0f };
                 serializer.GetOutput().Boole(isActive);
             }
             else serializer.GetInput().Boole();
         }
 
-        if (version > 0x29f && version < 0x2c4)
+        if (version is > 0x29f and < 0x2c4)
             serializer.Struct(IsActive);
 
-        if (version > 0x27c && version < 0x2dc)
+        if (version is > 0x27c and < 0x2dc)
             serializer.Enum32(Type);
     }
 
     
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
+        var size = BaseAllocationSize;
         if (Name != null)
             size += (Name.Length * 2);
         return size;

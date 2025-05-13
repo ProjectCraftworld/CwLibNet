@@ -1,14 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
 namespace CwLibNet.Structs.Profile 
@@ -46,7 +38,7 @@ namespace CwLibNet.Structs.Profile
 
         public int GetAllocatedSize() 
         {
-            int size = BASE_ALLOCATION_SIZE;
+            var size = BASE_ALLOCATION_SIZE;
             if (networkOnlineID != null)
             {
                 size += (networkOnlineID.Length);

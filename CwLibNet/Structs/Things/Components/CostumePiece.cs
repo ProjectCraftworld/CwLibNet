@@ -1,7 +1,6 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
 using CwLibNet.Resources;
 using CwLibNet.Structs.Mesh;
 using CwLibNet.Types.Data;
@@ -29,27 +28,27 @@ public class CostumePiece: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
-        int subVersion = serializer.GetRevision().GetSubVersion();
+        var version = serializer.GetRevision().GetVersion();
+        var subVersion = serializer.GetRevision().GetSubVersion();
 
         Mesh = serializer.Resource(Mesh, ResourceType.Mesh);
         CategoriesUsed = serializer.I32(CategoriesUsed);
 
         if (subVersion < 0x105)
         {
-            int size = serializer.I32(MorphParamRemap != null ?
+            var size = serializer.I32(MorphParamRemap != null ?
                 MorphParamRemap.Length : 0);
             if (serializer.IsWriting() && size != 0)
             {
-                MemoryOutputStream stream = serializer.GetOutput();
-                foreach (byte param in MorphParamRemap)
+                var stream = serializer.GetOutput();
+                foreach (var param in MorphParamRemap)
                     stream.I32(param);
             }
             else if (!serializer.IsWriting())
             {
                 MorphParamRemap = new byte[size];
-                MemoryInputStream stream = serializer.GetInput();
-                for (int i = 0; i < size; ++i)
+                var stream = serializer.GetInput();
+                for (var i = 0; i < size; ++i)
                     MorphParamRemap[i] = (byte) (stream.I32() & 0xFF);
             }
         }

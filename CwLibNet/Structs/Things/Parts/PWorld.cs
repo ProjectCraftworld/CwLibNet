@@ -7,7 +7,6 @@ using CwLibNet.Structs.Slot;
 using CwLibNet.Structs.Streaming;
 using CwLibNet.Structs.Things.Components;
 using CwLibNet.Structs.Things.Components.World;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
 namespace CwLibNet.Structs.Things.Parts;

@@ -10,16 +10,16 @@ public class PGroup: ISerializable
     public const int BaseAllocationSize = 0x60;
 
 
-    public Thing[] Things;
+    public Thing[]? Things;
 
     
-    public ResourceDescriptor PlanDescriptor;
+    public ResourceDescriptor? PlanDescriptor;
 
     
-    public NetworkPlayerID Creator = new NetworkPlayerID();
+    public NetworkPlayerID Creator = new();
 
     
-    public Thing Emitter;
+    public Thing? Emitter;
 
     
     public int Lifetime, AliveFrames;

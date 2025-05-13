@@ -170,7 +170,7 @@ public class MaterialBox: ISerializable
     public bool IsSimpleMultiply(RGfxMaterial material)
     {
         if (!IsMultiply()) return false;
-        MaterialBox[] ports = material.GetBoxesConnected(this);
+        var ports = material.GetBoxesConnected(this);
         if (ports.Length != 2) return false;
 
         if (ports[0].Type == BoxType.COLOR && ports[1].Type == BoxType.TEXTURE_SAMPLE)

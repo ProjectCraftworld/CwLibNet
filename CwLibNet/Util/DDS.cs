@@ -1,4 +1,4 @@
-using CwLibNet.Enums.ValueEnum;
+using CwLibNet.Enums;
 using CwLibNet.IO.Streams;
 using CwLibNet.Structs.Texture;
 

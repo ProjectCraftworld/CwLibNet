@@ -5,7 +5,6 @@ using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
 using CwLibNet.Structs.Server;
 using CwLibNet.Util;
-using CwLibNet.Types;
 using CwLibNet.Resources;
 
 namespace CwLibNet.Structs.Slot;
@@ -76,7 +75,7 @@ public class Slot : ISerializable
 
     // server specific fields
     public readonly int GameVersion;
-    public readonly SHA1[] Resources; // used for online play
+    public readonly Sha1[] Resources; // used for online play
 
     public Slot() { }
         

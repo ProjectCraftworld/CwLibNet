@@ -44,7 +44,7 @@ public static class ResourceSystem
         return resource.IsGUID() ? Get(resource.GetGUID()!.Value) : Get(resource.GetSHA1()!);
     }
 
-    private static FileEntry? Get(SHA1 hash)
+    private static FileEntry? Get(Sha1 hash)
     {
         return _fileDBs.Select(file => file.Get(hash)).OfType<FileDbRow>().FirstOrDefault();
     }
@@ -59,7 +59,7 @@ public static class ResourceSystem
         return resource.IsGUID() ? Extract(resource.GetGUID()!.Value) : Extract(resource.GetSHA1()!);
     }
 
-    private static byte[]? Extract(SHA1 hash)
+    private static byte[]? Extract(Sha1 hash)
     {
         return _fileArchives.Select(farc => farc.Extract(hash)).OfType<byte[]>().FirstOrDefault();
     }

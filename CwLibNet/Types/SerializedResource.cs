@@ -211,7 +211,7 @@ public class SerializedResource
             var flags = stream.I8();
 
             GUID? guid = null;
-            SHA1? sha1 = null;
+            Sha1? sha1 = null;
 
             if ((flags & 2) != 0)
                 guid = stream.Guid();
@@ -313,11 +313,10 @@ public class SerializedResource
         var isStaticMesh = type.Value.Value == ResourceType.StaticMesh.Value;
 
         var buffer = data.Buffer;
-        ResourceDescriptor[]? dependencies = data.Dependencies;
+        ResourceDescriptor?[] dependencies = data.Dependencies;
 
         var size = buffer.Length + 0x50;
-        if (dependencies != null)
-            size += dependencies.Length * 0x1c;
+        size += dependencies.Length * 0x1c;
         if (data.TextureInfo != null) size += 0x24;
         else if (meshInfo != null) size += meshInfo.GetAllocatedSize();
 
@@ -336,7 +335,7 @@ public class SerializedResource
             stream.Str(type.Value.Header + data.Method.GetValue(), 4);
 
             if (!type.Equals(ResourceType.Texture))
-                data.TextureInfo.Write(stream);
+                data.TextureInfo?.Write(stream);
             stream.Bytes(Compressor.GetCompressedStream(data.Buffer, preferCompressed));
 
             stream.Shrink();
@@ -434,7 +433,7 @@ public class SerializedResource
         if (version >= 0x297 || (version == 0x272 && revision.GetBranchRevision() == 0x4c44 && revision.GetBranchRevision() > 1))
             compressionFlags = CompressionFlags.USE_ALL_COMPRESSION;
 
-        Resource compressable;
+        Resource? compressable;
         try
         {
             var resource = new SerializedResource(data);
@@ -451,7 +450,7 @@ public class SerializedResource
                 plan.CompressionFlags = compressionFlags;
                 plan.SetThings(things);
             }
-            compressable = (Resource) @struct;
+            compressable = (Resource) @struct!;
         }
         catch (Exception)
         {

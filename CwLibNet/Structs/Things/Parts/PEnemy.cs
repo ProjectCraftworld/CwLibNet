@@ -2,7 +2,6 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.Types;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -55,7 +54,7 @@ public class PEnemy: ISerializable
         if (version >= 0x15d)
             PartType = serializer.Enum32(PartType, true);
 
-        if (version > 0x15c && version < 0x19f)
+        if (version is > 0x15c and < 0x19f)
             serializer.Thing(null);
 
         if (version >= 0x16d)

@@ -2,6 +2,7 @@ using System.Collections;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Streams;
+using CwLibNet.Types.Data;
 
 namespace CwLibNet.Types.Archives;
 
@@ -29,7 +30,7 @@ public abstract class Fart: IEnumerable<Fat>
     /**
      * Queue mapping for entries to be added on save.
      */
-    protected Dictionary<SHA1, byte[]> Queue = new(32);
+    protected Dictionary<Sha1, byte[]> Queue = new(32);
 
     protected Fat[] Entries;
 
@@ -37,7 +38,7 @@ public abstract class Fart: IEnumerable<Fat>
      * Structure to map SHA1s to their respective entries in the archive,
      * so access is constant time.
      */
-    protected Dictionary<SHA1, Fat> Lookup = new();
+    protected Dictionary<Sha1, Fat> Lookup = new();
 
     protected Fart(string file, ArchiveType type)
     {
@@ -58,7 +59,7 @@ public abstract class Fart: IEnumerable<Fat>
      * @param sha1 SHA1 signature of resource to extract
      * @return Extracted resource
      */
-    public byte[]? Extract(SHA1 sha1)
+    public byte[]? Extract(Sha1 sha1)
     {
         if (sha1 == null)
             throw new NullReferenceException("Can't search for null hash in archive!");
@@ -99,7 +100,7 @@ public abstract class Fart: IEnumerable<Fat>
      * @param sha1 Hash to query
      * @return Whether the hash exists
      */
-    public bool Exists(SHA1 sha1)
+    public bool Exists(Sha1 sha1)
     {
         if (sha1 == null)
             throw new NullReferenceException("Can't search for null hash in archive!");
@@ -112,11 +113,11 @@ public abstract class Fart: IEnumerable<Fat>
      * @param data Data to add
      * @return SHA1 hash of data added
      */
-    public SHA1 Add(byte[] data)
+    public Sha1 Add(byte[] data)
     {
         if (data == null)
             throw new NullReferenceException("Can't add null buffer to archive!");
-        var sha1 = SHA1.FromBuffer(data);
+        var sha1 = Sha1.FromBuffer(data);
 
         // Already exists, no point adding it to the queue.
         if (Exists(sha1)) return sha1;
@@ -132,9 +133,9 @@ public abstract class Fart: IEnumerable<Fat>
      * @param fart Archive containing data to add
      * @return Hashes added
      */
-    public SHA1[] Add(Fart fart)
+    public Sha1[] Add(Fart fart)
     {
-        List<SHA1> hashes = new(fart.Entries.Length);
+        List<Sha1> hashes = new(fart.Entries.Length);
         foreach (var fat in fart.Entries)
         {
             var sha1 = fat.GetSha1();
@@ -181,7 +182,7 @@ public abstract class Fart: IEnumerable<Fat>
      *
      * @return All hashes currently in queue
      */
-    public List<SHA1> GetQueueHashes()
+    public List<Sha1> GetQueueHashes()
     {
         return [..Queue.Keys];
     }
@@ -212,7 +213,7 @@ public abstract class Fart: IEnumerable<Fat>
      * @param clazz Resource class reference that implements Serializable
      * @return Deserialized resource
      */
-    public T? LoadResource<T>(SHA1 hash) where T: ISerializable
+    public T? LoadResource<T>(Sha1 hash) where T: ISerializable
     {
         var data = Extract(hash);
         if (data == null) return default;
@@ -243,7 +244,7 @@ public abstract class Fart: IEnumerable<Fat>
         List<Fat> entries = new(Entries.Length);
         foreach (var fat in Entries)
         {
-            var sha1 = SHA1.FromBuffer(fat.Extract());
+            var sha1 = Sha1.FromBuffer(fat.Extract());
             if (sha1.Equals(fat.GetSha1()))
                 entries.Add(fat);
         }

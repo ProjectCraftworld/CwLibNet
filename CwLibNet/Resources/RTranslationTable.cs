@@ -3,7 +3,7 @@ using CwLibNet.Extensions;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.IO.Streams;
-using CwLibNet.Types;
+using CwLibNet.Types.Data;
 using CwLibNet.Util;
 
 namespace CwLibNet.Resources;
@@ -131,7 +131,7 @@ public class RTranslationTable : Resource
             .Select(element => (Encoding.BigEndianUnicode.GetBytes(element).Length + 1) * 2)
             .Aggregate(0, (total, element) => total + element) - 2;
 
-        Dictionary<string, int> offsets = new Dictionary<string, int>();
+        var offsets = new Dictionary<string, int>();
         var stringTable = new MemoryOutputStream(stringTableSize);
         var keyTable = new MemoryOutputStream(lookup.Count * 8 + 4);
         keyTable.I32(lookup.Count);
