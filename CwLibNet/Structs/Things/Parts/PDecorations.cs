@@ -6,7 +6,7 @@ namespace CwLibNet.Structs.Things.Parts;
 
 public class PDecorations: ISerializable
 {
-    public Decoration[] Decorations;
+    public Decoration[]? Decorations;
 
     public PDecorations() { }
 

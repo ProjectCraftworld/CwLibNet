@@ -10,10 +10,10 @@ public class Skeleton: ISerializable
 {
     public const int BaseAllocationSize = 0x14;
 
-    public Bone[] Bones;
+    public Bone[]? Bones;
     public short[] Mirror;
     public FlipType[] MirrorType;
-    public CullBone[] CullBones;
+    public CullBone[]? CullBones;
 
     
     

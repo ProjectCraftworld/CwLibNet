@@ -63,8 +63,8 @@ namespace CwLibNet.Resources
 
         public string[] OldTextSearches { get; set; }
 
-        public SlotLink[] OldDiscoveredLinks { get; set; }
-        public SlotLink[] PendingLinks { get; set; }
+        public SlotLink[]? OldDiscoveredLinks { get; set; }
+        public SlotLink[]? PendingLinks { get; set; }
         public SlotID LastPlayed { get; set; } = new SlotID();
 
         public int[] Lbp1VideosPlayed { get; set; }
@@ -85,7 +85,7 @@ namespace CwLibNet.Resources
 
         public int Lbp2GameProgressionFlags { get; set; }
 
-        public InventoryItem[] PendingInventoryItems { get; set; }
+        public InventoryItem[]? PendingInventoryItems { get; set; }
 
         public ResourceDescriptor PodLevel { get; set; }
 
@@ -103,7 +103,7 @@ namespace CwLibNet.Resources
 
         public ResourceDescriptor SyncedProfile { get; set; }
 
-        public NetworkPlayerID[] VoipMutedPlayers { get; set; }
+        public NetworkPlayerID[]? VoipMutedPlayers { get; set; }
 
         public bool VoipChatPaused { get; set; }
 
@@ -157,7 +157,7 @@ namespace CwLibNet.Resources
 
         public int[] SectionHeadingToggled { get; set; }
 
-        public MysteryPodEventSeen[] MysteryPodEventsSeen { get; set; }
+        public MysteryPodEventSeen[]? MysteryPodEventsSeen { get; set; }
 
         public SHA1[] LastLegacyImportedProfileHashLBP1 { get; set; }
 
@@ -171,7 +171,7 @@ namespace CwLibNet.Resources
 
         public int[] HiddenCategories { get; set; }
 
-        public CollectedBubble[] CollectedBubbles { get; set; }
+        public CollectedBubble[]? CollectedBubbles { get; set; }
 
         public int NumWaterLevelsPlayed { get; set; }
 
@@ -314,7 +314,7 @@ namespace CwLibNet.Resources
         /// <summary>
         /// Popit puzzles completed (LBP3).
         /// </summary>
-        public SlotID[] PopitPuzzlesCompleted { get; set; }
+        public SlotID[]? PopitPuzzlesCompleted { get; set; }
 
         /// <summary>
         /// Whether the timesaver notice has been viewed (LBP3).
@@ -339,7 +339,7 @@ namespace CwLibNet.Resources
         /// <summary>
         /// Go Play cache (LBP3).
         /// </summary>
-        public GoPlayCache[] GoPlayCache { get; set; }
+        public GoPlayCache[]? GoPlayCache { get; set; }
 
         public override void Serialize(Serializer serializer)
         {
@@ -441,7 +441,7 @@ namespace CwLibNet.Resources
             if (version >= 0x268)
                 FixedUpByDeveloper = serializer.Bool(FixedUpByDeveloper);
 
-            if (version >= 0x297 || revision.Has(Branch.Leerdammer, (int)Revisions.LdSavegameInfo))
+            if (version >= 0x297 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_SAVEGAME_INFO))
             {
                 ShowSaveGameInfo = serializer.Bool(ShowSaveGameInfo);
                 TotalLevelCount = serializer.I32(TotalLevelCount);
@@ -450,13 +450,13 @@ namespace CwLibNet.Resources
             if (version >= 0x394)
                 LastMmPicksCount = serializer.I32(LastMmPicksCount);
 
-            if (version >= 0x2cc || revision.Has(Branch.Leerdammer, (int)Revisions.LdNewsTimestamp))
+            if (version >= 0x2cc || revision.Has(Branch.Leerdammer, (int)Revisions.LD_NEWS_TIMESTAMP))
                 LastNewsItemTimestamp = serializer.S64(LastNewsItemTimestamp);
 
             if (version >= 0x324)
                 LastStreamEventTimestamp = serializer.S64(LastStreamEventTimestamp);
 
-            if (version >= 0x2cd || revision.Has(Branch.Leerdammer, (int)Revisions.LdQueue))
+            if (version >= 0x2cd || revision.Has(Branch.Leerdammer, (int)Revisions.LD_QUEUE))
                 LolcatFtwTimestamp = serializer.S64(LolcatFtwTimestamp);
 
             if (version >= 0x328)
@@ -515,10 +515,10 @@ namespace CwLibNet.Resources
             if (version >= 0x18f)
                 PlayerId = serializer.Struct<NetworkPlayerID>(PlayerId);
 
-            if (version >= 0x296 || revision.Has(Branch.Leerdammer, (int)Revisions.LdOwnerId))
+            if (version >= 0x296 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_OWNER_ID))
                 OwnerPlayerId = serializer.Struct<NetworkPlayerID>(OwnerPlayerId);
 
-            if (version >= 0x296 || revision.Has(Branch.Leerdammer, (int)Revisions.LdOwnerId))
+            if (version >= 0x296 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_OWNER_ID))
             {
                 OwnerPsid = serializer.Struct<OpenPSID>(OwnerPsid);
                 OwnerUserId = serializer.I32(OwnerUserId);
@@ -593,7 +593,7 @@ namespace CwLibNet.Resources
             if (version == 0x261)
                 serializer.I32(0); // Unused: gameSaveProgressBits
 
-            if (version >= 0x341 || revision.Has(Branch.Leerdammer, (int)Revisions.LdThermometer))
+            if (version >= 0x341 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_THERMOMETER))
                 ShowThermometer = serializer.Bool(ShowThermometer);
 
             if (version >= 0x383)
@@ -640,7 +640,7 @@ namespace CwLibNet.Resources
             if (subVersion >= 0x160)
                 CollectedBubbles = serializer.Array<CollectedBubble>(CollectedBubbles);
 
-            if (version >= 0x2f5 || revision.Has(Branch.Leerdammer, (int)Revisions.LdWaterLevels))
+            if (version >= 0x2f5 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_WATER_LEVELS))
                 NumWaterLevelsPlayed = serializer.I32(NumWaterLevelsPlayed);
 
             if (version >= 0x3cf)
@@ -661,24 +661,24 @@ namespace CwLibNet.Resources
                 PlayerDataLabels = serializer.Struct<PlayerDataLabels>(PlayerDataLabels);
             }
 
-            if (version >= 0x3c9 || revision.Has(Branch.Double11, (int)Revisions.D1Datalabels))
+            if (version >= 0x3c9 || revision.Has(Branch.Double11, (int)Revisions.D_1DATALABELS))
             {
-                if (revision.Has(Branch.Double11, (int)Revisions.D13GConnectivity))
+                if (revision.Has(Branch.Double11, (int)Revisions.D13_G_CONNECTIVITY))
                 {
                     Total3GUpStream = serializer.I32(Total3GUpStream);
                     Total3GDownStream = serializer.I32(Total3GDownStream);
                 }
 
-                if (revision.Has(Branch.Double11, (int)Revisions.D1TouchCreate))
+                if (revision.Has(Branch.Double11, (int)Revisions.D1_TOUCH_CREATE))
                 {
                     CreateRearTouchPan = serializer.Bool(CreateRearTouchPan);
                     CreateRearTouchPinchZoom = serializer.Bool(CreateRearTouchPinchZoom);
                     CreateRearTapZoom = serializer.Bool(CreateRearTapZoom);
-
-                    if (revision.Has(Branch.Double11, (int)Revisions.D1CreateWarning))
+                
+                    if (revision.Has(Branch.Double11, (int)Revisions.D1_CREATE_WARNING))
                         CreateFrameRateWarningMessages = serializer.Bool(CreateFrameRateWarningMessages);
 
-                    if (revision.Has(Branch.Double11, (int)Revisions.D1CreateBeta))
+                    if (revision.Has(Branch.Double11, (int)Revisions.D1_CREATE_BETA))
                     {
                         OnlineBetaNetworkTimestamp = serializer.S64(OnlineBetaNetworkTimestamp);
                         OnlineBetaPlayTimeSinceOnline = serializer.I32(OnlineBetaPlayTimeSinceOnline);
@@ -817,7 +817,7 @@ namespace CwLibNet.Resources
         /// <param name="descriptor">GUID/SHA1 reference to the plan to add</param>
         /// <param name="table">Translation table for resolving categories/locations</param>
         /// <returns>Added inventory item</returns>
-        public InventoryItem AddItem(RPlan plan, ResourceDescriptor descriptor, RTranslationTable table)
+        public InventoryItem AddItem(RPlan plan, ResourceDescriptor? descriptor, RTranslationTable table)
         {
             InventoryItem existing = GetItem(descriptor);
             if (existing != null) 
@@ -855,7 +855,7 @@ namespace CwLibNet.Resources
 
             item.Details = plan.InventoryData;
             item.Flags = 4;
-            item.UID = GetLastInventoryUID() + 1;
+            item.Uid = GetLastInventoryUID() + 1;
 
             Inventory.Add(item);
 
@@ -868,11 +868,7 @@ namespace CwLibNet.Resources
         /// <returns>The highest inventory UID in use</returns>
         public int GetLastInventoryUID()
         {
-            int UID = 1;
-            foreach (InventoryItem item in Inventory)
-                if (item.UID > UID)
-                    UID = item.UID;
-            return UID;
+            return Inventory.Select(item => item.Uid).Prepend(1).Max();
         }
 
         /// <summary>
@@ -925,20 +921,7 @@ namespace CwLibNet.Resources
         /// <returns>Whether the item exists in the inventory</returns>
         public bool HasItem(GUID guid)
         {
-            foreach (InventoryItem item in Inventory)
-            {
-                ResourceDescriptor plan = item.Plan;
-                if (plan == null) 
-                    continue;
-                
-                if (plan.IsGUID()) 
-                {
-                    GUID? planGuid = plan.GetGUID();
-                    if (planGuid.HasValue && planGuid.Value.Equals(guid))
-                        return true;
-                }
-            }
-            return false;
+            return (from plan in Inventory.Select(item => item.Plan).OfType<ResourceDescriptor>() where plan.IsGUID() select plan.GetGUID()).OfType<GUID?>().Any(planGuid => planGuid.Value.Equals(guid));
         }
 
         /// <summary>
@@ -946,16 +929,9 @@ namespace CwLibNet.Resources
         /// </summary>
         /// <param name="descriptor">Resource descriptor to get</param>
         /// <returns>The inventory item if found, null otherwise</returns>
-        public InventoryItem GetItem(ResourceDescriptor descriptor)
+        public InventoryItem? GetItem(ResourceDescriptor? descriptor)
         {
-            if (descriptor == null) 
-                return null;
-            
-            foreach (InventoryItem item in Inventory)
-                if (descriptor.Equals(item.Plan))
-                    return item;
-            
-            return null;
+            return descriptor == null ? null : Inventory.FirstOrDefault(item => descriptor.Equals(item.Plan));
         }
     }
 }

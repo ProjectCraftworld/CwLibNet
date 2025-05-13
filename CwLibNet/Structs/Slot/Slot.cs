@@ -36,9 +36,9 @@ public class Slot : ISerializable
     // lbp2 fields
 
     public ResourceDescriptor PlanetDecorations;
-    public Label[] Labels;
-    public Collectabubble[] CollectabubblesRequired;
-    public Collectabubble[] CollectabubblesContained;
+    public Label[]? Labels;
+    public Collectabubble[]? CollectabubblesRequired;
+    public Collectabubble[]? CollectabubblesContained;
     public bool IsSubLevel; 
     public byte MinPlayers = 1; 
     public byte MaxPlayers = 4; 
@@ -70,7 +70,7 @@ public class Slot : ISerializable
     public int SizeOfResources;
     public int SizeOfSubLevels;
 
-    public SlotID[] SubLevels; // used for online play
+    public SlotID[]? SubLevels; // used for online play
     public ResourceDescriptor SlotList;
     public short Revision;
 

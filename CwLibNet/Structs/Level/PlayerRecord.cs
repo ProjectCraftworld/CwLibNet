@@ -8,7 +8,7 @@ public class PlayerRecord: ISerializable
 {
     public const int BaseAllocationSize = 0x800;
 
-    private NetworkPlayerID[] playerIDs = new NetworkPlayerID[32];
+    private NetworkPlayerID[]? playerIDs = new NetworkPlayerID[32];
     private int[] playerNumbers = new int[32];
     private int offset;
 
@@ -32,7 +32,7 @@ public class PlayerRecord: ISerializable
         return BaseAllocationSize;
     }
 
-    public NetworkPlayerID[] GetPlayerIDs()
+    public NetworkPlayerID[]? GetPlayerIDs()
     {
         return playerIDs;
     }

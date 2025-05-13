@@ -1,47 +1,40 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.IO.Streams;
-using CwLibNet.Structs;
 using CwLibNet.Structs.Profile;
-using static CwLibNet.Structs.Profile.Challenge;
-using static CwLibNet.Structs.Profile.DataLabel;
-using static CwLibNet.Structs.Profile.InventoryItem;
 using CwLibNet.Structs.Slot;
-using CwLibNet.Types.Data;
 using CwLibNet.Types;
+using CwLibNet.Types.Data;
 
 namespace CwLibNet.Resources 
 {
     public class RBigProfile : Resource 
     {
-        public static readonly int BASE_ALLOCATION_SIZE = 0x20;
+        public const int BaseAllocationSize = 0x20;
 
-        public List<InventoryItem> inventory = new List<InventoryItem>();
+        public List<InventoryItem>? Inventory = [];
 
-        public List<SHA1> vitaCrossDependencyHashes = new List<SHA1>();
+        public List<SHA1> VitaCrossDependencyHashes = [];
 
-        public List<DataLabel> creatorDataLabels = new List<DataLabel>();
+        public List<DataLabel>? CreatorDataLabels = [];
 
-        public StringLookupTable stringTable = new StringLookupTable();
-        public bool fromProductionBuild = true;
+        public StringLookupTable StringTable = new StringLookupTable();
+        public bool FromProductionBuild = true;
 
-        public Dictionary<SlotID, Slot> myMoonSlots = new Dictionary<SlotID, Slot>();
-        public List<Challenge> nearMyChallengeDataLog = new List<Challenge>(),
-            nearMyChallengeDataOpen = new List<Challenge>();
-        public List<Treasure> nearMyTreasureLog = new List<Treasure>();
-        public List<SlotID> downloadedSlots = new List<SlotID>();
-        public ResourceDescriptor planetDecorations;
+        public Dictionary<SlotID, Slot> MyMoonSlots = new Dictionary<SlotID, Slot>();
+        public List<Challenge>? NearMyChallengeDataLog = [];
+
+        public List<Challenge>? NearMyChallengeDataOpen = [];
+
+        public List<Treasure>? NearMyTreasureLog = [];
+        public List<SlotID>? DownloadedSlots = [];
+        public ResourceDescriptor PlanetDecorations;
 
 
         public override void Serialize(Serializer serializer) 
         {
-            inventory = serializer.Arraylist<InventoryItem>(inventory, true);
+            Inventory = serializer.Arraylist(Inventory, true);
 
             Revision revision = serializer.GetRevision();
             int version = revision.GetVersion();
@@ -50,11 +43,11 @@ namespace CwLibNet.Resources
             {
                 if (serializer.IsWriting())
                 {
-                    if (vitaCrossDependencyHashes != null) 
+                    if (VitaCrossDependencyHashes != null) 
                     {
                         MemoryOutputStream stream = serializer.GetOutput();
-                        stream.I32(vitaCrossDependencyHashes.Count);
-                        foreach (SHA1 hash in vitaCrossDependencyHashes) 
+                        stream.I32(VitaCrossDependencyHashes.Count);
+                        foreach (SHA1 hash in VitaCrossDependencyHashes) 
                         {
                             stream.Sha1(hash);
                         }
@@ -65,128 +58,115 @@ namespace CwLibNet.Resources
                 {
                     MemoryInputStream stream = serializer.GetInput();
                     int size = stream.I32();
-                    vitaCrossDependencyHashes = new List<SHA1>(size);
+                    VitaCrossDependencyHashes = new List<SHA1>(size);
                     for (int i = 0; i < size; i++)
                     {
-                        vitaCrossDependencyHashes.Add(stream.Sha1());
+                        VitaCrossDependencyHashes.Add(stream.Sha1());
                     }
                 }
             }
 
-            if (version >= (int)Revisions.Datalabels) 
+            if (version >= (int)Revisions.DATALABELS) 
             {
-                creatorDataLabels = serializer.Arraylist<DataLabel>(creatorDataLabels, true);
+                CreatorDataLabels = serializer.Arraylist(CreatorDataLabels, true);
             }
 
-            stringTable = serializer.Struct<StringLookupTable>(stringTable);
+            StringTable = serializer.Struct(StringTable);
 
-            if (version >= (int)Revisions.ProductionBuild) 
+            if (version >= (int)Revisions.PRODUCTION_BUILD) 
             {
-                fromProductionBuild = serializer.Bool(fromProductionBuild);
+                FromProductionBuild = serializer.Bool(FromProductionBuild);
             }
 
             if (serializer.IsWriting())
             {
-                HashSet<SlotID> keys = myMoonSlots.Keys.ToHashSet();
+                HashSet<SlotID> keys = MyMoonSlots.Keys.ToHashSet();
                 serializer.GetOutput().I32(keys.Count);
                 foreach (SlotID key in keys) 
                 {
-                    serializer.Struct<SlotID>(key);
-                    serializer.Struct<Slot>(myMoonSlots[key]);
+                    serializer.Struct(key);
+                    serializer.Struct(MyMoonSlots[key]);
                 }
             }
             else 
             {
                 int count = serializer.GetInput().I32();
-                myMoonSlots = new Dictionary<SlotID, Slot>(count);
+                MyMoonSlots = new Dictionary<SlotID, Slot>(count);
                 for (int i = 0; i < count; i++)
                 {
-                    myMoonSlots.Add(
-                        serializer.Struct<SlotID>(new SlotID()),
-                        serializer.Struct<Slot>(new Slot())
+                    MyMoonSlots.Add(
+                        serializer.Struct(new SlotID()),
+                        serializer.Struct(new Slot())
                     );
                 }
             }
 
             if (revision.IsVita())
             {
-                if (revision.Has(Branch.Double11, (int)Revisions.D1Datalabels))
-                    creatorDataLabels = serializer.Arraylist<DataLabel>(creatorDataLabels, true);
+                if (revision.Has(Branch.Double11, (int)Revisions.D_1DATALABELS))
+                    CreatorDataLabels = serializer.Arraylist(CreatorDataLabels, true);
 
-                if (revision.Has(Branch.Double11, (int)Revisions.D1NearChallenges))
+                if (revision.Has(Branch.Double11, (int)Revisions.D1_NEAR_CHALLENGES))
                 {
-                    nearMyChallengeDataLog = serializer.Arraylist<Challenge>(nearMyChallengeDataLog, true);
-                    nearMyChallengeDataOpen = serializer.Arraylist<Challenge>(nearMyChallengeDataOpen, true);
+                    NearMyChallengeDataLog = serializer.Arraylist(NearMyChallengeDataLog, true);
+                    NearMyChallengeDataOpen = serializer.Arraylist(NearMyChallengeDataOpen, true);
                 }
 
-                if (revision.Has(Branch.Double11, (int)Revisions.D1NearTreasures))
+                if (revision.Has(Branch.Double11, (int)Revisions.D1_NEAR_TREASURES))
                 {
-                    nearMyTreasureLog = serializer.Arraylist<Treasure>(nearMyTreasureLog, true);
+                    NearMyTreasureLog = serializer.Arraylist(NearMyTreasureLog, true);
                 }
 
-                if (revision.Has(Branch.Double11, (int)Revisions.D1DownloadedSlots))
+                if (revision.Has(Branch.Double11, (int)Revisions.D_1DOWNLOADED_SLOTS))
                 {
-                    downloadedSlots = serializer.Arraylist<SlotID>(downloadedSlots, true);
+                    DownloadedSlots = serializer.Arraylist(DownloadedSlots, true);
                 }
-                if (revision.Has(Branch.Double11, (int)Revisions.D1PlanetDecorations))
+                if (revision.Has(Branch.Double11, (int)Revisions.D1_PLANET_DECORATIONS))
                 {
-                    planetDecorations = serializer.Resource(planetDecorations, ResourceType.Level, true);
-                    if (planetDecorations != null)
-                        serializer.AddDependency(planetDecorations);
+                    PlanetDecorations = serializer.Resource(PlanetDecorations, ResourceType.Level, true);
+                    if (PlanetDecorations != null)
+                        serializer.AddDependency(PlanetDecorations);
                 }
             }
         }
 
-        public SlotID GetNextSlotID() 
+        public SlotID GetNextSlotId() 
         {
             SlotID next = new SlotID(SlotType.USER_CREATED_STORED_LOCAL, 0x0);
             while (true)
             {
-                if (!myMoonSlots.ContainsKey(next)) 
+                if (!MyMoonSlots.ContainsKey(next)) 
                 {
                     return next;
                 }
-                else 
-                {
-                    next.SlotNumber++;
-                }
+
+                next.SlotNumber++;
             }
         }
 
-        public int GetNextUID()
+        public int GetNextUid()
         {
-            int UID = 1;
-            foreach (InventoryItem item in inventory)
-            {
-                int fixedUID = (int)(item.UID & ~0x80000000);
-                if (fixedUID > UID)
-                    UID = fixedUID;
-            }
-            return (int)((UID + 1) | 0x80000000);
+            int uid = Inventory.Select(item => (int)(item.Uid & ~0x80000000)).Prepend(1).Max();
+            return (int)((uid + 1) | 0x80000000);
         }
 
         public override int GetAllocatedSize() 
         {
-            int size = BASE_ALLOCATION_SIZE;
-            size += stringTable.GetAllocatedSize();
-            if (inventory != null)
+            int size = BaseAllocationSize;
+            size += StringTable.GetAllocatedSize();
+            if (Inventory != null)
             {
-                foreach (InventoryItem item in inventory)
-                {
-                    size += item.GetAllocatedSize();
-                }
+                size += Inventory.Sum(item => item.GetAllocatedSize());
             }
-            foreach (Slot slot in myMoonSlots.Values)
-            {
-                size += slot.GetAllocatedSize() + SlotID.BASE_ALLOCATION_SIZE;
-            }
+
+            size += MyMoonSlots.Values.Sum(slot => slot.GetAllocatedSize() + SlotID.BaseAllocationSize);
             return size;
         }
 
         public override SerializationData Build(Revision revision, byte compressionFlags)
         {
             Serializer serializer = new Serializer(GetAllocatedSize(), revision, compressionFlags);
-            serializer.Struct<RBigProfile>(this);
+            serializer.Struct(this);
             return new SerializationData(
                 serializer.GetOutput().GetBuffer(),
                 revision,

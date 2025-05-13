@@ -24,7 +24,7 @@ namespace CwLibNet.Structs.Profile
 
         public int levelType;
         public int myScore;
-        public string networkOnlineID;
+        public string? networkOnlineID;
 
         public void Serialize(Serializer serializer)
         {
@@ -34,10 +34,10 @@ namespace CwLibNet.Structs.Profile
             scoreToBeat = serializer.I32(scoreToBeat);
             
             var revision = new Revision(); // Create an instance of Revision
-            if (revision.Has(Branch.Double11, (int)Revisions.D1ChallengeLevelType)) // Assuming 'HasBranchAndRevision' is the correct method
+            if (revision.Has(Branch.Double11, (int)Revisions.D1_CHALLENGE_LEVEL_TYPE)) // Assuming 'HasBranchAndRevision' is the correct method
                 levelType = serializer.I32(levelType);
 
-            if (revision.Has(Branch.Double11, (int)Revisions.D1ChallengeScore)) // Assuming 'HasBranchAndRevision' is the correct method
+            if (revision.Has(Branch.Double11, (int)Revisions.D1_CHALLENGE_SCORE)) // Assuming 'HasBranchAndRevision' is the correct method
             {
                 myScore = serializer.I32(myScore);
                 networkOnlineID = serializer.Str(networkOnlineID);
@@ -46,10 +46,10 @@ namespace CwLibNet.Structs.Profile
 
         public int GetAllocatedSize() 
         {
-            int size = Challenge.BASE_ALLOCATION_SIZE;
-            if (this.networkOnlineID != null)
+            int size = BASE_ALLOCATION_SIZE;
+            if (networkOnlineID != null)
             {
-                size += (this.networkOnlineID.Length);
+                size += (networkOnlineID.Length);
             }
             return size;
         }

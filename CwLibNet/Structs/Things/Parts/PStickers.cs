@@ -13,24 +13,24 @@ public class PStickers: ISerializable
     /**
      * Decals that are on the primary thing.
      */
-    public Decal[] decals;
+    public Decal[]? decals;
 
     /**
      * Decals on specific costume pieces.
      */
-    public Decal[][] costumeDecals = new Decal[14][];
+    public Decal[]?[] costumeDecals = new Decal[14][];
 
     /**
      * Paint control data, depreciated.
      */
     
-    public PaintControlPoint[] paintControl;
+    public PaintControlPoint[]? paintControl;
 
     /**
      * Eyetoy related information for decal placed.
      */
     
-    public EyetoyData[] eyetoyData;
+    public EyetoyData[]? eyetoyData;
 
     public PStickers() { }
 

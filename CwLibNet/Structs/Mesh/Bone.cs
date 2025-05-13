@@ -22,8 +22,8 @@ public class Bone: AnimBone
 
     public Vector4? ObbMin;
     public Vector4? ObbMax;
-    public MeshShapeVertex[] ShapeVerts;
-    public MeshShapeInfo[] ShapeInfos;
+    public MeshShapeVertex[]? ShapeVerts;
+    public MeshShapeInfo[]? ShapeInfos;
     public float ShapeMinZ, ShapeMaxZ;
     public Vector4? BoundBoxMin;
     public Vector4? BoundBoxMax;

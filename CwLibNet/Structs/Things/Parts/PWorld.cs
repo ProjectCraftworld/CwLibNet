@@ -34,10 +34,14 @@ public class PWorld: ISerializable
     public bool IsPaused;
     public float LightingFactor = 1.0f, ColorCorrectionFactor;
     public float FogFactor, FogTintFactor, DarknessFactor;
-    public EggLink[] CompleteRewards, CollectRewards, AceRewards;
+    public EggLink[]? CompleteRewards;
+    public EggLink[]? CollectRewards;
+    public EggLink[]? AceRewards;
     public bool AreRewardsShareable = true;
     public SlotID ScoreboardLevelLinkSlot;
-    public KeyLink[] CompleteUnlocks, CollectUnlocks, AceUnlocks;
+    public KeyLink[]? CompleteUnlocks;
+    public KeyLink[]? CollectUnlocks;
+    public KeyLink[]? AceUnlocks;
     public int DeathCount;
     public int MaxNumPlayers = 1;
     public Thing[] DissolvingThings, OldDissolvingThings;
@@ -103,7 +107,7 @@ public class PWorld: ISerializable
     public bool ScoreLocked;
     public int DebugTimeInLevel;
     public bool UseEvenNewerCheckpointCode;
-    public MoveCursor[] MoveCursors;
+    public MoveCursor[]? MoveCursors;
     
     public bool SinglePlayer;
     public int MinPlayers = 1, MaxPlayers = 4;
@@ -111,7 +115,7 @@ public class PWorld: ISerializable
     public bool FixInvalidInOutMoverContacts;
     public bool ContinueMusic;
 
-    public BroadcastMicrochipEntry[] BroadcastMicroChipEntries;
+    public BroadcastMicrochipEntry[]? BroadcastMicroChipEntries;
     public int ManualJumpDown;
     public Thing[] DeferredDestroys;
     public float GlobalDofFront, GlobalDofBack, GlobalDofSackTrack;
@@ -124,8 +128,12 @@ public class PWorld: ISerializable
     /* Vita Fields */
 
     public bool NonLinearFog;
-    public EggLink[] BronzeRewards, SilverRewards, GoldRewards;
-    public KeyLink[] BronzeUnlocks, SilverUnlocks, GoldUnlocks;
+    public EggLink[]? BronzeRewards;
+    public EggLink[]? SilverRewards;
+    public EggLink[]? GoldRewards;
+    public KeyLink[]? BronzeUnlocks;
+    public KeyLink[]? SilverUnlocks;
+    public KeyLink[]? GoldUnlocks;
     public byte BronzeTrophyConditionType, SilverTrophyConditionType, GoldTrophyConditionType;
     public int ScoreRequiredForBronzeTrophy, ScoreRequiredForSilverTrophy, ScoreRequiredForGoldTrophy;
     public float TimeRequiredForBronzeTrophy, TimeRequiredForSilverTrophy, TimeRequiredForGoldTrophy;

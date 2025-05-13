@@ -1037,7 +1037,7 @@ public class Serializer
     /// <param name="values">Array to serialize</param>
     /// <param name="clazz">Array base-serializable type</param>
     /// <returns>(De)serialized array</returns>
-    public T[] Array<T>(T[]? values) where T : ISerializable => Array(values, false);
+    public T[]? Array<T>(T[]? values) where T : ISerializable => Array(values, false);
 
     /// <summary>
     /// (De)serializes an array to/from the stream.

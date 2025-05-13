@@ -99,7 +99,7 @@ public class RMesh: Resource
     /**
      * The skeleton of this this.
      */
-    public Bone[] Bones;
+    public Bone[]? Bones;
 
     /**
      * Each index refers to a bone, the value at each index
@@ -124,22 +124,22 @@ public class RMesh: Resource
     public CellGcmPrimitive PrimitiveType = CellGcmPrimitive.TRIANGLE_STRIP;
 
     public SoftbodyClusterData SoftbodyCluster;
-    public SoftbodySpring[] SoftbodySprings;
+    public SoftbodySpring[]? SoftbodySprings;
 
     /**
      * Vertices that are equivalent, but only separate for texturing reasons.
      */
-    public SoftbodyVertEquivalence[] SoftbodyEquivs;
+    public SoftbodyVertEquivalence[]? SoftbodyEquivs;
 
     /**
      * Mass of each vertex, used for softbody physics.
      */
     public float[] Mass;
 
-    public ImplicitEllipsoid[] ImplicitEllipsoids = [];
+    public ImplicitEllipsoid[]? ImplicitEllipsoids = [];
     public Matrix4x4[] ClusterImplicitEllipsoids = [];
-    public ImplicitEllipsoid[] InsideImplicitEllipsoids = [];
-    public ImplicitPlane[] ImplicitPlanes = [];
+    public ImplicitEllipsoid[]? InsideImplicitEllipsoids = [];
+    public ImplicitPlane[]? ImplicitPlanes = [];
 
     /**
      * Settings for how this mesh's softbody physics behave.
@@ -171,7 +171,7 @@ public class RMesh: Resource
     /**
      * Bones that control render culling behavior.
      */
-    public CullBone[] CullBones;
+    public CullBone[]? CullBones;
 
     /**
      * Parts of the player mesh that gets hidden

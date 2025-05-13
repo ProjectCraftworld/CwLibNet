@@ -56,7 +56,7 @@ public class RGfxMaterial: Resource
     
     public int SoundEnum;
 
-    public MaterialParameterAnimation[] ParameterAnimations;
+    public MaterialParameterAnimation[]? ParameterAnimations;
 
     /* PS Vita specific fields */
 

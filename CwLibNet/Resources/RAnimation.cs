@@ -36,7 +36,7 @@ public class RAnimation: Resource
 
     public const int BaseAllocationSize = 0x100;
 
-    public AnimBone[] Bones;
+    public AnimBone[]? Bones;
 
     public short NumFrames, Fps = 24, LoopStart;
     public byte MorphCount;
@@ -55,7 +55,7 @@ public class RAnimation: Resource
     public Vector4?[] PackedScale;
     public float[] PackedMorph;
 
-    public Locator[] Locators;
+    public Locator[]? Locators;
 
     private RpsAnimData[] cachedFrameData;
 
