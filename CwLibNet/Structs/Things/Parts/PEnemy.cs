@@ -8,43 +8,43 @@ namespace CwLibNet.Structs.Things.Parts;
 
 public class PEnemy: ISerializable
 {
-    public const int BASE_ALLOCATION_SIZE = 0x100;
+    public const int BaseAllocationSize = 0x100;
 
 
-    public EnemyPart partType = EnemyPart.LEG;
-
-    
-    public float radius;
+    public EnemyPart PartType = EnemyPart.LEG;
 
     
-    public int snapVertex;
+    public float Radius;
 
     
-    public Vector3? centerOffset;
+    public int SnapVertex;
 
     
-    public Thing animThing;
+    public Vector3? CenterOffset;
 
     
-    public float animSpeed;
+    public Thing AnimThing;
 
     
-    public int sourcePlayerNumber;
+    public float AnimSpeed;
 
     
-    public bool newWalkConstraintMass;
+    public int SourcePlayerNumber;
 
     
-    public int smokeColor;
+    public bool NewWalkConstraintMass;
 
     
-    public float smokeBrightness;
+    public int SmokeColor;
+
+    
+    public float SmokeBrightness;
 
     /* Vita */
     
-    public bool touchSensitive;
+    public bool TouchSensitive;
     
-    public int touchType;
+    public int TouchType;
 
     
     public void Serialize(Serializer serializer)
@@ -53,13 +53,13 @@ public class PEnemy: ISerializable
         var version = revision.GetVersion();
 
         if (version >= 0x15d)
-            partType = serializer.Enum32(partType, true);
+            PartType = serializer.Enum32(PartType, true);
 
         if (version > 0x15c && version < 0x19f)
             serializer.Thing(null);
 
         if (version >= 0x16d)
-            radius = serializer.F32(radius);
+            Radius = serializer.F32(Radius);
 
         switch (version)
         {
@@ -67,15 +67,15 @@ public class PEnemy: ISerializable
                 serializer.Thing(null);
                 break;
             case >= 0x19f:
-                snapVertex = serializer.I32(snapVertex);
+                SnapVertex = serializer.I32(SnapVertex);
                 break;
         }
 
         if (version >= 0x1a9)
         {
-            centerOffset = serializer.V3(centerOffset);
-            animThing = serializer.Thing(animThing);
-            animSpeed = serializer.F32(animSpeed);
+            CenterOffset = serializer.V3(CenterOffset);
+            AnimThing = serializer.Thing(AnimThing);
+            AnimSpeed = serializer.F32(AnimSpeed);
         }
 
         switch (version)
@@ -98,29 +98,29 @@ public class PEnemy: ISerializable
                 serializer.S32(0);
                 break;
             case >= 0x246:
-                sourcePlayerNumber = serializer.I32(sourcePlayerNumber);
+                SourcePlayerNumber = serializer.I32(SourcePlayerNumber);
                 break;
         }
 
         if (version >= 0x265)
-            newWalkConstraintMass = serializer.Bool(newWalkConstraintMass);
+            NewWalkConstraintMass = serializer.Bool(NewWalkConstraintMass);
         if (version >= 0x31e)
-            smokeColor = serializer.I32(smokeColor);
+            SmokeColor = serializer.I32(SmokeColor);
         if (version >= 0x39a)
-            smokeBrightness = serializer.F32(smokeBrightness);
+            SmokeBrightness = serializer.F32(SmokeBrightness);
 
         if (!revision.IsVita()) return; // 0x3c0
         int vita = revision.GetBranchRevision();
         if (vita >= 0x2)
-            touchSensitive = serializer.Bool(touchSensitive);
+            TouchSensitive = serializer.Bool(TouchSensitive);
         if (vita >= 0x3)
-            touchType = serializer.I32(touchType);
+            TouchType = serializer.I32(TouchType);
     }
 
     
     public int GetAllocatedSize()
     {
-        return BASE_ALLOCATION_SIZE;
+        return BaseAllocationSize;
     }
 
 

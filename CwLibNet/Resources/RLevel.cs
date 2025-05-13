@@ -338,7 +338,7 @@ public class RLevel: Resource
                 if (thing.HasPart(Part.Parts["ENEMY"]))
                 {
                     var enemy = thing.GetPart<PEnemy>(Part.Parts["ENEMY"]);
-                    if (enemy.partType == EnemyPart.BRAIN)
+                    if (enemy.PartType == EnemyPart.BRAIN)
                     {
                         if (!thing.HasPart(Part.Parts["SCRIPT"]))
                             thing.SetPart(Part.Parts["SCRIPT"], new PScript(enemyScript));

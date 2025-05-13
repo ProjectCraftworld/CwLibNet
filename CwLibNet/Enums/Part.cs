@@ -39,15 +39,15 @@ public struct Part(string name, int index, int version, Type? serializable) : IE
         { "EMITTER", new Part("EMITTER", 0x14, PartHistory.EMITTER, typeof(PEmitter)) },
         { "REF", new Part("REF", 0x15, PartHistory.REF, typeof(PRef)) },
         { "METADATA", new Part("METADATA", 0x16, PartHistory.METADATA, typeof(PMetadata)) },
-/*            { "COSTUME", new Part("COSTUME", 0x17, PartHistory.COSTUME, typeof(PCostume)) }, */
-        { "PARTICLE_EMITTER_2", new Part("PARTICLE_EMITTER_2", 0x3d, PartHistory.PARTICLE_EMITTER_2, null) }, /*
-        { "CAMERA_TWEAK", new Part("CAMERA_TWEAK", 0x18, PartHistory.CAMERA_TWEAK, typeof(PCameraTweak)) }, */
+        { "COSTUME", new Part("COSTUME", 0x17, PartHistory.COSTUME, typeof(PCostume)) },
+        { "PARTICLE_EMITTER_2", new Part("PARTICLE_EMITTER_2", 0x3d, PartHistory.PARTICLE_EMITTER_2, null) },
+        { "CAMERA_TWEAK", new Part("CAMERA_TWEAK", 0x18, PartHistory.CAMERA_TWEAK, typeof(PCameraTweak)) },
         { "SWITCH", new Part("SWITCH", 0x19, PartHistory.SWITCH, typeof(PSwitch)) },
-/*        { "SWITCH_KEY", new Part("SWITCH_KEY", 0x1a, PartHistory.SWITCH_KEY, typeof(PSwitchKey)) }, */
+        { "SWITCH_KEY", new Part("SWITCH_KEY", 0x1a, PartHistory.SWITCH_KEY, typeof(PSwitchKey)) },
         { "GAMEPLAY_DATA", new Part("GAMEPLAY_DATA", 0x1b, PartHistory.GAMEPLAY_DATA, typeof(PGameplayData)) },
         { "ENEMY", new Part("ENEMY", 0x1c, PartHistory.ENEMY, typeof(PEnemy)) },
         { "GROUP", new Part("GROUP", 0x1d, PartHistory.GROUP, typeof(PGroup)) },
-/*        { "PHYSICS_TWEAK", new Part("PHYSICS_TWEAK", 0x1e, PartHistory.PHYSICS_TWEAK, typeof(PPhysicsTweak)) },
+        { "PHYSICS_TWEAK", new Part("PHYSICS_TWEAK", 0x1e, PartHistory.PHYSICS_TWEAK, typeof(PPhysicsTweak)) }, /*
         { "NPC", new Part("NPC", 0x1f, PartHistory.NPC, typeof(PNpc)) },
         { "SWITCH_INPUT", new Part("SWITCH_INPUT", 0x20, PartHistory.SWITCH_INPUT, typeof(PSwitchInput)) },
         { "MICROCHIP", new Part("MICROCHIP", 0x21, PartHistory.MICROCHIP, typeof(PMicrochip)) },
@@ -202,7 +202,7 @@ public struct Part(string name, int index, int version, Type? serializable) : IE
                     return true;
                 }
             }
-            else if (!serializer.IsWriting())
+            if (!serializer.IsWriting())
             {
                 return serializer.I32(0) == 0;
             }
