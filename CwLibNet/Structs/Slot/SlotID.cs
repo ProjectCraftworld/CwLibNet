@@ -6,18 +6,13 @@ namespace CwLibNet.Structs.Slot;
 
 public class SlotID: ISerializable
 {
-    public const int BaseAllocationSize = 0x10;
+    public const int BASE_ALLOCATION_SIZE = 0x10;
     public SlotType SlotType = SlotType.DEVELOPER;
     public long SlotNumber;
     public void Serialize(Serializer serializer)
     {
         SlotType = serializer.Enum32(SlotType);
         SlotNumber = serializer.U32(SlotNumber);
-    }
-
-    public int GetAllocatedSize()
-    {
-        return BaseAllocationSize;
     }
 
     public SlotID()
@@ -47,5 +42,10 @@ public class SlotID: ISerializable
     public override string ToString()
     {
         return $"SlotID: SlotType={SlotType}, SlotNumber={SlotNumber}";
+    }
+
+    public int GetAllocatedSize()
+    {
+        return BASE_ALLOCATION_SIZE;
     }
 }
