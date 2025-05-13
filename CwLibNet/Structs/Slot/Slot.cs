@@ -13,7 +13,7 @@ namespace CwLibNet.Structs.Slot
     public class Slot : ISerializable
     {
         public static readonly int BaseAllocationSize = 
-            (SlotID.BaseAllocationSize * 3) + 0x40 + NetworkOnlineID.BASE_ALLOCATION_SIZE + 0x30;
+            (SlotID.BASE_ALLOCATION_SIZE * 3) + 0x40 + NetworkOnlineID.BASE_ALLOCATION_SIZE + 0x30;
         public SlotID id = new SlotID();
         public ResourceDescriptor root;
         public ResourceDescriptor icon;
