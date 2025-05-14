@@ -1,10 +1,24 @@
 ﻿using System.Reflection;
 using CwLibNet.Resources;
 
-namespace CwLibNet.Enums
+namespace CwLibNet.Enums;
+
+public struct ResourceType : IEquatable<ResourceType>
 {
-    public struct ResourceType
+    public string? Header { get; }
+    public int Value { get; }
+    public Type? Compressable { get; }
+    public readonly string Folder;
+    public readonly string Extension;
+    
+    public ResourceType(string? magic, int value, Type type, string folder, string extension)
     {
+        Header = magic;
+        Value = value;
+        Folder = folder;
+        Compressable = type;
+        Extension = extension;
+    }
         public static readonly ResourceType
             Invalid = new(null, 0, "unknown/", ""),
             Texture = new("TEX", 1, "textures/", ".tex"),
@@ -82,59 +96,68 @@ namespace CwLibNet.Enums
         // SHADER_CACHE = new("CGC", 129, RShaderCache.class, "shader_caches/", ".shadercache"),
         // SCENE_GRAPH = new("SCE", 130, RSceneGraph.class, "scenes/", ".sg"),
         // TYPE_LIBRARY = new("LIB", 131, "type_library/", ".lib");
-    
-        public string? Header { get; }
-        public int Value { get; }
-        public Type? Compressable { get; }
-        public string Folder { get; }
-        public string Extension { get; }
-    
-        public ResourceType(string? magic, int value, Type type, string folder, string extension)
-        {
-            this.Header = magic;
-            this.Value = value;
-            this.Folder = folder;
-            this.Compressable = type;
-            this.Extension = extension;
-        }
+        
+    public ResourceType(string? magic, int value, string folder, string extension)
+    {
+        Header = magic;
+        Value = value;
+        Compressable = null;
+        Folder = folder;
+        Extension = extension;
+    }
 
-        public ResourceType(string? magic, int value, string folder, string extension)
-        {
-            this.Header = magic;
-            this.Value = value;
-            this.Compressable = null;
-            this.Folder = folder;
-            this.Extension = extension;
-        }
+    /**
+     * Attempts to get a valid ResourceType from a 3-byte magic header.
+     *
+     * @param value Magic header
+     * @return Resource type
+     */
+    public static ResourceType FromMagic(string? value)
+    {
+        if (value.Length > 3)
+            value = value[..3];
+        value = value.ToUpper();
+        return (ResourceType)(typeof(ResourceType).GetFields(BindingFlags.Static | BindingFlags.Public)
+            .Where(p => p.FieldType == typeof(ResourceType))
+            .Where(p => ((ResourceType)(p.GetValue(null) ?? Invalid)).Header == value).Select(e => e.GetValue(null))
+            .FirstOrDefault() ?? Invalid);
+    }
 
-        /**
-         * Attempts to get a valid ResourceType from a 3-byte magic header.
-         *
-         * @param value Magic header
-         * @return Resource type
-         */
-        public static ResourceType FromMagic(string value)
-        {
-            if (value.Length > 3)
-                value = value[..3];
-            value = value.ToUpper();
-            return (ResourceType)(typeof(ResourceType).GetFields(BindingFlags.Static | BindingFlags.Public)
-                .Where(p => p.FieldType == typeof(ResourceType))
-                .Where(p => ((ResourceType)(p.GetValue(null) ?? Invalid)).Header == value).Select(e => e.GetValue(null))
-                .FirstOrDefault() ?? Invalid);
-        }
+    /// <summary>
+    /// Attempts to get a valid ResourceType from the value index.
+    /// </summary>
+    /// <param name="value">Resource value index</param>
+    /// <returns>Resource type</returns>
+    public static ResourceType FromType(int value)
+    {
+        return (ResourceType)(typeof(ResourceType).GetFields(BindingFlags.Static | BindingFlags.Public)
+            .Where(p => p.FieldType == typeof(ResourceType))
+            .Where(p => ((ResourceType)(p.GetValue(null) ?? Invalid)).Value == value).Select(e => e.GetValue(null))
+            .FirstOrDefault() ?? Invalid);
+    }
 
-        /// <summary>
-        /// Attempts to get a valid ResourceType from the value index.
-        /// </summary>
-        /// <param name="value">Resource value index</param>
-        /// <returns>Resource type</returns>
-        public static ResourceType FromType(int value)
-        {
-            return (ResourceType)(typeof(ResourceType).GetFields(BindingFlags.Static | BindingFlags.Public)
-                 .Where(p => p.FieldType == typeof(ResourceType))
-                 .Where(p => ((ResourceType)(p.GetValue(null) ?? Invalid)).Value == value).Select(e => e.GetValue(null))
-                 .FirstOrDefault() ?? Invalid);
-        }
+    public bool Equals(ResourceType other)
+    {
+        return Value == other.Value; // Value is the most efficient key to compare this enum-like since it is different in each item, it's significative, and it's lightweight (int)
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is ResourceType other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return Value;
+    }
+
+    public static bool operator ==(ResourceType left, ResourceType right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(ResourceType left, ResourceType right)
+    {
+        return !left.Equals(right);
     }
 }

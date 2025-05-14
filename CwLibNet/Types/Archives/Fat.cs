@@ -1,53 +1,52 @@
+using CwLibNet.Types.Data;
+
 namespace CwLibNet.Types.Archives;
 
 public class Fat
 {
-    private Fart archive;
+    private Fart _archive;
 
     /**
      * SHA1 signature of data.
      */
-    private readonly SHA1 sha1;
+    private readonly Sha1 _sha1;
 
     /**
      * Offset of the data in the archive.
      */
-    private readonly long offset;
+    private readonly long _offset;
 
     /**
      * Size of the associated data buffer.
      */
-    private readonly int size;
+    private readonly int _size;
 
-    public Fat(Fart archive, SHA1 sha1, long offset, int size)
+    public Fat(Fart archive, Sha1 sha1, long offset, int size)
     {
-        if (archive == null)
-            throw new NullReferenceException("File archive provided to Fat cannot be null!");
-
-        this.archive = archive;
-        this.sha1 = sha1 ?? throw new NullReferenceException("File SHA1 provided to Fat cannot be null!");
-        this.offset = offset;
-        this.size = size;
+        this._archive = archive ?? throw new NullReferenceException("File archive provided to Fat cannot be null!");
+        this._sha1 = sha1 ?? throw new NullReferenceException("File SHA1 provided to Fat cannot be null!");
+        this._offset = offset;
+        this._size = size;
     }
 
-    public SHA1 getSHA1()
+    public Sha1 GetSha1()
     {
-        return this.sha1;
+        return _sha1;
     }
 
-    public long getOffset()
+    public long GetOffset()
     {
-        return this.offset;
+        return _offset;
     }
 
-    public int getSize()
+    public int GetSize()
     {
-        return this.size;
+        return _size;
     }
 
-    public Fart getFileArchive()
+    public Fart GetFileArchive()
     {
-        return this.archive;
+        return _archive;
     }
 
     /**
@@ -55,14 +54,14 @@ public class Fat
      *
      * @return Extracted resource.
      */
-    public byte[]? extract()
+    public byte[]? Extract()
     {
-        return this.archive.Extract(this);
+        return _archive.Extract(this);
     }
 
     public override string ToString()
     {
-        return String.Format("Fat (%h, offset=%d, size=%d)",
-            this.sha1, this.offset, this.size);
+        return string.Format("Fat (%h, offset=%d, size=%d)",
+            _sha1, _offset, _size);
     }
 }

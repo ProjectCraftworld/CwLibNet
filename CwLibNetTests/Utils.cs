@@ -1,5 +1,4 @@
 using CwLibNet.Enums;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 using CwLibNet.Util;
 
@@ -109,7 +108,7 @@ public class Utils
         {
             byte[]? originalBytes = [2, 255, 255, 3];
             byte[]? testBytes = Bytes.GetResourceReference(new ResourceDescriptor(65535, ResourceType.Texture),
-                new Revision((int)Revisions.Lbp1Max), 7);
+                new Revision((int)Revisions.LBP1_MAX), 7);
             Assert.Equal(originalBytes, testBytes);
         }
 
@@ -118,7 +117,7 @@ public class Utils
         {
             byte[]? originalBytes = [2, 0, 0, 255, 255];
             byte[]? testBytes =  Bytes.GetResourceReference(new ResourceDescriptor(65535, ResourceType.Texture),
-                new Revision((int)Revisions.Lbp1Max), 0);
+                new Revision((int)Revisions.LBP1_MAX), 0);
             Assert.Equal(originalBytes, testBytes);
         }
     }

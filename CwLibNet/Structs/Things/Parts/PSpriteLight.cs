@@ -3,7 +3,6 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
-using CwLibNet.Types.Things;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -19,12 +18,12 @@ public class PSpriteLight: ISerializable
     public float Multiplier = 1.8f;
 
     
-    public float MultiplierOff = 0.0f;
+    public float MultiplierOff;
 
     public float GlowRadius = 20.0f;
     public float FarDist = 2.3f;
     public float SourceSize = 0.28f;
-    ResourceDescriptor? falloffTexture;
+    private ResourceDescriptor? falloffTexture;
     public Thing? LookAt;
     public bool Spotlight;
 
@@ -65,8 +64,8 @@ public class PSpriteLight: ISerializable
 
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
-        int subVersion = serializer.GetRevision().GetSubVersion();
+        var version = serializer.GetRevision().GetVersion();
+        var subVersion = serializer.GetRevision().GetSubVersion();
 
         Color = serializer.V4(Color);
         if (version >= 0x2fd)
@@ -121,21 +120,19 @@ public class PSpriteLight: ISerializable
             CausticWidth = serializer.F32(CausticWidth);
         }
 
-        if (subVersion >= 0x16f)
-        {
-            TrackingLimit = serializer.F32(TrackingLimit);
-            TrackingAccel = serializer.F32(TrackingAccel);
-            TrackingSpeed = serializer.F32(TrackingSpeed);
-            MovementInput = serializer.S32(MovementInput);
-            LightingInput = serializer.S32(MovementInput);
+        if (subVersion < 0x16f) return;
+        TrackingLimit = serializer.F32(TrackingLimit);
+        TrackingAccel = serializer.F32(TrackingAccel);
+        TrackingSpeed = serializer.F32(TrackingSpeed);
+        MovementInput = serializer.S32(MovementInput);
+        LightingInput = serializer.S32(MovementInput);
 
-            BeamDir = serializer.V3(BeamDir);
-            Azimuth = serializer.V3(Azimuth);
-        }
+        BeamDir = serializer.V3(BeamDir);
+        Azimuth = serializer.V3(Azimuth);
     }
 
     public int GetAllocatedSize()
     {
-        return PSpriteLight.BaseAllocationSize;
+        return BaseAllocationSize;
     }
 }

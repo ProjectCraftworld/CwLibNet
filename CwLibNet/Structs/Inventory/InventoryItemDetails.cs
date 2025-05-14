@@ -2,12 +2,10 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Resources;
-using CwLibNet.Singleton;
 using CwLibNet.Structs.Slot;
 using CwLibNet.Structs.Things.Parts;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
-using Branch = CwLibNet.Types.Branch;
+using Branch = CwLibNet.Enums.Branch;
 
 namespace CwLibNet.Structs.Inventory;
 
@@ -19,14 +17,14 @@ public class InventoryItemDetails: ISerializable
 
     public long DateAdded = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
 
-    public SlotID LevelUnlockSlotId = new SlotID();
+    public SlotID LevelUnlockSlotId = new();
 
     public GUID? HighlightSound;
 
     public int Colour = -1;
 
     public HashSet<InventoryObjectType> Type = [InventoryObjectType.NONE];
-    public int SubType = InventoryObjectSubType.NONE;
+    public int SubType = InventoryObjectSubType.None;
 
     public long TitleKey, DescriptionKey;
 
@@ -50,7 +48,7 @@ public class InventoryItemDetails: ISerializable
     public bool Shareable;
     public bool Copyright;
 
-    public NetworkPlayerID? Creator = new NetworkPlayerID();
+    public NetworkPlayerID? Creator = new();
 
     public ToolType ToolType = ToolType.NONE;
     public byte Flags;
@@ -69,32 +67,32 @@ public class InventoryItemDetails: ISerializable
 
     public InventoryItemDetails() { }
 
-    public InventoryItemDetails(PMetadata metadata)
+    public InventoryItemDetails(PMetadata? metadata)
     {
         // if (metadata.nameTranslationTag != null && metadata.nameTranslationTag.endsWith
         // ("_NAME"))
         //     this.translationTag = metadata.nameTranslationTag.split("_NAME")[0]; // LOL
 
-        this.TitleKey = metadata.TitleKey;
-        this.DescriptionKey = metadata.DescriptionKey;
-        this.Location = metadata.Location;
-        this.Category = metadata.Category;
+        TitleKey = metadata.TitleKey;
+        DescriptionKey = metadata.DescriptionKey;
+        Location = metadata.Location;
+        Category = metadata.Category;
 
-        this.LocationTag = metadata.LocationTag;
-        this.CategoryTag = metadata.CategoryTag;
+        LocationTag = metadata.LocationTag;
+        CategoryTag = metadata.CategoryTag;
 
-        this.PrimaryIndex = (short) metadata.PrimaryIndex;
-        this.FluffCost = metadata.FluffCost;
-        this.Type = metadata.Type;
-        this.SubType = metadata.SubType;
-        this.Icon = metadata.Icon;
+        PrimaryIndex = (short) metadata.PrimaryIndex;
+        FluffCost = metadata.FluffCost;
+        Type = metadata.Type;
+        SubType = metadata.SubType;
+        Icon = metadata.Icon;
 
-        this.AllowEmit = metadata.AllowEmit;
+        AllowEmit = metadata.AllowEmit;
     }
 
     public void Serialize(Serializer serializer)
     {
-        int head = serializer.GetRevision().GetVersion();
+        var head = serializer.GetRevision().GetVersion();
 
         if (serializer.IsWriting() && HighlightSound != null)
             serializer.AddDependency(new ResourceDescriptor(HighlightSound.Value,
@@ -136,7 +134,7 @@ public class InventoryItemDetails: ISerializable
 
 
             if (serializer.GetRevision().Has(Branch.Double11,
-                    (int)Revisions.D1DetailsProportional))
+                    (int)Revisions.D_1DETAILS_PROPORTIONAL))
                 MakeSizeProportional = serializer.Bool(MakeSizeProportional);
 
             if (!serializer.IsWriting())
@@ -203,9 +201,7 @@ public class InventoryItemDetails: ISerializable
             if (head > 0x176)
             {
                 LevelUnlockSlotId.SlotType =
-                    (SlotType)(
-                        serializer.I32((int)LevelUnlockSlotId.SlotType)
-                    );
+                    (SlotType)serializer.I32((int)LevelUnlockSlotId.SlotType);
 
                 LevelUnlockSlotId.SlotNumber =
                     serializer.U32(LevelUnlockSlotId.SlotNumber, true);
@@ -249,9 +245,7 @@ public class InventoryItemDetails: ISerializable
         // so for some structures like SlotID, we need to force it manually.
 
         LevelUnlockSlotId.SlotType =
-            (SlotType)(
-                serializer.I32((int)LevelUnlockSlotId.SlotType, true)
-            );
+            (SlotType)serializer.I32((int)LevelUnlockSlotId.SlotType, true);
 
         LevelUnlockSlotId.SlotNumber =
             serializer.U32(LevelUnlockSlotId.SlotNumber, true);
@@ -289,7 +283,7 @@ public class InventoryItemDetails: ISerializable
         if (head > 0x334)
             Flags = serializer.I8(Flags);
 
-        if (serializer.GetRevision().Has(Branch.Leerdammer, (int)Revisions.LdLamsKeys) || head > 0x2ba)
+        if (serializer.GetRevision().Has(Branch.Leerdammer, (int)Revisions.LD_LAMS_KEYS) || head > 0x2ba)
         {
             TitleKey = serializer.U32(TitleKey);
             DescriptionKey = serializer.U32(DescriptionKey);
@@ -317,36 +311,36 @@ public class InventoryItemDetails: ISerializable
     }
     public int GetAllocatedSize()
     {
-        int size = BaseAllocationSize;
-        if (this.TranslationTag != null)
-            size += (this.TranslationTag.Length * 2);
-        if (this.UserCreatedDetails != null)
-            size += this.UserCreatedDetails.GetAllocatedSize();
-        if (this.CreationHistory != null)
-            size += this.CreationHistory.GetAllocatedSize();
-        if (this.PhotoData != null)
-            size += this.PhotoData.GetAllocatedSize();
-        if (this.EyetoyData != null)
-            size += this.EyetoyData.GetAllocatedSize();
+        var size = BaseAllocationSize;
+        if (TranslationTag != null)
+            size += TranslationTag.Length * 2;
+        if (UserCreatedDetails != null)
+            size += UserCreatedDetails.GetAllocatedSize();
+        if (CreationHistory != null)
+            size += CreationHistory.GetAllocatedSize();
+        if (PhotoData != null)
+            size += PhotoData.GetAllocatedSize();
+        if (EyetoyData != null)
+            size += EyetoyData.GetAllocatedSize();
         return size;
     }
 
-    public SHA1 GenerateHashCode(Revision revision)
+    public Sha1 GenerateHashCode(Revision revision)
     {
         // I wonder how slow this is...
-        Serializer serializer = new Serializer(this.GetAllocatedSize(), revision, (byte) 0);
+        var serializer = new Serializer(GetAllocatedSize(), revision, 0);
         serializer.Struct(this);
-        return SHA1.FromBuffer(serializer.GetBuffer());
+        return Sha1.FromBuffer(serializer.GetBuffer());
     }
 
     private void UpdateTranslations()
     {
-        if (!string.IsNullOrEmpty(this.TranslationTag))
+        if (!string.IsNullOrEmpty(TranslationTag))
         {
-            this.TitleKey =
-                RTranslationTable.MakeLamsKeyID(this.TranslationTag + "_NAME");
-            this.DescriptionKey =
-                RTranslationTable.MakeLamsKeyID(this.TranslationTag + "_DESC");
+            TitleKey =
+                RTranslationTable.MakeLamsKeyID(TranslationTag + "_NAME");
+            DescriptionKey =
+                RTranslationTable.MakeLamsKeyID(TranslationTag + "_DESC");
         }
 
         /* RTranslationTable lams = ResourceSystem.getLAMS();

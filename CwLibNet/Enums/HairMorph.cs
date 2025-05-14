@@ -1,41 +1,39 @@
-using CwLibNet.IO;
+namespace CwLibNet.Enums;
 
-namespace CwLibNet.Enums
+public enum HairMorph
 {
-    public enum HairMorph : int
+    // HAT(0)
+    HAT,
+    // HELMET(1)
+    HELMET,
+    // FRINGE(2)
+    FRINGE
+}
+
+public sealed class HairBody
+{
+
+    private readonly HairMorph value;
+
+    private HairBody(int value)
     {
-        // HAT(0)
-        HAT,
-        // HELMET(1)
-        HELMET,
-        // FRINGE(2)
-        FRINGE
+        this.value = (HairMorph)value;
     }
 
-    public sealed class HairBody
+    public int getValue()
     {
+        return (int)value;
+    }
 
-        private readonly HairMorph value;
-        HairBody(int value)
+
+
+
+    public static HairBody fromValue(int value)
+    {
+        if (Enum.IsDefined(typeof(HairMorph), value))
         {
-            this.value = (HairMorph)value;
+            return new HairBody(value);
         }
-
-        public int getValue()
-        {
-            return (int)this.value;
-        }
-
-
-
-
-        public static HairBody fromValue(int value)
-        {
-            if (Enum.IsDefined(typeof(HairMorph), value))
-            {
-                return new HairBody(value);
-            }
-            return default(HairBody);
-        }
+        return default(HairBody);
     }
 }

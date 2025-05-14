@@ -4,180 +4,178 @@ using CwLibNet.Extensions;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Inventory;
+using CwLibNet.Structs.Things;
 using CwLibNet.Structs.Things.Parts;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
-using CwLibNet.Types.Things;
 
-namespace CwLibNet.Resources
+namespace CwLibNet.Resources;
+
+public class RPlan : Resource
 {
-    public class RPlan : Resource
+    public const int BaseAllocationSize = 0x10;
+    public HashSet<ResourceDescriptor?> DependencyCache = [];
+    public bool IsUsedForStreaming;
+    public Revision Revision = new(Revision.Lbp1FinalRevision, 0x4c44, 0x17);
+    public byte[]? ThingData;
+    public InventoryItemDetails InventoryData = new();
+    public byte CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_ALL_COMPRESSION;
+    public RPlan()
     {
-        public const int BaseAllocationSize = 0x10;
-        public HashSet<ResourceDescriptor?> DependencyCache = [];
-        public bool IsUsedForStreaming;
-        public Revision Revision = new(Revision.Lbp1FinalRevision, 0x4c44, 0x17);
-        public byte[]? ThingData;
-        public InventoryItemDetails InventoryData = new();
-        public byte CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_ALL_COMPRESSION;
-        public RPlan()
+        ThingData = [];
+    }
+
+    public RPlan(Revision revision, byte compressionFlags, Thing thing, PMetadata? metadata)
+    {
+        Revision = revision;
+        CompressionFlags = compressionFlags;
+        SetThing(thing);
+        InventoryData = new InventoryItemDetails(metadata);
+        ThingData = [];
+    }
+
+    public RPlan(Revision revision, byte compressionFlags, Thing[]? things, PMetadata? metadata)
+    {
+        Revision = revision;
+        CompressionFlags = compressionFlags;
+        SetThings(things);
+        InventoryData = new InventoryItemDetails(metadata);
+        ThingData = [];
+    }
+
+    public RPlan(Revision revision, byte compressionFlags, Thing thing, InventoryItemDetails details)
+    {
+        Revision = revision;
+        CompressionFlags = compressionFlags;
+        SetThing(thing);
+        InventoryData = details;
+        ThingData = [];
+    }
+
+    public RPlan(Revision revision, byte compressionFlags, Thing[]? things, InventoryItemDetails details)
+    {
+        Revision = revision;
+        CompressionFlags = compressionFlags;
+        SetThings(things);
+        InventoryData = details;
+        ThingData = [];
+    }
+
+    public override void Serialize(Serializer serializer)
+    {
+        var revision = serializer.GetRevision();
+        var head = revision.GetVersion();
+        if (!serializer.IsWriting())
         {
-            this.ThingData = [];
+            DependencyCache.AddRange(serializer.GetDependencies());
+            serializer.ClearDependencies();
         }
 
-        public RPlan(Revision revision, byte compressionFlags, Thing thing, PMetadata metadata)
+        if (!serializer.IsWriting())
         {
-            this.Revision = revision;
-            this.CompressionFlags = compressionFlags;
-            this.SetThing(thing);
-            this.InventoryData = new InventoryItemDetails(metadata);
-            this.ThingData = [];
+            CompressionFlags = serializer.GetCompressionFlags();
+            Revision = revision;
         }
 
-        public RPlan(Revision revision, byte compressionFlags, Thing[]? things, PMetadata metadata)
+        if (revision.GetSubVersion() >= (int)Revisions.STREAMING_PLAN)
+            IsUsedForStreaming = serializer.Bool(IsUsedForStreaming);
+        if (serializer.IsWriting())
+            serializer.I32(serializer.GetRevision().Head);
+        else
+            serializer.GetInput().I32();
+        ThingData = serializer.Bytearray(ThingData);
+        if (head >= (int)Revisions.PLAN_DETAILS && !IsUsedForStreaming)
         {
-            this.Revision = revision;
-            this.CompressionFlags = compressionFlags;
-            this.SetThings(things);
-            this.InventoryData = new InventoryItemDetails(metadata);
-            this.ThingData = [];
-        }
-
-        public RPlan(Revision revision, byte compressionFlags, Thing thing, InventoryItemDetails details)
-        {
-            this.Revision = revision;
-            this.CompressionFlags = compressionFlags;
-            this.SetThing(thing);
-            this.InventoryData = details;
-            this.ThingData = [];
-        }
-
-        public RPlan(Revision revision, byte compressionFlags, Thing[]? things, InventoryItemDetails details)
-        {
-            this.Revision = revision;
-            this.CompressionFlags = compressionFlags;
-            this.SetThings(things);
-            this.InventoryData = details;
-            this.ThingData = [];
-        }
-
-        public override void Serialize(Serializer serializer)
-        {
-            Revision revision = serializer.GetRevision();
-            int head = revision.GetVersion();
-            if (!serializer.IsWriting())
+            InventoryData = serializer.Struct(InventoryData);
+            if (revision.Has(Branch.Leerdammer, (int)Revisions.LD_LAMS_KEYS) || head >= (int)Revisions.LAMS_KEYS)
             {
-                DependencyCache.AddRange(serializer.GetDependencies());
-                serializer.ClearDependencies();
+                InventoryData.Location = serializer.U32(InventoryData.Location);
+                InventoryData.Category = serializer.U32(InventoryData.Category);
             }
-
-            if (!serializer.IsWriting())
-            {
-                CompressionFlags = serializer.GetCompressionFlags();
-                this.Revision = revision;
-            }
-
-            if (revision.GetSubVersion() >= ((int)Revisions.StreamingPlan))
-                IsUsedForStreaming = serializer.Bool(IsUsedForStreaming);
-            if (serializer.IsWriting())
-                serializer.I32(serializer.GetRevision().Head);
             else
-                serializer.GetInput().I32();
-            ThingData = serializer.Bytearray(ThingData);
-            if (head >= ((int)Revisions.PlanDetails) && !IsUsedForStreaming)
             {
-                InventoryData = serializer.Struct(InventoryData);
-                if (revision.Has(Types.Branch.Leerdammer, ((int)Revisions.LdLamsKeys)) || head >= ((int)Revisions.LamsKeys))
+                InventoryData.LocationTag = serializer.Str(InventoryData.LocationTag);
+                InventoryData.CategoryTag = serializer.Str(InventoryData.CategoryTag);
+                if (!serializer.IsWriting())
                 {
-                    InventoryData.Location = serializer.U32(InventoryData.Location);
-                    InventoryData.Category = serializer.U32(InventoryData.Category);
-                }
-                else
-                {
-                    InventoryData.LocationTag = serializer.Str(InventoryData.LocationTag);
-                    InventoryData.CategoryTag = serializer.Str(InventoryData.CategoryTag);
-                    if (!serializer.IsWriting())
-                    {
-                        InventoryData.Location = RTranslationTable.MakeLamsKeyID(InventoryData.LocationTag);
-                        InventoryData.Category = RTranslationTable.MakeLamsKeyID(InventoryData.CategoryTag);
-                    }
+                    InventoryData.Location = RTranslationTable.MakeLamsKeyID(InventoryData.LocationTag);
+                    InventoryData.Category = RTranslationTable.MakeLamsKeyID(InventoryData.CategoryTag);
                 }
             }
+        }
 
-            if (!serializer.IsWriting())
+        if (!serializer.IsWriting())
+        {
+            foreach (var descriptor in serializer.GetDependencies())
+                DependencyCache.Remove(descriptor);
+            serializer.ClearDependencies();
+        }
+    }
+
+    public override int GetAllocatedSize()
+    {
+        var size = BaseAllocationSize;
+        if (ThingData != null)
+            size += ThingData.Length;
+        if (InventoryData != null)
+            size += InventoryData.GetAllocatedSize();
+        return size;
+    }
+
+    public SerializationData Build()
+    {
+        return Build(Revision, CompressionFlags);
+    }
+
+    public override SerializationData Build(Revision revision, byte compressionFlags)
+    {
+        var serializer = new Serializer(GetAllocatedSize() + 0x8000, revision, compressionFlags);
+        serializer.Struct(this);
+        foreach (var descriptor in DependencyCache)
+            serializer.AddDependency(descriptor);
+        return new SerializationData(serializer.GetBuffer(), revision, compressionFlags, ResourceType.Plan, SerializationType.BINARY, serializer.GetDependencies());
+    }
+
+    public virtual Thing[]? GetThings()
+    {
+        var serializer = new Serializer(ThingData, Revision, CompressionFlags);
+        var things = serializer.Array<Thing>(null, true);
+        if (Revision.GetVersion() >= 0x341)
+        {
+            foreach (var thing in things!)
             {
-                foreach (ResourceDescriptor? descriptor in serializer.GetDependencies())
-                    DependencyCache.Remove(descriptor);
-                serializer.ClearDependencies();
+                if (thing?.Parent == null) continue;
+                var pos = thing.GetPart<PPos>(Part.Parts["POS"]);
+                if (pos == null) continue;
+                var parent = thing.Parent.GetPart<PPos>(Part.Parts["POS"]);
+                if (parent == null) continue;
+                Matrix4x4.Invert(parent.WorldPosition!.Value, out var inv);
+                pos.LocalPosition = Matrix4x4.Multiply(inv, pos.WorldPosition!.Value);
             }
         }
 
-        public override int GetAllocatedSize()
-        {
-            int size = BaseAllocationSize;
-            if (ThingData != null)
-                size += ThingData.Length;
-            if (InventoryData != null)
-                size += InventoryData.GetAllocatedSize();
-            return size;
-        }
+        return things;
+    }
 
-        public SerializationData Build()
-        {
-            return this.Build(this.Revision, this.CompressionFlags);
-        }
+    public void SetThings(Thing[]? things)
+    {
+        Serializer serializer = new(0x800000, Revision, CompressionFlags);
+        serializer.Array(things, true);
+        ThingData = serializer.GetBuffer();
+        var dependencies = serializer.GetDependencies();
+        DependencyCache.Clear();
+        DependencyCache = [..dependencies];
+    }
 
-        public override SerializationData Build(Revision revision, byte compressionFlags)
-        {
-            Serializer serializer = new Serializer(this.GetAllocatedSize() + 0x8000, revision, compressionFlags);
-            serializer.Struct(this);
-            foreach (ResourceDescriptor? descriptor in this.DependencyCache)
-                serializer.AddDependency(descriptor);
-            return new SerializationData(serializer.GetBuffer(), revision, compressionFlags, ResourceType.Plan, SerializationType.BINARY, serializer.GetDependencies());
-        }
-
-        public virtual Thing[]? GetThings()
-        {
-            Serializer serializer = new Serializer(this.ThingData, this.Revision, this.CompressionFlags);
-            Thing[]? things = serializer.Array<Thing>(null, true);
-            if (Revision.GetVersion() >= 0x341)
-            {
-                foreach (Thing thing in things!)
-                {
-                    if (thing?.Parent == null) continue;
-                    PPos? pos = thing.GetPart<PPos>(Part.Parts["PPos"]);
-                    if (pos == null) continue;
-                    PPos? parent = thing.Parent.GetPart<PPos>(Part.Parts["PPos"]);
-                    if (parent == null) continue;
-                    Matrix4x4.Invert(parent.WorldPosition!.Value, out var inv);
-                    pos.LocalPosition = Matrix4x4.Multiply(inv, pos.WorldPosition!.Value);
-                }
-            }
-
-            return things;
-        }
-
-        public void SetThings(Thing[]? things)
-        {
-            Serializer serializer = new(0x800000, this.Revision, this.CompressionFlags);
-            serializer.Array(things, true);
-            this.ThingData = serializer.GetBuffer();
-            ResourceDescriptor?[] dependencies = serializer.GetDependencies();
-            this.DependencyCache.Clear();
-            this.DependencyCache = [..dependencies];
-        }
-
-        public void SetThing(Thing? thing)
-        {
-            Serializer serializer = new(0x800000, this.Revision, this.CompressionFlags);
-            serializer.Reference(thing);
-            Thing[]? things = serializer.GetThings();
-            serializer = new Serializer(0x800000, this.Revision, this.CompressionFlags);
-            serializer.Array(things, true);
-            this.ThingData = serializer.GetBuffer();
-            ResourceDescriptor?[] dependencies = serializer.GetDependencies();
-            this.DependencyCache.Clear();
-            this.DependencyCache = [..dependencies];
-        }
+    public void SetThing(Thing? thing)
+    {
+        Serializer serializer = new(0x800000, Revision, CompressionFlags);
+        serializer.Reference(thing);
+        var things = serializer.GetThings();
+        serializer = new Serializer(0x800000, Revision, CompressionFlags);
+        serializer.Array(things, true);
+        ThingData = serializer.GetBuffer();
+        var dependencies = serializer.GetDependencies();
+        DependencyCache.Clear();
+        DependencyCache = [..dependencies];
     }
 }

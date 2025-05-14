@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
@@ -32,7 +29,7 @@ namespace CwLibNet.Structs.Profile
 
         public int GetAllocatedSize() 
         {
-            int size = InventoryView.BASE_ALLOCATION_SIZE;
+            var size = BASE_ALLOCATION_SIZE;
             if (title != null)
             {
                 size += title.Length * 2; // 2 bytes per char

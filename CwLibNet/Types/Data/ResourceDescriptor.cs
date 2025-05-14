@@ -7,7 +7,7 @@ public class ResourceDescriptor
 {
     private readonly ResourceType type;
     private readonly GUID? guid;
-    private readonly SHA1? sha1;
+    private readonly Sha1? sha1;
     private int flags;
 
     public ResourceDescriptor(ResourceDescriptor descriptor)
@@ -22,8 +22,8 @@ public class ResourceDescriptor
     {
         if (Strings.IsSHA1(resource))
         {
-            SHA1 sha1 = Strings.GetSHA1(resource)!;
-            this.sha1 = sha1.Equals(SHA1.EMPTY) ? null : sha1;
+            var sha1 = Strings.GetSHA1(resource)!;
+            this.sha1 = sha1.Equals(Sha1.Empty) ? null : sha1;
             guid = null;
         }
         else if (Strings.IsGUID(resource))
@@ -53,18 +53,18 @@ public class ResourceDescriptor
         flags = ResourceFlags.NONE;
     }
 
-    public ResourceDescriptor(SHA1 sha1, ResourceType type)
+    public ResourceDescriptor(Sha1 sha1, ResourceType type)
     {
-        this.sha1 = sha1.Equals(SHA1.EMPTY) ? null : sha1;
+        this.sha1 = sha1.Equals(Sha1.Empty) ? null : sha1;
         this.type = type;
         guid = null;
         flags = ResourceFlags.NONE;
     }
 
-    public ResourceDescriptor(GUID? guid, SHA1? sha1, ResourceType type)
+    public ResourceDescriptor(GUID? guid, Sha1? sha1, ResourceType type)
     {
         this.guid = guid;
-        this.sha1 = sha1 != null && sha1.Equals(SHA1.EMPTY) ? null : sha1;
+        this.sha1 = sha1 != null && sha1.Equals(Sha1.Empty) ? null : sha1;
         this.type = type;
         flags = ResourceFlags.NONE;
     }
@@ -81,7 +81,7 @@ public class ResourceDescriptor
 
     public bool IsValid()
     {
-        return guid != null || (sha1 != null && !sha1.Equals(SHA1.EMPTY));
+        return guid != null || (sha1 != null && !sha1.Equals(Sha1.Empty));
     }
 
     public GUID? GetGUID()
@@ -89,7 +89,7 @@ public class ResourceDescriptor
         return guid;
     }
 
-    public SHA1? GetSHA1()
+    public Sha1? GetSHA1()
     {
         return sha1;
     }

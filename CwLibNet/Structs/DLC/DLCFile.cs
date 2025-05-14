@@ -1,7 +1,6 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
 namespace CwLibNet.Structs.DLC;
@@ -22,7 +21,7 @@ public class DLCFile: ISerializable
         
     public void Serialize(Serializer serializer)
     {
-        Revision revision = serializer.GetRevision();
+        var revision = serializer.GetRevision();
 
         Directory = serializer.Str(Directory);
         File = serializer.Str(File);
@@ -36,44 +35,44 @@ public class DLCFile: ISerializable
         {
             if (serializer.IsWriting())
             {
-                int[] output = new int[NonPlanGuids.Count];
-                for (int i = 0; i < output.Length; ++i)
+                var output = new int[NonPlanGuids.Count];
+                for (var i = 0; i < output.Length; ++i)
                 {
-                    GUID? guid = NonPlanGuids[i];
+                    var guid = NonPlanGuids[i];
                     output[i] = guid == null ? 0 : (int) guid?.Value!;
                 }
                 serializer.Intvector(output);
             }
             else
             {
-                int[]? guids = serializer.Intvector(null);
+                var guids = serializer.Intvector(null);
                 if (guids != null)
                 {
                     NonPlanGuids = new List<GUID?>(guids.Length);
-                    for (int i = 0; i < guids.Length; ++i)
-                        NonPlanGuids.Add(new GUID(guids[i]));
+                    foreach (var t in guids)
+                        NonPlanGuids.Add(new GUID(t));
                 }
             }
         }
 
         if (serializer.IsWriting())
         {
-            int[] output = new int[Guids.Count];
-            for (int i = 0; i < output.Length; ++i)
+            var output = new int[Guids.Count];
+            for (var i = 0; i < output.Length; ++i)
             {
-                GUID? guid = Guids[i];
+                var guid = Guids[i];
                 output[i] = guid == null ? 0 : (int) guid?.Value!;
             }
             serializer.Intvector(output);
         }
         else
         {
-            int[]? guids = serializer.Intvector(null);
+            var guids = serializer.Intvector(null);
             if (guids != null)
             {
-                this.Guids = new List<GUID?>(guids.Length);
+                Guids = new List<GUID?>(guids.Length);
                 foreach (var t in guids)
-                    this.Guids.Add(new GUID(t));
+                    Guids.Add(new GUID(t));
             }
         }
 
@@ -83,16 +82,16 @@ public class DLCFile: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = DLCFile.BaseAllocationSize;
-        if (this.Directory != null) size += this.Directory.Length;
-        if (this.File != null) size += this.File.Length;
-        if (this.ContentId != null) size += this.ContentId.Length;
-        if (this.InGameCommerceId != null) size += this.InGameCommerceId.Length;
-        if (this.CategoryId != null) size += this.CategoryId.Length;
-        if (this.Guids != null)
-            size += this.Guids.Count * 0x4;
-        if (this.NonPlanGuids != null)
-            size += this.NonPlanGuids.Count * 0x4;
+        var size = BaseAllocationSize;
+        if (Directory != null) size += Directory.Length;
+        if (File != null) size += File.Length;
+        if (ContentId != null) size += ContentId.Length;
+        if (InGameCommerceId != null) size += InGameCommerceId.Length;
+        if (CategoryId != null) size += CategoryId.Length;
+        if (Guids != null)
+            size += Guids.Count * 0x4;
+        if (NonPlanGuids != null)
+            size += NonPlanGuids.Count * 0x4;
         return size;
     }
 }

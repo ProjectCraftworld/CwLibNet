@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
 using CwLibNet.Enums;
 
 namespace CwLibNet.Structs.Profile 

@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
 using CwLibNet.Structs.Slot;
 
 namespace CwLibNet.Structs.Profile 
@@ -34,7 +27,7 @@ namespace CwLibNet.Structs.Profile
 
         public int GetAllocatedSize() 
         {
-            return GoPlayCache.BASE_ALLOCATION_SIZE;
+            return BASE_ALLOCATION_SIZE;
         }
     }
 }

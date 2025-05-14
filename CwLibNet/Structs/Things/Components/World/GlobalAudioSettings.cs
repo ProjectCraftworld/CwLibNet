@@ -20,8 +20,8 @@ public class GlobalAudioSettings: ISerializable
     
     public void Serialize(Serializer serializer) {
 
-        int version = serializer.GetRevision().GetVersion();
-        int subVersion = serializer.GetRevision().GetSubVersion();
+        var version = serializer.GetRevision().GetVersion();
+        var subVersion = serializer.GetRevision().GetSubVersion();
 
         Reverb = serializer.S32(Reverb);
         if (version < 0x347)

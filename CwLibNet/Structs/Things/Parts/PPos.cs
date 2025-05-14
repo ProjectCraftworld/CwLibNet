@@ -1,7 +1,6 @@
 using System.Numerics;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.Types.Things;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -27,35 +26,35 @@ public class PPos: ISerializable
 
     public PPos(Thing? root, int animHash)
     {
-        this.ThingOfWhichIAmABone = root;
-        this.AnimHash = animHash;
+        ThingOfWhichIAmABone = root;
+        AnimHash = animHash;
     }
 
     public PPos(Matrix4x4 wpos, Matrix4x4 pos)
     {
-        this.WorldPosition = wpos;
-        this.LocalPosition = pos;
+        WorldPosition = wpos;
+        LocalPosition = pos;
     }
 
     public PPos(Thing? root, int animHash, Matrix4x4 wpos)
     {
-        this.ThingOfWhichIAmABone = root;
-        this.AnimHash = animHash;
-        this.WorldPosition = wpos;
-        this.LocalPosition = wpos;
+        ThingOfWhichIAmABone = root;
+        AnimHash = animHash;
+        WorldPosition = wpos;
+        LocalPosition = wpos;
     }
 
     public PPos(Thing? root, int animHash, Matrix4x4 wpos, Matrix4x4 pos)
     {
-        this.ThingOfWhichIAmABone = root;
-        this.AnimHash = animHash;
-        this.WorldPosition = wpos;
-        this.LocalPosition = pos;
+        ThingOfWhichIAmABone = root;
+        AnimHash = animHash;
+        WorldPosition = wpos;
+        LocalPosition = pos;
     }
 
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
+        var version = serializer.GetRevision().GetVersion();
 
         ThingOfWhichIAmABone = serializer.Reference(ThingOfWhichIAmABone);
         AnimHash = serializer.I32(AnimHash);
@@ -64,8 +63,7 @@ public class PPos: ISerializable
             LocalPosition = serializer.M44(LocalPosition);
         WorldPosition = serializer.M44(WorldPosition);
 
-        if (LocalPosition == null)
-            LocalPosition = WorldPosition;
+        LocalPosition ??= WorldPosition;
 
         // Unknown value, depreciated very early
         if (version < 0x155)
@@ -74,6 +72,6 @@ public class PPos: ISerializable
 
     public int GetAllocatedSize()
     {
-        return PPos.BaseAllocationSize;
+        return BaseAllocationSize;
     }
 }

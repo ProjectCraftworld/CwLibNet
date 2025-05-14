@@ -1,7 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Resources;
-using CwLibNet.Types;
+using CwLibNet.Types.Data;
 
 namespace CwLibNetTests;
 
@@ -52,6 +52,15 @@ public class RPlanTest
         RPlan plan = new RPlan();
         plan.Serialize(serializer);
         Assert.Equal("Logo EAV", plan.InventoryData.UserCreatedDetails?.Name);
+    }
+
+    [Fact]
+    public void CanGetThings()
+    {
+        Serializer serializer = new Serializer(EavLogoPlan, new Revision(Branch.Leerdammer.Head, Branch.Leerdammer.Id, 23), 7);
+        RPlan plan = new RPlan();
+        plan.Serialize(serializer);
+        Assert.NotNull(plan.GetThings());
     }
 
     [Fact]

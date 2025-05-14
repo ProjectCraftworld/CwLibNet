@@ -1,7 +1,6 @@
 using System.Numerics;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.Types.Things;
 
 namespace CwLibNet.Structs.Things.Components.Popit;
 

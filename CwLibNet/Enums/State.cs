@@ -1,9 +1,8 @@
-namespace CwLibNet.Enums
+namespace CwLibNet.Enums;
+
+public enum State
 {
-    public enum State
-    {
-        INIT,
-        ERRORED,
-        READY
-    }
+    INIT,
+    ERRORED,
+    READY
 }

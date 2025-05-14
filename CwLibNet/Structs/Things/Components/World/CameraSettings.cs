@@ -15,7 +15,7 @@ public class CameraSettings: ISerializable
         ZoomDelayMultiplier = serializer.F32(ZoomDelayMultiplier);
         ZoomSpeedMultiplier = serializer.F32(ZoomSpeedMultiplier);
 
-        int subVersion = serializer.GetRevision().GetSubVersion();
+        var subVersion = serializer.GetRevision().GetSubVersion();
         if (subVersion > 0x36) {
             DefaultPitchMultiplier = serializer.F32(DefaultPitchMultiplier);
             MaximumPitchMultiplier = serializer.F32(MaximumPitchMultiplier);

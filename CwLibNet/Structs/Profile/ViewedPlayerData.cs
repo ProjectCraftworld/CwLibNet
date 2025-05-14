@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
@@ -9,34 +6,34 @@ namespace CwLibNet.Structs.Profile
 {
     public class ViewedPlayerData : ISerializable
     {
-        public const int BASE_ALLOCATION_SIZE = 0x50;
+        public const int BaseAllocationSize = 0x50;
 
-        public NetworkOnlineID onlineID;
-        public int lastReviewCount;
-        public int lastCommentCount;
-        public int lastPhotosByMeCount;
-        public int lastPhotosWithMeCount;
-        public int lastFavouriteSlotsCount;
-        public int lastFavoriteUsersCount;
-        public int lastStreamEventTimestamp;
-        public long lastViewedTimestamp;
+        public NetworkOnlineId? OnlineId;
+        public int LastReviewCount;
+        public int LastCommentCount;
+        public int LastPhotosByMeCount;
+        public int LastPhotosWithMeCount;
+        public int LastFavouriteSlotsCount;
+        public int LastFavoriteUsersCount;
+        public int LastStreamEventTimestamp;
+        public long LastViewedTimestamp;
 
         public void Serialize(Serializer serializer)
         {
-            onlineID = serializer.Struct<NetworkOnlineID>(onlineID);
-            lastReviewCount = serializer.S32(lastReviewCount);
-            lastCommentCount = serializer.S32(lastCommentCount);
-            lastPhotosByMeCount = serializer.S32(lastPhotosByMeCount);
-            lastPhotosWithMeCount = serializer.S32(lastPhotosWithMeCount);
-            lastFavouriteSlotsCount = serializer.S32(lastFavouriteSlotsCount);
-            lastFavoriteUsersCount = serializer.S32(lastFavoriteUsersCount);
-            lastStreamEventTimestamp = serializer.S32(lastStreamEventTimestamp);
-            lastViewedTimestamp = serializer.S64(lastViewedTimestamp);
+            OnlineId = serializer.Struct(OnlineId);
+            LastReviewCount = serializer.S32(LastReviewCount);
+            LastCommentCount = serializer.S32(LastCommentCount);
+            LastPhotosByMeCount = serializer.S32(LastPhotosByMeCount);
+            LastPhotosWithMeCount = serializer.S32(LastPhotosWithMeCount);
+            LastFavouriteSlotsCount = serializer.S32(LastFavouriteSlotsCount);
+            LastFavoriteUsersCount = serializer.S32(LastFavoriteUsersCount);
+            LastStreamEventTimestamp = serializer.S32(LastStreamEventTimestamp);
+            LastViewedTimestamp = serializer.S64(LastViewedTimestamp);
         }
 
         public int GetAllocatedSize() 
         {
-            return BASE_ALLOCATION_SIZE;
+            return BaseAllocationSize;
         }
     }
 }

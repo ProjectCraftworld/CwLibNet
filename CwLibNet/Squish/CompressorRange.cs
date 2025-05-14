@@ -37,15 +37,15 @@ public class CompressorRange : CompressorColourFit
     // Static constructor to initialize the codes array.
     static CompressorRange()
     {
-        for (int i = 0; i < codes.Length; i++)
+        for (var i = 0; i < codes.Length; i++)
         {
             codes[i] = new Vec();
         }
     }
 
     private readonly Util.Squish.CompressionMetric metric;
-    private readonly Vec start = new Vec();
-    private readonly Vec end = new Vec();
+    private readonly Vec start = new();
+    private readonly Vec end = new();
 
     private float bestError;
 
@@ -55,66 +55,63 @@ public class CompressorRange : CompressorColourFit
         this.metric = metric;
         bestError = float.MaxValue;
 
-        int count = colours.GetCount();
-        Vec[] points = colours.GetPoints();
+        var count = colours.GetCount();
+        var points = colours.GetPoints();
 
         // Compute the covariance matrix using a shared matrix from the base class.
-        Matrix cov = Matrix.ComputeWeightedCovariance(colours, CompressorColourFit.covariance);
+        var cov = Matrix.ComputeWeightedCovariance(colours, covariance);
         // Compute the principal component from the covariance.
-        Vec principle = Matrix.ComputePrincipleComponent(cov);
+        var principle = Matrix.ComputePrincipleComponent(cov);
 
-        if (count > 0)
+        if (count <= 0) return;
+        float bX, bY, bZ;
+        float max;
+
+        // Initialize with the first point.
+        var aX = bX = points[0].X;
+        var aY = bY = points[0].Y;
+        var aZ = bZ = points[0].Z;
+        var min = max = points[0].Dot(principle);
+
+        // Find the points that have the minimum and maximum dot product with the principle.
+        for (var i = 1; i < count; ++i)
         {
-            float aX, aY, aZ;
-            float bX, bY, bZ;
-            float min, max;
-
-            // Initialize with the first point.
-            aX = bX = points[0].X;
-            aY = bY = points[0].Y;
-            aZ = bZ = points[0].Z;
-            min = max = points[0].Dot(principle);
-
-            // Find the points that have the minimum and maximum dot product with the principle.
-            for (int i = 1; i < count; ++i)
+            var p = points[i];
+            var val = p.Dot(principle);
+            if (val < min)
             {
-                Vec p = points[i];
-                float val = p.Dot(principle);
-                if (val < min)
-                {
-                    aX = p.X;
-                    aY = p.Y;
-                    aZ = p.Z;
-                    min = val;
-                }
-                else if (val > max)
-                {
-                    bX = p.X;
-                    bY = p.Y;
-                    bZ = p.Z;
-                    max = val;
-                }
+                aX = p.X;
+                aY = p.Y;
+                aZ = p.Z;
+                min = val;
             }
-
-            // Clamp the endpoints to the grid and [0,1] range.
-            aX = Clamp(aX, GRID_X, GRID_X_RCP);
-            aY = Clamp(aY, GRID_Y, GRID_Y_RCP);
-            aZ = Clamp(aZ, GRID_Z, GRID_Z_RCP);
-            start.Set(aX, aY, aZ);
-
-            bX = Clamp(bX, GRID_X, GRID_X_RCP);
-            bY = Clamp(bY, GRID_Y, GRID_Y_RCP);
-            bZ = Clamp(bZ, GRID_Z, GRID_Z_RCP);
-            end.Set(bX, bY, bZ);
+            else if (val > max)
+            {
+                bX = p.X;
+                bY = p.Y;
+                bZ = p.Z;
+                max = val;
+            }
         }
+
+        // Clamp the endpoints to the grid and [0,1] range.
+        aX = Clamp(aX, GRID_X, GRID_X_RCP);
+        aY = Clamp(aY, GRID_Y, GRID_Y_RCP);
+        aZ = Clamp(aZ, GRID_Z, GRID_Z_RCP);
+        start.Set(aX, aY, aZ);
+
+        bX = Clamp(bX, GRID_X, GRID_X_RCP);
+        bY = Clamp(bY, GRID_Y, GRID_Y_RCP);
+        bZ = Clamp(bZ, GRID_Z, GRID_Z_RCP);
+        end.Set(bX, bY, bZ);
     }
 
     // Implements the 3–code compression method.
     public override void Compress3(byte[] block, int offset)
     {
-        int count = colours.GetCount();
-        Vec[] points = colours.GetPoints();
-        Vec v = new Vec();
+        var count = colours.GetCount();
+        var points = colours.GetPoints();
+        var v = new Vec();
 
         // Create a codebook:
         //   codes[0] = start
@@ -124,23 +121,23 @@ public class CompressorRange : CompressorColourFit
         codes[1].Set(end);
         codes[2].Set(start).Add(end).Mul(0.5f);
 
-        float error = 0.0f;
-        for (int i = 0; i < count; ++i)
+        var error = 0.0f;
+        for (var i = 0; i < count; ++i)
         {
-            Vec p = points[i];
+            var p = points[i];
 
-            float dist = float.MaxValue;
-            int index = 0;
+            var dist = float.MaxValue;
+            var index = 0;
             // Find the closest code among the three.
-            for (int j = 0; j < 3; ++j)
+            for (var j = 0; j < 3; ++j)
             {
-                Vec c = codes[j];
+                var c = codes[j];
                 v.Set(
                     (p.X - c.X) * metric.R,
                     (p.Y - c.Y) * metric.G,
                     (p.Z - c.Z) * metric.G
                 );
-                float d = v.LengthSq();
+                var d = v.LengthSq();
                 if (d < dist)
                 {
                     dist = d;
@@ -164,9 +161,9 @@ public class CompressorRange : CompressorColourFit
     // Implements the 4–code compression method.
     public override void Compress4(byte[] block, int offset)
     {
-        int count = colours.GetCount();
-        Vec[] points = colours.GetPoints();
-        Vec v = new Vec();
+        var count = colours.GetCount();
+        var points = colours.GetPoints();
+        var v = new Vec();
 
         // Create a codebook:
         //   codes[0] = start
@@ -178,23 +175,23 @@ public class CompressorRange : CompressorColourFit
         codes[2].Set(2.0f / 3.0f).Mul(start).Add(v.Set(1.0f / 3.0f).Mul(end));
         codes[3].Set(1.0f / 3.0f).Mul(start).Add(v.Set(2.0f / 3.0f).Mul(end));
 
-        float error = 0.0f;
-        for (int i = 0; i < count; ++i)
+        var error = 0.0f;
+        for (var i = 0; i < count; ++i)
         {
-            Vec p = points[i];
+            var p = points[i];
 
-            float dist = float.MaxValue;
-            int index = 0;
+            var dist = float.MaxValue;
+            var index = 0;
             // Find the closest code among the four.
-            for (int j = 0; j < 4; ++j)
+            for (var j = 0; j < 4; ++j)
             {
-                Vec c = codes[j];
+                var c = codes[j];
                 v.Set(
                     (p.X - c.X) * metric.R,
                     (p.Y - c.Y) * metric.G,
                     (p.Z - c.Z) * metric.B
                 );
-                float d = v.LengthSq();
+                var d = v.LengthSq();
                 if (d < dist)
                 {
                     dist = d;

@@ -1,42 +1,39 @@
-using static CwLibNet.IO.ValueEnum<int>;
+namespace CwLibNet.Enums;
 
-namespace CwLibNet.Enums
+public enum EnemyPart
 {
-    public enum EnemyPart : int
+    // LEG(0)
+    LEG,
+    // EYE(1)
+    EYE,
+    // BRAIN(2)
+    BRAIN,
+    // WHEEL(3)
+    WHEEL,
+    // ROCKET(4)
+    ROCKET,
+    // PAINT(5)
+    PAINT 
+}
+
+public sealed class EnemyBody
+{
+    private readonly EnemyPart value;
+
+    private EnemyBody(int value)
     {
-        // LEG(0)
-        LEG,
-        // EYE(1)
-        EYE,
-        // BRAIN(2)
-        BRAIN,
-        // WHEEL(3)
-        WHEEL,
-        // ROCKET(4)
-        ROCKET,
-        // PAINT(5)
-        PAINT 
+        this.value = (EnemyPart)value;
     }
 
-    public sealed class EnemyBody
+    public EnemyPart getValue()
     {
-        private readonly EnemyPart value;
+        return value;
+    }
 
-        EnemyBody(int value)
-        {
-            this.value = (EnemyPart)value;
-        }
-
-        public EnemyPart getValue()
-        {
-            return value;
-        }
-
-        public static EnemyBody fromValue(int value)
-        {
-            if (Enum.IsDefined(typeof(EnemyPart), value))
-                return new EnemyBody(value);
-            return default(EnemyBody);
-        }
+    public static EnemyBody fromValue(int value)
+    {
+        if (Enum.IsDefined(typeof(EnemyPart), value))
+            return new EnemyBody(value);
+        return default(EnemyBody);
     }
 }

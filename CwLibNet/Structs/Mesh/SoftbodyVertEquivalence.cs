@@ -13,8 +13,8 @@ public class SoftbodyVertEquivalence: ISerializable
 
     public SoftbodyVertEquivalence(int first, int count)
     {
-        this.First = (short) first;
-        this.Count = (short) count;
+        First = (short) first;
+        Count = (short) count;
     }
 
     

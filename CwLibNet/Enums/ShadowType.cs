@@ -1,14 +1,11 @@
-using CwLibNet.IO;
+namespace CwLibNet.Enums;
 
-namespace CwLibNet.Enums
+public enum ShadowType
 {
-    public enum ShadowType
-    {
-        // ALWAYS(0)
-        ALWAYS,
-        // NEVER(1)
-        NEVER,
-        // IF_ON_SCREEN(2)
-        IF_ON_SCREEN 
-    }
+    // ALWAYS(0)
+    ALWAYS,
+    // NEVER(1)
+    NEVER,
+    // IF_ON_SCREEN(2)
+    IF_ON_SCREEN 
 }

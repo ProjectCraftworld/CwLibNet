@@ -1,62 +1,55 @@
-using CwLibNet.IO;
+namespace CwLibNet.Enums;
 
-namespace CwLibNet.Enums
+public enum LethalType
 {
-    public enum LethalType : int
+    // NOT(0)
+    NOT,
+    // FIRE(1)
+    FIRE,
+    // ELECTRIC(2)
+    ELECTRIC,
+    // @Deprecated
+    // ICE(3)
+    ICE,
+    // CRUSH(4)
+    CRUSH,
+    // SPIKE(5)
+    SPIKE,
+    // GAS(6)
+    GAS,
+    // GAS2(7)
+    GAS2,
+    // GAS3(8)
+    GAS3,
+    // GAS4(9)
+    GAS4,
+    // GAS5(10)
+    GAS5,
+    // GAS6(11)
+    GAS6,
+    // NO_STAND(12)
+    NO_STAND,
+    // BULLET(13)
+    BULLET,
+    // DROWNED(14)
+    DROWNED 
+}
+
+public sealed class LethalBody
+{
+    private readonly LethalType type;
+
+    public LethalBody(int type)
     {
-        // NOT(0)
-        NOT,
-        // FIRE(1)
-        FIRE,
-        // ELECTRIC(2)
-        ELECTRIC,
-        // @Deprecated
-        // ICE(3)
-        ICE,
-        // CRUSH(4)
-        CRUSH,
-        // SPIKE(5)
-        SPIKE,
-        // GAS(6)
-        GAS,
-        // GAS2(7)
-        GAS2,
-        // GAS3(8)
-        GAS3,
-        // GAS4(9)
-        GAS4,
-        // GAS5(10)
-        GAS5,
-        // GAS6(11)
-        GAS6,
-        // NO_STAND(12)
-        NO_STAND,
-        // BULLET(13)
-        BULLET,
-        // DROWNED(14)
-        DROWNED 
+        this.type = (LethalType)type;
     }
 
-    public sealed class LethalBody
+    public LethalType GetBodyType()
     {
-        private readonly LethalType type;
-
-        public LethalBody(int type)
-        {
-            this.type = (LethalType)type;
-        }
-
-        public LethalType getType()
-        {
-            return this.type;
-        }
-        public static LethalBody fromValue(int type)
-        {
-            if (Enum.IsDefined(typeof(LethalType), type))
-            {
-                return new LethalBody(type);
-            }
-            return default(LethalBody);
-        }
+        return type;
+    }
+    public static LethalBody? FromValue(int type)
+    {
+        return Enum.IsDefined(typeof(LethalType), type) ? new LethalBody(type) : null;
     }
 }

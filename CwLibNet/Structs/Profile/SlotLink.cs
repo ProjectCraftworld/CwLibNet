@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Slot;
-using static CwLibNet.Structs.Slot.SlotID;
 
 namespace CwLibNet.Structs.Profile
 {
@@ -12,8 +8,8 @@ namespace CwLibNet.Structs.Profile
     {
         public const int BASE_ALLOCATION_SIZE = 0x10;
 
-        public SlotID from = new SlotID();
-        public SlotID to = new SlotID();
+        public SlotID from = new();
+        public SlotID to = new();
 
         public void Serialize(Serializer serializer)
         {

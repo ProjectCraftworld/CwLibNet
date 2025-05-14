@@ -1,7 +1,6 @@
 using System.Numerics;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.Types;
 
 namespace CwLibNet.Structs.Things.Components;
 
@@ -32,7 +31,7 @@ public class LevelSettings: ISerializable
     public float DofFar = 50000f;
 
     
-    public float ZEffectAmount = 0f, ZEffectBright = 0f, ZEffectContrast = 0.333f;
+    public float ZEffectAmount, ZEffectBright, ZEffectContrast = 0.333f;
 
     
     public float DofNear2 = -7500f, DofFar2 = -3500f;
@@ -41,9 +40,9 @@ public class LevelSettings: ISerializable
     
     public virtual void Serialize(Serializer serializer)
     {
-        Revision revision = serializer.GetRevision();
-        int version = revision.GetVersion();
-        int subVersion = revision.GetSubVersion();
+        var revision = serializer.GetRevision();
+        var version = revision.GetVersion();
+        var subVersion = revision.GetSubVersion();
 
         SunPosition = serializer.V3(SunPosition);
         SunPositionScale = serializer.F32(SunPositionScale);
@@ -69,20 +68,22 @@ public class LevelSettings: ISerializable
             DofNear = serializer.F32(DofNear); // 0x24
         }
 
-        if (version > 0x324 && version < 0x331)
+        if (version is > 0x324 and < 0x331)
             serializer.F32(0);
 
         if (version >= 0x326)
             DofFar = serializer.F32(DofFar); // 0x25
 
-        if (version > 0x324 && version < 0x331)
-            serializer.F32(0);
-
-        if (version >= 0x331)
+        switch (version)
         {
-            ZEffectAmount = serializer.F32(ZEffectAmount);
-            ZEffectBright = serializer.F32(ZEffectBright);
-            ZEffectContrast = serializer.F32(ZEffectContrast);
+            case > 0x324 and < 0x331:
+                serializer.F32(0);
+                break;
+            case >= 0x331:
+                ZEffectAmount = serializer.F32(ZEffectAmount);
+                ZEffectBright = serializer.F32(ZEffectBright);
+                ZEffectContrast = serializer.F32(ZEffectContrast);
+                break;
         }
 
         if (subVersion >= 0x7a)

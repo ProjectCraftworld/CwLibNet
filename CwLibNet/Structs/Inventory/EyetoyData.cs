@@ -8,7 +8,7 @@ namespace CwLibNet.Structs.Inventory;
 
 public class EyetoyData: ISerializable
 {
-    public const int BaseAllocationSize = 0x100 + Inventory.ColorCorrection.BASE_ALLOCATION_SIZE;
+    public const int BaseAllocationSize = 0x100 + Inventory.ColorCorrection.BaseAllocationSize;
 
     public ResourceDescriptor? Frame;
     public ResourceDescriptor? AlphaMask;

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 
@@ -8,31 +5,26 @@ namespace CwLibNet.Structs.Profile
 {
     public class LegacyInventoryCollection : ISerializable 
     {
-        public const int BASE_ALLOCATION_SIZE = 0x10;
+        public const int BaseAllocationSize = 0x10;
 
-        public InventoryView[] inventoryViews;
-        public int currentPageNumber;
-        public int collectionID;
-        public int actionOnItemSelect;
+        public InventoryView[]? InventoryViews;
+        public int CurrentPageNumber;
+        public int CollectionId;
+        public int ActionOnItemSelect;
 
         public void Serialize(Serializer serializer) 
         {
-            inventoryViews = serializer.Array(inventoryViews, true) ?? Array.Empty<InventoryView>(); // Ensure non-null assignment
-            currentPageNumber = serializer.I32(currentPageNumber);
-            collectionID = serializer.I32(collectionID);
-            actionOnItemSelect = serializer.I32(actionOnItemSelect);
+            InventoryViews = serializer.Array(InventoryViews, true) ?? []; // Ensure non-null assignment
+            CurrentPageNumber = serializer.I32(CurrentPageNumber);
+            CollectionId = serializer.I32(CollectionId);
+            ActionOnItemSelect = serializer.I32(ActionOnItemSelect);
         }
 
         public int GetAllocatedSize() 
         {
-            int size = BASE_ALLOCATION_SIZE;
-            if (inventoryViews != null) 
-            {
-                foreach (var view in inventoryViews) 
-                {
-                    size += view.GetAllocatedSize();
-                }
-            }
+            var size = BaseAllocationSize;
+            if (InventoryViews == null) return size;
+            size += InventoryViews.Sum(view => view.GetAllocatedSize());
             return size;
         }
     }

@@ -2,7 +2,6 @@ using CwLibNet.Enums;
 using CwLibNet.EX;
 using CwLibNet.IO.Streams;
 using CwLibNet.Util;
-using Microsoft.Win32.SafeHandles;
 
 namespace CwLibNet.Types.Archives;
 
@@ -10,11 +9,11 @@ public class FileArchive: Fart
 {
     public FileArchive(string file): base(file, ArchiveType.FARC)
     {
-        byte[] fatTable = null;
+        byte[] fatTable;
 
         try
         {
-            FileStream fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read);
+            var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.Read);
             if (fs.Length < 0x8)
             {
                 fs.Close();
@@ -26,36 +25,35 @@ public class FileArchive: Fart
             // archive.seek(archive.length() - 0x8); // Seek to the bottom of the archive to read
             // entry count and magic.
 
-            int entryCount;
-            byte[] entryCountBuffer = new byte[4];
+            var entryCountBuffer = new byte[4];
             fs.Seek(fs.Length - 8, SeekOrigin.Begin);
             fs.Read(entryCountBuffer, 0, 4);
-            entryCount = Bytes.ToIntegerBE(entryCountBuffer);
-            this.Entries = new Fat[entryCount];
-            byte[] magicBuffer = new byte[4];
+            var entryCount = Bytes.ToIntegerBE(entryCountBuffer);
+            Entries = new Fat[entryCount];
+            var magicBuffer = new byte[4];
             fs.Seek(fs.Length - 0x4, SeekOrigin.Begin);
             fs.Read(magicBuffer, 0, 0x4);
             if (!magicBuffer.SequenceEqual("FARC"u8.ToArray())  /* FARC */)
                 throw new SerializationException("Invalid FARC, magic does not match!");
-            this.FatOffset = fs.Length - 0x8 - (entryCount * 0x1cL);
+            FatOffset = fs.Length - 0x8 - entryCount * 0x1cL;
 
             fatTable = new byte[entryCount * 0x1c];
 
-            fs.Seek(this.FatOffset, SeekOrigin.Begin);
+            fs.Seek(FatOffset, SeekOrigin.Begin);
             fs.Read(fatTable, 0,fatTable.Length);
         }
-        catch (IOException ex)
+        catch (IOException)
         {
             throw new SerializationException("An I/O error occurred while reading the FARC.");
         }
 
         // Faster to read the fat table in-memory since it's small.
-        MemoryInputStream stream = new MemoryInputStream(fatTable);
-        for (int i = 0; i < this.Entries.Length; ++i)
+        var stream = new MemoryInputStream(fatTable);
+        for (var i = 0; i < Entries.Length; ++i)
         {
-            Fat fat = new Fat(this, stream.Sha1(), stream.U32(), stream.I32());
-            this.Entries[i] = fat;
-            this.Lookup.Add(fat.getSHA1(), fat);
+            var fat = new Fat(this, stream.Sha1(), stream.U32(), stream.I32());
+            Entries[i] = fat;
+            Lookup.Add(fat.GetSha1(), fat);
         }
     }
     
@@ -65,32 +63,32 @@ public class FileArchive: Fart
         // you save, so we only ever save when there's
         // data that needs to be added.
 
-        long size = this.GetQueueSize();
+        var size = GetQueueSize();
 
-        Fat[] fat = new Fat[this.Entries.Length + this.Queue.Count];
+        var fat = new Fat[Entries.Length + Queue.Count];
 
-        SHA1[] hashes = this.Queue.Keys.ToArray();
-        byte[][] buffers = new byte[hashes.Length][];
+        var hashes = Queue.Keys.ToArray();
+        var buffers = new byte[hashes.Length][];
 
         // Create a new FAT table with these new entries
         // appended at the end.
-        long offset = this.FatOffset;
-        Array.Copy(this.Entries, 0, fat, 0, this.Entries.Length);
-        for (int i = this.Entries.Length, j = 0; i < fat.Length; ++i, ++j)
+        var offset = FatOffset;
+        Array.Copy(Entries, 0, fat, 0, Entries.Length);
+        for (int i = Entries.Length, j = 0; i < fat.Length; ++i, ++j)
         {
-            buffers[j] = this.Queue[hashes[j]];
+            buffers[j] = Queue[hashes[j]];
             fat[i] = new Fat(this, hashes[j], offset, buffers[j].Length);
             offset += buffers[j].Length;
         }
 
-        byte[] table = Fart.GenerateFat(fat);
+        var table = GenerateFat(fat);
 
-        FileStream stream = new FileStream(File, FileMode.Create, FileAccess.Write);
+        var stream = new FileStream(File, FileMode.Create, FileAccess.Write);
 
-        long fatOffset = this.FatOffset;
+        var fatOffset = FatOffset;
 
         stream.Seek(offset, SeekOrigin.Begin);
-        foreach (byte[] buffer in buffers)
+        foreach (var buffer in buffers)
         {
             stream.Write(buffer, 0, buffer.Length);
             fatOffset += buffer.Length;
@@ -101,7 +99,7 @@ public class FileArchive: Fart
         fatOffset += table.Length;
 
         // Footer
-        byte[] data = Bytes.ToBytesBE(fat.Length);
+        var data = Bytes.ToBytesBE(fat.Length);
         stream.Write(data, 0, data.Length);
         fatOffset += sizeof(int);
         stream.Write("FARC"u8.ToArray(), 0, 4); // FARC
@@ -109,13 +107,13 @@ public class FileArchive: Fart
         // archive.setLength(archive.getFilePointer());
 
         // Update the state of the archive in memory.
-        this.Entries = fat;
-        this.Queue.Clear();
-        this.Lookup.Clear();
-        foreach (Fat row in this.Entries)
-            this.Lookup.Add(row.getSHA1(), row);
-        this.FatOffset = fatOffset;
-        this.LastModified = new DateTimeOffset(System.IO.File.GetLastAccessTime(File)).ToUnixTimeSeconds();
+        Entries = fat;
+        Queue.Clear();
+        Lookup.Clear();
+        foreach (var row in Entries)
+            Lookup.Add(row.GetSha1(), row);
+        FatOffset = fatOffset;
+        LastModified = new DateTimeOffset(System.IO.File.GetLastAccessTime(File)).ToUnixTimeSeconds();
         stream.Close();
         return true;
     }

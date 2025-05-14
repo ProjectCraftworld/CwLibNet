@@ -1,7 +1,7 @@
 using CwLibNet.IO.Serializer;
 using CwLibNet.IO.Streams;
 using CwLibNet.Resources;
-using CwLibNet.Types;
+using CwLibNet.Types.Data;
 
 namespace CwLibNetTests;
 

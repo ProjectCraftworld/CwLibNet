@@ -2,26 +2,25 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Joint;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
 namespace CwLibNet.Resources;
 
 public class RJoint: Resource
 {
-    public const int BASE_ALLOCATION_SIZE = 0x80 + (FCurve.BaseAllocationSize * 0x2);
+    public const int BASE_ALLOCATION_SIZE = 0x80 + FCurve.BaseAllocationSize * 0x2;
 
     public bool allowExpand, allowContract, contractFreely;
     public float lengthElasticity, lengthPlasticity;
-    public FCurve lengthFunc = new FCurve();
+    public FCurve lengthFunc = new();
     public float angleDeviation, angleElasticity, anglePlasticity = 0.01f;
-    public float angleVelocity = 0.0f;
-    public FCurve angleFunc = new FCurve();
+    public float angleVelocity;
+    public FCurve angleFunc = new();
     public bool normalizedForces = true, dontRotateA, dontRotateB;
     public float breakResistance;
     public ResourceDescriptor gfxMaterial;
     public float gfxWidth = 20.0f;
-    public String eventNameAngle, eventNameLength;
+    public string eventNameAngle, eventNameLength;
     public ResourceDescriptor mesh;
 
     
@@ -68,7 +67,7 @@ public class RJoint: Resource
     
     public override SerializationData Build(Revision revision, byte compressionFlags)
     {
-        Serializer serializer = new Serializer(this.GetAllocatedSize(), revision,
+        var serializer = new Serializer(GetAllocatedSize(), revision,
             compressionFlags);
         serializer.Struct(this);
         return new SerializationData(

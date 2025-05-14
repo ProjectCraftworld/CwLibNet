@@ -1,110 +1,102 @@
-using static CwLibNet.IO.ValueEnum<int>;
+namespace CwLibNet.Enums;
 
-namespace CwLibNet.Enums
+[Flags]
+public enum CostumePieceCategory
 {
-    public enum CostumePieceCategory : int
+    // BEARD(0)
+    BEARD,
+    // FEET(1)
+    FEET,
+    // EYES(2)
+    EYES,
+    // GLASSES(3)
+    GLASSES,
+    // MOUTH(4)
+    MOUTH,
+    // MOUSTACHE(5)
+    MOUSTACHE,
+    // NOSE(6)
+    NOSE,
+    // HAIR(7)
+    HAIR,
+    // HEAD(8)
+    HEAD,
+    // NECK(9)
+    NECK,
+    // TORSO(10)
+    TORSO,
+    // LEGS(11)
+    LEGS,
+    // HANDS(12)
+    HANDS,
+    // WAIST(13)
+    WAIST 
+}
+
+public sealed class CostumePieceBodyMembers
+{
+    private readonly CostumePieceCategory index;
+
+    public CostumePieceBodyMembers(CostumePieceCategory index)
     {
-        // BEARD(0)
-        BEARD,
-        // FEET(1)
-        FEET,
-        // EYES(2)
-        EYES,
-        // GLASSES(3)
-        GLASSES,
-        // MOUTH(4)
-        MOUTH,
-        // MOUSTACHE(5)
-        MOUSTACHE,
-        // NOSE(6)
-        NOSE,
-        // HAIR(7)
-        HAIR,
-        // HEAD(8)
-        HEAD,
-        // NECK(9)
-        NECK,
-        // TORSO(10)
-        TORSO,
-        // LEGS(11)
-        LEGS,
-        // HANDS(12)
-        HANDS,
-        // WAIST(13)
-        WAIST 
+        this.index = index;
     }
 
-    public sealed class CostumePieceBodyMembers
+    public CostumePieceCategory GetIndex()
     {
-        private readonly CostumePieceCategory index;
-        private readonly CostumePieceCategory flag;
+        return index;
+    }
 
-        public CostumePieceBodyMembers(CostumePieceCategory index)
+    public static CostumePieceCategory GetFlags(CostumePieceBodyMembers set)
+    {
+        var flags = 0;
+        var categories = Values();
+        for (var i = 0; i < categories.Length; ++i)
         {
-            this.index = (CostumePieceCategory)index;
+            var category = categories[i];
+            if (set.Contains(category))
+                flags |= 1 << i;
         }
+        return (CostumePieceCategory)flags;
+    }
 
-        public CostumePieceCategory getIndex()
+    public static HashSet<CostumePieceCategory> FromFlags(CostumePieceBodyMembers flags)
+    {
+        var set = new HashSet<CostumePieceCategory>();
+        var categories = Values();
+        for (var i = 0; i < categories.Length; ++i)
         {
-            return this.index;
+            var category = categories[i];
+            if (((int)flags.GetIndex() & (1 << i)) == 0) continue;
+            set.Add(categories[i]);
         }
+        return set;
+    }
 
-        public CostumePieceCategory getFlag()
-        {
-            return this.flag;
-        }
+    public static CostumePieceCategory[] Values()
+    {
+        return (CostumePieceCategory[])Enum.GetValues(typeof(CostumePieceCategory));
+    }
 
-        public static CostumePieceCategory GetFlags(CostumePieceBodyMembers set)
-        {
-            int flags = 0;
-            CostumePieceCategory[] categories = Values();
-            for (int i = 0; i < categories.Length; ++i)
-            {
-                CostumePieceCategory category = categories[i];
-                if (set.Contains(category))
-                    flags |= 1 << i;
-            }
-            return (CostumePieceCategory)flags;
-        }
+    public bool Contains(CostumePieceCategory category)
+    {
+        return (index & category) == category;
+    }
 
-        public static HashSet<CostumePieceCategory> FromFlags(CostumePieceBodyMembers flags)
+    public static string GetNameFromIndex(int index)
+    {
+        var categories = (CostumePieceCategory[])Enum.GetValues(typeof(CostumePieceCategory));
+        foreach (var t in categories)
         {
-            HashSet<CostumePieceCategory> set = new HashSet<CostumePieceCategory>();
-            CostumePieceCategory[] categories = Values();
-            for (int i = 0; i < categories.Length; ++i)
-            {
-                CostumePieceCategory category = categories[i];
-                if (((int)flags.getIndex() & (1 << i)) == 0) continue;
-                set.Add(categories[i]);
-            }
-            return set;
+            if ((int)t == index)
+                return t.ToString().ToLower();
         }
+        return "" + index;
+    }
 
-        public static CostumePieceCategory[] Values()
-        {
-            return (CostumePieceCategory[])Enum.GetValues(typeof(CostumePieceCategory));
-        }
-
-        public bool Contains(CostumePieceCategory category)
-        {
-            return (index & category) == category;
-        }
-
-        public static String getNameFromIndex(int index)
-        {
-            CostumePieceCategory[] categories = (CostumePieceCategory[])Enum.GetValues(typeof(CostumePieceCategory));
-            for (int i = 0; i < categories.Length; ++i)
-            {
-                if ((int)categories[i] == index)
-                    return categories[i].ToString().ToLower();
-            }
-            return "" + index;
-        }
-
-        public static String getPrimaryName(HashSet<CostumePieceCategory> set)
-        {
-            if (set == null || set.Count == 0) return CostumePieceCategory.BEARD.ToString().ToLower(); // or any default value
-            return set.First().ToString().ToLower();
-        }
+    public static string GetPrimaryName(HashSet<CostumePieceCategory> set)
+    {
+        if (set == null || set.Count == 0) return nameof(CostumePieceCategory.BEARD).ToLower(); // or any default value
+        return set.First().ToString().ToLower();
     }
 }

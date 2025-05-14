@@ -6,19 +6,19 @@ namespace CwLibNet.Structs.Things.Parts;
 
 public class PDecorations: ISerializable
 {
-    public Decoration[] decorations;
+    public Decoration[]? Decorations;
 
     public PDecorations() { }
 
     public PDecorations(Decoration decor)
     {
-        this.decorations = [decor];
+        Decorations = [decor];
     }
 
     
     public void Serialize(Serializer serializer)
     {
-        decorations = serializer.Array(decorations);
+        Decorations = serializer.Array(Decorations);
     }
 
     // TODO: Actually implement

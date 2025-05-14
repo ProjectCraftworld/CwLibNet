@@ -5,7 +5,7 @@ namespace CwLibNet.Types.Data;
 public class ResourceInfo
 {
     private const int MaxDependencyDepth = 2;
-    private Object Resource;
+    private object Resource;
     public Revision Revision;
     public ResourceType Type = ResourceType.Invalid;
     public SerializationType Method = SerializationType.UNKNOWN;
@@ -21,12 +21,12 @@ public class ResourceInfo
     public bool IsCompressedResource()
     {
         return IsResource() &&
-               (this.Method == SerializationType.BINARY || this.Method == SerializationType.ENCRYPTED_BINARY);
+               (Method == SerializationType.BINARY || Method == SerializationType.ENCRYPTED_BINARY);
     }
     
     public T GetResource<T>()
     {
-        return (T) this.Resource;
+        return (T) Resource;
     }
 
 }

@@ -1,34 +1,32 @@
-using System;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 
-namespace CwLibNet.Structs.Font
+namespace CwLibNet.Structs.Font;
+
+public class GlyphInfo: ISerializable
 {
-    public class GlyphInfo
+    public const int BaseAllocationSize = 0x10;
+    public short Character;
+    public byte BoxLeft, BoxTop;
+    public byte BoxW, BoxH;
+    public int Offset;
+    public int NextGlyph;
+
+    public int CacheX, CacheY;
+
+    public virtual void Serialize(Serializer serializer)
     {
-        public static readonly int BASE_ALLOCATION_SIZE = 0x10;
-        public short character;
-        public byte boxLeft, boxTop;
-        public byte boxW, boxH;
-        public int offset;
-        public int nextGlyph;
+        Character = serializer.I16(Character);
+        BoxLeft = serializer.I8(BoxLeft);
+        BoxTop = serializer.I8(BoxTop);
+        BoxW = serializer.I8(BoxW);
+        BoxH = serializer.I8(BoxH);
+        Offset = serializer.I32(Offset);
+        NextGlyph = serializer.I16((short)NextGlyph);
+    }
 
-        public int cacheX, cacheY;
-
-        public virtual void serialize(Serializer serializer)
-        {
-            character = serializer.I16(character);
-            boxLeft = serializer.I8(boxLeft);
-            boxTop = serializer.I8(boxTop);
-            boxW = serializer.I8(boxW);
-            boxH = serializer.I8(boxH);
-            offset = serializer.I32(offset);
-            nextGlyph = serializer.I16((short)nextGlyph);
-        }
-
-        public virtual int getAllocatedSize()
-        {
-            return GlyphInfo.BASE_ALLOCATION_SIZE;
-        }
+    public virtual int GetAllocatedSize()
+    {
+        return BaseAllocationSize;
     }
 }

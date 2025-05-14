@@ -29,8 +29,8 @@ namespace CwLibNet.Squish;
 
 public abstract class CompressorColourFit
 {
-    protected static readonly Vec ONE_V = new Vec(1.0f);
-    protected static readonly Vec ZERO_V = new Vec(0.0f);
+    protected static readonly Vec ONE_V = new(1.0f);
+    protected static readonly Vec ZERO_V = new(0.0f);
 
     public const float GRID_X = 31.0f;
     public const float GRID_Y = 63.0f;
@@ -40,7 +40,7 @@ public abstract class CompressorColourFit
     protected const float GRID_Y_RCP = 1.0f / GRID_Y;
     protected const float GRID_Z_RCP = 1.0f / GRID_Z;
 
-    public static readonly Matrix covariance = new Matrix();
+    public static readonly Matrix? covariance = new();
 
     protected readonly ColourSet colours;
     protected readonly Util.Squish.CompressionType type;
@@ -73,11 +73,14 @@ public abstract class CompressorColourFit
 
     protected static float Clamp(float v, float grid, float gridRcp)
     {
-        if (v <= 0.0f)
-            return 0.0f;
-        else if (v >= 1.0f)
-            return 1.0f;
-
-        return ((int)(grid * v + 0.5f)) * gridRcp;
+	    switch (v)
+	    {
+		    case <= 0.0f:
+			    return 0.0f;
+		    case >= 1.0f:
+			    return 1.0f;
+		    default:
+			    return (int)(grid * v + 0.5f) * gridRcp;
+	    }
     }
 }

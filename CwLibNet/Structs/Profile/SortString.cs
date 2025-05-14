@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 
@@ -8,48 +5,42 @@ namespace CwLibNet.Structs.Profile
 {
     public class SortString : ISerializable
     {
-        public const int BASE_ALLOCATION_SIZE = 0x10;
+        public const int BaseAllocationSize = 0x10;
 
-        public int lamsKeyID;
-        public string myString;
-        public int index;
+        public int LamsKeyId;
+        public string? MyString;
+        public int Index;
 
         public SortString() { }
 
-        public SortString(int key, string myString, int index)
+        public SortString(int key, string? myString, int index)
         {
-            this.lamsKeyID = key;
-            this.myString = myString;
-            this.index = index;
+            LamsKeyId = key;
+            this.MyString = myString;
+            this.Index = index;
         }
 
         public void Serialize(Serializer serializer)
         {
-            lamsKeyID = serializer.I32(lamsKeyID);
-            myString = serializer.Wstr(myString);
-            index = serializer.I32(index);
+            LamsKeyId = serializer.I32(LamsKeyId);
+            MyString = serializer.Wstr(MyString);
+            Index = serializer.I32(Index);
         }
 
         public int GetAllocatedSize()
         {
-            int size = BASE_ALLOCATION_SIZE;
-            if (myString != null)
+            var size = BaseAllocationSize;
+            if (MyString != null)
             {
-                size += myString.Length * 2;
+                size += MyString.Length * 2;
             }
             return size;
         }
 
-        public bool equals(SortString other)
+        public override bool Equals(object? other)
         {
-            if (other == this) return true;
-            if (!(other is SortString)) return false;
-            return ((SortString) other).myString.Equals(this.myString);
-        }
-
-        public int hashCode() 
-        {
-            return this.myString.GetHashCode();
+            var myString = ((SortString?) other)?.MyString;
+            return myString != null && (other == this || myString.Equals(MyString));
         }
     }
 }

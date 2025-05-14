@@ -9,25 +9,25 @@ namespace CwLibNet.Structs.Mesh;
 
 public class Bone: AnimBone
 {
-    public const int MAX_BONE_NAME_LENGTH = 32;
-    public new const int BASE_ALLOCATION_SIZE = AnimBone.BASE_ALLOCATION_SIZE + 0x120;
+    public const int MaxBoneNameLength = 32;
+    public new const int BaseAllocationSize = AnimBone.BaseAllocationSize + 0x120;
 
     private string? name;
-    public int flags = BoneFlag.NONE;
+    public int Flags = BoneFlag.None;
 
     
-    public Matrix4x4? skinPoseMatrix = Matrix4x4.Identity;
+    public Matrix4x4? SkinPoseMatrix = Matrix4x4.Identity;
 
-    public Matrix4x4? invSkinPoseMatrix = Matrix4x4.Identity.Invert();
+    public Matrix4x4? InvSkinPoseMatrix = Matrix4x4.Identity.Invert();
 
-    public Vector4? obbMin;
-    public Vector4? obbMax;
-    public MeshShapeVertex[] shapeVerts;
-    public MeshShapeInfo[] shapeInfos;
-    public float shapeMinZ, shapeMaxZ;
-    public Vector4? boundBoxMin;
-    public Vector4? boundBoxMax;
-    public Vector4? boundSphere;
+    public Vector4? ObbMin;
+    public Vector4? ObbMax;
+    public MeshShapeVertex[]? ShapeVerts;
+    public MeshShapeInfo[]? ShapeInfos;
+    public float ShapeMinZ, ShapeMaxZ;
+    public Vector4? BoundBoxMin;
+    public Vector4? BoundBoxMax;
+    public Vector4? BoundSphere;
 
     /**
      * Creates an empty bone
@@ -39,11 +39,11 @@ public class Bone: AnimBone
      *
      * @param name Name of the bone
      */
-    public Bone(String name)
+    public Bone(string name)
     {
-        this.animHash = RAnimation.CalculateAnimationHash(name);
-        if (name is { Length: >= MAX_BONE_NAME_LENGTH }) // null terminated
-            name = name[..MAX_BONE_NAME_LENGTH];
+        AnimHash = RAnimation.CalculateAnimationHash(name);
+        if (name is { Length: >= MaxBoneNameLength }) // null terminated
+            name = name[..MaxBoneNameLength];
         this.name = name;
     }
 
@@ -51,50 +51,46 @@ public class Bone: AnimBone
     public override void Serialize(Serializer serializer)
     {
 
-        name = serializer.Str(name, MAX_BONE_NAME_LENGTH);
-        flags = serializer.I32(flags);
+        name = serializer.Str(name, MaxBoneNameLength);
+        Flags = serializer.I32(Flags);
 
         base.Serialize(serializer);
 
-        skinPoseMatrix = serializer.M44(skinPoseMatrix);
-        invSkinPoseMatrix = serializer.M44(invSkinPoseMatrix);
+        SkinPoseMatrix = serializer.M44(SkinPoseMatrix);
+        InvSkinPoseMatrix = serializer.M44(InvSkinPoseMatrix);
 
-        obbMin = serializer.V4(obbMin);
-        obbMax = serializer.V4(obbMax);
+        ObbMin = serializer.V4(ObbMin);
+        ObbMax = serializer.V4(ObbMax);
 
-        shapeVerts = serializer.Array(shapeVerts);
-        shapeInfos = serializer.Array(shapeInfos);
+        ShapeVerts = serializer.Array(ShapeVerts);
+        ShapeInfos = serializer.Array(ShapeInfos);
 
-        shapeMinZ = serializer.F32(shapeMinZ);
-        shapeMaxZ = serializer.F32(shapeMaxZ);
+        ShapeMinZ = serializer.F32(ShapeMinZ);
+        ShapeMaxZ = serializer.F32(ShapeMaxZ);
 
-        boundBoxMin = serializer.V4(boundBoxMin);
-        boundBoxMax = serializer.V4(boundBoxMax);
-        boundSphere = serializer.V4(boundSphere);
+        BoundBoxMin = serializer.V4(BoundBoxMin);
+        BoundBoxMax = serializer.V4(BoundBoxMax);
+        BoundSphere = serializer.V4(BoundSphere);
     }
 
-    public string? getName()
+    public string? GetName()
     {
-        return this.name;
+        return name;
     }
 
-    public void setName(String name)
+    public void SetName(string name)
     {
-        if (name != null && name.Length > MAX_BONE_NAME_LENGTH)
+        if (name is { Length: > MaxBoneNameLength })
             throw new ArgumentException("Bone name cannot be longer than 31 " +
                                                "characters!");
         this.name = name;
     }
 
-    public static Bone getByHash(Bone[] skeleton, int animHash)
+    public static Bone? GetByHash(Bone?[] skeleton, int animHash)
     {
         if (skeleton == null)
             throw new NullReferenceException("Can't get bones from null skeleton!");
-        if (animHash == 0) return skeleton[0];
-        foreach (Bone bone in skeleton)
-            if (bone.animHash == animHash)
-                return bone;
-        return null;
+        return animHash == 0 ? skeleton[0] : skeleton.FirstOrDefault(bone => bone.AnimHash == animHash);
     }
 
     /**
@@ -104,25 +100,22 @@ public class Bone: AnimBone
      * @param animHash Hash to search for
      * @return Bone's name
      */
-    public static string? getNameFromHash(Bone[] skeleton, int animHash)
+    public static string? GetNameFromHash(Bone[] skeleton, int animHash)
     {
         if (skeleton == null)
             throw new NullReferenceException("Can't get bones from null skeleton!");
-        foreach (Bone bone in skeleton)
-            if (bone.animHash == animHash)
-                return bone.name;
-        return null;
+        return (from bone in skeleton where bone.AnimHash == animHash select bone.name).FirstOrDefault();
     }
 
-    public static int indexOf(Bone[] skeleton, int animHash)
+    public static int IndexOf(Bone[] skeleton, int animHash)
     {
         if (skeleton == null)
             throw new NullReferenceException("Can't get bones from null skeleton!");
         if (animHash == 0) return 0;
-        for (int i = 0; i < skeleton.Length; ++i)
+        for (var i = 0; i < skeleton.Length; ++i)
         {
-            Bone bone = skeleton[i];
-            if (bone.animHash == animHash)
+            var bone = skeleton[i];
+            if (bone.AnimHash == animHash)
                 return i;
         }
         return -1;
@@ -134,12 +127,12 @@ public class Bone: AnimBone
      * @param skeleton The skeleton that this bone is from
      * @return The index of this bone if it exists
      */
-    public int getIndex(Bone[] skeleton)
+    public int GetIndex(Bone[] skeleton)
     {
         if (skeleton == null)
             throw new NullReferenceException("Can't get bones from null skeleton!");
-        for (int i = 0; i < skeleton.Length; ++i)
-            if (skeleton[i].animHash == this.animHash)
+        for (var i = 0; i < skeleton.Length; ++i)
+            if (skeleton[i].AnimHash == AnimHash)
                 return i;
         return -1;
     }
@@ -150,39 +143,34 @@ public class Bone: AnimBone
      * @param skeleton The skeleton that this bone is from
      * @return The children of this bone
      */
-    public Bone[] getChildren(Bone[] skeleton)
+    public Bone[] GetChildren(Bone[] skeleton)
     {
         if (skeleton == null)
             throw new NullReferenceException("Can't get bones from null skeleton!");
         List<Bone> bones = new(skeleton.Length);
-        int index = this.getIndex(skeleton);
+        var index = GetIndex(skeleton);
         if (index == -1)
             throw new ArgumentException("This bone doesn't exist in the skeleton " +
                                                "provided!");
-        foreach (Bone bone in skeleton)
-        {
-            if (bone == this) continue;
-            if (bone.parent == index)
-                bones.Add(bone);
-        }
+        bones.AddRange(skeleton.Where(bone => bone != this).Where(bone => bone.Parent == index));
         return bones.ToArray();
     }
 
-    public Matrix4x4? getLocalTransform(Bone[] bones)
+    public Matrix4x4? GetLocalTransform(Bone[] bones)
     {
-        if (this.parent == -1) return this.skinPoseMatrix;
-        Bone bone = bones[this.parent];
-        return bone.invSkinPoseMatrix * (this.skinPoseMatrix);
+        if (Parent == -1) return SkinPoseMatrix;
+        var bone = bones[Parent];
+        return bone.InvSkinPoseMatrix * SkinPoseMatrix;
     }
 
     
-    public int GetAllocatedSize()
+    public override int GetAllocatedSize()
     {
-        int size = BASE_ALLOCATION_SIZE;
-        if (this.shapeInfos != null)
-            size += this.shapeInfos.Length * MeshShapeInfo.BaseAllocationSize;
-        if (this.shapeVerts != null)
-            size += this.shapeVerts.Length * MeshShapeVertex.BaseAllocationSize;
+        var size = BaseAllocationSize;
+        if (ShapeInfos != null)
+            size += ShapeInfos.Length * MeshShapeInfo.BaseAllocationSize;
+        if (ShapeVerts != null)
+            size += ShapeVerts.Length * MeshShapeVertex.BaseAllocationSize;
         return size;
     }
 

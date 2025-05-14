@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
@@ -12,29 +6,29 @@ namespace CwLibNet.Structs.Profile
 {
     public class InventoryCollection : ISerializable 
     {
-        public const int BASE_ALLOCATION_SIZE = 0x10;
+        public const int BaseAllocationSize = 0x10;
 
-        public int inventoryCollectionIndex;
-        public InventoryPage[] inventoryPageInstances;
-        public int currentPageNumber;
+        public int InventoryCollectionIndex;
+        public InventoryPage[]? InventoryPageInstances;
+        public int CurrentPageNumber;
 
-        public bool poppetPowerupSelection;
+        public bool PoppetPowerupSelection;
 
         public void Serialize(Serializer serializer)
         {
-            inventoryCollectionIndex = serializer.I32(inventoryCollectionIndex);
-            inventoryPageInstances = serializer.Array<InventoryPage>(inventoryPageInstances);
-            currentPageNumber = serializer.I32(currentPageNumber);
-            if (serializer.GetRevision().GetSubVersion() >= (int)Revisions.CollectionPoppetPowerup)
-                poppetPowerupSelection = serializer.Bool(poppetPowerupSelection);
+            InventoryCollectionIndex = serializer.I32(InventoryCollectionIndex);
+            InventoryPageInstances = serializer.Array(InventoryPageInstances);
+            CurrentPageNumber = serializer.I32(CurrentPageNumber);
+            if (serializer.GetRevision().GetSubVersion() >= (int)Revisions.COLLECTION_POPPET_POWERUP)
+                PoppetPowerupSelection = serializer.Bool(PoppetPowerupSelection);
         }
 
         public int GetAllocatedSize() 
         {
-            int size = BASE_ALLOCATION_SIZE;
-            if (inventoryPageInstances != null)
+            var size = BaseAllocationSize;
+            if (InventoryPageInstances != null)
             {
-                size += inventoryPageInstances.Length * InventoryPage.BASE_ALLOCATION_SIZE;
+                size += InventoryPageInstances.Length * InventoryPage.BASE_ALLOCATION_SIZE;
             }
             return size;
         }

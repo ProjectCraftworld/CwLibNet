@@ -25,31 +25,31 @@ public class FieldLayoutDetails: ISerializable
 
     public FieldLayoutDetails(FieldLayoutDetails details)
     {
-        this.Name = details.Name;
-        this.Modifiers = new HashSet<ModifierType>(details.Modifiers);
-        this.MachineType = details.MachineType;
-        this.FishType = details.FishType;
-        this.DimensionCount = details.DimensionCount;
-        this.ArrayBaseMachineType = details.ArrayBaseMachineType;
-        this.InstanceOffset = details.InstanceOffset;
+        Name = details.Name;
+        Modifiers = new HashSet<ModifierType>(details.Modifiers);
+        MachineType = details.MachineType;
+        FishType = details.FishType;
+        DimensionCount = details.DimensionCount;
+        ArrayBaseMachineType = details.ArrayBaseMachineType;
+        InstanceOffset = details.InstanceOffset;
     }
 
     
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
+        var version = serializer.GetRevision().GetVersion();
 
         Name = serializer.Str(Name);
 
         if (serializer.IsWriting())
         {
-            short flags = ModifierBody.GetFlags(Modifiers);
+            var flags = ModifierBody.GetFlags(Modifiers);
             if (version >= 0x3d9) serializer.GetOutput().I16(flags);
             else serializer.GetOutput().I32(flags);
         }
         else
         {
-            int flags = (version >= 0x3d9) ? serializer.GetInput().I16() :
+            var flags = version >= 0x3d9 ? serializer.GetInput().I16() :
                 serializer.GetInput().I32();
             Modifiers = ModifierBody.fromValue(flags);
         }
@@ -67,8 +67,8 @@ public class FieldLayoutDetails: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = FieldLayoutDetails.BaseAllocationSize;
-        if (this.Name != null) size += (this.Name.Length);
+        var size = BaseAllocationSize;
+        if (Name != null) size += Name.Length;
         return size;
     }
 

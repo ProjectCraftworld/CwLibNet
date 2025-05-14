@@ -1,36 +1,26 @@
-using CwLibNet.IO;
+namespace CwLibNet.Enums;
 
-namespace CwLibNet.Enums
+public enum FunctionType
 {
-    public enum FunctionType : int
+    // NORMAL(0)
+    NORMAL,
+    // GETTER(1)
+    GETTER,
+    // SETTER(2)
+    SETTER 
+}
+
+public sealed class FunctionBody(int value)
+{
+    private readonly FunctionType value = (FunctionType)(value & 0xFF);
+
+    public FunctionType GetValue()
     {
-        // NORMAL(0)
-        NORMAL,
-        // GETTER(1)
-        GETTER,
-        // SETTER(2)
-        SETTER 
+        return value;
     }
 
-    public sealed class FunctionBody
+    public static FunctionBody? FromValue(int value)
     {
-        private readonly FunctionType value;
-
-        FunctionBody(int value)
-        {
-            this.value = (FunctionType)(value & 0xFF);
-        }
-
-        public FunctionType getValue()
-        {
-            return this.value;
-        }
-
-        public static FunctionBody fromValue(int value)
-        {
-            if (Enum.IsDefined(typeof(FunctionType), value))
-                return new FunctionBody(value);
-            return default(FunctionBody);
-        }
+        return Enum.IsDefined(typeof(FunctionType), value) ? new FunctionBody(value) : null;
     }
 }

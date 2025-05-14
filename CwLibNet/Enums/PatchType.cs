@@ -1,7 +1,6 @@
-namespace CwLibNet.Enums
+namespace CwLibNet.Enums;
+
+public enum PatchType
 {
-    public enum PatchType
-    {
-        TRANSLATION
-    }
+    TRANSLATION
 }

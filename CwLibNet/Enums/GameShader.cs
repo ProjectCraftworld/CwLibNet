@@ -1,10 +1,9 @@
-namespace CwLibNet.Enums
+namespace CwLibNet.Enums;
+
+public enum GameShader
 {
-    public enum GameShader
-    {
-        LBP1,
-        LBP2_PRE_ALPHA,
-        LBP2,
-        LBP3_PS4
-    }
+    LBP1,
+    LBP2_PRE_ALPHA,
+    LBP2,
+    LBP3_PS4
 }

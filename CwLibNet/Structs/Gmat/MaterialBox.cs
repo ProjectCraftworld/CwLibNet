@@ -22,8 +22,8 @@ public class MaterialBox: ISerializable
     private int[] @params = new int[ParameterCount];
     public float X, Y, W, H;
     public int SubType;
-    public MaterialParameterAnimation Anim = new MaterialParameterAnimation();
-    public MaterialParameterAnimation Anim2 = new MaterialParameterAnimation();
+    public MaterialParameterAnimation Anim = new();
+    public MaterialParameterAnimation Anim2 = new();
 
     /**
      * Creates an output node
@@ -35,13 +35,13 @@ public class MaterialBox: ISerializable
      */
     public MaterialBox(Vector2 scale, Vector2 offset, int channel, int texture)
     {
-        this.Type = BoxType.TEXTURE_SAMPLE;
-        this.@params[0] = scale.X.FloatToIntBits();
-        this.@params[1] = scale.Y.FloatToIntBits();
-        this.@params[2] = offset.X.FloatToIntBits();
-        this.@params[3] = offset.Y.FloatToIntBits();
-        this.@params[4] = channel;
-        this.@params[5] = texture;
+        Type = BoxType.TEXTURE_SAMPLE;
+        @params[0] = scale.X.FloatToIntBits();
+        @params[1] = scale.Y.FloatToIntBits();
+        @params[2] = offset.X.FloatToIntBits();
+        @params[3] = offset.Y.FloatToIntBits();
+        @params[4] = channel;
+        @params[5] = texture;
     }
 
     /**
@@ -49,13 +49,13 @@ public class MaterialBox: ISerializable
      */
     public MaterialBox(Vector4 transform, int channel, int texture)
     {
-        this.Type = BoxType.TEXTURE_SAMPLE;
-        this.@params[0] = transform.X.FloatToIntBits();
-        this.@params[1] = transform.Y.FloatToIntBits();
-        this.@params[2] = transform.Z.FloatToIntBits();
-        this.@params[3] = transform.W.FloatToIntBits();
-        this.@params[4] = channel;
-        this.@params[5] = texture;
+        Type = BoxType.TEXTURE_SAMPLE;
+        @params[0] = transform.X.FloatToIntBits();
+        @params[1] = transform.Y.FloatToIntBits();
+        @params[2] = transform.Z.FloatToIntBits();
+        @params[3] = transform.W.FloatToIntBits();
+        @params[4] = channel;
+        @params[5] = texture;
     }
 
     /***
@@ -63,20 +63,20 @@ public class MaterialBox: ISerializable
      */
     public MaterialBox(Vector4 color)
     {
-        this.Type = BoxType.COLOR;
-        this.@params[0] = color.X.FloatToIntBits();
-        this.@params[1] = color.Y.FloatToIntBits();
-        this.@params[2] = color.Z.FloatToIntBits();
-        this.@params[3] = color.W.FloatToIntBits();
+        Type = BoxType.COLOR;
+        @params[0] = color.X.FloatToIntBits();
+        @params[1] = color.Y.FloatToIntBits();
+        @params[2] = color.Z.FloatToIntBits();
+        @params[3] = color.W.FloatToIntBits();
     }
 
     public float GetTextureRotation()
     {
         if (Type != BoxType.TEXTURE_SAMPLE || SubType != 1) return 0.0f;
 
-        Vector2 col0 = new Vector2(@params[0].IntBitsToFloat(),
+        var col0 = new Vector2(@params[0].IntBitsToFloat(),
             @params[1].IntBitsToFloat());
-        col0 /= (col0.Length());
+        col0 /= col0.Length();
         return (float) Math.Acos(col0.X);
     }
 
@@ -94,9 +94,9 @@ public class MaterialBox: ISerializable
         }
         else
         {
-            Vector2 col0 = new Vector2(@params[0].IntBitsToFloat(),
+            var col0 = new Vector2(@params[0].IntBitsToFloat(),
                 @params[1].IntBitsToFloat());
-            Vector2 col1 = new Vector2(@params[3].IntBitsToFloat(),
+            var col1 = new Vector2(@params[3].IntBitsToFloat(),
                 @params[6].IntBitsToFloat());
             return new Vector4(col0.Length(), col1.Length(),
                 @params[2].IntBitsToFloat(),
@@ -109,18 +109,18 @@ public class MaterialBox: ISerializable
     {
         Type = serializer.I32(Type);
 
-        int head = serializer.GetRevision().GetVersion();
+        var head = serializer.GetRevision().GetVersion();
 
         if (!serializer.IsWriting()) @params = new int[ParameterCount];
         if (head < 0x2a4)
         {
-            for (int i = 0; i < LegacyParameterCount; ++i)
+            for (var i = 0; i < LegacyParameterCount; ++i)
                 @params[i] = serializer.I32(@params[i]);
         }
         else
         {
             serializer.I32(ParameterCount);
-            for (int i = 0; i < ParameterCount; ++i)
+            for (var i = 0; i < ParameterCount; ++i)
                 @params[i] = serializer.I32(@params[i]);
         }
 
@@ -141,36 +141,36 @@ public class MaterialBox: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = MaterialBox.BaseAllocationSize;
-        size += this.Anim.GetAllocatedSize();
-        size += this.Anim2.GetAllocatedSize();
+        var size = BaseAllocationSize;
+        size += Anim.GetAllocatedSize();
+        size += Anim2.GetAllocatedSize();
         return size;
     }
 
     public int[] GetParameters()
     {
-        return this.@params;
+        return @params;
     }
 
     public bool IsColor()
     {
-        return this.Type == BoxType.COLOR;
+        return Type == BoxType.COLOR;
     }
 
     public bool IsTexture()
     {
-        return this.Type == BoxType.TEXTURE_SAMPLE;
+        return Type == BoxType.TEXTURE_SAMPLE;
     }
 
     public bool IsMultiply()
     {
-        return this.Type == BoxType.MULTIPLY;
+        return Type == BoxType.MULTIPLY;
     }
 
     public bool IsSimpleMultiply(RGfxMaterial material)
     {
         if (!IsMultiply()) return false;
-        MaterialBox[] ports = material.GetBoxesConnected(this);
+        var ports = material.GetBoxesConnected(this);
         if (ports.Length != 2) return false;
 
         if (ports[0].Type == BoxType.COLOR && ports[1].Type == BoxType.TEXTURE_SAMPLE)

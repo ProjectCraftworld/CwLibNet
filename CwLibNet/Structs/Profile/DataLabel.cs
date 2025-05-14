@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-
-using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 
@@ -13,23 +5,23 @@ namespace CwLibNet.Structs.Profile
 {
     public class DataLabel : ISerializable
     {
-        public const int BASE_ALLOCATION_SIZE = 0x8;
+        public const int BaseAllocationSize = 0x8;
 
-        public int labelIndex;
-        public string name;
+        public int LabelIndex;
+        public string? Name;
 
         public void Serialize(Serializer serializer)
         {
-            labelIndex = serializer.I32(labelIndex);
-            name = serializer.Wstr(name);
+            LabelIndex = serializer.I32(LabelIndex);
+            Name = serializer.Wstr(Name);
         }
 
         public int GetAllocatedSize() 
         {
-            int size = DataLabel.BASE_ALLOCATION_SIZE;
-            if (this.name != null)
+            var size = BaseAllocationSize;
+            if (Name != null)
             {
-                size += (this.name.Length * 2);
+                size += (Name.Length * 2);
             }
             return size;
         }

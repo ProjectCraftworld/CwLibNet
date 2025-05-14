@@ -1,6 +1,5 @@
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.Types.Things;
 
 namespace CwLibNet.Structs.Things.Components.World;
 
@@ -18,8 +17,8 @@ public class EditorSelection: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = EditorSelection.BaseAllocationSize;
-        if (this.Name != null) size += (this.Name.Length);
+        var size = BaseAllocationSize;
+        if (Name != null) size += Name.Length;
         return size;
     }
 }

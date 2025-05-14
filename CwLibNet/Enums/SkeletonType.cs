@@ -1,18 +1,15 @@
-using CwLibNet.IO;
+namespace CwLibNet.Enums;
 
-namespace CwLibNet.Enums
+public enum SkeletonType
 {
-    public enum SkeletonType
-    {
-        // SACKBOY(0)
-        SACKBOY,
-        // GIANT(1)
-        GIANT,
-        // DWARF(2)
-        DWARF,
-        // BIRD(3)
-        BIRD,
-        // QUAD(4)
-        QUAD
-    }
+    // SACKBOY(0)
+    SACKBOY,
+    // GIANT(1)
+    GIANT,
+    // DWARF(2)
+    DWARF,
+    // BIRD(3)
+    BIRD,
+    // QUAD(4)
+    QUAD
 }

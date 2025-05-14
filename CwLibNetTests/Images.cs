@@ -1,6 +1,4 @@
-using System.Diagnostics;
 using CwLibNet.Enums;
-using CwLibNet.Extensions;
 using CwLibNet.Resources;
 using CwLibNet.Util;
 using SkiaSharp;
@@ -1481,7 +1479,7 @@ public class ImagesTests
     public void Deserialize()
     {
         RTexture texture = new RTexture(tex);
-        SKBitmap aimage = texture.getImage();
+        SKBitmap? aimage = texture.GetImage();
         byte[] apng = SKImage.FromBitmap(aimage).Encode(SKEncodedImageFormat.Png, 100).ToArray();
         Assert.Equal(image, apng);
     }

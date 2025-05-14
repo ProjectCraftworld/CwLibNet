@@ -1,74 +1,65 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
-namespace CwLibNet.Structs.Profile 
+namespace CwLibNet.Structs.Profile;
+
+public class DataLabelValue: ISerializable
 {
-    public class DataLabelValue : ISerializable 
+    public const int BaseAllocationSize = 0x30;
+
+    public NetworkOnlineId? CreatorId;
+    public string? LabelName;
+    public int LabelIndex;
+    public float[]? Analogue;
+    public byte[]? Ternary;
+
+    
+    public void Serialize(Serializer serializer)
     {
-        public const int BASE_ALLOCATION_SIZE = 0x30;
+        var revision = serializer.GetRevision();
+        var head = revision.GetVersion();
 
-        public NetworkOnlineID creatorID;
-        public string labelName;
-        public int labelIndex;
-        public float[] analogue;
-        public byte[] ternary;
+        CreatorId = serializer.Struct(CreatorId);
+        LabelIndex = serializer.I32(LabelIndex);
 
-        public void Serialize(Serializer serializer)
+        if (revision.IsVita())
         {
-            Revision revision = serializer.GetRevision();
-            int head = revision.GetVersion();
 
-            creatorID = serializer.Struct<NetworkOnlineID>(creatorID);
-            labelIndex = serializer.I32(labelIndex);
-
-            if (revision.IsVita())
+            if (revision.Has(Branch.Double11, (int)Revisions.D1_LABEL_ANALOGUE_ARRAY))
+                Analogue = serializer.Floatarray(Analogue);
+            else if (revision.Has(Branch.Double11, (int)Revisions.D_1DATALABELS))
             {
-                if (revision.Has(Branch.Double11, (int)Revisions.D1LabelAnalogueArray))
-                    analogue = serializer.Floatarray(analogue);
-                else if (revision.Has(Branch.Double11, (int)Revisions.D1Datalabels))
+                if (serializer.IsWriting())
                 {
-                    if (serializer.IsWriting()) 
-                    {
-                        float value = analogue != null &&
-                            analogue.Length != 0 ? analogue[0] : 0f;
-                        serializer.GetOutput().F32(value);
-                    }
-                    else
-                        analogue = new float[] { serializer.GetInput().F32() };
+                    var value = Analogue != null && Analogue.Length != 0 ? Analogue[0] : 0.0f;
+                    serializer.GetOutput().F32(value);
                 }
+                else
+                    Analogue = [serializer.GetInput().F32()];
+            }
 
-                if (revision.Has(Branch.Double11, (int)Revisions.D1LabelTernary))
-                    ternary = serializer.Bytearray(ternary);
-            }
-            else if (head >= (int)Revisions.Datalabels)
-            {
-                analogue = serializer.Floatarray(analogue);
-                ternary = serializer.Bytearray(ternary);
-            }
+            if (revision.Has(Branch.Double11, (int)Revisions.D1_LABEL_TERNARY))
+                Ternary = serializer.Bytearray(Ternary);
         }
-
-        public int GetAllocatedSize() 
+        else if (head >= (int)Revisions.DATALABELS)
         {
-            int size = DataLabelValue.BASE_ALLOCATION_SIZE;
-            if (this.analogue != null)
-            {
-                size += (this.analogue.Length * 4);
-            }
-            if (this.ternary != null)
-            {
-                size += this.ternary.Length;
-            }
-            return size;
+            Analogue = serializer.Floatarray(Analogue);
+            Ternary = serializer.Bytearray(Ternary);
         }
     }
+
+    
+    public int GetAllocatedSize()
+    {
+        var size = BaseAllocationSize;
+        if (Analogue != null)
+            size += Analogue.Length * 4;
+        if (Ternary != null)
+            size += Ternary.Length;
+        return size;
+    }
+
+
 }

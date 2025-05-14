@@ -1,120 +1,114 @@
-using System;
-using System.Collections.Generic;
-
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
-using CwLibNet.Types;
-using CwLibNet.Types.Data;
 
 namespace CwLibNet.Structs.Profile 
 {
     public class PlayerMetrics : ISerializable
     {
-        public const int BASE_ALLOCATION_SIZE = 0x60;
+        public const int BaseAllocationSize = 0x60;
 
-        private int totalTime, editingTime, playingTime, idlingTime;
+        public int TotalTime, EditingTime, PlayingTime, IdlingTime;
 
-        private int multiplayerGamesCount;
+        public int MultiplayerGamesCount;
 
-        private Dictionary<int, int> levelTimesMap;
+        public Dictionary<int, int> LevelTimesMap;
 
-        private int totalLevelTime;
+        public int TotalLevelTime;
 
-        private float playerLadderPoints;
+        public float PlayerLadderPoints;
 
-        private int storyLevelCompletionCount;
+        public int StoryLevelCompletionCount;
 
-        private int communityLevelCompletionCount;
-        private int levelCompletionCount;
-        private int levelsTaggedCount;
+        public int CommunityLevelCompletionCount;
+        public int LevelCompletionCount;
+        public int LevelsTaggedCount;
 
-        private int gamesWithRandomPlayersCount;
+        public int GamesWithRandomPlayersCount;
 
-        private float pointsCollected;
+        public float PointsCollected;
 
-        private long[] stats;
+        public long[]? Stats;
 
         public void Serialize(Serializer serializer)
         {
-            Revision revision = serializer.GetRevision();
-            int head = revision.GetVersion();
+            var revision = serializer.GetRevision();
+            var head = revision.GetVersion();
 
             if (head > 0x16f) 
             {
-                totalTime = serializer.I32(totalTime);
-                editingTime = serializer.I32(editingTime);
-                playingTime = serializer.I32(playingTime);
-                idlingTime = serializer.I32(idlingTime);
+                TotalTime = serializer.I32(TotalTime);
+                EditingTime = serializer.I32(EditingTime);
+                PlayingTime = serializer.I32(PlayingTime);
+                IdlingTime = serializer.I32(IdlingTime);
             }
 
             if (head > 0x183)
-                multiplayerGamesCount = serializer.I32(multiplayerGamesCount);
+                MultiplayerGamesCount = serializer.I32(MultiplayerGamesCount);
 
-            if (revision.Has(Branch.Double11, (int)Revisions.D1LevelTimesMap)) 
+            if (revision.Has(Branch.Double11, (int)Revisions.D1_LEVEL_TIMES_MAP)) 
             {
                 if (serializer.IsWriting())
                 {
-                    MemoryOutputStream stream = serializer.GetOutput();
-                    HashSet<int> keys = new HashSet<int>(levelTimesMap.Keys);
+                    var stream = serializer.GetOutput();
+                    var keys = new HashSet<int>(LevelTimesMap.Keys);
                     stream.I32(keys.Count);
-                    foreach (int key in keys)
+                    foreach (var key in keys)
                     {
                         stream.I32(key);
-                        stream.I32(levelTimesMap[key]);
+                        stream.I32(LevelTimesMap[key]);
                     }
                 }
                 else 
                 {
-                    MemoryInputStream stream = serializer.GetInput();
-                    int count = stream.I32();
-                    levelTimesMap = new Dictionary<int, int>(count);
-                    for (int i = 0; i < count; i++)
+                    var stream = serializer.GetInput();
+                    var count = stream.I32();
+                    LevelTimesMap = new Dictionary<int, int>(count);
+                    for (var i = 0; i < count; i++)
                     {
-                        levelTimesMap.Add(stream.I32(), stream.I32());
+                        LevelTimesMap.Add(stream.I32(), stream.I32());
                     }
                 }
 
-                totalLevelTime = serializer.I32(totalLevelTime);
+                TotalLevelTime = serializer.I32(TotalLevelTime);
             }
 
             if (head > 0x1c9)
-                playerLadderPoints = serializer.F32(playerLadderPoints);
+                PlayerLadderPoints = serializer.F32(PlayerLadderPoints);
             if (head > 0x1ab)
-                storyLevelCompletionCount = serializer.I32(storyLevelCompletionCount);
+                StoryLevelCompletionCount = serializer.I32(StoryLevelCompletionCount);
             if (head > 0x1f7)
-                communityLevelCompletionCount = serializer.I32(communityLevelCompletionCount);
+                CommunityLevelCompletionCount = serializer.I32(CommunityLevelCompletionCount);
             if (head > 0x1ab)
-                levelCompletionCount = serializer.I32(levelCompletionCount);
+                LevelCompletionCount = serializer.I32(LevelCompletionCount);
             
             if (head > 0x1f7)
-                levelsTaggedCount = serializer.I32(levelsTaggedCount);
+                LevelsTaggedCount = serializer.I32(LevelsTaggedCount);
             
             if (head > 0x1c9)
-                gamesWithRandomPlayersCount = serializer.I32(gamesWithRandomPlayersCount);
+                GamesWithRandomPlayersCount = serializer.I32(GamesWithRandomPlayersCount);
 
-            if (head > 0x1de && head < 0x2cb)
+            if (head is > 0x1de and < 0x2cb)
             {
-                if (!revision.IsLeerdammer() || revision.Before(Branch.Leerdammer, (int)Revisions.LdRemovedEnemyStat))
+                if (!revision.IsLeerdammer() || revision.Before(Branch.Leerdammer, (int)Revisions.LD_REMOVED_ENEMY_STAT))
                 {
                     serializer.I32(0); // enemy kills
                 }
             }
 
             if (head > 0x1de) 
-                pointsCollected = serializer.F32(pointsCollected);
+                PointsCollected = serializer.F32(PointsCollected);
             if (head > 0x1f7)
-                stats = serializer.Longarray(stats);
+                Stats = serializer.Longarray(Stats);
         }
 
         public int GetAllocatedSize() 
         {
-            int size = BASE_ALLOCATION_SIZE;
-            if (stats != null)
-                size += stats.Length * 0x8;
-            if (levelTimesMap != null)
-                size += levelTimesMap.Count * 0x8;
+            var size = BaseAllocationSize;
+            if (Stats != null)
+                size += Stats.Length * 0x8;
+            if (LevelTimesMap != null)
+                size += LevelTimesMap.Count * 0x8;
             return size;
         }
     }

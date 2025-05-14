@@ -18,7 +18,7 @@ public class EggLink: ISerializable
     public ResourceDescriptor? Painting;
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
+        var version = serializer.GetRevision().GetVersion();
 
 
         // The game technically removes this field at 0x197,
@@ -26,18 +26,22 @@ public class EggLink: ISerializable
         if (version < 0x160) 
             Item = serializer.Struct(Item);
         else
-        Plan = serializer.Resource(Plan, ResourceType.Plan, false, false, false);
+            Plan = serializer.Resource(Plan, ResourceType.Plan, false, false, false);
 
-        if (version > 0x15f && version < 0x197)
-            Details = serializer.Struct(Details);
+        switch (version)
+        {
+            case > 0x15f and < 0x197:
+                Details = serializer.Struct(Details);
+                break;
+            case > 0x207 and < 0x22a:
+                serializer.Bool(false); // Unknown value
+                break;
+            case > 0x23b:
+                Shareable = serializer.Bool(Shareable);
+                break;
+        }
 
-        if (version > 0x207 && version < 0x22a)
-            serializer.Bool(false); // Unknown value
-        
-        if (version > 0x23b)
-            Shareable = serializer.Bool(Shareable);
-
-        bool hasPainting = false;
+        var hasPainting = false;
         if (version > 0x3e0) {
             if (serializer.IsWriting()) hasPainting = Painting != null;
             hasPainting = serializer.Bool(hasPainting);
@@ -49,8 +53,8 @@ public class EggLink: ISerializable
 
     public int GetAllocatedSize()
     {
-        int size = EggLink.BaseAllocationSize;
-        if (this.Details != null) size += this.Details.GetAllocatedSize();
+        var size = BaseAllocationSize;
+        if (Details != null) size += Details.GetAllocatedSize();
         return size;
     }
 }

@@ -1,38 +1,34 @@
-using System;
-using System.Collections.Generic;
-
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
 using CwLibNet.Types.Data;
 
 namespace CwLibNet.Structs.Profile 
 {
     public class PaintProperties : ISerializable
     {
-        public const int BASE_ALLOCATION_SIZE = 0x40;
+        public const int BaseAllocationSize = 0x40;
         
-        public int triggerOverride, stickerSaveSize;
-        public bool angleOverride, uiHidden;
-        public ResourceDescriptor lastAutoSave;
+        public int TriggerOverride, StickerSaveSize;
+        public bool AngleOverride, UiHidden;
+        public ResourceDescriptor LastAutoSave;
 
-        public bool useDefaultBackground;
+        public bool UseDefaultBackground;
 
         public void Serialize(Serializer serializer)
         {
-            triggerOverride = serializer.I32(triggerOverride);
-            angleOverride = serializer.Bool(angleOverride);
-            stickerSaveSize = serializer.I32(stickerSaveSize);
-            uiHidden = serializer.Bool(uiHidden);
-            lastAutoSave = serializer.Resource(lastAutoSave, ResourceType.Painting);
-            if (serializer.GetRevision().GetVersion() >= (int)Revisions.PtgUseDefaultBackground)
-                useDefaultBackground = serializer.Bool(useDefaultBackground);
+            TriggerOverride = serializer.I32(TriggerOverride);
+            AngleOverride = serializer.Bool(AngleOverride);
+            StickerSaveSize = serializer.I32(StickerSaveSize);
+            UiHidden = serializer.Bool(UiHidden);
+            LastAutoSave = serializer.Resource(LastAutoSave, ResourceType.Painting);
+            if (serializer.GetRevision().GetVersion() >= (int)Revisions.PTG_USE_DEFAULT_BACKGROUND)
+                UseDefaultBackground = serializer.Bool(UseDefaultBackground);
         }
 
         public int GetAllocatedSize()
         {
-            return PaintProperties.BASE_ALLOCATION_SIZE;
+            return BaseAllocationSize;
         }
     }
 }

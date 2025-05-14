@@ -53,7 +53,7 @@ public class CompressorCluster: CompressorColourFit
 
 	private static int[] _unordered = new int[16];
 
-	private static Vec _xxSum = new Vec();
+	private static Vec _xxSum = new();
 
 	private static float _bestError;
 
@@ -65,52 +65,52 @@ public class CompressorCluster: CompressorColourFit
 		_bestError = float.MaxValue;
 
 		// initialise the metric
-		CompressorCluster._metric = metric;
+		_metric = metric;
 
 		// get the covariance matrix
-		Matrix covariance = Matrix.ComputeWeightedCovariance(colours, CompressorColourFit.covariance);
+		var covariance = Matrix.ComputeWeightedCovariance(colours, CompressorColourFit.covariance);
 
 		// compute the principle component
 		_principle = Matrix.ComputePrincipleComponent(covariance);
 	}
 
 	public override void Compress3(byte[] block, int offset) {
-		int count = colours.GetCount();
+		var count = colours.GetCount();
 
-		Vec bestStart = new Vec(0.0f);
-		Vec bestEnd = new Vec(0.0f);
-		float bestError = CompressorCluster._bestError;
+		var bestStart = new Vec(0.0f);
+		var bestEnd = new Vec(0.0f);
+		var bestError = _bestError;
 
-		Vec a = new Vec();
-		Vec b = new Vec();
+		var a = new Vec();
+		var b = new Vec();
 
 		// prepare an ordering using the principle axis
 		ConstructOrdering(_principle, 0);
 
 		// loop over iterations
-		int[] indices = CompressorCluster._indices;
-		int[] bestIndices = CompressorCluster._bestIndices;
+		var indices = _indices;
+		var bestIndices = _bestIndices;
 
-		float[] alpha = CompressorCluster._alpha;
-		float[] beta = CompressorCluster._beta;
-		float[] weights = CompressorCluster._weights;
+		var alpha = _alpha;
+		var beta = _beta;
+		var weights = _weights;
 
 		// check all possible clusters and iterate on the total order
-		int bestIteration = 0;
-		for ( int iteration = 0; ; ) {
+		var bestIteration = 0;
+		for ( var iteration = 0; ; ) {
 			// first cluster [0,i) is at the start
-			for ( int m = 0; m < count; ++m ) {
+			for ( var m = 0; m < count; ++m ) {
 				indices[m] = 0;
 				alpha[m] = weights[m];
 				beta[m] = _zero;
 			}
-			for ( int i = count; i >= 0; --i ) {
+			for ( var i = count; i >= 0; --i ) {
 				// second cluster [i,j) is half along
-				for ( int m = i; m < count; ++m ) {
+				for ( var m = i; m < count; ++m ) {
 					indices[m] = 2;
 					alpha[m] = beta[m] = _half * weights[m];
 				}
-				for ( int j = count; j >= i; --j ) {
+				for ( var j = count; j >= i; --j ) {
 					// last cluster [j,k) is at the end
 					if ( j < count ) {
 						indices[j] = 1;
@@ -119,7 +119,7 @@ public class CompressorCluster: CompressorColourFit
 					}
 
 					// solve a least squares problem to place the endpoints
-					float error = SolveLeastSquares(a, b);
+					var error = SolveLeastSquares(a, b);
 
 					// keep the solution if it wins
 					if ( error < bestError ) {
@@ -146,14 +146,14 @@ public class CompressorCluster: CompressorColourFit
 		}
 
 		// save the block if necessary
-		if ( bestError < CompressorCluster._bestError ) {
-			int[] orders = CompressorCluster._orders;
-			int[] unordered = CompressorCluster._unordered;
+		if ( bestError < _bestError ) {
+			var orders = _orders;
+			var unordered = _unordered;
 
 			// remap the indices
-			int order = 16 * bestIteration;
+			var order = 16 * bestIteration;
 
-			for ( int i = 0; i < count; ++i )
+			for ( var i = 0; i < count; ++i )
 				unordered[orders[order + i]] = bestIndices[i];
 			colours.RemapIndices(unordered, bestIndices);
 
@@ -161,56 +161,56 @@ public class CompressorCluster: CompressorColourFit
 			ColourBlock.WriteColourBlock3(bestStart, bestEnd, bestIndices, block, offset);
 
 			// save the error
-			CompressorCluster._bestError = bestError;
+			_bestError = bestError;
 		}
 	}
 
 	public override void Compress4(byte[] block, int offset) {
-		int count = colours.GetCount();
+		var count = colours.GetCount();
 
-		Vec bestStart = new Vec(0.0f);
-		Vec bestEnd = new Vec(0.0f);
-		float bestError = CompressorCluster._bestError;
+		var bestStart = new Vec(0.0f);
+		var bestEnd = new Vec(0.0f);
+		var bestError = _bestError;
 
-		Vec start = new Vec();
-		Vec end = new Vec();
+		var start = new Vec();
+		var end = new Vec();
 
 		// prepare an ordering using the principle axis
 		ConstructOrdering(_principle, 0);
 
 		// check all possible clusters and iterate on the total order
-		int[] indices = CompressorCluster._indices;
-		int[] bestIndices = CompressorCluster._bestIndices;
+		var indices = _indices;
+		var bestIndices = _bestIndices;
 
-		float[] alpha = CompressorCluster._alpha;
-		float[] beta = CompressorCluster._beta;
-		float[] weights = CompressorCluster._weights;
+		var alpha = _alpha;
+		var beta = _beta;
+		var weights = _weights;
 
-		int bestIteration = 0;
+		var bestIteration = 0;
 
 		// loop over iterations
-		for ( int iteration = 0; ; ) {
+		for ( var iteration = 0; ; ) {
 			// first cluster [0,i) is at the start
-			for ( int m = 0; m < count; ++m ) {
+			for ( var m = 0; m < count; ++m ) {
 				indices[m] = 0;
 				alpha[m] = weights[m];
 				beta[m] = _zero;
 			}
-			for ( int i = count; i >= 0; --i ) {
+			for ( var i = count; i >= 0; --i ) {
 				// second cluster [i,j) is one third along
-				for ( int m = i; m < count; ++m ) {
+				for ( var m = i; m < count; ++m ) {
 					indices[m] = 2;
 					alpha[m] = _twoThirds * weights[m];
 					beta[m] = _oneThird * weights[m];
 				}
-				for ( int j = count; j >= i; --j ) {
+				for ( var j = count; j >= i; --j ) {
 					// third cluster [j,k) is two thirds along
-					for ( int m = j; m < count; ++m ) {
+					for ( var m = j; m < count; ++m ) {
 						indices[m] = 3;
 						alpha[m] = _oneThird * weights[m];
 						beta[m] = _twoThirds * weights[m];
 					}
-					for ( int k = count; k >= j; --k ) {
+					for ( var k = count; k >= j; --k ) {
 						// last cluster [k,n) is at the end
 						if ( k < count ) {
 							indices[k] = 1;
@@ -219,7 +219,7 @@ public class CompressorCluster: CompressorColourFit
 						}
 
 						// solve a least squares problem to place the endpoints
-						float error = SolveLeastSquares(start, end);
+						var error = SolveLeastSquares(start, end);
 
 						// keep the solution if it wins
 						if ( error < bestError ) {
@@ -248,13 +248,13 @@ public class CompressorCluster: CompressorColourFit
 		}
 
 		// save the block if necessary
-		if ( bestError < CompressorCluster._bestError ) {
-			int[] orders = CompressorCluster._orders;
-			int[] unordered = CompressorCluster._unordered;
+		if ( bestError < _bestError ) {
+			var orders = _orders;
+			var unordered = _unordered;
 
 			// remap the indices
-			int order = 16 * bestIteration;
-			for ( int i = 0; i < count; ++i )
+			var order = 16 * bestIteration;
+			for ( var i = 0; i < count; ++i )
 				unordered[orders[order + i]] = bestIndices[i];
 			colours.RemapIndices(unordered, bestIndices);
 
@@ -262,28 +262,28 @@ public class CompressorCluster: CompressorColourFit
 			ColourBlock.WriteColourBlock4(bestStart, bestEnd, bestIndices, block, offset);
 
 			// save the error
-			CompressorCluster._bestError = bestError;
+			_bestError = bestError;
 		}
 	}
 
 	private bool ConstructOrdering(Vec axis, int iteration) {
 		// cache some values
-		int count = colours.GetCount();
-		Vec[] values = colours.GetPoints();
+		var count = colours.GetCount();
+		var values = colours.GetPoints();
 
-		int[] orders = CompressorCluster._orders;
+		var orders = _orders;
 
 		// build the list of dot products
-		float[] dps = CompressorCluster._dps;
-		int order = 16 * iteration;
-		for ( int i = 0; i < count; ++i ) {
+		var dps = _dps;
+		var order = 16 * iteration;
+		for ( var i = 0; i < count; ++i ) {
 			dps[i] = values[i].Dot(axis);
 			orders[order + i] = i;
 		}
 
 		// stable sort using them
-		for ( int i = 0; i < count; ++i ) {
-			for ( int j = i; j > 0 && dps[j] < dps[j - 1]; --j ) {
+		for ( var i = 0; i < count; ++i ) {
+			for ( var j = i; j > 0 && dps[j] < dps[j - 1]; --j ) {
 				(dps[j], dps[j - 1]) = (dps[j - 1], dps[j]);
 
 				(orders[order + j], orders[order + j - 1]) = (orders[order + j - 1], orders[order + j]);
@@ -291,10 +291,10 @@ public class CompressorCluster: CompressorColourFit
 		}
 
 		// check this ordering is unique
-		for ( int it = 0; it < iteration; ++it ) {
-			int prev = 16 * it;
-			bool same = true;
-			for ( int i = 0; i < count; ++i ) {
+		for ( var it = 0; it < iteration; ++it ) {
+			var prev = 16 * it;
+			var same = true;
+			for ( var i = 0; i < count; ++i ) {
 				if ( orders[order + i] != orders[prev + i] ) {
 					same = false;
 					break;
@@ -305,23 +305,23 @@ public class CompressorCluster: CompressorColourFit
 		}
 
 		// copy the ordering and weight all the points
-		Vec[] points = colours.GetPoints();
-		float[] cWeights = colours.GetWeights();
+		var points = colours.GetPoints();
+		var cWeights = colours.GetWeights();
 		_xxSum.Set(0.0f);
 
-		float[] weighted = CompressorCluster._weighted;
+		var weighted = _weighted;
 
 		for ( int i = 0, j = 0; i < count; ++i, j += 3 ) {
-			int p = orders[order + i];
+			var p = orders[order + i];
 
-			float weight = cWeights[p];
-			Vec point = points[p];
+			var weight = cWeights[p];
+			var point = points[p];
 
 			_weights[i] = weight;
 
-			float wX = weight * point.X;
-			float wY = weight * point.Y;
-			float wZ = weight * point.Z;
+			var wX = weight * point.X;
+			var wY = weight * point.Y;
+			var wZ = weight * point.Z;
 
 			_xxSum.Add(wX * wX, wY * wY, wZ * wZ);
 
@@ -333,28 +333,28 @@ public class CompressorCluster: CompressorColourFit
 	}
 
 	private float SolveLeastSquares(Vec start, Vec end) {
-		int count = colours.GetCount();
+		var count = colours.GetCount();
 
-		float alpha2Sum = 0.0f;
-		float beta2Sum = 0.0f;
-		float alphabetaSum = 0.0f;
+		var alpha2Sum = 0.0f;
+		var beta2Sum = 0.0f;
+		var alphabetaSum = 0.0f;
 
-		float alphaxSumX = 0f;
-		float alphaxSumY = 0f;
-		float alphaxSumZ = 0f;
+		var alphaxSumX = 0f;
+		var alphaxSumY = 0f;
+		var alphaxSumZ = 0f;
 
-		float betaxSumX = 0f;
-		float betaxSumY = 0f;
-		float betaxSumZ = 0f;
+		var betaxSumX = 0f;
+		var betaxSumY = 0f;
+		var betaxSumZ = 0f;
 
-		float[] alpha = CompressorCluster._alpha;
-		float[] beta = CompressorCluster._beta;
-		float[] weighted = CompressorCluster._weighted;
+		var alpha = _alpha;
+		var beta = _beta;
+		var weighted = _weighted;
 
 		// accumulate all the quantities we need
 		for ( int i = 0, j = 0; i < count; ++i, j += 3 ) {
-			float a = alpha[i];
-			float b = beta[i];
+			var a = alpha[i];
+			var b = beta[i];
 
 			alpha2Sum += a * a;
 			beta2Sum += b * b;
@@ -374,21 +374,21 @@ public class CompressorCluster: CompressorColourFit
 
 		// zero where non-determinate
 		if ( beta2Sum == 0.0f ) {
-			float rcp = 1.0f / alpha2Sum;
+			var rcp = 1.0f / alpha2Sum;
 
 			aX = alphaxSumX * rcp;
 			aY = alphaxSumY * rcp;
 			aZ = alphaxSumZ * rcp;
 			bX = bY = bZ = 0.0f;
 		} else if ( alpha2Sum == 0.0f ) {
-			float rcp = 1.0f / beta2Sum;
+			var rcp = 1.0f / beta2Sum;
 
 			aX = aY = aZ = 0.0f;
 			bX = betaxSumX * rcp;
 			bY = betaxSumY * rcp;
 			bZ = betaxSumZ * rcp;
 		} else {
-			float rcp = 1.0f / (alpha2Sum * beta2Sum - alphabetaSum * alphabetaSum);
+			var rcp = 1.0f / (alpha2Sum * beta2Sum - alphabetaSum * alphabetaSum);
 			if ( float.IsPositiveInfinity(rcp) ) // Detect Infinity
 				return float.MaxValue;
 
@@ -416,9 +416,9 @@ public class CompressorCluster: CompressorColourFit
 		end.Set(bX, bY, bZ);
 
 		// compute the error
-		float eX = aX * aX * alpha2Sum + bX * bX * beta2Sum + _xxSum.X + 2.0f * (aX * bX * alphabetaSum - aX * alphaxSumX - bX * betaxSumX);
-		float eY = aY * aY * alpha2Sum + bY * bY * beta2Sum + _xxSum.Y + 2.0f * (aY * bY * alphabetaSum - aY * alphaxSumY - bY * betaxSumY);
-		float eZ = aZ * aZ * alpha2Sum + bZ * bZ * beta2Sum + _xxSum.Z + 2.0f * (aZ * bZ * alphabetaSum - aZ * alphaxSumZ - bZ * betaxSumZ);
+		var eX = aX * aX * alpha2Sum + bX * bX * beta2Sum + _xxSum.X + 2.0f * (aX * bX * alphabetaSum - aX * alphaxSumX - bX * betaxSumX);
+		var eY = aY * aY * alpha2Sum + bY * bY * beta2Sum + _xxSum.Y + 2.0f * (aY * bY * alphabetaSum - aY * alphaxSumY - bY * betaxSumY);
+		var eZ = aZ * aZ * alpha2Sum + bZ * bZ * beta2Sum + _xxSum.Z + 2.0f * (aZ * bZ * alphabetaSum - aZ * alphaxSumZ - bZ * betaxSumZ);
 
 		// apply the metric to the error term
 		return _metric.Dot(eX, eY, eZ);

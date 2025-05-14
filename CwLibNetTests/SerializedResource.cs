@@ -1,18 +1,11 @@
 ﻿using CwLibNet.Resources;
 using CwLibNet.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CwLibNetTests
 {
     public class SerializedResourceTests
     {
-
-        byte[] darkOak = [
+        private readonly byte[] darkOak = [
 	0x47, 0x4D, 0x54, 0x62, 0x00, 0x00, 0x02, 0x72, 0x00, 0x00, 0x07, 0xD6,
     0x4C, 0x44, 0x00, 0x13, 0x07, 0x01, 0x00, 0x01, 0x00, 0x01, 0x07, 0xBC,
     0x36, 0xD7, 0x78, 0xDA, 0xED, 0x99, 0x5B, 0x6C, 0x14, 0x55, 0x18, 0xC7,
@@ -188,7 +181,7 @@ namespace CwLibNetTests
         public void TestSerializedResource()
         {
             SerializedResource resource = new SerializedResource(darkOak);
-            RGfxMaterial mat = resource.loadResource<RGfxMaterial>();
+            RGfxMaterial mat = resource.LoadResource<RGfxMaterial>();
         }
     }
 }

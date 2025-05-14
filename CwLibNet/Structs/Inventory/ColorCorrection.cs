@@ -5,29 +5,29 @@ namespace CwLibNet.Structs.Inventory;
 
 public class ColorCorrection: ISerializable
 {
-    public const int BASE_ALLOCATION_SIZE = 0x18;
+    public const int BaseAllocationSize = 0x18;
 
-    public float saturation = 1.0f;
-    public float hueShift;
-    public float brightness = 0.5f;
-    public float contrast = 0.5f;
-    public float tintHue, tintAmount;
+    public float Saturation = 1.0f;
+    public float HueShift;
+    public float Brightness = 0.5f;
+    public float Contrast = 0.5f;
+    public float TintHue, TintAmount;
 
     
     public void Serialize(Serializer serializer)
     {
-        saturation = serializer.F32(saturation);
-        hueShift = serializer.F32(hueShift);
-        brightness = serializer.F32(brightness);
-        contrast = serializer.F32(contrast);
-        tintHue = serializer.F32(tintHue);
-        tintAmount = serializer.F32(tintAmount);
+        Saturation = serializer.F32(Saturation);
+        HueShift = serializer.F32(HueShift);
+        Brightness = serializer.F32(Brightness);
+        Contrast = serializer.F32(Contrast);
+        TintHue = serializer.F32(TintHue);
+        TintAmount = serializer.F32(TintAmount);
     }
 
     
     public int GetAllocatedSize()
     {
-        return BASE_ALLOCATION_SIZE;
+        return BaseAllocationSize;
     }
 
 

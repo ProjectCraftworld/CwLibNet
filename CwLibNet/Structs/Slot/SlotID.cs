@@ -6,7 +6,7 @@ namespace CwLibNet.Structs.Slot;
 
 public class SlotID: ISerializable
 {
-    public const int BASE_ALLOCATION_SIZE = 0x10;
+    public const int BaseAllocationSize = 0x10;
     public SlotType SlotType = SlotType.DEVELOPER;
     public long SlotNumber;
     public void Serialize(Serializer serializer)
@@ -21,8 +21,8 @@ public class SlotID: ISerializable
 
     public SlotID(SlotType type, long id)
     {
-        this.SlotType = type;
-        this.SlotNumber = id;
+        SlotType = type;
+        SlotNumber = id;
     }
 
     public override bool Equals(object? obj)
@@ -34,18 +34,18 @@ public class SlotID: ISerializable
 
     public override int GetHashCode()
     {
-        int result = (int) (SlotNumber ^ (SlotNumber >>> 32));
+        var result = (int) (SlotNumber ^ (SlotNumber >>> 32));
         result = 31 * result + SlotType.GetHashCode();
         return result; 
     }
 
     public override string ToString()
     {
-        return String.Format("SlotID: SlotType={0}, SlotNumber={1}", SlotType, SlotNumber);
+        return $"SlotID: SlotType={SlotType}, SlotNumber={SlotNumber}";
     }
 
     public int GetAllocatedSize()
     {
-        return BASE_ALLOCATION_SIZE;
+        return BaseAllocationSize;
     }
 }

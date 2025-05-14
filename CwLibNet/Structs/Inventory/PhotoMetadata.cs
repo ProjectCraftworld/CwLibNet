@@ -13,7 +13,7 @@ public class PhotoMetadata: ISerializable
     public ResourceDescriptor? Photo;
     public SlotID Level = new();
     public string? LevelName;
-    public SHA1? LevelHash = new();
+    public Sha1? LevelHash = new();
     public PhotoUser[]? Users;
     public long Timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
     

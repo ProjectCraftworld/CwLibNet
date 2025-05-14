@@ -4,35 +4,34 @@ using CwLibNet.Types.Data;
 using System.Numerics;
 using CwLibNet.IO.Serializer;
 
-namespace CwLibNet.Structs.StaticMesh
+namespace CwLibNet.Structs.StaticMesh;
+
+public class StaticPrimitive: ISerializable
 {
-    public class StaticPrimitive: ISerializable
+    public const int BaseAllocationSize = 0x60;
+
+    public Vector4? Min, Max;
+    public ResourceDescriptor? Gmat;
+    public int VertexStart, IndexStart;
+    public int NumIndices;
+    public CellGcmPrimitive Type = CellGcmPrimitive.TRIANGLES;
+
+    /* Not actually serialized, just used for exporting */
+    public int NumVerts;
+
+    public void Serialize(Serializer serializer)
     {
-        public static readonly int BASE_ALLOCATION_SIZE = 0x60;
+        Min = serializer.V4(Min);
+        Max = serializer.V4(Max);
+        Gmat = serializer.Resource(Gmat, ResourceType.GfxMaterial);
+        VertexStart = serializer.I32(VertexStart);
+        IndexStart = serializer.I32(IndexStart);
+        NumIndices = serializer.I32(NumIndices);
+        Type = serializer.Enum8(Type);
+    }
 
-        public Vector4? min, max;
-        public ResourceDescriptor? gmat;
-        public int vertexStart, indexStart;
-        public int numIndices;
-        public CellGcmPrimitive type = CellGcmPrimitive.TRIANGLES;
-
-        /* Not actually serialized, just used for exporting */
-        public int numVerts;
-
-        public void Serialize(Serializer serializer)
-        {
-            min = serializer.V4(min);
-            max = serializer.V4(max);
-            gmat = serializer.Resource(gmat, ResourceType.GfxMaterial);
-            vertexStart = serializer.I32(vertexStart);
-            indexStart = serializer.I32(indexStart);
-            numIndices = serializer.I32(numIndices);
-            type = serializer.Enum8(type);
-        }
-
-        public int GetAllocatedSize()
-        {
-            return StaticPrimitive.BASE_ALLOCATION_SIZE;
-        }
+    public int GetAllocatedSize()
+    {
+        return BaseAllocationSize;
     }
 }

@@ -2,8 +2,6 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
-using CwLibNet.Types.Things;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -33,8 +31,8 @@ public class PBody: ISerializable
 
     public void Serialize(Serializer serializer) {
 
-        int version = serializer.GetRevision().GetVersion();
-        int subVersion = serializer.GetRevision().GetSubVersion();
+        var version = serializer.GetRevision().GetVersion();
+        var subVersion = serializer.GetRevision().GetSubVersion();
 
         // A lot of fields were removed in 0x13c, across a lot of structures,
         // so I have no idea what they are, nor they do matter in any
@@ -58,9 +56,9 @@ public class PBody: ISerializable
 
             if (serializer.IsWriting()) serializer.GetOutput().I32(0);
             else {
-                MemoryInputStream stream = serializer.GetInput();
-                int count = stream.I32();
-                for (int i = 0; i < count; ++i)
+                var stream = serializer.GetInput();
+                var count = stream.I32();
+                for (var i = 0; i < count; ++i)
                     stream.V3();
             }
 
@@ -90,5 +88,5 @@ public class PBody: ISerializable
             EditingPlayer = serializer.Reference(EditingPlayer);
     }
     
-    public int GetAllocatedSize() { return PBody.BaseAllocationSize; }
+    public int GetAllocatedSize() { return BaseAllocationSize; }
 }

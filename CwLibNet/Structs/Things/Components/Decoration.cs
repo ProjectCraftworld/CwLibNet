@@ -1,8 +1,8 @@
 using System.Numerics;
+using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Things.Parts;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
 namespace CwLibNet.Structs.Things.Components;
@@ -26,7 +26,7 @@ public class Decoration: ISerializable
     
     public bool HasShadow = true;
     
-    public bool IsQuest = false;
+    public bool IsQuest;
     
     public int PlayModeFrame;
     
@@ -37,9 +37,9 @@ public class Decoration: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        Revision revision = serializer.GetRevision();
-        int version = revision.GetVersion();
-        int subVersion = revision.GetSubVersion();
+        var revision = serializer.GetRevision();
+        var version = revision.GetVersion();
+        var subVersion = revision.GetSubVersion();
 
         RenderMesh = serializer.Reference(RenderMesh);
 
@@ -78,9 +78,9 @@ public class Decoration: ISerializable
     
     public int GetAllocatedSize()
     {
-        int size = Decoration.BaseAllocationSize;
-        if (this.RenderMesh != null)
-            size += this.RenderMesh.GetAllocatedSize();
+        var size = BaseAllocationSize;
+        if (RenderMesh != null)
+            size += RenderMesh.GetAllocatedSize();
         return size;
     }
 

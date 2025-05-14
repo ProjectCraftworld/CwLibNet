@@ -22,10 +22,10 @@ public class MaterialWire: ISerializable
      */
     public MaterialWire(int boxFrom, int boxTo, int portFrom, int portTo)
     {
-        this.BoxFrom = boxFrom;
-        this.BoxTo = boxTo;
-        this.PortFrom = (byte) portFrom;
-        this.PortTo = (byte) portTo;
+        BoxFrom = boxFrom;
+        BoxTo = boxTo;
+        PortFrom = (byte) portFrom;
+        PortTo = (byte) portTo;
     }
 
     
@@ -35,14 +35,14 @@ public class MaterialWire: ISerializable
         BoxTo = serializer.S32(BoxTo);
         PortFrom = serializer.I8(PortFrom);
         PortTo = serializer.I8(PortTo);
-        for (int i = 0; i < SwizzleElementCount; ++i)
+        for (var i = 0; i < SwizzleElementCount; ++i)
             Swizzle[i] = serializer.I8(Swizzle[i]);
     }
 
     
     public int GetAllocatedSize()
     {
-        return MaterialWire.BaseAllocationSize;
+        return BaseAllocationSize;
     }
 
 

@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 
@@ -8,50 +5,44 @@ namespace CwLibNet.Structs.Profile
 {
     public class StringLookupTable : ISerializable, IEnumerable<SortString>
     {
-        public const int BASE_ALLOCATION_SIZE = 0x10;
+        public const int BaseAllocationSize = 0x10;
 
-        private bool unsorted;
-        private bool sortEnabled = true;
-        public int[] rawIndexToSortedIndex;
-        public List<SortString> stringList = new List<SortString>();
+        private bool _unsorted;
+        private bool _sortEnabled = true;
+        public int[]? RawIndexToSortedIndex;
+        public List<SortString> StringList = [];
 
         public void Serialize(Serializer serializer)
         {
             if (serializer.IsWriting())
             {
-                sortEnabled = true;
-                unsorted = false;
-                rawIndexToSortedIndex = new int[stringList.Count];
-                stringList.Sort((a, z) => a.myString.CompareTo(z.myString));
-                for (int i = 0; i < stringList.Count; i++)
-                    rawIndexToSortedIndex[i] = i;
+                _sortEnabled = true;
+                _unsorted = false;
+                RawIndexToSortedIndex = new int[StringList.Count];
+                StringList.Sort((a, z) => string.Compare(a.MyString, z.MyString, StringComparison.Ordinal));
+                for (var i = 0; i < StringList.Count; i++)
+                    RawIndexToSortedIndex[i] = i;
             }
 
-            unsorted = serializer.Bool(unsorted);
-            sortEnabled = serializer.Bool(sortEnabled);
-            rawIndexToSortedIndex = serializer.Intvector(rawIndexToSortedIndex);
-            stringList = serializer.Arraylist(stringList);
+            _unsorted = serializer.Bool(_unsorted);
+            _sortEnabled = serializer.Bool(_sortEnabled);
+            RawIndexToSortedIndex = serializer.Intvector(RawIndexToSortedIndex);
+            StringList = serializer.Arraylist(StringList);
         }
 
         public int GetAllocatedSize()
         {
-            int size = BASE_ALLOCATION_SIZE;
-            if (stringList != null)
-            {
-                for (int i = 0; i < stringList.Count; i++)
-                {
-                    size += stringList[i].GetAllocatedSize();
-                }
-                size += stringList.Count * sizeof(int);
-            }
-            if (rawIndexToSortedIndex != null)
-                size += rawIndexToSortedIndex.Length * 0x4;
+            var size = BaseAllocationSize;
+            size += StringList.Sum(t => t.GetAllocatedSize());
+            size += StringList.Count * sizeof(int);
+            if (RawIndexToSortedIndex != null)
+                size += RawIndexToSortedIndex.Length * 0x4;
             return size;
         }
 
         public IEnumerator<SortString> GetEnumerator()
         {
-            return stringList.GetEnumerator();
+            return StringList.GetEnumerator();
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -59,16 +50,9 @@ namespace CwLibNet.Structs.Profile
             return GetEnumerator();
         }
 
-        public string Get(int index)
+        public string? Get(int index)
         {
-            foreach (SortString sortString in stringList)
-            {
-                if (sortString.index == index)
-                {
-                    return sortString.myString;
-                }
-            }
-            return null;
+            return (from sortString in StringList where sortString.Index == index select sortString.MyString).FirstOrDefault();
         }
 
 
@@ -77,16 +61,13 @@ namespace CwLibNet.Structs.Profile
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public int Find(string key)
+        public int Find(string? key)
         {
-            for (int i = 0; i < stringList.Count; i++)
+            foreach (var myString in StringList.Where(myString => myString.MyString != null && myString.MyString.Equals(key)))
             {
-                SortString myString = stringList[i];
-                if (myString.myString.Equals(key))
-                {
-                    return myString.index;
-                }
+                return myString.Index;
             }
+
             return -1;
         }
 
@@ -97,34 +78,31 @@ namespace CwLibNet.Structs.Profile
         /// <returns></returns>
         public int Find(int key)
         {
-            for (int i = 0; i < stringList.Count; i++)
+            foreach (var myString in StringList.Where(myString => myString.Index == key))
             {
-                SortString myString = stringList[i];
-                if (myString.index == key)
-                {
-                    return myString.index;
-                }
+                return myString.Index;
             }
+
             return -1;
         }
 
-        public int Add(string stringValue, int key)
+        public int Add(string? stringValue, int key)
         {
-            int index = key != 0 ? Find(key) : Find(stringValue);
+            var index = key != 0 ? Find(key) : Find(stringValue);
             if (index != -1)
             {
                 return index;
             }
 
-            index = stringList.Count;
-            stringList.Add(new SortString(key, stringValue, index));
+            index = StringList.Count;
+            StringList.Add(new SortString(key, stringValue, index));
             return index;
         }
 
         public void Clear() 
         {
-            stringList.Clear();
-            rawIndexToSortedIndex = new int[0];
+            StringList.Clear();
+            RawIndexToSortedIndex = [];
         }
     }
 }

@@ -1,59 +1,53 @@
-using System;
-using System.Collections.Generic;
-
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
 using CwLibNet.Types.Data;
 using CwLibNet.Structs.Slot;
-using static CwLibNet.Structs.Slot.SlotID;
-using CwLibNet.Types;
 
 namespace CwLibNet.Structs.Profile 
 {
     public class PlayedLevelData : ISerializable 
     {
-        public const int BASE_ALLOCATION_SIZE = 0x80;
+        public const int BaseAllocationSize = 0x80;
 
-        public SlotID slotID;
-        public long lastPlayedTimestamp;
-        public int[] localHighScore;
-        public short playCount, completionCount, acedCount;
-        public CollectableData[] collectables;
+        public SlotID SlotId;
+        public long LastPlayedTimestamp;
+        public int[]? LocalHighScore;
+        public short PlayCount, CompletionCount, AcedCount;
+        public CollectableData[]? Collectables;
 
-        public int[] videos;
-        public SlotID[] linkedLevels;
-        public SlotID[] subLevels;
-        public SHA1 levelHash;
-        public short flags;
+        public int[] Videos;
+        public SlotID[]? LinkedLevels;
+        public SlotID[]? SubLevels;
+        public Sha1 LevelHash;
+        public short Flags;
 
         // LBP3
 
-        public int bestTime;
-        public short multiplayerCompletionCount;
+        public int BestTime;
+        public short MultiplayerCompletionCount;
 
         // Vita
 
-        public short deferredPlayCount, deferredPlayCountUploaded;
+        public short DeferredPlayCount, DeferredPlayCountUploaded;
 
-        public int[] uploadedLocalHighScore;
+        public int[]? UploadedLocalHighScore;
 
-        public short goldTrophyCount, silverTrophyCount, bronzeTrophyCount;
+        public short GoldTrophyCount, SilverTrophyCount, BronzeTrophyCount;
 
         public void Serialize(Serializer serializer)
         {
-            Revision revision = serializer.GetRevision();
-            int version = revision.GetVersion();
-            int subVersion = revision.GetSubVersion();
+            var revision = serializer.GetRevision();
+            var version = revision.GetVersion();
+            var subVersion = revision.GetSubVersion();
 
-            slotID = serializer.Struct<SlotID>(slotID);
+            SlotId = serializer.Struct<SlotID>(SlotId);
             if (version > 0x1fd)
-                lastPlayedTimestamp = serializer.S64(lastPlayedTimestamp);
+                LastPlayedTimestamp = serializer.S64(LastPlayedTimestamp);
             if (version > 0x200)
-                localHighScore = serializer.Intarray(localHighScore);
+                LocalHighScore = serializer.Intarray(LocalHighScore);
 
-            if (version > 0x268 && version < 0x399) 
+            if (version is > 0x268 and < 0x399) 
             {
                 serializer.Bool(false); // Discovered
                 serializer.Bool(false); // Unlocked
@@ -61,62 +55,62 @@ namespace CwLibNet.Structs.Profile
 
             if (version < 0x269) 
             {
-                playCount = (short)serializer.I32(playCount);
-                completionCount = (short)serializer.I32(completionCount);
-                acedCount = (short)serializer.I32(acedCount);
+                PlayCount = (short)serializer.I32(PlayCount);
+                CompletionCount = (short)serializer.I32(CompletionCount);
+                AcedCount = (short)serializer.I32(AcedCount);
             }
             else 
             {
-                playCount = serializer.I16(playCount);
-                completionCount = serializer.I16(completionCount);
-                acedCount = serializer.I16(acedCount);
+                PlayCount = serializer.I16(PlayCount);
+                CompletionCount = serializer.I16(CompletionCount);
+                AcedCount = serializer.I16(AcedCount);
             }
 
             if (version > 0x1c1) 
-                collectables = serializer.Array<CollectableData>(collectables);
+                Collectables = serializer.Array<CollectableData>(Collectables);
             if (version > 0x1c3 && subVersion < 0x106)
-                videos = serializer.Intarray(videos);
+                Videos = serializer.Intarray(Videos);
             
             if (version > 0x363) 
             {
-                linkedLevels = serializer.Array<SlotID>(linkedLevels);
-                subLevels = serializer.Array<SlotID>(subLevels);
+                LinkedLevels = serializer.Array<SlotID>(LinkedLevels);
+                SubLevels = serializer.Array<SlotID>(SubLevels);
             }
 
-            if (revision.Has(Branch.Double11, (int)Revisions.D1DeferredPlays))
+            if (revision.Has(Branch.Double11, (int)Revisions.D_1DEFERRED_PLAYS))
             {
-                deferredPlayCount = serializer.I16(deferredPlayCount);
-                deferredPlayCountUploaded = serializer.I16(deferredPlayCountUploaded);
-                if (revision.Has(Branch.Double11, (int)Revisions.D1UploadedHighScore))
-                    uploadedLocalHighScore = serializer.Intarray(uploadedLocalHighScore);
-                if (revision.Has(Branch.Double11, (int)Revisions.D1Trophies))
+                DeferredPlayCount = serializer.I16(DeferredPlayCount);
+                DeferredPlayCountUploaded = serializer.I16(DeferredPlayCountUploaded);
+                if (revision.Has(Branch.Double11, (int)Revisions.D1_UPLOADED_HIGH_SCORE))
+                    UploadedLocalHighScore = serializer.Intarray(UploadedLocalHighScore);
+                if (revision.Has(Branch.Double11, (int)Revisions.D1_TROPHIES))
                 {
-                    goldTrophyCount = serializer.I16(goldTrophyCount);
-                    silverTrophyCount = serializer.I16(silverTrophyCount);
-                    bronzeTrophyCount = serializer.I16(bronzeTrophyCount);
+                    GoldTrophyCount = serializer.I16(GoldTrophyCount);
+                    SilverTrophyCount = serializer.I16(SilverTrophyCount);
+                    BronzeTrophyCount = serializer.I16(BronzeTrophyCount);
                 }
             }
 
             if (subVersion >= 0x1ad)
             {
-                bestTime = serializer.I32(bestTime);
-                multiplayerCompletionCount = serializer.I16(multiplayerCompletionCount);
+                BestTime = serializer.I32(BestTime);
+                MultiplayerCompletionCount = serializer.I16(MultiplayerCompletionCount);
             }
         }
 
         public int GetAllocatedSize() 
         {
-            int size = BASE_ALLOCATION_SIZE;
-            if (localHighScore != null)
-                size += localHighScore.Length * 4;
-            if (collectables != null)
-                size += collectables.Length * CollectableData.BASE_ALLOCATION_SIZE;
-            if (linkedLevels != null)
-                size += linkedLevels.Length * SlotID.BASE_ALLOCATION_SIZE;
-            if (subLevels != null)
-                size += subLevels.Length * SlotID.BASE_ALLOCATION_SIZE;
-            if (uploadedLocalHighScore != null)
-                size += uploadedLocalHighScore.Length * 4;
+            var size = BaseAllocationSize;
+            if (LocalHighScore != null)
+                size += LocalHighScore.Length * 4;
+            if (Collectables != null)
+                size += Collectables.Length * CollectableData.BaseAllocationSize;
+            if (LinkedLevels != null)
+                size += LinkedLevels.Length * SlotID.BaseAllocationSize;
+            if (SubLevels != null)
+                size += SubLevels.Length * SlotID.BaseAllocationSize;
+            if (UploadedLocalHighScore != null)
+                size += UploadedLocalHighScore.Length * 4;
             return size;
         }
     }

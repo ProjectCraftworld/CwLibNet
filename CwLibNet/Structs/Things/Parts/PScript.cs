@@ -15,7 +15,7 @@ public class PScript: ISerializable
 
     public PScript(ResourceDescriptor script)
     {
-        this.Instance.Script = script;
+        Instance.Script = script;
     }
 
     public bool Is(GUID guid)
@@ -27,7 +27,7 @@ public class PScript: ISerializable
     
     public void Serialize(Serializer serializer)
     {
-        int version = serializer.GetRevision().GetVersion();
+        var version = serializer.GetRevision().GetVersion();
         if (version is > 0x179 and < 0x1a1)
             serializer.Bool(false); // unknown
         Instance = serializer.Struct(Instance);
@@ -36,7 +36,7 @@ public class PScript: ISerializable
     
     public int GetAllocatedSize()
     {
-        return PScript.BaseAllocationSize;
+        return BaseAllocationSize;
     }
 
 

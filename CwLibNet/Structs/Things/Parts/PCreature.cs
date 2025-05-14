@@ -2,10 +2,7 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
-using CwLibNet.Types.Things;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -47,13 +44,13 @@ public class WhipSim : ISerializable
 
         public int GetAllocatedSize()
         {
-            return WhipSim.BASE_ALLOCATION_SIZE;
+            return BASE_ALLOCATION_SIZE;
         }
     }
 
     public class SpringData : ISerializable
     {
-        public const int BASE_ALLOCATION_SIZE = 0x30;
+        public const int BaseAllocationSize = 0x30;
 
         public Thing SpringThing;
         public int SpringTimer;
@@ -72,7 +69,7 @@ public class WhipSim : ISerializable
 
         public int GetAllocatedSize()
         {
-            return SpringData.BASE_ALLOCATION_SIZE;
+            return BaseAllocationSize;
         }
     }
 
@@ -338,9 +335,9 @@ public class PCreature : ISerializable
 
     public void Serialize(Serializer serializer)
     {
-        Revision revision = serializer.GetRevision();
-        int version = revision.GetVersion();
-        int subVersion = revision.GetSubVersion();
+        var revision = serializer.GetRevision();
+        var version = revision.GetVersion();
+        var subVersion = revision.GetSubVersion();
 
         Config = serializer.Resource(Config, ResourceType.SettingsCharacter);
         if (version < 0x155)
@@ -348,9 +345,9 @@ public class PCreature : ISerializable
             if (serializer.IsWriting()) serializer.GetOutput().I32(0);
             else
             {
-                MemoryInputStream stream = serializer.GetInput();
-                int count = stream.I32();
-                for (int i = 0; i < count; ++i)
+                var stream = serializer.GetInput();
+                var count = stream.I32();
+                for (var i = 0; i < count; ++i)
                     stream.V3();
             }
         }
@@ -377,14 +374,18 @@ public class PCreature : ISerializable
 
         ZMode = serializer.I32(ZMode);
 
-        if (version < 0x146) serializer.I32(0);
-        if (version > 0x145 && version < 0x1f0)
+        switch (version)
         {
-            serializer.I32(0);
-            serializer.I32(0);
-            serializer.Bool(false);
-            serializer.Bool(false);
-            serializer.I32(0);
+            case < 0x146:
+                serializer.I32(0);
+                break;
+            case > 0x145 and < 0x1f0:
+                serializer.I32(0);
+                serializer.I32(0);
+                serializer.Bool(false);
+                serializer.Bool(false);
+                serializer.I32(0);
+                break;
         }
 
         PlayerAwareness = serializer.S32(PlayerAwareness);
@@ -434,7 +435,7 @@ public class PCreature : ISerializable
             JumpIntervalPhase = serializer.I32(JumpIntervalPhase);
         }
 
-        if (0x162 < version && version < 0x16d) serializer.Bool(false);
+        if (version is > 0x162 and < 0x16d) serializer.Bool(false);
 
         if (version >= 0x169) MeshDirty = serializer.Bool(MeshDirty);
 
@@ -445,7 +446,7 @@ public class PCreature : ISerializable
             BrainLifeList = serializer.Thingarray(BrainLifeList);
         }
 
-        if (0x177 < version && version < 0x1e3) serializer.F32(0);
+        if (version is > 0x177 and < 0x1e3) serializer.F32(0);
 
         if (version >= 0x19c)
             ReactToLethal = serializer.Bool(ReactToLethal);
@@ -456,7 +457,7 @@ public class PCreature : ISerializable
             AnimOffset = serializer.F32(AnimOffset);
         }
 
-        if (0x1ed < version && version < 0x225)
+        if (version is > 0x1ed and < 0x225)
             serializer.S32(0);
 
         if (version >= 0x1fc) GroundNormalRaw = serializer.V3(GroundNormalRaw);
@@ -466,10 +467,10 @@ public class PCreature : ISerializable
             BodyAdjustApplied = serializer.F32(BodyAdjustApplied);
         }
 
-        if (version >= 0x240 && version < 0x2c4)
+        if (version is >= 0x240 and < 0x2c4)
             SwitchScale = serializer.F32(SwitchScale);
 
-        if (version > 0x242 && version < 0x24d)
+        if (version is > 0x242 and < 0x24d)
             serializer.Resource(null, ResourceType.Plan);
 
         if (version >= 0x243)
@@ -516,7 +517,7 @@ public class PCreature : ISerializable
         if (version >= 0x272)
             AirTimeLeft = serializer.I32(AirTimeLeft);
 
-        if (version >= 0x2c9 || revision.Has(Branch.Leerdammer, (int)Revisions.LdSubmerged))
+        if (version >= 0x2c9 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_SUBMERGED))
         {
             AmountBodySubmerged = serializer.F32(AmountBodySubmerged);
             AmountHeadSubmerged = serializer.F32(AmountHeadSubmerged);
@@ -526,7 +527,7 @@ public class PCreature : ISerializable
             HasScubaGear = serializer.Bool(HasScubaGear);
 
         if (version is >= 0x289 and < 0x2c8 || revision.Before(Branch.Leerdammer,
-                (int)Revisions.LdRemovedHeadPiece))
+                (int)Revisions.LD_REMOVED_HEAD_PIECE))
             HeadPiece = serializer.Resource(HeadPiece, ResourceType.Plan);
 
         if (version >= 0x289 || revision.IsLeerdammer())
@@ -548,12 +549,11 @@ public class PCreature : ISerializable
                 BootContactForceList = new Vector3[serializer.GetInput().I32()];
             else
             {
-                if (BootContactForceList == null)
-                    BootContactForceList = [];
+                BootContactForceList ??= [];
                 serializer.GetOutput().I32(BootContactForceList.Length);
             }
 
-            for (int i = 0; i < BootContactForceList.Length; ++i)
+            for (var i = 0; i < BootContactForceList.Length; ++i)
                 BootContactForceList[i] = serializer.V3(BootContactForceList[i]).Value;
 
 
@@ -561,13 +561,13 @@ public class PCreature : ISerializable
             WallJumpMat = serializer.Bool(WallJumpMat);
         }
 
-        if (version >= 0x29e && version < 0x336)
+        if (version is >= 0x29e and < 0x336)
             LastDirectControlPrompt = serializer.Thing(LastDirectControlPrompt);
 
         if (version > 0x2e4)
             DirectControlPrompt = serializer.Thing(DirectControlPrompt);
 
-        if (version >= 0x29e && version < 0x336)
+        if (version is >= 0x29e and < 0x336)
         {
             SmoothedDirectControlStick =
                 serializer.V3(SmoothedDirectControlStick);
@@ -575,11 +575,15 @@ public class PCreature : ISerializable
             DirectControlAnimState = serializer.I8(DirectControlAnimState);
         }
 
-        if (version is >= 0x29f and < 0x2c1)
-            DirectControlMode = serializer.I8(DirectControlMode);
-
-        if (version is >= 0x2c1 and < 0x336)
-            serializer.U8(0);
+        switch (version)
+        {
+            case >= 0x29f and < 0x2c1:
+                DirectControlMode = serializer.I8(DirectControlMode);
+                break;
+            case >= 0x2c1 and < 0x336:
+                serializer.U8(0);
+                break;
+        }
 
         if (version >= 0x2a5)
         {
@@ -605,21 +609,31 @@ public class PCreature : ISerializable
         if (revision.IsVita())
         {
             int vita = revision.GetBranchRevision();
-            if (vita < 0x53) serializer.U8(0);
-            if (vita >= 0x53)
-                ShootAtTouch = serializer.I32(ShootAtTouch);
+            switch (vita)
+            {
+                case < 0x53:
+                    serializer.U8(0);
+                    break;
+                case >= 0x53:
+                    ShootAtTouch = serializer.I32(ShootAtTouch);
+                    break;
+            }
         }
 
-        if (subVersion is >= 0x88 and <= 0xa4)
-            serializer.Resource(null, ResourceType.Plan);
-
-        if (subVersion >= 0xaa)
-            AlternateFormWorld = serializer.Thing(AlternateFormWorld);
+        switch (subVersion)
+        {
+            case >= 0x88 and <= 0xa4:
+                serializer.Resource(null, ResourceType.Plan);
+                break;
+            case >= 0xaa:
+                AlternateFormWorld = serializer.Thing(AlternateFormWorld);
+                break;
+        }
 
         if (subVersion >= 0xd7)
             HookHatState = serializer.I32(HookHatState);
 
-        if (subVersion >= 0xd7 && subVersion < 0xea)
+        if (subVersion is >= 0xd7 and < 0xea)
         {
             serializer.Thing(null);
             serializer.Thing(null);

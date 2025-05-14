@@ -6,36 +6,36 @@ namespace CwLibNet.Singleton;
 
 public static class ResourceLogLevel
 {
-    public const int NONE = 0;
-    public const int INFO = 1;
-    public const int ERROR = 2;
-    public const int WARNING = 3;
-    public const int DEBUG = 4;
-    public const int SERIALIZER_TRACE = 5;
+    public const int None = 0;
+    public const int Info = 1;
+    public const int Error = 2;
+    public const int Warning = 3;
+    public const int Debug = 4;
+    public const int SerializerTrace = 5;
 }
 
 public static class ResourceSystem
 {
-    private static List<FileDb> fileDBs = [];
-    private static List<FileArchive> fileArchives = [];
+    private static List<FileDb> _fileDBs = [];
+    private static List<FileArchive> _fileArchives = [];
 
-    public static bool IsInitialized => fileDBs.Count > 0 && fileArchives.Count > 0;
+    public static bool IsInitialized => _fileDBs.Count > 0 && _fileArchives.Count > 0;
 
     public static void LoadGameRoot(string path)
     {
-        fileDBs = new List<FileDb>();
-        fileArchives = new List<FileArchive>();
+        _fileDBs = [];
+        _fileArchives = [];
         var dbFiles = Directory.GetFiles(path, "*.map", SearchOption.AllDirectories);
         foreach (var dbFile in dbFiles)
         {
             var db = new FileDb(dbFile);
-            fileDBs.Add(db);
+            _fileDBs.Add(db);
         }
         var archiveFiles = Directory.GetFiles(path, "*.farc", SearchOption.AllDirectories);
         foreach (var archiveFile in archiveFiles)
         {
             var archive = new FileArchive(archiveFile);
-            fileArchives.Add(archive);
+            _fileArchives.Add(archive);
         }
     }
     
@@ -44,14 +44,14 @@ public static class ResourceSystem
         return resource.IsGUID() ? Get(resource.GetGUID()!.Value) : Get(resource.GetSHA1()!);
     }
 
-    private static FileEntry? Get(SHA1 hash)
+    private static FileEntry? Get(Sha1 hash)
     {
-        return fileDBs.Select(file => file.Get(hash)).OfType<FileDBRow>().FirstOrDefault();
+        return _fileDBs.Select(file => file.Get(hash)).OfType<FileDbRow>().FirstOrDefault();
     }
 
     private static FileEntry? Get(GUID guid)
     {
-        return fileDBs.Select(file => file.Get(guid)).OfType<FileDBRow>().FirstOrDefault();
+        return _fileDBs.Select(file => file.Get(guid)).OfType<FileDbRow>().FirstOrDefault();
     }
 
     public static byte[]? Extract(ResourceDescriptor resource)
@@ -59,9 +59,9 @@ public static class ResourceSystem
         return resource.IsGUID() ? Extract(resource.GetGUID()!.Value) : Extract(resource.GetSHA1()!);
     }
 
-    private static byte[]? Extract(SHA1 hash)
+    private static byte[]? Extract(Sha1 hash)
     {
-        return fileArchives.Select(farc => farc.Extract(hash)).OfType<byte[]>().FirstOrDefault();
+        return _fileArchives.Select(farc => farc.Extract(hash)).OfType<byte[]>().FirstOrDefault();
     }
 
     private static byte[]? Extract(GUID guid)
@@ -70,5 +70,5 @@ public static class ResourceSystem
         return sha1 != null ? Extract(sha1) : null;
     }
     
-    public static int LOG_LEVEL = ResourceLogLevel.SERIALIZER_TRACE;
+    public static int LogLevel = ResourceLogLevel.SerializerTrace;
 }
