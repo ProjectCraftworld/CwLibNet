@@ -42,5 +42,10 @@ namespace CwLibNet.Structs.Profile
             var myString = ((SortString?) other)?.MyString;
             return myString != null && (other == this || myString.Equals(MyString));
         }
+
+        public override int GetHashCode()
+        {
+            return MyString != null ? MyString.GetHashCode() : 0;
+        }
     }
 }

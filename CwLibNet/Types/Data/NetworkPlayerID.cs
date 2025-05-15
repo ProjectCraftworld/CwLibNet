@@ -49,12 +49,13 @@ public class NetworkPlayerID: ISerializable
     {
         var id = new NetworkPlayerID();
         id.handle = new NetworkOnlineId(id.handle.ToString());
-        id.opt = (byte[])opt.Clone();
-        id.reserved = (byte[])reserved.Clone();
+        if (opt != null)
+            id.opt = (byte[])opt.Clone();
+        if (reserved != null)
+            id.reserved = (byte[])reserved.Clone();
         return id;
     }
 
-    
     public override bool Equals(object? other)
     {
         if (other == this) return true;
@@ -62,7 +63,11 @@ public class NetworkPlayerID: ISerializable
         return otherId.handle.Equals(handle);
     }
 
-    
+    public override int GetHashCode()
+    {
+        return handle != null ? handle.GetHashCode() : 0;
+    }
+
     public override string ToString()
     {
         return handle.ToString();
