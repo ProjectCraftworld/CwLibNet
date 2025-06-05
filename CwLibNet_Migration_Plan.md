@@ -9,11 +9,14 @@ This document outlines the findings, differences, and migration strategy for ove
 - **Data Structures:** The new codebase is modular, with clear separation of mesh data, serialization, and utility logic.
 - **Extensibility:** The new code is easier to extend and maintain due to its modularity and clear separation.
 
-## Migration Goals
-- Refactor scripts to match the modular, engine-agnostic style of CwLibNet_4_HUB.
-- Update serialization logic to use the new versioned system.
-- Remove or refactor Unity-specific dependencies where possible, but maintain .NET Standard 2.1 compatibility for Unity.
-- Standardize naming conventions, namespaces, and data structures.
+## Updated Migration Goals
+- Refactor scripts in `CwLibNet_4_HUB` to be compatible with the serialization patterns and code used in the legacy Craftworld HUB (LittleBIGPlanet 2 PC port).
+- Ensure that serialization logic, interfaces, and data structures in `CwLibNet_4_HUB` match or interoperate with those in Craftworld HUB.
+- Adapt or wrap CwLibNet_4_HUB's modular, instance-based serialization to support the static/global, return-code-based, and Unity-centric serialization style of Craftworld HUB where necessary.
+- Maintain .NET Standard 2.1 compatibility for Unity and cross-platform use.
+- Document all changes and patterns to ensure maintainability and clarity for future development.
+
+---
 
 ## Migration Steps
 1. Analyze each script for Unity dependencies and legacy patterns.
@@ -183,5 +186,32 @@ This document outlines the findings, differences, and migration strategy for ove
 - Update serialization methods to use explicit serializer instance methods.
 - Remove reflection-based text serialization in favor of type-safe approaches.
 - Use enums or bitfields for compression flags.
+
+---
+
+## Serializer Patterns: CwLibNet vs. Legacy (RMesh.cs)
+
+### CwLibNet (Structs/Resources)
+- Implements `ISerializable` interface with a `Serialize(Serializer serializer)` method.
+- Uses an instance of `Serializer` (not static/global state).
+- Serialization methods are void, with errors handled via exceptions.
+- Field serialization uses methods like `serializer.S32`, `serializer.F32`, `serializer.Resource`, etc.
+- Handles versioning with explicit checks (e.g., `serializer.GetRevision().GetSubVersion()`).
+- Arrays and optionals are handled with null checks and length serialization.
+- Pattern is modular, type-safe, and extensible.
+
+### Legacy (RMesh.cs)
+- No interface; serialization is via a `Serialize()` method returning a `SERIALIZER_RESULT` enum.
+- Uses static `Serializer.Serialize(ref field)` methods and global state.
+- Error handling via return codes, not exceptions.
+- Versioning via `Serializer.SerializerInfo.DataVersion`.
+- Unity types and attributes are used throughout.
+- Arrays are handled with manual length and element serialization.
+- Less modular and less type-safe than CwLibNet.
+
+### Key Differences
+- CwLibNet uses interface-based, instance-driven, exception-based, and modular serialization.
+- Legacy uses static/global, return-code-based, and Unity-centric serialization.
+- CwLibNet’s pattern is more extensible, automatable, and maintainable.
 
 ---
