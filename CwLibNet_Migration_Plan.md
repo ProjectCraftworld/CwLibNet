@@ -215,3 +215,254 @@ This document outlines the findings, differences, and migration strategy for ove
 - CwLibNet’s pattern is more extensible, automatable, and maintainable.
 
 ---
+
+## Additional Analysis Areas
+
+### 1. Field Types & Naming Conventions
+- Compare field types (e.g., float[] vs. Vector2/3/4, int vs. short, etc.) between CwLibNet_4_HUB and Craftworld HUB.
+- Check for naming convention mismatches (camelCase vs. PascalCase, etc.).
+- Note any fields present in one version but not the other.
+
+### 2. Enum Differences
+- Compare enums (names, values, usage) between both codebases.
+- Document any enums that need to be mapped or aliased.
+
+### 3. Array & Collection Handling
+- Analyze how arrays, lists, and dictionaries are serialized/deserialized.
+- Note any differences in null handling, length prefixing, or type safety.
+
+### 4. Custom Types & Structs
+- List custom types (e.g., ResourceReference, AnimBone, etc.) and compare their structure and serialization.
+- Document any type wrapping/unwrapping or conversion needed.
+
+### 5. Versioning & Compatibility
+- Compare how versioning is handled in both serializers.
+- Note any fields or logic that are version-dependent.
+
+### 6. Error Handling & Logging
+- Compare error handling (exceptions vs. return codes).
+- Note any logging or debug output differences.
+
+### 7. Unity/Engine-Specific Logic
+- Identify any Unity-specific logic that must be retained, removed, or replaced.
+- Document any dependencies on UnityEditor, UnityEngine, etc.
+
+### 8. Serialization Entry Points
+- Compare how serialization is triggered (e.g., via methods, attributes, or reflection).
+- Note any differences in how resources are loaded/saved.
+
+### 9. Performance Considerations
+- Document any performance-critical code (e.g., large arrays, memory streams, etc.).
+- Note any optimizations or bottlenecks.
+
+### 10. Testing & Validation
+- Compare test coverage and strategies for serialization.
+- Note any test cases or edge cases that must be preserved.
+
+---
+
+*Proceeding to analyze each area in detail...*
+
+## Detailed Analysis Results
+
+### Field Types and Naming Conventions
+
+**CwLibNet_4_HUB Patterns:**
+- **Field Naming**: PascalCase for all public fields (e.g., `Id`, `Root`, `Location`, `AuthorName`)
+- **Constants**: PascalCase with descriptive names (e.g., `BaseAllocationSize`, `MaxBoneNameLength`)
+- **Method Names**: PascalCase (e.g., `Serialize`, `GetAllocatedSize`, `GetName`)
+- **Null Safety**: Extensive use of nullable types (`string?`, `Label[]?`, `Vector4?`)
+- **Collection Types**: Arrays with nullable notation (`Label[]?`, `Collectabubble[]?`)
+
+**Primitive Types:**
+- Standard C# types: `int`, `byte`, `short`, `float`, `bool`, `string`
+- System.Numerics: `Vector4`, `Matrix4x4` (for 3D math)
+- Custom types: `GUID`, `ResourceDescriptor`, `SlotID`, `NetworkOnlineId`
+
+**Legacy Craftworld Patterns (from previous analysis):**
+- **Field Naming**: camelCase for private fields, PascalCase for properties
+- **Method Names**: PascalCase
+- **Arrays**: Standard C# arrays without nullable annotations
+- **Unity Types**: Vector3, Quaternion, Transform dependencies
+
+### Enum Handling
+
+**CwLibNet_4_HUB Patterns:**
+```csharp
+public enum LevelType
+{
+    MAIN_PATH,      // 0 - implicit
+    MINI_LEVEL,     // 1 - implicit
+    MINI_GAME,      // 2 - implicit
+    // ...
+}
+
+// Complex enum wrapper pattern:
+public sealed class LevelBody
+{
+    private readonly LevelType value;
+    
+    public static LevelBody FromValue(int value)
+    {
+        return Enum.IsDefined(typeof(LevelType), value) 
+            ? new LevelBody(value) 
+            : new LevelBody((int)LevelType.MAIN_PATH);
+    }
+}
+```
+
+**Enum Serialization:**
+```csharp
+DeveloperLevelType = serializer.Enum32(DeveloperLevelType);
+GameProgressionStatus = serializer.Enum32(GameProgressionStatus);
+```
+
+### Array and Collection Handling
+
+**CwLibNet_4_HUB Patterns:**
+```csharp
+Labels = serializer.Array<Label>(Labels);
+ShapeVerts = serializer.Array(ShapeVerts);
+CollectabubblesRequired = new Collectabubble[]?
+SubLevels = SlotID[]?
+```
+
+**Array Initialization:**
+```csharp
+if (descriptor.Labels != null)
+{
+    Labels = new Label[descriptor.Labels.Length];
+    for (var i = 0; i < Labels.Length; i++)
+    {
+        Labels[i] = new Label((int) RTranslationTable.MakeLamsKeyID(descriptor.Labels[i]), i);
+    }
+}
+```
+
+### Custom Type Patterns
+
+**GUID Implementation:**
+```csharp
+public readonly struct GUID : IEquatable<GUID>
+{
+    public readonly long Value;
+    public GUID(long value) { Value = value; }
+    public override string ToString() => "g" + Value;
+    // Proper equality implementation
+}
+```
+
+**Struct Inheritance:**
+```csharp
+public class Bone: AnimBone  // Inheritance for specialized structs
+{
+    public new const int BaseAllocationSize = AnimBone.BaseAllocationSize + 0x120;
+    // Additional fields and overrides
+}
+```
+
+### Versioning and Conditional Serialization
+
+**Sophisticated Version Handling:**
+```csharp
+public void Serialize(Serializer serializer)
+{
+    var revision = serializer.GetRevision();
+    var version = revision.GetVersion();
+    var subVersion = revision.GetSubVersion();
+
+    // Version-dependent field serialization
+    if (subVersion >= (int)Revisions.ADVENTURE)
+        Adventure = serializer.Resource(Adventure, ResourceType.Level, true);
+    
+    if (version >= 0x13b)
+        AuthorName = serializer.Wstr(AuthorName);
+        
+    switch (version)
+    {
+        case >= 0x333:
+            PlanetDecorations = serializer.Resource(PlanetDecorations, ResourceType.Plan, true);
+            break;
+        case < 0x188:
+            serializer.U8(0); // Unknown/deprecated field
+            break;
+    }
+}
+```
+
+### Serializer Method Patterns
+
+**CwLibNet_4_HUB Serializer Methods:**
+```csharp
+// Primitive types
+I32(int value)           // 32-bit integer
+S32(int value)           // signed 32-bit
+U8(int value)            // unsigned byte
+F32(float value)         // 32-bit float
+Bool(bool value)         // boolean
+Wstr(string value)       // wide string
+Str(string value)        // regular string
+
+// Complex types
+V4(Vector4? value)       // Vector4
+M44(Matrix4x4? value)    // Matrix4x4
+Guid(GUID value)         // GUID
+Enum32<T>(T value)       // 32-bit enum
+Resource(ResourceDescriptor, ResourceType, bool) // Resource reference
+Struct<T>(T value)       // Generic struct
+Array<T>(T[] value)      // Generic array
+```
+
+**Legacy Craftworld Patterns (inferred):**
+- Simpler method names (readInt, writeInt, etc.)
+- Less type safety
+- Manual array handling
+- Basic versioning
+
+### Memory Management and Size Calculation
+
+**CwLibNet_4_HUB Patterns:**
+```csharp
+public const int BaseAllocationSize = 0x40;  // Base size constants
+public new const int BaseAllocationSize = AnimBone.BaseAllocationSize + 0x120;  // Inheritance
+
+public int GetAllocatedSize()
+{
+    return BaseAllocationSize;  // Override for dynamic sizing
+}
+```
+
+### Error Handling and Validation
+
+**CwLibNet_4_HUB Patterns:**
+```csharp
+// Enum validation with fallbacks
+public static LevelBody FromValue(int value)
+{
+    return Enum.IsDefined(typeof(LevelType), value) 
+        ? new LevelBody(value) 
+        : new LevelBody((int)LevelType.MAIN_PATH);
+}
+
+// Range clamping
+MinPlayers = (byte)Math.Clamp(descriptor.Minplayers, 1, 4);
+MaxPlayers = (byte)Math.Clamp(descriptor.Maxplayers, 1, 4);
+
+// String length validation
+if (name is { Length: >= MaxBoneNameLength })
+    name = name[..MaxBoneNameLength];
+```
+
+### Key Differences Summary
+
+| Aspect | CwLibNet_4_HUB | Legacy Craftworld |
+|--------|----------------|-------------------|
+| **Field Naming** | PascalCase consistently | Mixed camelCase/PascalCase |
+| **Null Safety** | Extensive nullable types | No nullable annotations |
+| **Enums** | Complex wrapper classes | Simple enum usage |
+| **Versioning** | Sophisticated multi-level | Basic version checks |
+| **Arrays** | Generic `Array<T>()` methods | Manual array handling |
+| **Types** | System.Numerics, custom structs | Unity types, basic C# |
+| **Error Handling** | Validation, clamping, fallbacks | Basic error handling |
+| **Memory** | Size calculation constants | Manual size management |
+| **Serializer** | Type-safe method names | Generic read/write methods |
