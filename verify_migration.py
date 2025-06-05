@@ -26,11 +26,26 @@ class BuildVerifier:
     def run_build(self, project_path: Path) -> Tuple[bool, str]:
         """Run dotnet build on a project and return success status with output."""
         try:
+            # If project_path is a .csproj file, use its parent directory
+            # If project_path is a directory, use it directly
+            if project_path.is_file() and project_path.suffix == '.csproj':
+                build_dir = project_path.parent
+                build_target = project_path.name
+            else:
+                build_dir = project_path
+                build_target = None
+            
+            # Build command
+            if build_target:
+                cmd = ["dotnet", "build", build_target]
+            else:
+                cmd = ["dotnet", "build"]
+            
             result = subprocess.run(
-                ["dotnet", "build", str(project_path)],
+                cmd,
                 capture_output=True,
                 text=True,
-                cwd=project_path.parent
+                cwd=build_dir
             )
             
             success = result.returncode == 0
@@ -106,7 +121,7 @@ class BuildVerifier:
             # Build verification
             csproj_path = next(hub_path.glob("*.csproj"), None)
             if csproj_path:
-                build_success, build_output = self.run_build(csproj_path)
+                build_success, build_output = self.run_build(hub_path)
             else:
                 build_success, build_output = False, "No .csproj file found"
             
@@ -126,7 +141,7 @@ class BuildVerifier:
             
             csproj_path = next(cwlibnet_path.glob("*.csproj"), None)
             if csproj_path:
-                build_success, build_output = self.run_build(csproj_path)
+                build_success, build_output = self.run_build(cwlibnet_path)
             else:
                 build_success, build_output = False, "No .csproj file found"
             
