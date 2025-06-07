@@ -25,12 +25,12 @@ namespace CwLibNet.Structs.Profile
             Serializer.Serialize(ref category);
             Serializer.Serialize(ref titleLamsKey);
             Serializer.Serialize(ref descriptionLamsKey);
-            Serializer.Serialize(ref icon, icon, ResourceType.Texture);
+            Serializer.Serialize(ref icon, ResourceType.Texture);
             Serializer.Serialize(ref initialProgressValue);
             Serializer.Serialize(ref targetValue);
             Serializer.Serialize(ref trophyToUnlock);
             Serializer.Serialize(ref behaviorFlags);
-            if (Serializer.GetCurrentSerializer().GetRevision().GetVersion() >= 0x3f7)
+            if (serializer.GetRevision().GetVersion() >= 0x3f7)
                 Serializer.Serialize(ref trophyToUnlockLBP1);
         }
 

@@ -25,7 +25,7 @@ public class ScriptInstance: ISerializable
 
         var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 
-        Serializer.Serialize(ref Script, Script, ResourceType.Script);
+        Serializer.Serialize(ref Script, ResourceType.Script, false, true, false);
 
         var serialize = true;
         if (version > 0x1a0)

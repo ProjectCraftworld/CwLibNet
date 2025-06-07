@@ -33,7 +33,7 @@ public class EggLink: ISerializable
         if (version < 0x160) 
             Serializer.Serialize(ref Item);
         else
-            Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, false, false, false);
+            Serializer.Serialize(ref Plan, ResourceType.Plan, false, false, false);
 
         switch (version)
         {
@@ -54,7 +54,7 @@ public class EggLink: ISerializable
             Serializer.Serialize(ref hasPainting);
         }
         if (hasPainting)
-            Serializer.Serialize(ref Painting, Painting, ResourceType.Painting, true);
+            Serializer.Serialize(ref Painting, ResourceType.Painting, true, true, true);
 
     }
 

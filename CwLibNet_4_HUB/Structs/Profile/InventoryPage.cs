@@ -15,7 +15,7 @@ namespace CwLibNet.Structs.Profile
         public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
         {
             Serializer.Serialize(ref inventoryPageTitleKey);
-            Serializer.Serialize(ref desiredSortMode);
+            desiredSortMode = serializer.Enum32(desiredSortMode);
         }
 
         public int GetAllocatedSize() 

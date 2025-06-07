@@ -52,7 +52,7 @@ public class PStickers: ISerializable
             costumeDecals = new Decal[Serializer.GetCurrentSerializer().GetInput().I32()][];
         else Serializer.GetCurrentSerializer().GetOutput().I32(costumeDecals.Length);
         for (var i = 0; i < costumeDecals.Length; ++i)
-            costumeDecals[i] = Serializer.Serialize(ref costumeDecals[i]);
+            costumeDecals[i] = Serializer.GetCurrentSerializer().Array(costumeDecals[i]);
 
         if (version is >= 0x158 and <= 0x3ba)
             Serializer.Serialize(ref paintControl);

@@ -460,12 +460,12 @@ public class PSwitch: ISerializable
                     Serializer.Serialize(ref Value.LabelIndex);
                 if (vita >= 0x46)
                 {
-                    Value.CreatorId = Serializer.Serialize(ref Value.CreatorId);
-                    Value.LabelName = Serializer.Serialize(ref Value.LabelName);
+                    Value.CreatorId = Serializer.GetCurrentSerializer().Struct(Value.CreatorId);
+                    Value.LabelName = Serializer.GetCurrentSerializer().Wstr(Value.LabelName);
                 }
 
                 if (revision.Has(Branch.Double11, (int)Revisions.D1_LABEL_ANALOGUE_ARRAY))
-                    Value.Analogue = Serializer.Serialize(ref Value.Analogue);
+                    Value.Analogue = Serializer.GetCurrentSerializer().Floatarray(Value.Analogue);
                 else if (revision.Has(Branch.Double11, (int)Revisions.D_1DATALABELS))
                 {
                     if (Serializer.IsWriting())

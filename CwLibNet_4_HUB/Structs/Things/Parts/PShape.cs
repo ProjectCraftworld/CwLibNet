@@ -154,11 +154,11 @@ public class PShape: ISerializable
         var subVersion = revision.GetSubVersion();
 
         Serializer.Serialize(ref Polygon);
-        Serializer.Serialize(ref Material, Material, ResourceType.Material);
+        Serializer.Serialize(ref Material, ResourceType.Material, false, true, false);
         switch (version)
         {
             case >= 0x15c:
-                Serializer.Serialize(ref OldMaterial, OldMaterial, ResourceType.Material);
+                Serializer.Serialize(ref OldMaterial, ResourceType.Material, false, true, false);
                 break;
             case < 0x13c:
                 Serializer.Serialize(ref temp_int);

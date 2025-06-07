@@ -15,7 +15,7 @@ public class GlobalThingDescriptor: ISerializable
     public int Uid;
     public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        Serializer.Serialize(ref LevelDesc, LevelDesc, ResourceType.Level, true, false, false);
+        Serializer.Serialize(ref LevelDesc, ResourceType.Level, true, false, false);
         Serializer.Serialize(ref Uid);
     }
 

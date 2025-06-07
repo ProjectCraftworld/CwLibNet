@@ -75,7 +75,7 @@ public class PJoint: ISerializable
         Serializer.Serialize(ref Angle);
         Serializer.Serialize(ref OffsetTime);
         Serializer.Serialize(ref InvertAngle);
-        Serializer.Serialize(ref Settings, Settings, ResourceType.Joint);
+        Serializer.Serialize(ref Settings, ResourceType.Joint, false, true, false);
         Serializer.Serialize(ref BoneIdx);
         Serializer.Serialize(ref BoneLengths);
         Serializer.Serialize(ref Type);

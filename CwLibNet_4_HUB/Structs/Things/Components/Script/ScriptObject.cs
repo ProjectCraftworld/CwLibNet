@@ -97,7 +97,7 @@ public class ScriptObject: ISerializable
                     if (serializer.IsWriting())
                         serializer.Serialize(ref (ResourceDescriptor) Value, type);
                     else
-                        serializer.Serialize(ref Value, null, type);
+                        serializer.Serialize(ref Value, type, false, true, false);
                 }
 
                 break;

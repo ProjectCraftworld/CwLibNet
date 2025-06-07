@@ -82,8 +82,7 @@ public class Poppet: ISerializable
             {
                 TweakObject = Serializer.SerializeReference(TweakObject);
                 Serializer.Serialize(ref BackupCameraZoneTargetBox);
-                BackupCameraZonePitchAngle =
-                    Serializer.Serialize(ref BackupCameraZonePitchAngle);
+                BackupCameraZonePitchAngle = Serializer.GetCurrentSerializer().V3(BackupCameraZonePitchAngle);
                 Serializer.Serialize(ref BackupCameraZoneZoomDistance);
                 Serializer.Serialize(ref CameraZoneZoomSpeed);
                 Serializer.Serialize(ref TweakObjectPlacement);

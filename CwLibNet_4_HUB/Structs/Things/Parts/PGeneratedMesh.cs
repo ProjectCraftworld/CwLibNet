@@ -101,8 +101,8 @@ public class PGeneratedMesh : ISerializable
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
-        Serializer.Serialize(ref GfxMaterial, GfxMaterial, ResourceType.GfxMaterial);
-        Serializer.Serialize(ref Bevel, Bevel, ResourceType.Bevel);
+        Serializer.Serialize(ref GfxMaterial, ResourceType.GfxMaterial, false, true, false);
+        Serializer.Serialize(ref Bevel, ResourceType.Bevel, false, true, false);
         Serializer.Serialize(ref UvOffset);
         if (version >= 0x258)
             Serializer.Serialize(ref PlanGuid);

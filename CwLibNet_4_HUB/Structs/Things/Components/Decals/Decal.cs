@@ -109,7 +109,7 @@ public class Decal: ISerializable
         var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
 
-        Serializer.Serialize(ref Texture, Texture, ResourceType.Texture);
+        Serializer.Serialize(ref Texture, ResourceType.Texture, false, true, false);
         Serializer.Serialize(ref U);
         Serializer.Serialize(ref V);
         Serializer.Serialize(ref Xvecu);
@@ -170,7 +170,7 @@ public class Decal: ISerializable
         switch (version)
         {
             case >= 0x34c:
-                Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true);
+                Serializer.Serialize(ref Plan, ResourceType.Plan, true, true, false);
                 break;
             case >= 0x25b:
             {

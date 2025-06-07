@@ -1393,7 +1393,9 @@ public class Serializer
             array = new Matrix4x4[length];
             for (int i = 0; i < length; i++)
             {
-                Serialize(ref array[i]);
+                Matrix4x4? temp = array[i];
+                Serialize(ref temp);
+                array[i] = temp ?? default(Matrix4x4);
             }
         }
         else
@@ -1404,9 +1406,9 @@ public class Serializer
             {
                 for (int i = 0; i < length; i++)
                 {
-                    var temp = array[i];
+                    Matrix4x4? temp = array[i];
                     Serialize(ref temp);
-                    array[i] = temp;
+                    array[i] = temp ?? default(Matrix4x4);
                 }
             }
         }

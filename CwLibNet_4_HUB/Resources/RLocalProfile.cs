@@ -586,7 +586,7 @@ namespace CwLibNet.Resources
             if (version >= 0x1e1)
             {
                 var tempLbp1GameProgressionStatus = Lbp1GameProgressionStatus;
-                Serializer.Serialize(ref tempLbp1GameProgressionStatus);
+                tempLbp1GameProgressionStatus = serializer.Enum32(tempLbp1GameProgressionStatus);
                 Lbp1GameProgressionStatus = tempLbp1GameProgressionStatus;
             }
 
@@ -613,12 +613,12 @@ namespace CwLibNet.Resources
 
             if (version >= 0x188)
             {
-                PendingInventoryItems = Serializer.Array(PendingInventoryItems);
+                PendingInventoryItems = serializer.Array(PendingInventoryItems);
             }
 
             if (version >= 0x14f)
             {
-                PodLevel = serializer.Reference(PodLevel,ResourceType.Level, true, false, false);
+                PodLevel = serializer.Reference(PodLevel, ResourceType.Level, true, false);
             }
 
             if (version >= 0x18f)

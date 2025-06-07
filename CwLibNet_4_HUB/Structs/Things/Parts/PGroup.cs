@@ -39,7 +39,7 @@ public class PGroup: ISerializable
         var isWriting = Serializer.IsWriting();
 
         if (version is >= 0x18e and <= 0x1b0)
-            Serializer.Serialize(ref Things, true);
+            Things = Serializer.GetCurrentSerializer().Thingarray(Things);
 
         if (version is >= 0x18e and < 0x341)
         {

@@ -350,7 +350,7 @@ public class PCreature : ISerializable
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
-        Serializer.Serialize(ref Config, Config, ResourceType.SettingsCharacter);
+        Serializer.Serialize(ref Config, ResourceType.SettingsCharacter, false, true, false);
         if (version < 0x155)
         {
             if (Serializer.IsWriting()) Serializer.GetCurrentSerializer().GetOutput().I32(0);
@@ -538,13 +538,13 @@ public class PCreature : ISerializable
 
         if (version is >= 0x289 and < 0x2c8 || revision.Before(Branch.Leerdammer,
                 (int)Revisions.LD_REMOVED_HEAD_PIECE))
-            Serializer.Serialize(ref HeadPiece, HeadPiece, ResourceType.Plan);
+            Serializer.Serialize(ref HeadPiece, ResourceType.Plan, false, true, false);
 
         if (version >= 0x289 || revision.IsLeerdammer())
             Serializer.Serialize(ref OutOfWaterJumpBoost);
 
         if (version >= 0x2a9)
-            Serializer.Serialize(ref HandPiece, HandPiece, ResourceType.Plan);
+            Serializer.Serialize(ref HandPiece, ResourceType.Plan, false, true, false);
 
         if (version >= 0x273)
         {

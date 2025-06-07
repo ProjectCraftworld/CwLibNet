@@ -22,8 +22,8 @@ namespace CwLibNet.Structs.Profile
             Serializer.Serialize(ref AngleOverride);
             Serializer.Serialize(ref StickerSaveSize);
             Serializer.Serialize(ref UiHidden);
-            Serializer.Serialize(ref LastAutoSave, LastAutoSave, ResourceType.Painting);
-            if (Serializer.GetCurrentSerializer().GetRevision().GetVersion() >= (int)Revisions.PTG_USE_DEFAULT_BACKGROUND)
+            Serializer.Serialize(ref LastAutoSave, ResourceType.Painting);
+            if (serializer.GetRevision().GetVersion() >= (int)Revisions.PTG_USE_DEFAULT_BACKGROUND)
                 Serializer.Serialize(ref UseDefaultBackground);
         }
 

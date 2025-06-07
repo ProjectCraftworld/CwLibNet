@@ -95,7 +95,7 @@ public class PMetadata: ISerializable
         Serializer.Serialize(ref SubType);
         Serializer.Serialize(ref CreationDate);
         
-        Serializer.Serialize(ref Icon, Icon, ResourceType.Texture);
+        Serializer.Serialize(ref Icon, ResourceType.Texture, false, true, false);
         Serializer.Serialize(ref PhotoMetadata);
         
         if (version >= 0x15f)

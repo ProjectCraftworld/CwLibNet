@@ -57,7 +57,7 @@ public class LevelData : ISerializable
             if (subVersion >= 0x1ac)
                 Serializer.Serialize(ref FarcGuid);
         }
-        else Serializer.Reference<LevelData>(null);
+        else serializer.Reference<LevelData>(null);
     }
 
     

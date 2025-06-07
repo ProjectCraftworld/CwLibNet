@@ -23,8 +23,8 @@ namespace CwLibNet.Structs.Profile
             Serializer.Serialize(ref title);
             Serializer.Serialize(ref heartedOnly);
             Serializer.Serialize(ref customID);
-            Serializer.Serialize(ref currentSortMode);
-            Serializer.Serialize(ref desiredSortMode);
+            currentSortMode = serializer.Enum32(currentSortMode);
+            desiredSortMode = serializer.Enum32(desiredSortMode);
         }   
 
         public int GetAllocatedSize() 

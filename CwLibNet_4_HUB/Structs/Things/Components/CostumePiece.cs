@@ -33,7 +33,7 @@ public class CostumePiece: ISerializable
         var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
         var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 
-        Serializer.Serialize(ref Mesh, Mesh, ResourceType.Mesh);
+        Serializer.Serialize(ref Mesh, ResourceType.Mesh, true, true, false);
         Serializer.Serialize(ref CategoriesUsed);
 
         if (subVersion < 0x105)
@@ -59,7 +59,7 @@ public class CostumePiece: ISerializable
         Serializer.Serialize(ref Primitives);
 
         if (version >= 0x19a)
-            Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true);
+            Serializer.Serialize(ref Plan, ResourceType.Plan, true, true, true);
     }
 
     

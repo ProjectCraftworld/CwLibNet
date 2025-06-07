@@ -44,7 +44,7 @@ public class ChunkFile: ISerializable
                         descriptor = new ResourceDescriptor(ChunkHash,
                             ResourceType.StreamingChunk);
                 }
-                Serializer.Serialize(ref descriptor, descriptor, ResourceType.StreamingChunk, true);
+                Serializer.Serialize(ref descriptor, ResourceType.StreamingChunk, true, true, true);
                 if (!Serializer.IsWriting())
                 {
                     if (descriptor != null && descriptor.IsHash())
@@ -96,7 +96,7 @@ public class ChunkFile: ISerializable
                 for (var i = 0; i < numItems; ++i)
                 {
                     ResourceDescriptor? tempResource = null;
-                    Serializer.Serialize(ref tempResource);
+                    Serializer.Serialize(ref tempResource, ResourceType.FileOfBytes, true, true, false);
                     UserResources.Add(tempResource);
                 }
             }

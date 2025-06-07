@@ -27,13 +27,13 @@ public class DecorationInfo: ISerializable
         Serializer.Serialize(ref Angle);
         Serializer.Serialize(ref LastDecoration);
         LastDecoratedThing = Serializer.SerializeReference(LastDecoratedThing);
-        Serializer.Serialize(ref Decoration, Decoration, ResourceType.Mesh);
+        Serializer.Serialize(ref Decoration, ResourceType.Mesh, false, true, false);
         Serializer.Serialize(ref Scale);
         Serializer.Serialize(ref Reversed);
         if (version > 0x147)
             Serializer.Serialize(ref Stamping);
         if (version > 0x177)
-            Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true);
+            Serializer.Serialize(ref Plan, ResourceType.Plan, true, true, false);
     }
 
     public int GetAllocatedSize()

@@ -36,11 +36,11 @@ public class PRenderMesh: ISerializable
     {
         var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 
-        Serializer.Serialize(ref Mesh, Mesh, ResourceType.Mesh);
+        Serializer.Serialize(ref Mesh, ResourceType.Mesh, false, true, false);
 
         Serializer.Serialize(ref BoneThings);
         
-        Serializer.Serialize(ref Anim, Anim, ResourceType.Animation);
+        Serializer.Serialize(ref Anim, ResourceType.Animation, false, true, false);
         Serializer.Serialize(ref AnimPos);
         Serializer.Serialize(ref AnimSpeed);
         Serializer.Serialize(ref AnimLoop);

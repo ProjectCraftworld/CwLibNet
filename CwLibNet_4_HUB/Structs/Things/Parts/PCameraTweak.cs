@@ -153,7 +153,7 @@ public class PCameraTweak: ISerializable
         }
         else
         {
-            CameraType = version < 0x1d7 ? Serializer.Serialize(ref CameraType) : Serializer.Serialize(ref CameraType);
+            CameraType = Serializer.GetCurrentSerializer().I32(CameraType);
         }
 
 

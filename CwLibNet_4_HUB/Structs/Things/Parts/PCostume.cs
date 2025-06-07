@@ -53,11 +53,11 @@ public class PCostume: ISerializable
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
-        Serializer.Serialize(ref Mesh, Mesh, ResourceType.Mesh);
-        Serializer.Serialize(ref Material, Material, ResourceType.GfxMaterial);
+        Serializer.Serialize(ref Mesh, ResourceType.Mesh, false, true, false);
+        Serializer.Serialize(ref Material, ResourceType.GfxMaterial, false, true, false);
 
         if (version >= 0x19a)
-            Serializer.Serialize(ref MaterialPlan, ResourceType.Plan);
+            Serializer.Serialize(ref MaterialPlan, ResourceType.Plan, false, true, false);
 
         if (Serializer.IsWriting())
         {

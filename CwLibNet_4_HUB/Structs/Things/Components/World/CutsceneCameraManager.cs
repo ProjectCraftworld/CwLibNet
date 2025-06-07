@@ -1,6 +1,7 @@
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Things;
+using CwLibNet.Types.Data;
 using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Components.World;
 
@@ -34,16 +35,16 @@ public class CutsceneCameraManager: ISerializable
             case > 0x2ef and < 0x36e:
                 Serializer.Serialize(ref temp_bool_false);
                 ResourceDescriptor? tempNull1 = null;
-                Serializer.Serialize(ref tempNull1);
+                Serializer.Serialize(ref tempNull1, ResourceType.Texture, true, true, false);
                 Serializer.Serialize(ref temp_int);
                 ResourceDescriptor? tempNull2 = null;
-                Serializer.Serialize(ref tempNull2);
+                Serializer.Serialize(ref tempNull2, ResourceType.Texture, true, true, false);
                 Serializer.Serialize(ref temp_bool_false);
                 ResourceDescriptor? tempNull3 = null;
-                Serializer.Serialize(ref tempNull3);
+                Serializer.Serialize(ref tempNull3, ResourceType.Texture, true, true, false);
                 Serializer.Serialize(ref temp_int);
                 ResourceDescriptor? tempNull4 = null;
-                Serializer.Serialize(ref tempNull4);
+                Serializer.Serialize(ref tempNull4, ResourceType.Texture, true, true, false);
                 break;
             case >= 0x3a0:
                 Serializer.Serialize(ref CurrentCameraTweaking);

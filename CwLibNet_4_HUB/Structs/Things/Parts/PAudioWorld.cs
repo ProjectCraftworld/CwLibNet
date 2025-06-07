@@ -81,7 +81,7 @@ public class PAudioWorld: ISerializable
                 if (triggerByDestroy) PlayMode = PlayMode.TRIGGER_BY_DESTROY;
             }
         }
-        else Serializer.Serialize(ref PlayMode);
+        else PlayMode = serializer.Enum32(PlayMode);
 
         Serializer.Serialize(ref ParamAffectVol);
         Serializer.Serialize(ref ParamAffectPitch);

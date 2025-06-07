@@ -55,12 +55,12 @@ public class FieldLayoutDetails: ISerializable
             Modifiers = ModifierBody.fromValue(flags);
         }
 
-        Serializer.Serialize(ref MachineType);
+        MachineType = serializer.Enum32(MachineType);
         if (version >= 0x145)
-            Serializer.Serialize(ref FishType);
+            FishType = serializer.Enum32(FishType);
 
         Serializer.Serialize(ref DimensionCount);
-        Serializer.Serialize(ref ArrayBaseMachineType);
+        ArrayBaseMachineType = serializer.Enum32(ArrayBaseMachineType);
 
         Serializer.Serialize(ref InstanceOffset);
     }

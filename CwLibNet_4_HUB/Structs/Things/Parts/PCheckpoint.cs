@@ -87,7 +87,7 @@ public class PCheckpoint: ISerializable
 
         if (version < 0x1f3)
         {
-            Serializer.Reference<Thing>(null);
+            serializer.Reference<Thing>(null);
             Serializer.Serialize(ref temp_int);
         }
 
@@ -101,7 +101,7 @@ public class PCheckpoint: ISerializable
 
         if (version >= 0x1f3)
         {
-            SpawningList = Serializer.Thingarray(SpawningList);
+            SpawningList = serializer.Thingarray(SpawningList);
             Serializer.Serialize(ref SpawningDelay);
         }
 
@@ -126,7 +126,7 @@ public class PCheckpoint: ISerializable
                         descriptor = new ResourceDescriptor((uint)CreatureToChangeBackTo,
                             ResourceType.Plan);
                 }
-                Serializer.Serialize(ref descriptor, descriptor, ResourceType.Plan);
+                Serializer.Serialize(ref descriptor, ResourceType.Plan, false, true, false);
                 if (!Serializer.IsWriting())
                 {
                     if (descriptor != null && descriptor.IsGUID())

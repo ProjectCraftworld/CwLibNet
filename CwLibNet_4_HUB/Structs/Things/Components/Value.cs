@@ -28,7 +28,7 @@ public class Value: ISerializable
     public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Fluff);
-        Serializer.Serialize(ref Icon, Icon, ResourceType.Texture);
+        Serializer.Serialize(ref Icon, ResourceType.Texture, true, true, false);
         Serializer.Serialize(ref Type);
         Serializer.Serialize(ref SubType);
         Serializer.Serialize(ref LinkTo);

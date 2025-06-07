@@ -25,16 +25,16 @@ public class PoppetMaterialOverride: ISerializable
         var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 
         if (version >= 0x2ed)
-            Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true);
+            Serializer.Serialize(ref Plan, ResourceType.Plan, true, true, false);
 
-        Serializer.Serialize(ref GfxMaterial, GfxMaterial, ResourceType.GfxMaterial);
-        Serializer.Serialize(ref Bevel, Bevel, ResourceType.Bevel);
-        Serializer.Serialize(ref PhysicsMaterial, ResourceType.Material);
+        Serializer.Serialize(ref GfxMaterial, ResourceType.GfxMaterial, false, true, false);
+        Serializer.Serialize(ref Bevel, ResourceType.Bevel, false, true, false);
+        Serializer.Serialize(ref PhysicsMaterial, ResourceType.Material, false, true, false);
         Serializer.Serialize(ref SoundEnum);
         Serializer.Serialize(ref BevelSize);
 
         if (version < 0x2ed)
-            Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true);
+            Serializer.Serialize(ref Plan, ResourceType.Plan, true, true, false);
 
         if (Serializer.GetCurrentSerializer().GetRevision().GetSubVersion() > 0x62)
             Serializer.Serialize(ref HeadDucking);

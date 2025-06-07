@@ -30,7 +30,7 @@ public class StickerInfo: ISerializable
 
         Serializer.Serialize(ref Up);
         Serializer.Serialize(ref Across);
-        Serializer.Serialize(ref Texture, Texture, ResourceType.Texture);
+        Serializer.Serialize(ref Texture, ResourceType.Texture, false, true, false);
         Serializer.Serialize(ref Height);
         Serializer.Serialize(ref Width);
         Serializer.Serialize(ref Angle);
@@ -39,7 +39,7 @@ public class StickerInfo: ISerializable
         Serializer.Serialize(ref Offset);
         Serializer.Serialize(ref Stamping);
         if (version > 0x15f)
-            Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true);
+            Serializer.Serialize(ref Plan, ResourceType.Plan, true, true, false);
         if (version > 0x24b)
             Serializer.Serialize(ref EyetoyData);
     }

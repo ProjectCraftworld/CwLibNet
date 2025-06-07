@@ -143,12 +143,12 @@ public class Slot : ISerializable
 
         Serializer.Serialize(ref Id);
 
-        Serializer.Serialize(ref Root, Root, ResourceType.Level, true);
+        Serializer.Serialize(ref Root, ResourceType.Level, true, true, true);
         if (subVersion >= (int)Revisions.ADVENTURE)
-            Serializer.Serialize(ref Adventure, Adventure, ResourceType.Level, true);
-        Serializer.Serialize(ref Icon, Icon, ResourceType.Texture, true);
+            Serializer.Serialize(ref Adventure, ResourceType.Level, true, true, true);
+        Serializer.Serialize(ref Icon, ResourceType.Texture, true, true, true);
 
-        Location = (Vector4)Serializer.Serialize(ref Location);
+        Serializer.Serialize(ref Location);
 
         Serializer.Serialize(ref AuthorId);
         if (version >= 0x13b)
@@ -169,13 +169,13 @@ public class Slot : ISerializable
         if (version > 0x237)
         {
             Serializer.Serialize(ref Shareable);
-            BackgroundGuid = (GUID) Serializer.Serialize(ref BackgroundGuid);
+            Serializer.Serialize(ref BackgroundGuid);
         }
 
         switch (version)
         {
             case >= 0x333:
-                Serializer.Serialize(ref PlanetDecorations, PlanetDecorations, ResourceType.Plan, true);
+                Serializer.Serialize(ref PlanetDecorations, ResourceType.Plan, true, true, true);
                 break;
             case < 0x188:
                 Serializer.Serialize(ref temp_int); // Unknown
@@ -183,7 +183,7 @@ public class Slot : ISerializable
         }
 
         if (version > 0x1de)
-            Serializer.Serialize(ref DeveloperLevelType);
+            DeveloperLevelType = serializer.Enum32(DeveloperLevelType);
         else
             Serializer.Serialize(ref temp_bool_false); // SideMission
 
@@ -193,7 +193,7 @@ public class Slot : ISerializable
                 Serializer.Serialize(ref temp_int); // Unknown
                 break;
             case > 0x1b8 and < 0x36c:
-                Serializer.Serialize(ref GameProgressionStatus);
+                GameProgressionStatus = serializer.Enum32(GameProgressionStatus);
                 break;
         }
 
@@ -270,7 +270,7 @@ public class Slot : ISerializable
                 Serializer.Serialize(ref SizeOfResources);
                 Serializer.Serialize(ref SizeOfSubLevels);
                 Serializer.Serialize(ref SubLevels);
-                Serializer.Serialize(ref SlotList, SlotList, ResourceType.SlotList, true);
+                Serializer.Serialize(ref SlotList, ResourceType.SlotList, true, true, true);
             }
 
             if (revision.Has(Branch.Double11, (int)Revisions.D1_SLOT_REVISION))

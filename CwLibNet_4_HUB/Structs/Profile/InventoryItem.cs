@@ -71,11 +71,11 @@ public class InventoryItem: ISerializable
     
     public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true);
+        Serializer.Serialize(ref Plan, ResourceType.Plan, true, false, false);
         if (Plan != null)
-            Serializer.GetCurrentSerializer().AddDependency(Plan);
+            serializer.AddDependency(Plan);
 
-        if (Serializer.GetCurrentSerializer().GetRevision().GetSubVersion() >= (int)Revisions.ITEM_GUID)
+        if (serializer.GetRevision().GetSubVersion() >= (int)Revisions.ITEM_GUID)
             Serializer.Serialize(ref Guid);
 
         Serializer.Serialize(ref Details);

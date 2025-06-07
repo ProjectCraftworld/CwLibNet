@@ -57,7 +57,7 @@ public class PEnemy: ISerializable
         var version = revision.GetVersion();
 
         if (version >= 0x15d)
-            Serializer.Serialize(ref PartType);
+            serializer.Enum32(ref PartType);
 
         if (version is > 0x15c and < 0x19f)
             Serializer.SerializeReference(null);

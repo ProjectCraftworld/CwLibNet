@@ -24,7 +24,7 @@ public class EmittedObjectSource: ISerializable
     public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Things);
-        Serializer.Serialize(ref Plan, Plan, ResourceType.Plan);
+        Serializer.Serialize(ref Plan, ResourceType.Plan, false, true, false);
 
         if (Serializer.GetCurrentSerializer().GetRevision().GetSubVersion() <= 0xcc) return;
         Serializer.Serialize(ref F0);

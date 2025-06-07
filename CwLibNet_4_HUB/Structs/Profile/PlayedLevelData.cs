@@ -60,9 +60,9 @@ namespace CwLibNet.Structs.Profile
 
             if (version < 0x269) 
             {
-                PlayCount = (short)Serializer.Serialize(ref PlayCount);
-                CompletionCount = (short)Serializer.Serialize(ref CompletionCount);
-                AcedCount = (short)Serializer.Serialize(ref AcedCount);
+                Serializer.Serialize(ref PlayCount);
+                Serializer.Serialize(ref CompletionCount);
+                Serializer.Serialize(ref AcedCount);
             }
             else 
             {

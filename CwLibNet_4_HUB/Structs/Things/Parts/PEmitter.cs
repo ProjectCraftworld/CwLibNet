@@ -149,7 +149,7 @@ public class PEmitter: ISerializable
         if (version < 0x160)
             Serializer.Serialize(ref Thing);
         else
-            Serializer.Serialize(ref Plan, Plan, ResourceType.Plan);
+            Serializer.Serialize(ref Plan, ResourceType.Plan, false, true, false);
 
         Serializer.Serialize(ref MaxEmitted);
         switch (version)
