@@ -2,7 +2,10 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Structs.Inventory;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Profile;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Components;
 
@@ -16,9 +19,13 @@ public class EggLink: ISerializable
     public ResourceDescriptor? Plan;
     public bool Shareable = true;
     public ResourceDescriptor? Painting;
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 
 
         // The game technically removes this field at 0x197,
@@ -34,7 +41,7 @@ public class EggLink: ISerializable
                 Serializer.Serialize(ref Details);
                 break;
             case > 0x207 and < 0x22a:
-                Serializer.Serialize(ref false); // Unknown value
+                Serializer.Serialize(ref temp_bool_false); // Unknown value
                 break;
             case > 0x23b:
                 Serializer.Serialize(ref Shareable);

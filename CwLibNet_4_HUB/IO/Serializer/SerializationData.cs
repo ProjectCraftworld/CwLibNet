@@ -2,7 +2,9 @@
 using CwLibNet.Structs.StaticMesh;
 using CwLibNet.Structs.Texture;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO;
+using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet.IO.Serializer;
 
 namespace CwLibNet.IO.Serializer;
 
@@ -92,7 +94,7 @@ public class SerializationData
         Serializer serializer = new(info.GetAllocatedSize(), revision,
             CwLibNet.Enums.CompressionFlags.USE_NO_COMPRESSION);
         Serializer.Serialize(ref info);
-        Dependencies = Serializer.GetDependencies();
+        Dependencies = Serializer.GetCurrentSerializer().GetDependencies();
 
         TextureInfo = null;
         StaticMeshInfo = info;

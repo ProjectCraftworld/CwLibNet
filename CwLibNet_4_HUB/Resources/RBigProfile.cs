@@ -1,6 +1,10 @@
+using CwLibNet.IO;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Profile;
+using CwLibNet.Structs.Slot;
 using CwLibNet.Types.Data;
-
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.Enums;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Resources 
 {
     public class RBigProfile : Resource 
@@ -26,11 +30,11 @@ namespace CwLibNet.Resources
         public ResourceDescriptor? PlanetDecorations;
 
 
-        public override void Serialize() 
+        public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer) 
         {
             Serializer.Serialize(ref Inventory);
 
-            var revision = Serializer.GetRevision();
+            var revision = Serializer.GetCurrentSerializer().GetRevision();
             var version = revision.GetVersion();
 
             if (version >= 0x3ea) 
@@ -39,18 +43,22 @@ namespace CwLibNet.Resources
                 {
                     if (VitaCrossDependencyHashes != null) 
                     {
-                        var stream = Serializer.GetOutput();
+                        var stream = Serializer.GetCurrentSerializer().GetOutput();
                         stream.I32(VitaCrossDependencyHashes.Count);
                         foreach (var hash in VitaCrossDependencyHashes) 
                         {
                             stream.Sha1(hash);
                         }
                     }
-                    else Serializer.Serialize(ref 0);
+                    else 
+                    {
+                        var zero = 0;
+                        Serializer.Serialize(ref zero);
+                    }
                 }
                 else 
                 {
-                    var stream = Serializer.GetInput();
+                    var stream = Serializer.GetCurrentSerializer().GetInput();
                     var size = stream.I32();
                     VitaCrossDependencyHashes = new List<Sha1>(size);
                     for (var i = 0; i < size; i++)
@@ -75,23 +83,27 @@ namespace CwLibNet.Resources
             if (Serializer.IsWriting())
             {
                 var keys = MyMoonSlots.Keys.ToHashSet();
-                Serializer.GetOutput().I32(keys.Count);
+                Serializer.GetCurrentSerializer().GetOutput().I32(keys.Count);
                 foreach (var key in keys) 
                 {
-                    Serializer.Serialize(ref key);
-                    Serializer.Serialize(ref MyMoonSlots[key]);
+                    var tempKey = key;
+                    var tempValue = MyMoonSlots[key];
+                    Serializer.Serialize(ref tempKey);
+                    Serializer.Serialize(ref tempValue);
+                    MyMoonSlots[tempKey] = tempValue; // Update the dictionary after serialization
                 }
             }
             else 
             {
-                var count = Serializer.GetInput().I32();
+                var count = Serializer.GetCurrentSerializer().GetInput().I32();
                 MyMoonSlots = new Dictionary<SlotID, Slot>(count);
                 for (var i = 0; i < count; i++)
                 {
-                    MyMoonSlots.Add(
-                        Serializer.Serialize(ref new SlotID()),
-                        Serializer.Serialize(ref new Slot())
-                    );
+                    var slotId = new SlotID();
+                    var slot = new Slot();
+                    Serializer.Serialize(ref slotId);
+                    Serializer.Serialize(ref slot);
+                    MyMoonSlots.Add(slotId, slot);
                 }
             }
 
@@ -117,9 +129,9 @@ namespace CwLibNet.Resources
                 }
                 if (revision.Has(Branch.Double11, (int)Revisions.D1_PLANET_DECORATIONS))
                 {
-                    Serializer.Serialize(ref PlanetDecorations, PlanetDecorations, ResourceType.Level, true);
+                    Serializer.Serialize(ref PlanetDecorations, ResourceType.Level, true, false, false);
                     if (PlanetDecorations != null)
-                        Serializer.AddDependency(PlanetDecorations);
+                        Serializer.GetCurrentSerializer().AddDependency(PlanetDecorations);
                 }
             }
         }
@@ -160,14 +172,14 @@ namespace CwLibNet.Resources
         public override SerializationData Build(Revision revision, byte compressionFlags)
         {
             var serializer = new Serializer(GetAllocatedSize(), revision, compressionFlags);
-            Serializer.Serialize(ref this);
+            Serialize(serializer);
             return new SerializationData(
-                Serializer.GetOutput().GetBuffer(),
+                Serializer.GetCurrentSerializer().GetOutput().GetBuffer(),
                 revision,
                 compressionFlags,
                 ResourceType.BigProfile,
                 SerializationType.BINARY,
-                Serializer.GetDependencies()
+                Serializer.GetCurrentSerializer().GetDependencies()
             );
         }
     }

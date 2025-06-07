@@ -2,7 +2,9 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -62,10 +64,10 @@ public class PSpriteLight: ISerializable
     public Vector3? BeamDir;
     public Vector3? Azimuth;
 
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
-        var subVersion = Serializer.GetRevision().GetSubVersion();
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
+        var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 
         Serializer.Serialize(ref Color);
         if (version >= 0x2fd)
@@ -77,9 +79,9 @@ public class PSpriteLight: ISerializable
         Serializer.Serialize(ref GlowRadius);
         Serializer.Serialize(ref FarDist);
         Serializer.Serialize(ref SourceSize);
-        falloffTexture = Serializer.Serialize(ref falloffTexture, ResourceType.Texture);
+        Serializer.Serialize(ref falloffTexture, ResourceType.Texture);
 
-        LookAt = Serializer.Reference(LookAt);
+        LookAt = Serializer.SerializeReference(LookAt);
         Serializer.Serialize(ref Spotlight);
 
         if (version < 0x337)
@@ -126,8 +128,8 @@ public class PSpriteLight: ISerializable
         Serializer.Serialize(ref MovementInput);
         Serializer.Serialize(ref MovementInput);
 
-        BeamDir = Serializer.Serialize(ref BeamDir);
-        Azimuth = Serializer.Serialize(ref Azimuth);
+        Serializer.Serialize(ref BeamDir);
+        Serializer.Serialize(ref Azimuth);
     }
 
     public int GetAllocatedSize()

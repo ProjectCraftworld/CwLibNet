@@ -4,9 +4,14 @@
         <TargetFramework>netstandard2.1</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <LangVersion>latest</LangVersion>
+        <LangVersion>12.0</LangVersion>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <OutputType>Library</OutputType>
+        <AssemblyName>CwLibNet</AssemblyName>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+        <UseReferenceAssemblies>false</UseReferenceAssemblies>
     </PropertyGroup>
 
     <ItemGroup>

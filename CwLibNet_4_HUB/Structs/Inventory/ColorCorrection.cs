@@ -1,5 +1,6 @@
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Inventory;
 
 public class ColorCorrection: ISerializable
@@ -13,7 +14,7 @@ public class ColorCorrection: ISerializable
     public float TintHue, TintAmount;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Saturation);
         Serializer.Serialize(ref HueShift);

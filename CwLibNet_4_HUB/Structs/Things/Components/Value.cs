@@ -2,7 +2,9 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Structs.Slot;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Components;
 
@@ -23,7 +25,7 @@ public class Value: ISerializable
     public byte Color, Size;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Fluff);
         Serializer.Serialize(ref Icon, Icon, ResourceType.Texture);

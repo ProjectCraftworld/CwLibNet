@@ -3,7 +3,9 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Structs.Inventory;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Components.Popit;
 
@@ -22,9 +24,9 @@ public class StickerInfo: ISerializable
     public ResourceDescriptor? Plan;
 
     public EyetoyData EyetoyData = new();
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 
         Serializer.Serialize(ref Up);
         Serializer.Serialize(ref Across);

@@ -1,5 +1,7 @@
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Slot;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Slot;
 
 public class Label : ISerializable
@@ -17,7 +19,7 @@ public class Label : ISerializable
         Order = order;
     }
 
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Key);
         Serializer.Serialize(ref Order);

@@ -1,6 +1,8 @@
 using System.Numerics;
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Components.Popit;
 
 public class PoppetShapeOverride: ISerializable
@@ -14,13 +16,13 @@ public class PoppetShapeOverride: ISerializable
     public float Scale, Angle;
 
     public Matrix4x4? WorldMatrix;
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        if (!Serializer.IsWriting()) Polygon = new Vector3?[Serializer.GetInput().I32()];
+        if (!Serializer.IsWriting()) Polygon = new Vector3?[Serializer.GetCurrentSerializer().GetInput().I32()];
         else
         {
             Polygon ??= [];
-            Serializer.GetOutput().I32(Polygon.Length);
+            Serializer.GetCurrentSerializer().GetOutput().I32(Polygon.Length);
         }
         for (var i = 0; i < Polygon.Length; ++i)
             Serializer.Serialize(ref Polygon[i]);
@@ -29,7 +31,7 @@ public class PoppetShapeOverride: ISerializable
         Serializer.Serialize(ref Front);
         Serializer.Serialize(ref Scale);
         Serializer.Serialize(ref Angle);
-        if (Serializer.GetRevision().GetVersion() > 0x317)
+        if (Serializer.GetCurrentSerializer().GetRevision().GetVersion() > 0x317)
             Serializer.Serialize(ref WorldMatrix);
     }
 

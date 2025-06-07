@@ -2,7 +2,8 @@ using CwLibNet.Enums;
 using CwLibNet.EX;
 using CwLibNet.IO.Streams;
 using CwLibNet.Util;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Types.Archives;
 

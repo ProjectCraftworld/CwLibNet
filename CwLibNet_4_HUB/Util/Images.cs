@@ -4,8 +4,10 @@ using CwLibNet.Extensions;
 using CwLibNet.External;
 using CwLibNet.Structs.Texture;
 using CwLibNet.Types;
+using CwLibNet.IO;
 using SkiaSharp;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet.IO.Serializer;
 
 namespace CwLibNet.Util;
 

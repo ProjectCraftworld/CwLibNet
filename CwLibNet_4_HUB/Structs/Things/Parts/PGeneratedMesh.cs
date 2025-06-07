@@ -2,7 +2,9 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -93,9 +95,9 @@ public class PGeneratedMesh : ISerializable
         Bevel = bevel;
     }
 
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
@@ -103,16 +105,16 @@ public class PGeneratedMesh : ISerializable
         Serializer.Serialize(ref Bevel, Bevel, ResourceType.Bevel);
         Serializer.Serialize(ref UvOffset);
         if (version >= 0x258)
-            PlanGuid = Serializer.Serialize(ref PlanGuid);
+            Serializer.Serialize(ref PlanGuid);
 
         if (version >= 0x27c && subVersion < 0xfb)
         {
             if (Serializer.IsWriting())
-                Serializer.GetOutput().Boole((VisibilityFlags & (byte)Enums.VisibilityFlags.PLAY_MODE) != 0);
+                Serializer.GetCurrentSerializer().GetOutput().Boole((VisibilityFlags & (byte)Enums.VisibilityFlags.PLAY_MODE) != 0);
             else
             {
                 VisibilityFlags = (byte)Enums.VisibilityFlags.EDIT_MODE;
-                if (Serializer.GetInput().Boole())
+                if (Serializer.GetCurrentSerializer().GetInput().Boole())
                     VisibilityFlags |= (byte)Enums.VisibilityFlags.PLAY_MODE;
             }
         }

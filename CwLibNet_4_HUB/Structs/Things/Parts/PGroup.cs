@@ -1,7 +1,9 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -31,18 +33,18 @@ public class PGroup: ISerializable
     public bool MainSelectableObject;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
         var isWriting = Serializer.IsWriting();
 
         if (version is >= 0x18e and <= 0x1b0)
-            Things = Serializer.Serialize(ref Things, true);
+            Serializer.Serialize(ref Things, true);
 
         if (version is >= 0x18e and < 0x341)
         {
-            if (isWriting) Serializer.GetOutput().Boole((Flags & GroupFlags.COPYRIGHT) != 0);
-            else if (Serializer.GetInput().Boole())
+            if (isWriting) Serializer.GetCurrentSerializer().GetOutput().Boole((Flags & GroupFlags.COPYRIGHT) != 0);
+            else if (Serializer.GetCurrentSerializer().GetInput().Boole())
                 Flags |= GroupFlags.COPYRIGHT;
         }
 
@@ -50,12 +52,12 @@ public class PGroup: ISerializable
             Serializer.Serialize(ref Creator);
 
         if (version is >= 0x25e or 0x252)
-            PlanDescriptor = Serializer.Serialize(ref PlanDescriptor, ResourceType.Plan);
+            Serializer.Serialize(ref PlanDescriptor, ResourceType.Plan);
 
         if (version is >= 0x25e and < 0x341)
         {
-            if (isWriting) Serializer.GetOutput().Boole((Flags & GroupFlags.EDITABLE) != 0);
-            else if (Serializer.GetInput().Boole())
+            if (isWriting) Serializer.GetCurrentSerializer().GetOutput().Boole((Flags & GroupFlags.EDITABLE) != 0);
+            else if (Serializer.GetCurrentSerializer().GetInput().Boole())
                 Flags |= GroupFlags.EDITABLE;
         }
 
@@ -69,8 +71,8 @@ public class PGroup: ISerializable
         if (version is >= 0x26e and < 0x341)
         {
             if (isWriting)
-                Serializer.GetOutput().Boole((Flags & GroupFlags.PICKUP_ALL_MEMBERS) != 0);
-            else if (Serializer.GetInput().Boole())
+                Serializer.GetCurrentSerializer().GetOutput().Boole((Flags & GroupFlags.PICKUP_ALL_MEMBERS) != 0);
+            else if (Serializer.GetCurrentSerializer().GetInput().Boole())
                 Flags |= GroupFlags.PICKUP_ALL_MEMBERS;
         }
 

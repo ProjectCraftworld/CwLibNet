@@ -2,7 +2,9 @@ using CwLibNet.IO;
 using CwLibNet.Structs.Inventory;
 using CwLibNet.Structs.Things.Components.Decals;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -40,23 +42,23 @@ public class PStickers: ISerializable
     }
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 
-        decals = Serializer.Serialize(ref decals);
+        Serializer.Serialize(ref decals);
 
         if (!Serializer.IsWriting())
-            costumeDecals = new Decal[Serializer.GetInput().I32()][];
-        else Serializer.GetOutput().I32(costumeDecals.Length);
+            costumeDecals = new Decal[Serializer.GetCurrentSerializer().GetInput().I32()][];
+        else Serializer.GetCurrentSerializer().GetOutput().I32(costumeDecals.Length);
         for (var i = 0; i < costumeDecals.Length; ++i)
             costumeDecals[i] = Serializer.Serialize(ref costumeDecals[i]);
 
         if (version is >= 0x158 and <= 0x3ba)
-            paintControl = Serializer.Serialize(ref paintControl);
+            Serializer.Serialize(ref paintControl);
 
         if (version >= 0x15d)
-            eyetoyData = Serializer.Serialize(ref eyetoyData);
+            Serializer.Serialize(ref eyetoyData);
     }
 
     

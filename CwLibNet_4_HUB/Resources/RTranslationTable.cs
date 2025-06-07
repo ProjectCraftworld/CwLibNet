@@ -4,7 +4,8 @@ using CwLibNet.IO;
 using CwLibNet.IO.Streams;
 using CwLibNet.Types.Data;
 using CwLibNet.Util;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet.IO.Serializer;
 
 namespace CwLibNet.Resources;
 
@@ -120,7 +121,7 @@ public class RTranslationTable : Resource
         throw new NotImplementedException();
     }
 
-    public override void Serialize()
+    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         throw new NotImplementedException();
     }

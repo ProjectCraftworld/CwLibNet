@@ -1,5 +1,7 @@
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Types.Data;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Profile
 {
     public class StringLookupTable : ISerializable, IEnumerable<SortString>
@@ -11,7 +13,7 @@ namespace CwLibNet.Structs.Profile
         public int[]? RawIndexToSortedIndex;
         public List<SortString> StringList = [];
 
-        public void Serialize()
+        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
         {
             if (Serializer.IsWriting())
             {

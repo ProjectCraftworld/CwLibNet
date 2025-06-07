@@ -1,5 +1,7 @@
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Profile;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Profile
 {
     public class Treasure : ISerializable
@@ -10,7 +12,7 @@ namespace CwLibNet.Structs.Profile
         public int planID;
         public int timestamp;
 
-        public void Serialize() 
+        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer) 
         {
             Serializer.Serialize(ref treasureID);
             Serializer.Serialize(ref planID);

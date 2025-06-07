@@ -1,7 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Level;
 
@@ -15,20 +16,21 @@ public class AdventureItem: ISerializable
     public int IconPuid;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var subVersion = Serializer.GetRevision().GetSubVersion();
+        var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 
         Serializer.Serialize(ref Puid);
-        Serializer.Serialize(ref Descriptor, Descriptor, ResourceType.Plan, true);
+        Serializer.Serialize(ref Descriptor, ResourceType.Plan, true, false, false);
 
         switch (subVersion)
         {
             case < 0xae:
-                Serializer.Serialize(ref 0);
-                Serializer.Serialize(ref 0);
-                Serializer.Serialize(ref 0);
-                Serializer.Serialize(ref 0);
+                int temp1 = 0, temp2 = 0, temp3 = 0, temp4 = 0;
+                Serializer.Serialize(ref temp1);
+                Serializer.Serialize(ref temp2);
+                Serializer.Serialize(ref temp3);
+                Serializer.Serialize(ref temp4);
                 break;
             case > 0xbe:
                 Serializer.Serialize(ref Flags);

@@ -1,7 +1,9 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Slot;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Slot;
 
@@ -12,9 +14,9 @@ public class Collectabubble : ISerializable
     public ResourceDescriptor? Plan;
     public int Count;
 
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true);
+        Serializer.Serialize(ref Plan, ResourceType.Plan, true, false, false);
         Serializer.Serialize(ref Count);
     }
 

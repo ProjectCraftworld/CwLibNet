@@ -7,7 +7,9 @@ using CwLibNet.Singleton;
 using CwLibNet.Structs.Font;
 using CwLibNet.Structs.Things;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.IO.Serializer;
 
@@ -1167,7 +1169,7 @@ public class Serializer
         return [.. things];
     }
 
-    public bool IsWriting()
+    public bool GetIsWriting()
     {
         return isWriting;
     }
@@ -1203,23 +1205,10 @@ public class Serializer
 
     public static bool IsWriting()
     {
-        return GetCurrentSerializer().IsWriting();
+        return GetCurrentSerializer().GetIsWriting();
     }
 
-    public static Revision GetRevision()
-    {
-        return GetCurrentSerializer().GetRevision();
-    }
 
-    public static MemoryInputStream GetInput()
-    {
-        return GetCurrentSerializer().GetInput();
-    }
-
-    public static MemoryOutputStream GetOutput()
-    {
-        return GetCurrentSerializer().GetOutput();
-    }
 
     // Static Serialize methods for different types
     public static void Serialize(ref bool value)
@@ -1322,14 +1311,40 @@ public class Serializer
         value = GetCurrentSerializer().Arraylist(value);
     }
 
-    public static void Serialize<T>(ref T value) where T : Enum
+    public static void Serialize<T>(ref T? value) where T : struct, Enum
     {
-        value = GetCurrentSerializer().Enum32(value);
+        if (value.HasValue)
+        {
+            var temp = value.Value;
+            temp = GetCurrentSerializer().Enum32(temp);
+            value = temp;
+        }
+        else
+        {
+            value = GetCurrentSerializer().Enum32(default(T));
+        }
     }
 
-    public static T? Reference<T>(T? value) where T : ISerializable
+    // Static methods for arrays and enums that HUB expects
+    public static void Serialize(ref short[]? value)
     {
-        return GetCurrentSerializer().Reference(value);
+        value = GetCurrentSerializer().Shortarray(value);
+    }
+
+    public static void SerializeEnumArray<T>(ref T[]? value) where T : struct, Enum
+    {
+        if (value == null)
+        {
+            GetCurrentSerializer().I32(0);
+            return;
+        }
+        
+        GetCurrentSerializer().I32(value.Length);
+        for (int i = 0; i < value.Length; i++)
+        {
+            var temp = value[i];
+            value[i] = GetCurrentSerializer().Enum32(temp);
+        }
     }
 
     // Additional static methods for common types
@@ -1374,7 +1389,7 @@ public class Serializer
         
         if (!IsWriting())
         {
-            var length = GetInput().I32();
+            var length = GetCurrentSerializer().GetInput().I32();
             array = new Matrix4x4[length];
             for (int i = 0; i < length; i++)
             {
@@ -1384,7 +1399,7 @@ public class Serializer
         else
         {
             var length = array?.Length ?? 0;
-            GetOutput().I32(length);
+            GetCurrentSerializer().GetOutput().I32(length);
             if (array != null)
             {
                 for (int i = 0; i < length; i++)
@@ -1395,5 +1410,42 @@ public class Serializer
                 }
             }
         }
+    }
+
+    // Static wrapper methods for HUB compatibility with different names
+    public static void LogMessage(string message)
+    {
+        GetCurrentSerializer().Log(message);
+    }
+
+    public static T? SerializeReference<T>(T? value) where T : ISerializable
+    {
+        return GetCurrentSerializer().Reference(value);
+    }
+
+    public static T[]? SerializeArray<T>(T[]? values, bool isReference = false) where T : ISerializable
+    {
+        return GetCurrentSerializer().Array(values, isReference);
+    }
+
+    public static List<T>? SerializeArraylist<T>(List<T>? values, bool isReference = false) where T : ISerializable
+    {
+        return GetCurrentSerializer().Arraylist(values, isReference);
+    }
+
+    public static void SerializeEnum8<T>(ref T value) where T : struct, Enum
+    {
+        T? result = GetCurrentSerializer().Enum8(value);
+        value = result ?? default(T);
+    }
+
+    public static void SerializeEnum32<T>(ref T value) where T : struct, Enum
+    {
+        value = GetCurrentSerializer().Enum32(value);
+    }
+
+    public static void SerializeV4(ref Vector4? value)
+    {
+        value = GetCurrentSerializer().V4(value);
     }
 }

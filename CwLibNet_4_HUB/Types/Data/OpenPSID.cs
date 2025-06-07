@@ -1,5 +1,6 @@
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Types.Data
 {
     public class OpenPSID : ISerializable
@@ -16,7 +17,7 @@ namespace CwLibNet.Types.Data
             this.low = low;
         }
 
-        public void Serialize()
+        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
         {
             Serializer.Serialize(ref high);
             Serializer.Serialize(ref low);

@@ -1,5 +1,6 @@
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Streaming;
 
 public class QuestSwitch: ISerializable
@@ -12,9 +13,9 @@ public class QuestSwitch: ISerializable
     public int ObjectiveId;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var subVersion = Serializer.GetRevision().GetSubVersion();
+        var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 
         if (subVersion > 0x118)
         {

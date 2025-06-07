@@ -2,7 +2,8 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
 using CwLibNet.Structs.Slot;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Profile 
 {
@@ -35,22 +36,26 @@ namespace CwLibNet.Structs.Profile
 
         public short GoldTrophyCount, SilverTrophyCount, BronzeTrophyCount;
 
-        public void Serialize()
+        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
         {
-            var revision = Serializer.GetRevision();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+            var revision = Serializer.GetCurrentSerializer().GetRevision();
             var version = revision.GetVersion();
             var subVersion = revision.GetSubVersion();
 
-            SlotId = Serializer.Serialize(ref SlotId);
+            Serializer.Serialize(ref SlotId);
             if (version > 0x1fd)
-                LastPlayedTimestamp = Serializer.Serialize(ref LastPlayedTimestamp);
+                Serializer.Serialize(ref LastPlayedTimestamp);
             if (version > 0x200)
                 Serializer.Serialize(ref LocalHighScore);
 
             if (version is > 0x268 and < 0x399) 
             {
-                Serializer.Serialize(ref false); // Discovered
-                Serializer.Serialize(ref false); // Unlocked
+                Serializer.Serialize(ref temp_bool_false); // Discovered
+                Serializer.Serialize(ref temp_bool_false); // Unlocked
             }
 
             if (version < 0x269) 

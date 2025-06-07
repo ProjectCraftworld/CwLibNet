@@ -12,6 +12,7 @@
     <ItemGroup>
       <PackageReference Include="DotNetZip.Original" Version="2025.2.15" />
       <PackageReference Include="SkiaSharp" Version="3.116.1" />
+      <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="3.116.1" />
     </ItemGroup>
 
 </Project>

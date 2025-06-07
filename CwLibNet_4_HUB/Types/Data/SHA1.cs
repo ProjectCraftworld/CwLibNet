@@ -1,5 +1,6 @@
 using XSHA1 = System.Security.Cryptography.SHA1;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Types.Data;
 

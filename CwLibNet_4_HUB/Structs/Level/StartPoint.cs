@@ -1,7 +1,8 @@
 using CwLibNet.IO;
 using CwLibNet.Structs.Slot;
 using CwLibNet.Structs.Streaming;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Level;
 
@@ -13,7 +14,7 @@ public class StartPoint: ISerializable
     public List<StreamingID> Ids = [];
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Slot);
         Serializer.Serialize(ref Ids);

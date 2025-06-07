@@ -1,6 +1,10 @@
+using CwLibNet.Structs.Joint;
 using CwLibNet.Types.Data;
+using CwLibNet.IO;
+using CwLibNet.Enums;
 
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet.IO.Serializer;
 namespace CwLibNet.Resources;
 
 public class RJoint: Resource
@@ -21,7 +25,7 @@ public class RJoint: Resource
     public ResourceDescriptor mesh;
 
     
-    public override void Serialize()
+    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref allowExpand);
         Serializer.Serialize(ref allowContract);
@@ -45,14 +49,14 @@ public class RJoint: Resource
 
         Serializer.Serialize(ref breakResistance);
 
-        Serializer.Serialize(ref gfxMaterial, gfxMaterial, ResourceType.GfxMaterial);
+        Serializer.Serialize(ref gfxMaterial, ResourceType.GfxMaterial, true, false, false);
 
         Serializer.Serialize(ref gfxWidth);
 
         Serializer.Serialize(ref eventNameAngle);
         Serializer.Serialize(ref eventNameLength);
 
-        Serializer.Serialize(ref mesh, mesh, ResourceType.Mesh);
+        Serializer.Serialize(ref mesh, ResourceType.Mesh, true, false, false);
     }
 
     
@@ -66,14 +70,15 @@ public class RJoint: Resource
     {
         var serializer = new Serializer(GetAllocatedSize(), revision,
             compressionFlags);
-        Serializer.Serialize(ref this);
+        Serializer.SetCurrentSerializer(serializer);
+        Serialize(serializer);
         return new SerializationData(
-            Serializer.GetBuffer(),
+            Serializer.GetCurrentSerializer().GetBuffer(),
             revision,
             compressionFlags,
             ResourceType.Joint,
             SerializationType.BINARY,
-            Serializer.GetDependencies()
+            Serializer.GetCurrentSerializer().GetDependencies()
         );
     }
 

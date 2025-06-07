@@ -2,7 +2,8 @@ using CwLibNet.IO;
 using CwLibNet.Types.Data;
 using CwLibNet.Enums;
 using CwLibNet.Structs.Slot;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet.IO.Serializer;
 
 namespace CwLibNet.Resources;
 
@@ -45,7 +46,7 @@ public class RQuest : ISerializable
     // items
     //     SlotID
     //     int[]
-    public virtual void Serialize(Serializer serializer)
+    public virtual void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
     }
 
@@ -58,14 +59,15 @@ public class RQuest : ISerializable
     {
         var serializer = new Serializer(GetAllocatedSize(), revision,
             compressionFlags);
-        Serializer.Serialize(ref this);
+        Serializer.SetCurrentSerializer(serializer);
+        Serialize(serializer);
         return new SerializationData(
-            Serializer.GetBuffer(),
+            Serializer.GetCurrentSerializer().GetBuffer(),
             revision,
             compressionFlags,
             ResourceType.Quest,
             SerializationType.BINARY,
-            Serializer.GetDependencies()
+            Serializer.GetCurrentSerializer().GetDependencies()
         );
         
     }

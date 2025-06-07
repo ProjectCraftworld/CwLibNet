@@ -1,5 +1,6 @@
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Mesh;
 
 public class MeshShapeInfo: ISerializable
@@ -10,7 +11,7 @@ public class MeshShapeInfo: ISerializable
     public bool IsPointCloud;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref NumVerts);
         Serializer.Serialize(ref IsPointCloud);

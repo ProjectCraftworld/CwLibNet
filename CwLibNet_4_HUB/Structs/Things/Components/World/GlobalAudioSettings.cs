@@ -1,5 +1,7 @@
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Components.World;
 
 public class GlobalAudioSettings: ISerializable
@@ -17,14 +19,18 @@ public class GlobalAudioSettings: ISerializable
 
     public string? AmbianceTrack;
     
-    public void Serialize() {
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer) {
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
 
-        var version = Serializer.GetRevision().GetVersion();
-        var subVersion = Serializer.GetRevision().GetSubVersion();
+
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
+        var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 
         Serializer.Serialize(ref Reverb);
         if (version < 0x347)
-            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref temp_int);
         Serializer.Serialize(ref MusicVolume);
         Serializer.Serialize(ref SfxVolume);
         Serializer.Serialize(ref BackgroundVolume);

@@ -3,7 +3,8 @@ using CwLibNet.Types.Data;
 using CwLibNet.Enums;
 using System.Numerics;
 using CwLibNet.Structs.Things;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Adventure;
 
@@ -20,19 +21,19 @@ public class PlanetArea : ISerializable
     public Vector3[]? SpritelightPositions;
     public Thing? Area;
 
-    public virtual void Serialize(Serializer serializer)
+    public virtual void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var subVersion = Serializer.GetRevision().GetSubVersion();
+        var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 
         if (subVersion > 0x109) Serializer.Serialize(ref AreaId);
         if (subVersion < 0x108)
         {
-            if (subVersion > 0x109) Area = Serializer.Reference(Area);
+            if (subVersion > 0x109) Area = Serializer.SerializeReference(Area);
         }
         else
         {
-            if (subVersion > 0x186) MainAreaDescriptor = Serializer.Serialize(ref MainAreaDescriptor, ResourceType.Plan);
-            if (subVersion > 0x18b) ShadowAreaDescriptor = Serializer.Serialize(ref ShadowAreaDescriptor, ResourceType.Plan);
+            if (subVersion > 0x186) Serializer.Serialize(ref MainAreaDescriptor, ResourceType.Plan);
+            if (subVersion > 0x18b) Serializer.Serialize(ref ShadowAreaDescriptor, ResourceType.Plan);
         }
 
         if (subVersion > 0x178)
@@ -43,15 +44,19 @@ public class PlanetArea : ISerializable
 
         if (subVersion > 0x189)
         {
-            Spritelights = Serializer.Serialize(ref Spritelights);  
+            Serializer.Serialize(ref Spritelights);  
 
-            var numPositions = Serializer.Serialize(ref SpritelightPositions?.Length ?? 0); 
+            var numPositions = SpritelightPositions?.Length ?? 0;
+            Serializer.Serialize(ref numPositions); 
             if (!Serializer.IsWriting()) SpritelightPositions = new Vector3[numPositions];
             for (var i = 0; i < numPositions; ++i)
             {
-                Serializer.Serialize(ref SpritelightPositions[i]);
+                Vector3? pos = SpritelightPositions?[i];
+                Serializer.Serialize(ref pos);
+                if (SpritelightPositions != null && pos.HasValue) 
+                    SpritelightPositions[i] = pos.Value;
             }
-            Area = Serializer.Reference(Area); // This is the area object, not the descriptor
+            Area = Serializer.SerializeReference(Area); // This is the area object, not the descriptor
         }
     }
 

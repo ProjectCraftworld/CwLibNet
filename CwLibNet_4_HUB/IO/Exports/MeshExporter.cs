@@ -14,6 +14,7 @@ using CwLibNet.Types;
 using CwLibNet.Types.Data;
 using CwLibNet.Types.Databases;
 using CwLibNet.Util;
+using CwLibNet.IO;
 using SkiaSharp;
 using VGltf;
 using VGltf.Types;
@@ -22,7 +23,8 @@ using VJson;
 using VJson.Schema;
 using Buffer = VGltf.Types.Buffer;
 using Node = VGltf.Types.Node;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.IO.Exports;
 

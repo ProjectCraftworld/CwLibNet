@@ -1,7 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Profile 
 {
@@ -12,14 +13,14 @@ namespace CwLibNet.Structs.Profile
         public DataLabelValue[]? Values;
         public NetworkOnlineId[]? ProtectedIDs;
 
-        public void Serialize()
+        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
         {
-            var revision = Serializer.GetRevision();
+            var revision = Serializer.GetCurrentSerializer().GetRevision();
             var head = revision.GetVersion();
 
-            Values = Serializer.Serialize(ref Values);
+            Serializer.Serialize(ref Values);
             if (revision.Has(Branch.Double11, (int)Revisions.D1_PROTECTED_LABELS) || head >= (int)Revisions.DATALABELS)
-                ProtectedIDs = Serializer.Serialize(ref ProtectedIDs);
+                Serializer.Serialize(ref ProtectedIDs);
         }
 
         public int GetAllocatedSize() 

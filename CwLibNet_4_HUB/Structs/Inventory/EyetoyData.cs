@@ -2,7 +2,8 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Inventory;
 
@@ -19,17 +20,17 @@ public class EyetoyData: ISerializable
     public ResourceDescriptor? Outline;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        if (Serializer.GetRevision().GetVersion() < 0x15e)
+        if (Serializer.GetCurrentSerializer().GetRevision().GetVersion() < 0x15e)
             return;
 
-        Serializer.Serialize(ref Frame, Frame, ResourceType.Texture);
-        Serializer.Serialize(ref AlphaMask, AlphaMask, ResourceType.Texture);
+        Serializer.Serialize(ref Frame, ResourceType.Texture, true, false, false);
+        Serializer.Serialize(ref AlphaMask, ResourceType.Texture, true, false, false);
         Serializer.Serialize(ref ColorCorrection);
         Serializer.Serialize(ref ColorCorrectionSrc);
-        if (Serializer.GetRevision().GetVersion() > 0x39f)
-            Serializer.Serialize(ref Outline, Outline, ResourceType.Texture);
+        if (Serializer.GetCurrentSerializer().GetRevision().GetVersion() > 0x39f)
+            Serializer.Serialize(ref Outline, ResourceType.Texture, true, false, false);
     }
 
     

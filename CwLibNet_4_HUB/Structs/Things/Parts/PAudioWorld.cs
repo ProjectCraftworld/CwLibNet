@@ -1,7 +1,9 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -33,10 +35,14 @@ public class PAudioWorld: ISerializable
     public int CategoryGuid;
     public bool ActivatedLastFrame;
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
-        var subVersion = Serializer.GetRevision().GetSubVersion();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
+        var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 
         Serializer.Serialize(ref SoundName);
 
@@ -56,12 +62,12 @@ public class PAudioWorld: ISerializable
             Serializer.Serialize(ref triggerByFalloff);
             Serializer.Serialize(ref triggerByImpact);
             if (version < 0x165)
-                Serializer.Serialize(ref false); // unk
+                Serializer.Serialize(ref temp_bool_false); // unk
             Serializer.Serialize(ref TriggerBySwitch);
             switch (version)
             {
                 case < 0x165:
-                    Serializer.Serialize(ref false);
+                    Serializer.Serialize(ref temp_bool_false);
                     break;
                 case >= 0x1ad:
                     Serializer.Serialize(ref triggerByDestroy);
@@ -90,7 +96,7 @@ public class PAudioWorld: ISerializable
             Serializer.Serialize(ref Behavior);
 
         if (version >= 0x380)
-            SoundNames = Serializer.Serialize(ref SoundNames);
+            Serializer.Serialize(ref SoundNames);
 
         if (version >= 0x380)
             Serializer.Serialize(ref MeshColor);

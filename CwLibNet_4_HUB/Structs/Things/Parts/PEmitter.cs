@@ -4,7 +4,9 @@ using CwLibNet.IO;
 using CwLibNet.Structs.Things.Components;
 using CwLibNet.Structs.Things.Components.Switches;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -115,20 +117,24 @@ public class PEmitter: ISerializable
     public byte CleanUpOnDestroyed;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
         if (version < 0x368)
-            PosVel = Serializer.Serialize(ref PosVel);
+            Serializer.Serialize(ref PosVel);
         Serializer.Serialize(ref AngVel);
 
         if (version < 0x137)
         {
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref temp_int);
+            Serializer.Serialize(ref temp_int);
         }
 
         Serializer.Serialize(ref Frequency);
@@ -152,7 +158,7 @@ public class PEmitter: ISerializable
                 Serializer.Serialize(ref MaxEmittedAtOnce);
                 break;
             case < 0x137:
-                Serializer.Serialize(ref false);
+                Serializer.Serialize(ref temp_bool_false);
                 break;
         }
 
@@ -280,7 +286,7 @@ public class PEmitter: ISerializable
         // reason?
 
         if (subVersion is >= 0x41 and < 0x1a7)
-            Serializer.Serialize(ref false);
+            Serializer.Serialize(ref temp_bool_false);
 
         if (subVersion > 0x64)
             Serializer.Serialize(ref EmitByReferenceInPlayMode);

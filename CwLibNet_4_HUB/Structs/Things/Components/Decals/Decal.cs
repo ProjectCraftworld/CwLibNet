@@ -2,7 +2,9 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Components.Decals;
 
@@ -102,9 +104,9 @@ public class Decal: ISerializable
     }
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
 
         Serializer.Serialize(ref Texture, Texture, ResourceType.Texture);
@@ -121,7 +123,7 @@ public class Decal: ISerializable
             {
                 if (Serializer.IsWriting())
                 {
-                    Serializer.GetOutput().I32(
+                    Serializer.GetCurrentSerializer().GetOutput().I32(
                         (int)((((Color & 0xffff) << 5) & 0xfc00) |
                               ((Color & 0xffff) << 8 & 0xf80000) |
                               ((Color & 0x1f) << 3) |
@@ -130,7 +132,7 @@ public class Decal: ISerializable
                 }
                 else
                 {
-                    var color = Serializer.GetInput().I32();
+                    var color = Serializer.GetCurrentSerializer().GetInput().I32();
 /*
                     color = (short) (
                         (((color >>> 10) & 0x3f) << 5) |
@@ -143,7 +145,9 @@ public class Decal: ISerializable
                 break;
             }
             case >= 0x260:
-                Color = (ushort)Serializer.Serialize(ref (short)Color);
+                var tempColor = (short)Color;
+                Serializer.Serialize(ref tempColor);
+                Color = (ushort)tempColor;
                 break;
         }
 
@@ -173,13 +177,13 @@ public class Decal: ISerializable
                 if (Serializer.IsWriting())
                 {
                     if (Plan == null || Plan.IsHash())
-                        Serializer.GetOutput().I32(0);
+                        Serializer.GetCurrentSerializer().GetOutput().I32(0);
                     else if (Plan.IsGUID())
-                        Serializer.GetOutput().Guid(Plan.GetGUID());
+                        Serializer.GetCurrentSerializer().GetOutput().Guid(Plan.GetGUID());
                 }
                 else
                 {
-                    var guid = Serializer.GetInput().Guid();
+                    var guid = Serializer.GetCurrentSerializer().GetInput().Guid();
                     Plan = guid == null ? null : new ResourceDescriptor(guid.Value, ResourceType.Plan);
                 }
 

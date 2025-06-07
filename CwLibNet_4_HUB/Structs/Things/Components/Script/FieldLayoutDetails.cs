@@ -1,6 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Components.Script;
 
 public class FieldLayoutDetails: ISerializable
@@ -34,22 +36,22 @@ public class FieldLayoutDetails: ISerializable
     }
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 
         Serializer.Serialize(ref Name);
 
         if (Serializer.IsWriting())
         {
             var flags = ModifierBody.GetFlags(Modifiers);
-            if (version >= 0x3d9) Serializer.GetOutput().I16(flags);
-            else Serializer.GetOutput().I32(flags);
+            if (version >= 0x3d9) Serializer.GetCurrentSerializer().GetOutput().I16(flags);
+            else Serializer.GetCurrentSerializer().GetOutput().I32(flags);
         }
         else
         {
-            var flags = version >= 0x3d9 ? Serializer.GetInput().I16() :
-                Serializer.GetInput().I32();
+            var flags = version >= 0x3d9 ? Serializer.GetCurrentSerializer().GetInput().I16() :
+                Serializer.GetCurrentSerializer().GetInput().I32();
             Modifiers = ModifierBody.fromValue(flags);
         }
 

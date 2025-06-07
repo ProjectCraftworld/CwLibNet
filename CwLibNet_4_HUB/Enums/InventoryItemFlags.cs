@@ -1,4 +1,6 @@
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Profile;
 namespace CwLibNet.Enums;
 
 public class InventoryItemFlags

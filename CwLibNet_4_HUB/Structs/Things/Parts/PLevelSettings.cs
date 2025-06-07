@@ -2,7 +2,10 @@ using CwLibNet.Enums;
 using CwLibNet.EX;
 using CwLibNet.Structs.Things.Components;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -18,9 +21,13 @@ public class PLevelSettings: LevelSettings
     public int BackgroundRepeatFlags;
     public float BackgroundSkyHeight;
     
-    public override void Serialize()
+    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
@@ -30,7 +37,7 @@ public class PLevelSettings: LevelSettings
             Serializer.Serialize(ref Presets);
 
         if (version is > 0x152 and < 0x15a)
-            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref temp_int);
 
         if (revision.Has(Branch.Double11, 0x78))
             Serializer.Serialize(ref NonLinearFog);
@@ -54,7 +61,7 @@ public class PLevelSettings: LevelSettings
                 Serializer.Serialize(ref null, ResourceType.Texture);
                 break;
             case >= 0x2f3:
-                BackdropMesh = Serializer.Serialize(ref BackdropMesh, ResourceType.StaticMesh);
+                Serializer.Serialize(ref BackdropMesh, ResourceType.StaticMesh);
                 break;
         }
 

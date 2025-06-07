@@ -3,7 +3,9 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
 using CwLibNet.Util;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -30,13 +32,13 @@ public class PRenderMesh: ISerializable
     public float ParentDistanceFront, ParentDistanceSide;
     public bool IsDirty = true;
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 
         Serializer.Serialize(ref Mesh, Mesh, ResourceType.Mesh);
 
-        BoneThings = Serializer.Serialize(ref BoneThings);
+        Serializer.Serialize(ref BoneThings);
         
         Serializer.Serialize(ref Anim, Anim, ResourceType.Animation);
         Serializer.Serialize(ref AnimPos);
@@ -48,9 +50,9 @@ public class PRenderMesh: ISerializable
         if (version > 0x31a) Serializer.Serialize(ref EditorColor);
         else {
             if (Serializer.IsWriting())
-                Serializer.GetOutput().V4(Colors.FromARGB(EditorColor));
+                Serializer.GetCurrentSerializer().GetOutput().V4(Colors.FromARGB(EditorColor));
             else {
-                var color = Serializer.GetInput().V4();
+                var color = Serializer.GetCurrentSerializer().GetInput().V4();
                 EditorColor = Colors.GetARGB(color);
             }
         }
@@ -62,10 +64,10 @@ public class PRenderMesh: ISerializable
             Serializer.Serialize(ref VisibilityFlags);
         else {
             if (Serializer.IsWriting())
-                Serializer.GetOutput().Boole((VisibilityFlags & (byte)Enums.VisibilityFlags.PLAY_MODE) != 0);
+                Serializer.GetCurrentSerializer().GetOutput().Boole((VisibilityFlags & (byte)Enums.VisibilityFlags.PLAY_MODE) != 0);
             else {
                 VisibilityFlags = (byte)Enums.VisibilityFlags.EDIT_MODE;
-                if (Serializer.GetInput().Boole())
+                if (Serializer.GetCurrentSerializer().GetInput().Boole())
                     VisibilityFlags |=  (byte)Enums.VisibilityFlags.PLAY_MODE;
             }
         }

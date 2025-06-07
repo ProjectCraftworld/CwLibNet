@@ -1,6 +1,8 @@
 using System.Numerics;
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Components;
 
 public class CameraNode: ISerializable
@@ -13,10 +15,10 @@ public class CameraNode: ISerializable
     public bool LocalSpaceRoll;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref TargetBox);
-        PitchAngle = Serializer.Serialize(ref PitchAngle);
+        Serializer.Serialize(ref PitchAngle);
         Serializer.Serialize(ref ZoomDistance);
         Serializer.Serialize(ref LocalSpaceRoll);
     }

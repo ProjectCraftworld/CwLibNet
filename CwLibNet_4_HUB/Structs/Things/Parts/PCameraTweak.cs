@@ -1,7 +1,9 @@
 using System.Numerics;
 using CwLibNet.IO;
 using CwLibNet.Structs.Things.Components;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -108,14 +110,18 @@ public class PCameraTweak: ISerializable
     public bool AllowSmoothZTransition;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
-        var subVersion = Serializer.GetRevision().GetSubVersion();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
+        var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 
         if (version < 0x37e)
         {
-            PitchAngle = Serializer.Serialize(ref PitchAngle);
+            Serializer.Serialize(ref PitchAngle);
             Serializer.Serialize(ref TargetBox);
         }
 
@@ -143,7 +149,7 @@ public class PCameraTweak: ISerializable
         if (EnableImproperLoading && version is 0x13d or 0x176)
         {
             if (!Serializer.IsWriting())
-                Serializer.Log("ADD CAMERA TYPE HERE", 1);
+                Serializer.LogMessage("ADD CAMERA TYPE HERE", 1);
         }
         else
         {
@@ -157,8 +163,8 @@ public class PCameraTweak: ISerializable
         switch (version)
         {
             case > 0x1b6 and < 0x1d2:
-                Serializer.Serialize(ref 0);
-                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref temp_int);
+                Serializer.Serialize(ref temp_int);
                 break;
             case >= 0x1ff:
                 Serializer.Serialize(ref DisableZoomMode);
@@ -175,7 +181,7 @@ public class PCameraTweak: ISerializable
             Serializer.Serialize(ref Behavior);
 
         if (version is >= 0x2f8 and < 0x37e)
-            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref temp_int);
 
         if (version >= 0x2eb)
         {
@@ -186,13 +192,13 @@ public class PCameraTweak: ISerializable
         if (version >= 0x2eb)
             Serializer.Serialize(ref CutSceneSkippable);
 
-        if (Serializer.GetRevision().GetSubVersion() >= 0x9f)
+        if (Serializer.GetCurrentSerializer().GetRevision().GetSubVersion() >= 0x9f)
             Serializer.Serialize(ref CutSceneUseHoldTime);
 
         if (version is > 0x2ea and < 0x2f1)
         {
             Serializer.Serialize(ref null);
-            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref temp_int);
         }
 
         if (version > 0x2ed)
@@ -200,7 +206,7 @@ public class PCameraTweak: ISerializable
             Serializer.Serialize(ref CutSceneTimeSinceUsed);
             Serializer.Serialize(ref CutSceneTransitionTime);
             if (version < 0x35a)
-                Serializer.Serialize(ref false);
+                Serializer.Serialize(ref temp_bool_false);
         }
 
         if (version > 0x359)
@@ -235,7 +241,7 @@ public class PCameraTweak: ISerializable
 
         if (version > 0x37d)
         {
-            Nodes = Serializer.Serialize(ref Nodes);
+            Serializer.Serialize(ref Nodes);
 
             // Fill in the LBP1 data with the first node if it exists
             if (!Serializer.IsWriting() && Nodes is { Length: > 0 })

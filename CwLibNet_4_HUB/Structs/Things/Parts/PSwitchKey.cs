@@ -1,7 +1,9 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Structs.Things.Components.Switches;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -26,10 +28,10 @@ public class PSwitchKey: ISerializable
     public SwitchKeyType Type = SwitchKeyType.MAGNETIC;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
-        var subVersion = Serializer.GetRevision().GetSubVersion();
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
+        var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 
         Serializer.Serialize(ref ColorIndex);
         if (version >= 0x2dc)
@@ -42,11 +44,11 @@ public class PSwitchKey: ISerializable
             {
                 var flags = HideInPlayMode ? 0x80 : 0x0;
                 if (IsDummy) flags |= 0x40;
-                Serializer.GetOutput().U8(flags);
+                Serializer.GetCurrentSerializer().GetOutput().U8(flags);
             }
             else
             {
-                var flags = Serializer.GetInput().U8();
+                var flags = Serializer.GetCurrentSerializer().GetInput().U8();
                 HideInPlayMode = (flags & 0x80) != 0;
                 IsDummy = (flags & 0x40) != 0;
             }
@@ -66,9 +68,9 @@ public class PSwitchKey: ISerializable
             {
                 var isActive = IsActive != null;
                 if (isActive) isActive = IsActive is not { Activation: 0.0f };
-                Serializer.GetOutput().Boole(isActive);
+                Serializer.GetCurrentSerializer().GetOutput().Boole(isActive);
             }
-            else Serializer.GetInput().Boole();
+            else Serializer.GetCurrentSerializer().GetInput().Boole();
         }
 
         if (version is > 0x29f and < 0x2c4)

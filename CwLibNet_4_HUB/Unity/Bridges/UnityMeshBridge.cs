@@ -1,4 +1,4 @@
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 using System;
 using System.Numerics;
 using CwLibNet.Unity.Bridges;
@@ -7,6 +7,7 @@ using CwLibNet.Unity.Bridges;
 using UnityEngine;
 using Mesh = UnityEngine.Mesh;
 using Vector3 = UnityEngine.Vector3;
+using CwLibNet.IO.Serializer;
 #endif
 
 namespace CwLibNet.Unity.Bridges

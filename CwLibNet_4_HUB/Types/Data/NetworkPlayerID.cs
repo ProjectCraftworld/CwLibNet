@@ -1,5 +1,6 @@
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Types.Data;
 
 public class NetworkPlayerID: ISerializable
@@ -18,17 +19,25 @@ public class NetworkPlayerID: ISerializable
     }
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref handle);
 
-        var lengthPrefixed = Serializer.GetRevision().GetVersion() < 0x234;
+        var lengthPrefixed = Serializer.GetCurrentSerializer().GetRevision().GetVersion() < 0x234;
 
-        if (lengthPrefixed) Serializer.Serialize(ref 8);
-        opt = Serializer.Serialize(ref opt);
+        if (lengthPrefixed) 
+        {
+            int optLength = 8;
+            Serializer.Serialize(ref optLength);
+        }
+        Serializer.Serialize(ref opt);
 
-        if (lengthPrefixed) Serializer.Serialize(ref 8);
-        reserved = Serializer.Serialize(ref reserved);
+        if (lengthPrefixed) 
+        {
+            int reservedLength = 8;
+            Serializer.Serialize(ref reservedLength);
+        }
+        Serializer.Serialize(ref reserved);
     }
 
     public NetworkOnlineId GetHandle()

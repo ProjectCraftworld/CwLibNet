@@ -1,5 +1,6 @@
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Inventory;
 
 public class UserCreatedDetails: ISerializable
@@ -17,7 +18,7 @@ public class UserCreatedDetails: ISerializable
         Description = description;
     }
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Name);
         Serializer.Serialize(ref Description);

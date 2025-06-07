@@ -2,7 +2,9 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -55,16 +57,20 @@ public class PJoint: ISerializable
     public bool CanBeTweakedByPoppetPowerup, CreatedByPoppetPowerup;
 
     public bool OldJointOutputBehavior;
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
         Serializer.Serialize(ref A);
         Serializer.Serialize(ref B);
-        AContact = Serializer.Serialize(ref AContact);
-        BContact = Serializer.Serialize(ref BContact);
+        Serializer.Serialize(ref AContact);
+        Serializer.Serialize(ref BContact);
         Serializer.Serialize(ref Length);
         Serializer.Serialize(ref Angle);
         Serializer.Serialize(ref OffsetTime);
@@ -76,11 +82,11 @@ public class PJoint: ISerializable
         Serializer.Serialize(ref Strength);
 
         if (version < 0x18d)
-            Serializer.Serialize(ref 0); // Unknown
+            Serializer.Serialize(ref temp_int); // Unknown
         else
         {
             Serializer.Serialize(ref Stiff);
-            SlideDir = Serializer.Serialize(ref SlideDir);
+            Serializer.Serialize(ref SlideDir);
         }
 
         Serializer.Serialize(ref AnimationPattern);
@@ -139,7 +145,7 @@ public class PJoint: ISerializable
         {
             if (Serializer.IsWriting())
             {
-                var stream = Serializer.GetOutput();
+                var stream = Serializer.GetCurrentSerializer().GetOutput();
                 if (RailKnotVector != null)
                 {
                     stream.I32(RailKnotVector.Length);
@@ -150,7 +156,7 @@ public class PJoint: ISerializable
             }
             else
             {
-                var stream = Serializer.GetInput();
+                var stream = Serializer.GetCurrentSerializer().GetInput();
                 RailKnotVector = new Vector3[stream.I32()];
                 for (var i = 0; i < RailKnotVector.Length; ++i)
                     RailKnotVector[i] = stream.V3();

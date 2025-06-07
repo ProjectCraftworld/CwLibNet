@@ -1,7 +1,8 @@
 ﻿using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Types.Profile;
 
@@ -17,19 +18,19 @@ public class Pin : ISerializable
     public short BehaviourFlags;
     public byte TrophyToUnlockLbp1;
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Id);
         Serializer.Serialize(ref ProgressType);
         Serializer.Serialize(ref Category);
         Serializer.Serialize(ref TitleLamsKey);
         Serializer.Serialize(ref DescriptionLamsKey);
-        Serializer.Serialize(ref Icon, Icon, ResourceType.Texture, true);
+        Serializer.Serialize(ref Icon, ResourceType.Texture, true, false, false);
         Serializer.Serialize(ref InitialProgressValue);
         Serializer.Serialize(ref TargetValue);
         Serializer.Serialize(ref TrophyToUnlock);
         Serializer.Serialize(ref BehaviourFlags);
-        if (Serializer.GetRevision().GetVersion() >= 0x3f7)
+        if (Serializer.GetCurrentSerializer().GetRevision().GetVersion() >= 0x3f7)
             Serializer.Serialize(ref TrophyToUnlockLbp1);
     }
     

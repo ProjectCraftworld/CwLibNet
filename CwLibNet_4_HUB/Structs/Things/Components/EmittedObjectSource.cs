@@ -1,7 +1,9 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Components;
 
@@ -19,12 +21,12 @@ public class EmittedObjectSource: ISerializable
     public byte B0;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        Things = Serializer.Serialize(ref Things);
+        Serializer.Serialize(ref Things);
         Serializer.Serialize(ref Plan, Plan, ResourceType.Plan);
 
-        if (Serializer.GetRevision().GetSubVersion() <= 0xcc) return;
+        if (Serializer.GetCurrentSerializer().GetRevision().GetSubVersion() <= 0xcc) return;
         Serializer.Serialize(ref F0);
         Serializer.Serialize(ref F1);
         Serializer.Serialize(ref F2);

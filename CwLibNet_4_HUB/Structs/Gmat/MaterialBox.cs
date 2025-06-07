@@ -3,7 +3,10 @@ using CwLibNet.Enums;
 using CwLibNet.Extensions;
 using CwLibNet.IO;
 using CwLibNet.Resources;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Gmat;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Gmat;
 
@@ -105,23 +108,24 @@ public class MaterialBox: ISerializable
     }
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Type);
 
-        var head = Serializer.GetRevision().GetVersion();
+        var head = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 
         if (!Serializer.IsWriting()) @params = new int[ParameterCount];
         if (head < 0x2a4)
         {
             for (var i = 0; i < LegacyParameterCount; ++i)
-                @Serializer.Serialize(ref params[i]);
+                Serializer.Serialize(ref @params[i]);
         }
         else
         {
-            Serializer.Serialize(ref ParameterCount);
+            int paramCount = ParameterCount;
+            Serializer.Serialize(ref paramCount);
             for (var i = 0; i < ParameterCount; ++i)
-                @Serializer.Serialize(ref params[i]);
+                Serializer.Serialize(ref @params[i]);
         }
 
         Serializer.Serialize(ref X);

@@ -1,7 +1,9 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Profile;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Profile 
 {
@@ -18,7 +20,7 @@ namespace CwLibNet.Structs.Profile
         public int myScore;
         public string? networkOnlineID;
 
-        public void Serialize()
+        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
         {
             Serializer.Serialize(ref challengeID);
             Serializer.Serialize(ref challengeStatus);

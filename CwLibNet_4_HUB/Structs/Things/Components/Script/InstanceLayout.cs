@@ -1,6 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Components.Script;
 
 public class InstanceLayout: ISerializable
@@ -20,14 +22,14 @@ public class InstanceLayout: ISerializable
     }
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Fields);
-        if (Serializer.GetRevision().GetVersion() < 0x1ec)
+        if (Serializer.GetCurrentSerializer().GetRevision().GetVersion() < 0x1ec)
         {
             if (Serializer.IsWriting())
             {
-                var stream = Serializer.GetOutput();
+                var stream = Serializer.GetCurrentSerializer().GetOutput();
                 var reflectFields = GetFieldsForReflection(false);
                 stream.I32(reflectFields.Length);
                 foreach (var field in reflectFields)
@@ -38,7 +40,7 @@ public class InstanceLayout: ISerializable
             }
             else
             {
-                var stream = Serializer.GetInput();
+                var stream = Serializer.GetCurrentSerializer().GetInput();
                 var count = stream.I32();
                 for (var i = 0; i < count; ++i)
                 {

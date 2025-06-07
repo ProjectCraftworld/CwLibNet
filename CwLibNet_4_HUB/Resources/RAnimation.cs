@@ -2,10 +2,11 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.Extensions;
 using CwLibNet.IO;
+using CwLibNet.IO.Serializer;
 using CwLibNet.IO.Streams;
 using CwLibNet.Structs.Animation;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Resources;
 
@@ -81,21 +82,21 @@ public class RAnimation: Resource
     }
 
     
-    public override void Serialize()
+    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
         var isWriting = Serializer.IsWriting();
 
         if (version < 0x378)
         {
-            Bones = Serializer.Serialize(ref Bones);
+            Serializer.Serialize(ref Bones);
 
-            NumFrames = (short) Serializer.Serialize(ref NumFrames);
-            Fps = (short) Serializer.Serialize(ref Fps);
-            MorphCount = (byte) Serializer.Serialize(ref MorphCount);
+            Serializer.Serialize(ref NumFrames);
+            Serializer.Serialize(ref Fps);
+            Serializer.Serialize(ref MorphCount);
 
-            var input = Serializer.GetInput();
-            var output = Serializer.GetOutput();
+            var input = Serializer.GetCurrentSerializer().GetInput();
+            var output = Serializer.GetCurrentSerializer().GetOutput();
 
             // Should I just throw these into some other function?
             // Pretty repetitive
@@ -103,22 +104,22 @@ public class RAnimation: Resource
             if (!isWriting) RotBonesAnimated = new byte[input.I32()];
             else output.I32(RotBonesAnimated.Length);
             for (var i = 0; i < RotBonesAnimated.Length; ++i)
-                RotBonesAnimated[i] = (byte) Serializer.Serialize(ref RotBonesAnimated[i]);
+                Serializer.Serialize(ref RotBonesAnimated[i]);
 
             if (!isWriting) PosBonesAnimated = new byte[input.I32()];
             else output.I32(PosBonesAnimated.Length);
             for (var i = 0; i < PosBonesAnimated.Length; ++i)
-                PosBonesAnimated[i] = (byte) Serializer.Serialize(ref PosBonesAnimated[i]);
+                Serializer.Serialize(ref PosBonesAnimated[i]);
 
             if (!isWriting) ScaledBonesAnimated = new byte[input.I32()];
             else output.I32(ScaledBonesAnimated.Length);
             for (var i = 0; i < ScaledBonesAnimated.Length; ++i)
-                ScaledBonesAnimated[i] = (byte) Serializer.Serialize(ref ScaledBonesAnimated[i]);
+                Serializer.Serialize(ref ScaledBonesAnimated[i]);
 
             if (!isWriting) MorphsAnimated = new byte[input.I32()];
             else output.I32(MorphsAnimated.Length);
             for (var i = 0; i < MorphsAnimated.Length; ++i)
-                MorphsAnimated[i] = (byte) Serializer.Serialize(ref MorphsAnimated[i]);
+                Serializer.Serialize(ref MorphsAnimated[i]);
 
             if (!isWriting) PackedRotation = new Vector4?[input.I32()];
             else output.I32(PackedRotation.Length);
@@ -201,7 +202,7 @@ public class RAnimation: Resource
             memoryOutputStream.Shrink();
 
             var animationData = memoryOutputStream.GetBuffer();
-            memoryOutputStream = Serializer.GetOutput();
+            memoryOutputStream = Serializer.GetCurrentSerializer().GetOutput();
 
             memoryOutputStream.U8(Bones.Length);
             memoryOutputStream.U8(RotBonesAnimated.Length);
@@ -225,7 +226,7 @@ public class RAnimation: Resource
             return;
         }
 
-        var stream = Serializer.GetInput();
+        var stream = Serializer.GetCurrentSerializer().GetInput();
 
         var boneCount = stream.U8();
         var rotAnims = stream.U8();
@@ -244,7 +245,7 @@ public class RAnimation: Resource
 
         var animData = stream.Bytearray();
 
-        Locators = Serializer.Serialize(ref Locators);
+        Serializer.Serialize(ref Locators);
 
         stream = new MemoryInputStream(animData);
 
@@ -779,14 +780,14 @@ public class RAnimation: Resource
     {
         var serializer = new Serializer(GetAllocatedSize(), revision,
             compressionFlags);
-        Serializer.Serialize(ref this);
+        this.Serialize(serializer);
         return new SerializationData(
-            Serializer.GetBuffer(),
+            Serializer.GetCurrentSerializer().GetBuffer(),
             revision,
             compressionFlags,
             ResourceType.Animation,
             SerializationType.BINARY,
-            Serializer.GetDependencies()
+            Serializer.GetCurrentSerializer().GetDependencies()
         );
     }
 

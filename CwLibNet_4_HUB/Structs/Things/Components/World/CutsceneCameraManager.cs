@@ -1,5 +1,7 @@
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Components.World;
 
 public class CutsceneCameraManager: ISerializable
@@ -13,9 +15,13 @@ public class CutsceneCameraManager: ISerializable
     
     public bool CurrentCameraTweaking;
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 
         Serializer.Serialize(ref State);
         Serializer.Serialize(ref CurrentCutSceneCamera);
@@ -26,14 +32,18 @@ public class CutsceneCameraManager: ISerializable
         switch (version)
         {
             case > 0x2ef and < 0x36e:
-                Serializer.Serialize(ref false);
-                Serializer.Serialize(ref null);
-                Serializer.Serialize(ref 0);
-                Serializer.Serialize(ref null);
-                Serializer.Serialize(ref false);
-                Serializer.Serialize(ref null);
-                Serializer.Serialize(ref 0);
-                Serializer.Serialize(ref null);
+                Serializer.Serialize(ref temp_bool_false);
+                ResourceDescriptor? tempNull1 = null;
+                Serializer.Serialize(ref tempNull1);
+                Serializer.Serialize(ref temp_int);
+                ResourceDescriptor? tempNull2 = null;
+                Serializer.Serialize(ref tempNull2);
+                Serializer.Serialize(ref temp_bool_false);
+                ResourceDescriptor? tempNull3 = null;
+                Serializer.Serialize(ref tempNull3);
+                Serializer.Serialize(ref temp_int);
+                ResourceDescriptor? tempNull4 = null;
+                Serializer.Serialize(ref tempNull4);
                 break;
             case >= 0x3a0:
                 Serializer.Serialize(ref CurrentCameraTweaking);

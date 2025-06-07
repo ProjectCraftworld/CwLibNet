@@ -3,7 +3,9 @@ using CwLibNet.Enums;
 using CwLibNet.Extensions;
 using CwLibNet.Resources;
 using CwLibNet.Structs.Animation;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Mesh;
 
@@ -48,7 +50,7 @@ public class Bone: AnimBone
     }
 
     
-    public override void Serialize()
+    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
 
         Serializer.Serialize(ref name);
@@ -62,8 +64,8 @@ public class Bone: AnimBone
         Serializer.Serialize(ref ObbMin);
         Serializer.Serialize(ref ObbMax);
 
-        ShapeVerts = Serializer.Serialize(ref ShapeVerts);
-        ShapeInfos = Serializer.Serialize(ref ShapeInfos);
+        Serializer.Serialize(ref ShapeVerts);
+        Serializer.Serialize(ref ShapeInfos);
 
         Serializer.Serialize(ref ShapeMinZ);
         Serializer.Serialize(ref ShapeMaxZ);

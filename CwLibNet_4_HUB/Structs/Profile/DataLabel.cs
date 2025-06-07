@@ -1,5 +1,7 @@
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Types.Data;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Profile 
 {
     public class DataLabel : ISerializable
@@ -9,7 +11,7 @@ namespace CwLibNet.Structs.Profile
         public int LabelIndex;
         public string? Name;
 
-        public void Serialize()
+        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
         {
             Serializer.Serialize(ref LabelIndex);
             Serializer.Serialize(ref Name);

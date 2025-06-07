@@ -1,6 +1,8 @@
 using System.Numerics;
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Components.Popit;
 
 public class PoppetEditState: ISerializable
@@ -38,7 +40,7 @@ public class PoppetEditState: ISerializable
 
     public int SwitchConnectorUid;
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         throw new NotImplementedException();
     }

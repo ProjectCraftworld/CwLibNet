@@ -3,7 +3,9 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Structs.Profile;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Streaming;
 
@@ -27,9 +29,9 @@ public class ChunkFile: ISerializable
     public List<Sha1>? Hashes = [];
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var subVersion = Serializer.GetRevision().GetSubVersion();
+        var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 
         switch (subVersion)
         {
@@ -55,9 +57,9 @@ public class ChunkFile: ISerializable
             }
             case > 0x130:
             {
-                ChunkHash = Serializer.Serialize(ref ChunkHash);
+                Serializer.Serialize(ref ChunkHash);
                 if (Serializer.IsWriting() && ChunkHash != null)
-                    Serializer.AddDependency(new ResourceDescriptor(ChunkHash,
+                    Serializer.GetCurrentSerializer().AddDependency(new ResourceDescriptor(ChunkHash,
                         ResourceType.StreamingChunk));
                 break;
             }
@@ -77,26 +79,33 @@ public class ChunkFile: ISerializable
 
         if (subVersion >= 0xde)
         {
-            var numItems = Serializer.Serialize(ref UserResources != null ?
-                UserResources.Count : 0);
+            int numItems = UserResources != null ? UserResources.Count : 0;
+            Serializer.Serialize(ref numItems);
             if (Serializer.IsWriting())
             {
                 foreach (var descriptor in UserResources)
-                    Serializer.Serialize(ref descriptor, descriptor.GetResourceType(), true, false,
+                {
+                    var desc = descriptor;
+                    Serializer.Serialize(ref desc, descriptor.GetResourceType(), true, false,
                         true);
+                }
             }
             else
             {
                 UserResources = new List<ResourceDescriptor?>(numItems);
                 for (var i = 0; i < numItems; ++i)
-                    UserResources.Add(Serializer.Serialize(ref null, null, true, false, true));
+                {
+                    ResourceDescriptor? tempResource = null;
+                    Serializer.Serialize(ref tempResource);
+                    UserResources.Add(tempResource);
+                }
             }
         }
 
         if (subVersion > 0x72)
         {
-            Min = Serializer.Serialize(ref Min);
-            Max = Serializer.Serialize(ref Max);
+            Serializer.Serialize(ref Min);
+            Serializer.Serialize(ref Max);
         }
 
         if (subVersion > 0x10d)
@@ -112,32 +121,34 @@ public class ChunkFile: ISerializable
         if (subVersion <= 0x169) return;
         {
             {
-                var numItems = Serializer.Serialize(ref Guids != null ? Guids.Count : 0);
+                var numItems = Guids != null ? Guids.Count : 0;
+                Serializer.Serialize(ref numItems);
                 if (Serializer.IsWriting())
                 {
                     foreach (var guid in Guids!)
-                        Serializer.GetOutput().Guid(guid);
+                        Serializer.GetCurrentSerializer().GetOutput().Guid(guid);
                 }
                 else
                 {
                     Guids = new List<GUID?>(numItems);
                     for (var i = 0; i < numItems; ++i)
-                        Guids.Add(Serializer.GetInput().Guid());
+                        Guids.Add(Serializer.GetCurrentSerializer().GetInput().Guid());
                 }
             }
 
             {
-                var numItems = Serializer.Serialize(ref Hashes?.Count ?? 0);
+                var numItems = Hashes?.Count ?? 0;
+                Serializer.Serialize(ref numItems);
                 if (Serializer.IsWriting())
                 {
                     foreach (var sha1 in Hashes!)
-                        Serializer.GetOutput().Sha1(sha1);
+                        Serializer.GetCurrentSerializer().GetOutput().Sha1(sha1);
                 }
                 else
                 {
                     Hashes = new List<Sha1>(numItems);
                     for (var i = 0; i < numItems; ++i)
-                        Hashes.Add(Serializer.GetInput().Sha1()!);
+                        Hashes.Add(Serializer.GetCurrentSerializer().GetInput().Sha1()!);
                 }
             }
         }

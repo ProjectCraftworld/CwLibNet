@@ -1,7 +1,9 @@
 using CwLibNet.Types.Archives;
 using CwLibNet.Types.Data;
 using CwLibNet.Types.Databases;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Singleton;
 

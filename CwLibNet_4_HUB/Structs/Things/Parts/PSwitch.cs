@@ -6,7 +6,9 @@ using CwLibNet.Structs.Profile;
 using CwLibNet.Structs.Things.Components;
 using CwLibNet.Structs.Things.Components.Switches;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -168,16 +170,22 @@ public class PSwitch: ISerializable
     public byte PlayerFilter;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
         if (version < 0x1a5)
         {
-            Serializer.Reference<Thing>(null);
-            Serializer.Serialize(ref false);
+            Thing? nullThing = null;
+            Serializer.GetCurrentSerializer().Reference(nullThing);
+            bool tempFalse = false;
+            Serializer.Serialize(ref tempFalse);
         }
 
         Serializer.Serialize(ref Inverted);
@@ -204,7 +212,7 @@ public class PSwitch: ISerializable
             // it added in 0x310
             if (Serializer.IsWriting())
             {
-                var stream = Serializer.GetOutput();
+                var stream = Serializer.GetCurrentSerializer().GetOutput();
                 var output = Outputs != null && Outputs.Length != 0 ?
                     Outputs[0] : new SwitchOutput();
                 Serializer.Serialize(ref output.Activation.Activation);
@@ -213,7 +221,7 @@ public class PSwitch: ISerializable
             }
             else
             {
-                var stream = Serializer.GetInput();
+                var stream = Serializer.GetCurrentSerializer().GetInput();
                 var output = new SwitchOutput
                 {
                     Activation =
@@ -222,27 +230,39 @@ public class PSwitch: ISerializable
                     }
                 };
                 if (version > 0x2a2)
-                    output.Activation.Player = Serializer.Serialize(ref output.Activation.Player);
-                output.Serializer.Serialize(ref null);
+                {
+                    var tempPlayer = output.Activation.Player;
+                    Serializer.Serialize(ref tempPlayer);
+                    output.Activation.Player = tempPlayer;
+                }
+                ResourceDescriptor? nullDescriptor = null;
+                output.Serialize(Serializer.GetCurrentSerializer());
                 Outputs = [output];
             }
         }
-        else Outputs = Serializer.Serialize(ref Outputs, true);
+        else 
+        {
+            Serializer.Serialize(ref Outputs);
+        }
 
         if (version is < 0x398 and >= 0x140)
         {
             if (version < 0x160)
                 Serializer.Serialize(ref RefSticker);
             else
-                StickerPlan = Serializer.Serialize(ref StickerPlan, ResourceType.Plan);
+                Serializer.Serialize(ref StickerPlan, ResourceType.Plan);
         }
 
-        if (version is > 0x13f and < 0x1a5) Serializer.Serialize(ref 0);
+        if (version is > 0x13f and < 0x1a5) 
+        {
+            int tempZero = 0;
+            Serializer.Serialize(ref tempZero);
+        }
 
         if (version > 0x197) Serializer.Serialize(ref HideInPlayMode);
         if (version > 0x1a4)
         {
-            Serializer.Serialize(ref Type);
+            Serializer.SerializeEnum32(ref Type);
             Serializer.Serialize(ref ReferenceThing);
             Serializer.Serialize(ref ManualActivation);
         }
@@ -250,7 +270,7 @@ public class PSwitch: ISerializable
         switch (version)
         {
             case >= 0x398 when Type == SwitchType.STICKER || (Type == SwitchType.POCKET_ITEM && subVersion > 0x10):
-                StickerPlan = Serializer.Serialize(ref StickerPlan, ResourceType.Plan);
+                Serializer.Serialize(ref StickerPlan, ResourceType.Plan);
                 break;
             case > 0x1a4 and < 0x368:
                 Serializer.Serialize(ref PlatformVisualFactor);
@@ -271,11 +291,11 @@ public class PSwitch: ISerializable
 
             // connectorGrabbed
             if (!Serializer.IsWriting())
-                ConnectorGrabbed = new bool[Serializer.GetInput().I32()];
+                ConnectorGrabbed = new bool[Serializer.GetCurrentSerializer().GetInput().I32()];
             else
             {
                 ConnectorGrabbed ??= [];
-                Serializer.GetOutput().I32(ConnectorGrabbed.Length);
+                Serializer.GetCurrentSerializer().GetOutput().I32(ConnectorGrabbed.Length);
             }
             for (var i = 0; i < ConnectorGrabbed.Length; ++i)
                 Serializer.Serialize(ref ConnectorGrabbed[i]);
@@ -291,7 +311,7 @@ public class PSwitch: ISerializable
             Serializer.Serialize(ref AngleRange);
             Serializer.Serialize(ref IncludeTouching);
             if (version >= 0x398 && Type == SwitchType.MICROCHIP && IncludeTouching == 1)
-                StickerPlan = Serializer.Serialize(ref StickerPlan, ResourceType.Plan);
+                Serializer.Serialize(ref StickerPlan, ResourceType.Plan);
         }
 
         if (subVersion > 0x165 && Type == SwitchType.GAME_LIVE_STREAMING_CHOICE)
@@ -304,7 +324,8 @@ public class PSwitch: ISerializable
         switch (version)
         {
             case 0x244:
-                Serializer.Serialize(ref 0); // ???
+                int tempZero = 0;
+                Serializer.Serialize(ref tempZero); // ???
                 break;
             case > 0x244:
                 Serializer.Serialize(ref BulletsDetected);
@@ -322,14 +343,14 @@ public class PSwitch: ISerializable
             Serializer.Serialize(ref HideConnectors);
 
         if (version is > 0x272 and < 0x398)
-            Serializer.Serialize(ref LogicType);
+            Serializer.SerializeEnum32(ref LogicType);
         if (version is > 0x272 and < 0x369)
             Serializer.Serialize(ref UpdateFrame);
         if (version > 0x272)
-            InputList = Serializer.Serialize(ref InputList);
+            Serializer.Serialize(ref InputList);
 
         if (version is > 0x276 and < 0x327)
-            PortThing = Serializer.Reference(PortThing);
+            PortThing = Serializer.SerializeReference(PortThing);
 
         if (version > 0x283)
             Serializer.Serialize(ref IncludeRigidConnectors);
@@ -352,7 +373,7 @@ public class PSwitch: ISerializable
 
         if (version > 0x2c3) Serializer.Serialize(ref Behavior);
 
-        if (version is < 0x329 and > 0x2c3) Serializer.Serialize(ref 0);
+        if (version is < 0x329 and > 0x2c3) Serializer.Serialize(ref temp_int);
 
         if (version > 0x2c3)
         {
@@ -390,7 +411,7 @@ public class PSwitch: ISerializable
                 Serializer.Serialize(ref SwitchTouchType);
 
             if (vita is >= 0x6 and < 0x36) // > 0x3c0
-                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref temp_int);
 
             CursorScreenArea = vita switch
             {
@@ -412,11 +433,11 @@ public class PSwitch: ISerializable
                 case < 0x36:
                 {
                     // > 0x3c0
-                    if (vita >= 0x23) Serializer.Serialize(ref 0);
-                    if (vita >= 0x13) Serializer.Serialize(ref 0);
-                    if (vita >= 0x7) Serializer.Serialize(ref 0);
-                    if (vita >= 0x15) Serializer.Serialize(ref 0);
-                    if (vita >= 0x24) Serializer.Serialize(ref 0); // Most of these should correspond to a value in sw.flags
+                    if (vita >= 0x23) Serializer.Serialize(ref temp_int);
+                    if (vita >= 0x13) Serializer.Serialize(ref temp_int);
+                    if (vita >= 0x7) Serializer.Serialize(ref temp_int);
+                    if (vita >= 0x15) Serializer.Serialize(ref temp_int);
+                    if (vita >= 0x24) Serializer.Serialize(ref temp_int); // Most of these should correspond to a value in sw.flags
                     break;
                 }
                 case >= 0x36:
@@ -428,7 +449,7 @@ public class PSwitch: ISerializable
                 Serializer.Serialize(ref OutputAndOr);
 
             if (vita is >= 0x2b and < 0x36)
-                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref temp_int);
 
             // data sampler, although 0x2f shouldn't be the switch type?
             if (revision.IsVita() && (int)Type == 0x2f)
@@ -451,9 +472,9 @@ public class PSwitch: ISerializable
                     {
                         var analogue = Value.Analogue != null && Value.Analogue.Length != 0 ?
                             Value.Analogue[0] : 0.0f;
-                        Serializer.GetOutput().F32(analogue);
+                        Serializer.GetCurrentSerializer().GetOutput().F32(analogue);
                     }
-                    else Value.Analogue = [Serializer.GetInput().F32()];
+                    else Value.Analogue = [Serializer.GetCurrentSerializer().GetInput().F32()];
                 }
 
                 if (revision.Has(Branch.Double11, (int)Revisions.D1_LABEL_TERNARY))
@@ -463,7 +484,7 @@ public class PSwitch: ISerializable
             switch (vita)
             {
                 case >= 0x38 and < 0x41:
-                    Serializer.Serialize(ref 0); // if equal to 0, includeSameChipTags is 1
+                    Serializer.Serialize(ref temp_int); // if equal to 0, includeSameChipTags is 1
                     break;
                 case >= 0x41:
                     Serializer.Serialize(ref IncludeSameChipTags);

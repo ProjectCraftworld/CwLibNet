@@ -1,6 +1,11 @@
 ﻿using System.Reflection;
 using CwLibNet.Resources;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Slot;
+using CwLibNet.Structs.Things;
+using CwLibNet.Types.Data;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Enums;
 

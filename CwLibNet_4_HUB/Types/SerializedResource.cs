@@ -9,7 +9,8 @@ using CwLibNet.Structs.Things;
 using CwLibNet.Types.Data;
 using CwLibNet.Util;
 using Xxtea;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet.IO.Serializer;
 
 namespace CwLibNet.Types;
 
@@ -165,7 +166,7 @@ public class SerializedResource
     {
         var serializer = new Serializer(data, revision, compressionFlags);
         foreach (var descriptor in dependencies)
-            Serializer.AddDependency(descriptor);
+            Serializer.GetCurrentSerializer().AddDependency(descriptor);
         return serializer;
     }
 
@@ -189,7 +190,9 @@ public class SerializedResource
     public T LoadResource<T>() where T : ISerializable
     {
         var serializer = GetSerializer();
-        return Serializer.Serialize(ref default(T));
+        T? resource = default(T);
+        Serializer.Serialize(ref resource);
+        return resource;
     }
 
     /**

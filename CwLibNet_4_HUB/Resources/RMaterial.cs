@@ -1,7 +1,8 @@
 ﻿using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet.IO.Serializer;
 
 namespace CwLibNet.Resources;
 
@@ -52,10 +53,14 @@ public class RMaterial: Resource
     public bool circuitBoard, disableCSG;
 
 
-    public override void Serialize()
+    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
 
-        var head = Serializer.GetRevision().GetVersion();
+
+        var head = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 
         Serializer.Serialize(ref traction);
         Serializer.Serialize(ref density);
@@ -69,7 +74,7 @@ public class RMaterial: Resource
         // if (head >= 0x292)
         Serializer.Serialize(ref restitution);
         // else
-        //     Serializer.Serialize(ref 0); // Is this supposed to be restitution still?
+        //     Serializer.Serialize(ref temp_int); // Is this supposed to be restitution still?
 
         Serializer.Serialize(ref slidingFriction);
 
@@ -155,14 +160,14 @@ public class RMaterial: Resource
     {
         Serializer serializer = new(GetAllocatedSize(), revision,
             compressionFlags);
-        Serializer.Serialize(ref this);
+        this.Serialize(serializer);
         return new SerializationData(
-            Serializer.GetBuffer(),
+            Serializer.GetCurrentSerializer().GetBuffer(),
             revision,
             compressionFlags,
             ResourceType.Material,
             SerializationType.BINARY,
-            Serializer.GetDependencies()
+            Serializer.GetCurrentSerializer().GetDependencies()
         );
     }
 }

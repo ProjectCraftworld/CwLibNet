@@ -1,7 +1,9 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Components.Popit;
 
@@ -18,13 +20,13 @@ public class DecorationInfo: ISerializable
     public bool Stamping;
 
     public ResourceDescriptor? Plan;
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 
         Serializer.Serialize(ref Angle);
         Serializer.Serialize(ref LastDecoration);
-        LastDecoratedThing = Serializer.Reference(LastDecoratedThing);
+        LastDecoratedThing = Serializer.SerializeReference(LastDecoratedThing);
         Serializer.Serialize(ref Decoration, Decoration, ResourceType.Mesh);
         Serializer.Serialize(ref Scale);
         Serializer.Serialize(ref Reversed);

@@ -5,7 +5,10 @@ using CwLibNet.Structs.Slot;
 using CwLibNet.Structs.Things.Parts;
 using CwLibNet.Types.Data;
 using Branch = CwLibNet.Enums.Branch;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Profile;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Inventory;
 
@@ -90,27 +93,31 @@ public class InventoryItemDetails: ISerializable
         AllowEmit = metadata.AllowEmit;
     }
 
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var head = Serializer.GetRevision().GetVersion();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var head = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 
         if (Serializer.IsWriting() && HighlightSound != null)
-            Serializer.AddDependency(new ResourceDescriptor(HighlightSound.Value,
+            Serializer.GetCurrentSerializer().AddDependency(new ResourceDescriptor(HighlightSound.Value,
                 ResourceType.Filename));
 
-        if (Serializer.GetRevision().GetVersion() > 0x37c)
+        if (Serializer.GetCurrentSerializer().GetRevision().GetVersion() > 0x37c)
         {
-            DateAdded = Serializer.Serialize(ref DateAdded);
+            Serializer.Serialize(ref DateAdded);
             Serializer.Serialize(ref LevelUnlockSlotId);
-            HighlightSound = Serializer.Serialize(ref HighlightSound);
+            Serializer.Serialize(ref HighlightSound);
             Serializer.Serialize(ref Colour);
 
 
             if (Serializer.IsWriting())
-                Serializer.GetOutput().I32(Type.GetFlags());
+                Serializer.GetCurrentSerializer().GetOutput().I32(Type.GetFlags());
             else
-                Type = InvObjectBody.FromFlags(Serializer.GetInput().I32(),
-                    Serializer.GetRevision());
+                Type = InvObjectBody.FromFlags(Serializer.GetCurrentSerializer().GetInput().I32(),
+                    Serializer.GetCurrentSerializer().GetRevision());
 
             Serializer.Serialize(ref SubType);
 
@@ -118,7 +125,7 @@ public class InventoryItemDetails: ISerializable
             Serializer.Serialize(ref DescriptionKey);
 
             Serializer.Serialize(ref CreationHistory);
-            Serializer.Serialize(ref Icon, Icon, ResourceType.Texture, true);
+            Serializer.Serialize(ref Icon, ResourceType.Texture, true, false, false);
             Serializer.Serialize(ref UserCreatedDetails);
             Serializer.Serialize(ref PhotoData);
             Serializer.Serialize(ref EyetoyData);
@@ -129,11 +136,13 @@ public class InventoryItemDetails: ISerializable
 
             Serializer.Serialize(ref Creator);
 
-            ToolType = ToolTypeBody.FromValue(Serializer.Serialize(ref ToolType.GetValue()));
+            var tempToolTypeValue = ToolType.GetValue();
+            Serializer.Serialize(ref tempToolTypeValue);
+            ToolType = ToolTypeBody.FromValue(tempToolTypeValue);
             Serializer.Serialize(ref Flags);
 
 
-            if (Serializer.GetRevision().Has(Branch.Double11,
+            if (Serializer.GetCurrentSerializer().GetRevision().Has(Branch.Double11,
                     (int)Revisions.D_1DETAILS_PROPORTIONAL))
                 Serializer.Serialize(ref MakeSizeProportional);
 
@@ -147,46 +156,53 @@ public class InventoryItemDetails: ISerializable
         {
             if (head < 0x174)
             {
-                Serializer.Serialize(ref null); // nameTranslationTag
-                Serializer.Serialize(ref null); // descTranslationTag
+                string? tempNullName = null;
+                string? tempNullDesc = null;
+                Serializer.Serialize(ref tempNullName); // nameTranslationTag
+                Serializer.Serialize(ref tempNullDesc); // descTranslationTag
             }
             else
             {
                 Serializer.Serialize(ref TranslationTag);
             }
 
-            LocationIndex = (short) Serializer.Serialize(ref LocationIndex);
-            CategoryIndex = (short) Serializer.Serialize(ref CategoryIndex);
+            Serializer.Serialize(ref LocationIndex);
+            Serializer.Serialize(ref CategoryIndex);
             if (head > 0x194)
-                PrimaryIndex = (short) Serializer.Serialize(ref PrimaryIndex);
+                Serializer.Serialize(ref PrimaryIndex);
 
-            Serializer.Serialize(ref 0); // Pad
+            Serializer.Serialize(ref temp_int); // Pad
 
             if (Serializer.IsWriting())
-                Serializer.GetOutput().I32(Type.GetFlags(), true);
+                Serializer.GetCurrentSerializer().GetOutput().I32(Type.GetFlags(), true);
             else
-                Type = InvObjectBody.FromFlags(Serializer.GetInput().I32(true),
-                    Serializer.GetRevision());
-            SubType = Serializer.Serialize(ref SubType);
+                Type = InvObjectBody.FromFlags(Serializer.GetCurrentSerializer().GetInput().I32(true),
+                    Serializer.GetCurrentSerializer().GetRevision());
+            Serializer.Serialize(ref SubType);
 
             if (head > 0x196)
-                ToolType =
-                    ToolTypeBody.FromValue((byte) Serializer.Serialize(ref ToolType.GetValue(),
-                        true));
-            Serializer.Serialize(ref Icon, Icon, ResourceType.Texture, true);
+            {
+                var tempToolTypeValue = ToolType.GetValue();
+                Serializer.Serialize(ref tempToolTypeValue);
+                ToolType = ToolTypeBody.FromValue((byte)tempToolTypeValue);
+            }
+            Serializer.Serialize(ref Icon, ResourceType.Texture);
             if (head > 0x1c0)
             {
-                NumUses = Serializer.Serialize(ref NumUses);
-                LastUsed = Serializer.Serialize(ref LastUsed);
+                Serializer.Serialize(ref NumUses);
+                Serializer.Serialize(ref LastUsed);
             }
 
             if (head > 0x14e)
-                HighlightSound = Serializer.Serialize(ref HighlightSound);
+                Serializer.Serialize(ref HighlightSound);
             else
-                Serializer.Serialize(ref null); // Path to highlight sound?
+            {
+                GUID? tempNullGuid = null;
+                Serializer.Serialize(ref tempNullGuid); // Path to highlight sound?
+            }
 
             if (head > 0x156)
-                Colour = Serializer.Serialize(ref Colour);
+                Serializer.Serialize(ref Colour);
 
             if (head > 0x161)
             {
@@ -201,10 +217,9 @@ public class InventoryItemDetails: ISerializable
             if (head > 0x176)
             {
                 LevelUnlockSlotId.SlotType =
-                    (SlotType)Serializer.Serialize(ref (int)LevelUnlockSlotId.SlotType);
+                    Serializer.GetCurrentSerializer().Enum32(LevelUnlockSlotId.SlotType);
 
-                LevelUnlockSlotId.SlotNumber =
-                    Serializer.Serialize(ref LevelUnlockSlotId.SlotNumber, true);
+                Serializer.Serialize(ref LevelUnlockSlotId.SlotNumber);
             }
 
             if (head > 0x181)
@@ -227,7 +242,7 @@ public class InventoryItemDetails: ISerializable
                 Serializer.Serialize(ref AllowEmit);
 
             if (head > 0x221)
-                DateAdded = Serializer.Serialize(ref DateAdded);
+                Serializer.Serialize(ref DateAdded);
 
             if (head > 0x222)
                 Serializer.Serialize(ref Shareable);
@@ -238,42 +253,43 @@ public class InventoryItemDetails: ISerializable
             return;
         }
 
-        HighlightSound = Serializer.Serialize(ref HighlightSound);
+        Serializer.Serialize(ref HighlightSound);
 
         // In these older versions of the inventory details,
         // 32-bit values are enforced while still using encoded values elsewhere,
         // so for some structures like SlotID, we need to force it manually.
 
-        LevelUnlockSlotId.SlotType =
-            (SlotType)Serializer.Serialize(ref (int)LevelUnlockSlotId.SlotType, true);
+        var tempSlotType = (int)LevelUnlockSlotId.SlotType;
+        Serializer.Serialize(ref tempSlotType);
+        LevelUnlockSlotId.SlotType = (SlotType)tempSlotType;
 
-        LevelUnlockSlotId.SlotNumber =
-            Serializer.Serialize(ref LevelUnlockSlotId.SlotNumber, true);
+        Serializer.Serialize(ref LevelUnlockSlotId.SlotNumber);
 
-        LocationIndex = (short) Serializer.Serialize(ref LocationIndex);
-        CategoryIndex = (short) Serializer.Serialize(ref CategoryIndex);
-        PrimaryIndex = (short) Serializer.Serialize(ref PrimaryIndex);
+        Serializer.Serialize(ref LocationIndex);
+        Serializer.Serialize(ref CategoryIndex);
+        Serializer.Serialize(ref PrimaryIndex);
 
-        LastUsed = Serializer.Serialize(ref LastUsed);
-        NumUses = Serializer.Serialize(ref NumUses);
+        Serializer.Serialize(ref LastUsed);
+        Serializer.Serialize(ref NumUses);
         if (head > 0x234)
-            Serializer.Serialize(ref 0); // Pad
+            Serializer.Serialize(ref temp_int); // Pad
 
 
-        DateAdded = Serializer.Serialize(ref DateAdded);
+        Serializer.Serialize(ref DateAdded);
 
-        FluffCost = Serializer.Serialize(ref FluffCost);
+        Serializer.Serialize(ref FluffCost);
 
-        Colour = Serializer.Serialize(ref Colour);
+        Serializer.Serialize(ref Colour);
 
         if (Serializer.IsWriting())
-            Serializer.GetOutput().I32(Type.GetFlags(), true);
+            Serializer.GetCurrentSerializer().GetOutput().I32(Type.GetFlags(), true);
         else
-            Type = InvObjectBody.FromFlags(Serializer.GetInput().I32(true),
-                Serializer.GetRevision());
-        SubType = Serializer.Serialize(ref SubType);
-        ToolType = ToolTypeBody.FromValue((byte) Serializer.Serialize(ref ToolType.GetValue(),
-            true));
+            Type = InvObjectBody.FromFlags(Serializer.GetCurrentSerializer().GetInput().I32(true),
+                Serializer.GetCurrentSerializer().GetRevision());
+        Serializer.Serialize(ref SubType);
+        var tempToolTypeValue2 = ToolType.GetValue();
+        Serializer.Serialize(ref tempToolTypeValue2);
+        ToolType = ToolTypeBody.FromValue((byte)tempToolTypeValue2);
 
         Serializer.Serialize(ref Creator);
 
@@ -283,7 +299,7 @@ public class InventoryItemDetails: ISerializable
         if (head > 0x334)
             Serializer.Serialize(ref Flags);
 
-        if (Serializer.GetRevision().Has(Branch.Leerdammer, (int)Revisions.LD_LAMS_KEYS) || head > 0x2ba)
+        if (Serializer.GetCurrentSerializer().GetRevision().Has(Branch.Leerdammer, (int)Revisions.LD_LAMS_KEYS) || head > 0x2ba)
         {
             Serializer.Serialize(ref TitleKey);
             Serializer.Serialize(ref DescriptionKey);
@@ -297,12 +313,12 @@ public class InventoryItemDetails: ISerializable
 
         Serializer.Serialize(ref CreationHistory);
 
-        Serializer.Serialize(ref Icon, Icon, ResourceType.Texture, true);
+        Serializer.Serialize(ref Icon, ResourceType.Texture, true, false, false);
         Serializer.Serialize(ref PhotoData);
         Serializer.Serialize(ref EyetoyData);
 
         if (head > 0x358)
-            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref temp_int);
 
         if (!Serializer.IsWriting())
             UpdateTranslations();
@@ -329,8 +345,8 @@ public class InventoryItemDetails: ISerializable
     {
         // I wonder how slow this is...
         var serializer = new Serializer(GetAllocatedSize(), revision, 0);
-        Serializer.Serialize(ref this);
-        return Sha1.FromBuffer(Serializer.GetBuffer());
+        this.Serialize(serializer);
+        return Sha1.FromBuffer(Serializer.GetCurrentSerializer().GetBuffer());
     }
 
     private void UpdateTranslations()

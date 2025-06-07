@@ -3,7 +3,8 @@ using CwLibNet.IO;
 using CwLibNet.Structs.Profile;
 using CwLibNet.Structs.Slot;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet.IO.Serializer;
 
 namespace CwLibNet.Resources
 {
@@ -336,9 +337,25 @@ namespace CwLibNet.Resources
         /// </summary>
         public GoPlayCache[]? GoPlayCache { get; set; }
 
-        public override void Serialize()
+        public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
         {
-            var revision = Serializer.GetRevision();
+        int temp_int = 0;
+        int temp_Lbp2GameProgressionFlags = 0;
+        int temp_HiddenCategories = 0;
+        int temp_EnableMusicInPod = 0;
+        int temp_EnableMusicInPlayMode = 0;
+        int temp_CollectedBubbles = 0;
+        int temp_AvatarIcon = 0;
+        int temp_UserSettingPhotoBooth = 0;
+        int temp_Lbp2TutorialUnlockButtonUnleashed = 0;
+        int temp_Gamma = 0;
+        int temp_FriendJoinRequestMode = 0;
+        int temp_CreateRearTouchPinchZoom = 0;
+        int temp_CreateRearTapZoom = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+            var revision = Serializer.GetCurrentSerializer().GetRevision();
             var version = revision.GetVersion();
             var subVersion = revision.GetSubVersion();
 
@@ -348,13 +365,19 @@ namespace CwLibNet.Resources
                 return;
             }
 
-            Serializer.Serialize(ref Inventory);
-            StringTable = Serializer.Serialize(ref StringTable);
+            var tempInventory = Inventory;
+            Serializer.Serialize(ref tempInventory);
+            Inventory = tempInventory;
+            var tempStringTable = StringTable;
+            Serializer.Serialize(ref tempStringTable);
+            StringTable = tempStringTable;
 
             switch (version)
             {
                 case >= 0x3b6:
-                    Serializer.Serialize(ref FromProductionBuild);
+                    var tempFromProductionBuild = FromProductionBuild;
+                    Serializer.Serialize(ref tempFromProductionBuild);
+                    FromProductionBuild = tempFromProductionBuild;
                     break;
                 case >= 0x133 and < 0x1df:
                     // SlotID[]
@@ -367,11 +390,11 @@ namespace CwLibNet.Resources
                 {
                     var keys = new List<TutorialLevel>();
                     var values = new List<TutorialState>();
-                    var count = Serializer.GetInput().I32();
+                    var count = Serializer.GetCurrentSerializer().GetInput().I32();
                     for (var i = 0; i < count; ++i)
                     {
-                        keys.Add(Serializer.GetInput().Enum32<TutorialLevel>());
-                        values.Add(Serializer.GetInput().Enum32<TutorialState>());
+                        keys.Add(Serializer.GetCurrentSerializer().GetInput().Enum32<TutorialLevel>());
+                        values.Add(Serializer.GetCurrentSerializer().GetInput().Enum32<TutorialState>());
                     }
 
                     Lbp1TutorialStates = new Dictionary<TutorialLevel, TutorialState>();
@@ -381,165 +404,275 @@ namespace CwLibNet.Resources
                 else
                 {
                     var keys = new List<TutorialLevel>(Lbp1TutorialStates.Keys);
-                    Serializer.GetOutput().I32(keys.Count);
+                    Serializer.GetCurrentSerializer().GetOutput().I32(keys.Count);
                     foreach (var key in keys)
                     {
-                        Serializer.GetOutput().Enum32(key);
-                        Serializer.GetOutput().Enum32(Lbp1TutorialStates[key]);
+                        Serializer.GetCurrentSerializer().GetOutput().Enum32(key);
+                        Serializer.GetCurrentSerializer().GetOutput().Enum32(Lbp1TutorialStates[key]);
                     }
                 }
             }
 
             if (version >= 0x266)
             {
-                Serializer.Serialize(ref DlcPackViewed);
-                Serializer.Serialize(ref DlcPackShown);
+                var tempDlcPackViewed = DlcPackViewed;
+                Serializer.Serialize(ref tempDlcPackViewed);
+                DlcPackViewed = tempDlcPackViewed;
+                var tempDlcPackShown = DlcPackShown;
+                Serializer.Serialize(ref tempDlcPackShown);
+                DlcPackShown = tempDlcPackShown;
             }
 
             if (version >= 0x1e5)
-                Serializer.Serialize(ref Lbp1MainMenuButtonUnlocks);
+            {
+                var tempLbp1MainMenuButtonUnlocks = Lbp1MainMenuButtonUnlocks;
+                Serializer.Serialize(ref tempLbp1MainMenuButtonUnlocks);
+                Lbp1MainMenuButtonUnlocks = tempLbp1MainMenuButtonUnlocks;
+            }
 
             if (version >= 0x16e)
-                Serializer.Serialize(ref PlayedLevelData);
+            {
+                var tempPlayedLevelData = PlayedLevelData;
+                Serializer.Serialize(ref tempPlayedLevelData);
+                PlayedLevelData = tempPlayedLevelData;
+            }
 
             if (version >= 0x37a)
             {
-                Serializer.Serialize(ref ViewedLevelData);
-                Serializer.Serialize(ref ViewedPlayerData);
+                var tempViewedLevelData = ViewedLevelData;
+                Serializer.Serialize(ref tempViewedLevelData);
+                ViewedLevelData = tempViewedLevelData;
+                var tempViewedPlayerData = ViewedPlayerData;
+                Serializer.Serialize(ref tempViewedPlayerData);
+                ViewedPlayerData = tempViewedPlayerData;
             }
 
             if (version >= 0x16e)
             {
                 if (!Serializer.IsWriting())
                 {
-                    var count = Serializer.GetInput().I32();
+                    var count = Serializer.GetCurrentSerializer().GetInput().I32();
                     OldMyMoonSlots = new Dictionary<SlotID, Slot>(count);
                     for (var i = 0; i < count; ++i)
                     {
-                        OldMyMoonSlots[Serializer.Serialize(ref default(SlotID))] =
-                            Serializer.Serialize(ref default(Slot));
+                        var tempSlotId = default(SlotID);
+                        var tempSlot = default(Slot);
+                        Serializer.Serialize(ref tempSlotId);
+                        Serializer.Serialize(ref tempSlot);
+                        OldMyMoonSlots[tempSlotId] = tempSlot;
                     }
                 }
                 else
                 {
-                    Serializer.GetOutput().I32(OldMyMoonSlots.Count);
+                    Serializer.GetCurrentSerializer().GetOutput().I32(OldMyMoonSlots.Count);
                     foreach (var entry in OldMyMoonSlots)
                     {
-                        Serializer.Serialize(ref entry.Key);
-                        Serializer.Serialize(ref entry.Value);
+                        var tempKey = entry.Key;
+                        var tempValue = entry.Value;
+                        Serializer.Serialize(ref tempKey);
+                        Serializer.Serialize(ref tempValue);
                     }
                 }
             }
 
             if (version >= 0x20e)
-                Serializer.Serialize(ref CopiedFromAnotherUser);
+            {
+                var tempCopiedFromAnotherUser = CopiedFromAnotherUser;
+                Serializer.Serialize(ref tempCopiedFromAnotherUser);
+                CopiedFromAnotherUser = tempCopiedFromAnotherUser;
+            }
 
             if (version >= 0x268)
-                Serializer.Serialize(ref FixedUpByDeveloper);
+            {
+                var tempFixedUpByDeveloper = FixedUpByDeveloper;
+                Serializer.Serialize(ref tempFixedUpByDeveloper);
+                FixedUpByDeveloper = tempFixedUpByDeveloper;
+            }
 
             if (version >= 0x297 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_SAVEGAME_INFO))
             {
-                Serializer.Serialize(ref ShowSaveGameInfo);
-                Serializer.Serialize(ref TotalLevelCount);
+                var tempShowSaveGameInfo = ShowSaveGameInfo;
+                Serializer.Serialize(ref tempShowSaveGameInfo);
+                ShowSaveGameInfo = tempShowSaveGameInfo;
+                var tempTotalLevelCount = TotalLevelCount;
+                Serializer.Serialize(ref tempTotalLevelCount);
+                TotalLevelCount = tempTotalLevelCount;
             }
 
             if (version >= 0x394)
-                Serializer.Serialize(ref LastMmPicksCount);
+            {
+                var tempLastMmPicksCount = LastMmPicksCount;
+                Serializer.Serialize(ref tempLastMmPicksCount);
+                LastMmPicksCount = tempLastMmPicksCount;
+            }
 
             if (version >= 0x2cc || revision.Has(Branch.Leerdammer, (int)Revisions.LD_NEWS_TIMESTAMP))
-                LastNewsItemTimestamp = Serializer.Serialize(ref LastNewsItemTimestamp);
+            {
+                var tempLastNewsItemTimestamp = LastNewsItemTimestamp;
+                Serializer.Serialize(ref tempLastNewsItemTimestamp);
+                LastNewsItemTimestamp = tempLastNewsItemTimestamp;
+            }
 
             if (version >= 0x324)
-                LastStreamEventTimestamp = Serializer.Serialize(ref LastStreamEventTimestamp);
+            {
+                var tempLastStreamEventTimestamp = LastStreamEventTimestamp;
+                Serializer.Serialize(ref tempLastStreamEventTimestamp);
+                LastStreamEventTimestamp = tempLastStreamEventTimestamp;
+            }
 
             if (version >= 0x2cd || revision.Has(Branch.Leerdammer, (int)Revisions.LD_QUEUE))
-                LolcatFtwTimestamp = Serializer.Serialize(ref LolcatFtwTimestamp);
+            {
+                var tempLolcatFtwTimestamp = LolcatFtwTimestamp;
+                Serializer.Serialize(ref tempLolcatFtwTimestamp);
+                LolcatFtwTimestamp = tempLolcatFtwTimestamp;
+            }
 
             if (version >= 0x328)
             {
                 if (!Serializer.IsWriting())
-                    OldTextSearches = new string[Serializer.GetInput().I32()];
+                    OldTextSearches = new string[Serializer.GetCurrentSerializer().GetInput().I32()];
                 else
-                    Serializer.GetOutput().I32(OldTextSearches.Length);
+                    Serializer.GetCurrentSerializer().GetOutput().I32(OldTextSearches.Length);
                 for (var i = 0; i < OldTextSearches.Length; ++i)
                     Serializer.Serialize(ref OldTextSearches[i]);
             }
 
             if (version >= 0x32a)
             {
-                Serializer.Serialize(ref OldDiscoveredLinks);
-                Serializer.Serialize(ref PendingLinks);
+                var tempOldDiscoveredLinks = OldDiscoveredLinks;
+                Serializer.Serialize(ref tempOldDiscoveredLinks);
+                OldDiscoveredLinks = tempOldDiscoveredLinks;
+                var tempPendingLinks = PendingLinks;
+                Serializer.Serialize(ref tempPendingLinks);
+                PendingLinks = tempPendingLinks;
             }
 
             if (version >= 0x239)
-                Serializer.Serialize(ref LastPlayed);
+            {
+                var tempLastPlayed = LastPlayed;
+                Serializer.Serialize(ref tempLastPlayed);
+                LastPlayed = tempLastPlayed;
+            }
 
             if (version >= 0x1c2)
-                Serializer.Serialize(ref Lbp1VideosPlayed);
+            {
+                var tempLbp1VideosPlayed = Lbp1VideosPlayed;
+                Serializer.Serialize(ref tempLbp1VideosPlayed);
+                Lbp1VideosPlayed = tempLbp1VideosPlayed;
+            }
         
             // ArrayList<GUID>
             if (version >= 0x219)
-                Serializer.Serialize(ref Lbp2VideosPlayed);
+            {
+                var tempLbp2VideosPlayed = Lbp2VideosPlayed;
+                Serializer.Serialize(ref tempLbp2VideosPlayed);
+                Lbp2VideosPlayed = tempLbp2VideosPlayed;
+            }
 
             if (version >= 0x16f)
-                Serializer.Serialize(ref CurrentPlayerMetrics);
+            {
+                var tempCurrentPlayerMetrics = CurrentPlayerMetrics;
+                Serializer.Serialize(ref tempCurrentPlayerMetrics);
+                CurrentPlayerMetrics = tempCurrentPlayerMetrics;
+            }
 
             if (version >= 0x1ab)
-                Serializer.Serialize(ref LastPostedPlayerMetrics);
+            {
+                var tempLastPostedPlayerMetrics = LastPostedPlayerMetrics;
+                Serializer.Serialize(ref tempLastPostedPlayerMetrics);
+                LastPostedPlayerMetrics = tempLastPostedPlayerMetrics;
+            }
 
             if (version >= 0x1e1)
-                Serializer.Serialize(ref Lbp1GameProgressionStatus);
+            {
+                var tempLbp1GameProgressionStatus = Lbp1GameProgressionStatus;
+                Serializer.Serialize(ref tempLbp1GameProgressionStatus);
+                Lbp1GameProgressionStatus = tempLbp1GameProgressionStatus;
+            }
 
             if (version >= 0x1cf)
             {
-                Serializer.Serialize(ref Lbp1GameProgressionEventHappenedBits);
-                Serializer.Serialize(ref Lbp1GameProgressionEventsExplainedBits);
+                var tempLbp1GameProgressionEventHappenedBits = Lbp1GameProgressionEventHappenedBits;
+                Serializer.Serialize(ref tempLbp1GameProgressionEventHappenedBits);
+                Lbp1GameProgressionEventHappenedBits = tempLbp1GameProgressionEventHappenedBits;
+                var tempLbp1GameProgressionEventsExplainedBits = Lbp1GameProgressionEventsExplainedBits;
+                Serializer.Serialize(ref tempLbp1GameProgressionEventsExplainedBits);
+                Lbp1GameProgressionEventsExplainedBits = tempLbp1GameProgressionEventsExplainedBits;
             }
 
             if (version >= 0x1f4)
-                Serializer.Serialize(ref DemoProgressionStatus);
+            {
+                DemoProgressionStatus = serializer.I32(DemoProgressionStatus);
+            }
 
             if (version >= 0x1bd)
-                Serializer.Serialize(ref Lbp2GameProgressionFlags);
+            {            }
+                Serializer.Serialize(ref temp_Lbp2GameProgressionFlags);
+                temp_Lbp2GameProgressionFlags = temp_Lbp2GameProgressionFlags;
+                Lbp2GameProgressionFlags = temp_Lbp2GameProgressionFlags;
 
             if (version >= 0x188)
-                Serializer.Serialize(ref PendingInventoryItems);
+            {
+                PendingInventoryItems = Serializer.Array(PendingInventoryItems);
+            }
 
             if (version >= 0x14f)
-                Serializer.Serialize(ref PodLevel, PodLevel, ResourceType.Level, true);
+            {
+                PodLevel = serializer.Reference(PodLevel,ResourceType.Level, true, false, false);
+            }
 
             if (version >= 0x18f)
-                PlayerId = Serializer.Serialize(ref PlayerId);
-
-            if (version >= 0x296 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_OWNER_ID))
-                OwnerPlayerId = Serializer.Serialize(ref OwnerPlayerId);
+            {
+                Serializer.Serialize(ref PlayerId);
+            }
 
             if (version >= 0x296 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_OWNER_ID))
             {
-                OwnerPsid = Serializer.Serialize(ref OwnerPsid);
+                Serializer.Serialize(ref OwnerPlayerId);
+            }
+
+            if (version >= 0x296 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_OWNER_ID))
+            {
+                Serializer.Serialize(ref OwnerPsid);
                 Serializer.Serialize(ref OwnerUserId);
             }
 
             if (version >= 0x175)
-                EulaAgreed = Serializer.Serialize(ref EulaAgreed);
+            {
+                Serializer.Serialize(ref EulaAgreed);
+            }
 
             if (version >= 0x18d)
-                AcceptingPlayer = Serializer.Serialize(ref AcceptingPlayer);
+            {
+                Serializer.Serialize(ref AcceptingPlayer);
+            }
 
             if (version >= 0x199)
-                Serializer.Serialize(ref SyncedProfile, SyncedProfile, ResourceType.SyncedProfile, true);
+            {
+                SyncedProfile = serializer.Reference(SyncedProfile,ResourceType.SyncedProfile, true, false, false);
+            }
 
             if (version >= 0x1f9)
-                Serializer.Serialize(ref VoipMutedPlayers);
+            {
+                VoipMutedPlayers = serializer.I32(VoipMutedPlayers);
+            }
 
             if (version >= 0x1fc)
-                Serializer.Serialize(ref VoipChatPaused);
+            {
+                VoipChatPaused = serializer.I32(VoipChatPaused);
+            }
 
             if (version >= 0x1bc)
-                Serializer.Serialize(ref EnableMusicInPlayMode);
+            {            }
+                Serializer.Serialize(ref temp_EnableMusicInPlayMode);
+                temp_EnableMusicInPlayMode = temp_EnableMusicInPlayMode;
+                EnableMusicInPlayMode = temp_EnableMusicInPlayMode;
 
             if (version >= 0x1c5)
-                Serializer.Serialize(ref EnableMusicInPod);
+            {            }
+                Serializer.Serialize(ref temp_EnableMusicInPod);
+                temp_EnableMusicInPod = temp_EnableMusicInPod;
+                EnableMusicInPod = temp_EnableMusicInPod;
 
             if (version >= 0x27d)
             {
@@ -551,237 +684,305 @@ namespace CwLibNet.Resources
                 InventoryCollections = Serializer.Array<InventoryCollection>(InventoryCollections, true);
 
             if (version >= 0x1bc)
-                Serializer.Serialize(ref AvatarIcon, AvatarIcon, ResourceType.Texture, true);
+            {            }
+                Serializer.Serialize(ref temp_AvatarIcon, ResourceType.Texture, true, false, false);
+                temp_AvatarIcon = temp_AvatarIcon;
+                AvatarIcon = temp_AvatarIcon;
 
             if (version >= 0x23c)
-                Serializer.Serialize(ref SaveIcon, SaveIcon, ResourceType.Texture, true);
+            {
+                SaveIcon = serializer.Reference(SaveIcon,ResourceType.Texture, true, false, false);
+            }
 
             if (version >= 0x263)
-                Serializer.Serialize(ref Lbp1CreateModeVOProgress);
+            {
+                Lbp1CreateModeVOProgress = serializer.I32(Lbp1CreateModeVOProgress);
+            }
 
             if (version >= 0x283)
-            {
-                Serializer.Serialize(ref Gamma);
-                Serializer.Serialize(ref ScreenSize);
-                Serializer.Serialize(ref HasSeenCalibrationScreen);
+            {                temp_Gamma = serializer.I32(temp_Gamma);
+                Gamma = temp_Gamma;
+                ScreenSize = serializer.I32(ScreenSize);
+                HasSeenCalibrationScreen = serializer.I32(HasSeenCalibrationScreen);
             }
 
             if (version >= 0x35e)
             {
-                Serializer.Serialize(ref Lbp1VOPlayed);
-                Serializer.Serialize(ref Lbp2VOPlayed);
+                Lbp1VOPlayed = serializer.I32(Lbp1VOPlayed);
+                Lbp2VOPlayed = serializer.I32(Lbp2VOPlayed);
             }
 
             if (version >= 0x23a)
-                Serializer.Serialize(ref SubtitleMode);
+            {
+                SubtitleMode = serializer.I32(SubtitleMode);
+            }
 
             if (version >= 0x36f)
-                PinsAwarded = Serializer.Serialize(ref PinsAwarded);
+            {
+                PinsAwarded = serializer.I32(PinsAwarded);
+            }
 
             if (version >= 0x32e)
-            {
-                Serializer.Serialize(ref UserSettingPhotoBooth);
+            {                temp_UserSettingPhotoBooth = serializer.I32(temp_UserSettingPhotoBooth);
+                UserSettingPhotoBooth = temp_UserSettingPhotoBooth;
                 if (subVersion >= 0x17e)
-                    Serializer.Serialize(ref UserSettingAdvancedEditMode);
-                Serializer.Serialize(ref UserSettingCollection);
+                {
+                    UserSettingAdvancedEditMode = serializer.I32(UserSettingAdvancedEditMode);
+                }
+                UserSettingCollection = serializer.I32(UserSettingCollection);
             }
 
             if (version == 0x261)
-                Serializer.Serialize(ref 0); // Unused: gameSaveProgressBits
+                Serializer.Serialize(ref temp_int); // Unused: gameSaveProgressBits
 
             if (version >= 0x341 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_THERMOMETER))
-                Serializer.Serialize(ref ShowThermometer);
+            {
+                ShowThermometer = serializer.I32(ShowThermometer);
+            }
 
             if (version >= 0x383)
-                Serializer.Serialize(ref SaveOnlinePlaySettings);
+            {
+                SaveOnlinePlaySettings = serializer.I32(SaveOnlinePlaySettings);
+            }
 
             if (version >= 0x30d)
             {
-                Serializer.Serialize(ref OnlinePlayMode);
-                Serializer.Serialize(ref FriendJoinRequestMode);
-                Serializer.Serialize(ref NonFriendJoinRequestMode);
+                OnlinePlayMode = serializer.I32(OnlinePlayMode);                temp_FriendJoinRequestMode = serializer.I32(temp_FriendJoinRequestMode);
+                FriendJoinRequestMode = temp_FriendJoinRequestMode;
+                NonFriendJoinRequestMode = serializer.I32(NonFriendJoinRequestMode);
             }
 
             if (version >= 0x31c)
-                Serializer.Serialize(ref Lbp2TutorialsPlayed);
+            {
+                Lbp2TutorialsPlayed = serializer.I32(Lbp2TutorialsPlayed);
+            }
 
             if (version >= 0x31d)
-                Serializer.Serialize(ref SectionHeadingToggled);
+            {
+                SectionHeadingToggled = serializer.I32(SectionHeadingToggled);
+            }
 
             if (subVersion >= 0x20d)
-                Serializer.Serialize(ref MysteryPodEventsSeen);
+            {
+                MysteryPodEventsSeen = serializer.I32(MysteryPodEventsSeen);
+            }
 
             if (version is >= 0x35f and < 0x3f9)
             {
                 if (!Serializer.IsWriting())
-                    LastLegacyImportedProfileHashLBP1 = new Sha1[Serializer.GetInput().I32()];
+                    LastLegacyImportedProfileHashLBP1 = new Sha1[Serializer.GetCurrentSerializer().GetInput().I32()];
                 else 
-                    Serializer.GetOutput().I32(LastLegacyImportedProfileHashLBP1.Length);
+                    Serializer.GetCurrentSerializer().GetOutput().I32(LastLegacyImportedProfileHashLBP1.Length);
                 for (var i = 0; i < LastLegacyImportedProfileHashLBP1.Length; ++i)
                     Serializer.Serialize(ref LastLegacyImportedProfileHashLBP1[i]);
             }
 
             if (version >= 0x360)
-                Serializer.Serialize(ref PlayedLBP1);
+            {
+                PlayedLBP1 = serializer.I32(PlayedLBP1);
+            }
 
             if (subVersion >= 0x12c)
             {
-                Serializer.Serialize(ref HasPerformedFirstRun);
-                Serializer.Serialize(ref Lbp2TutorialUnlockButtonUnleashed);
+                HasPerformedFirstRun = serializer.I32(HasPerformedFirstRun);                temp_Lbp2TutorialUnlockButtonUnleashed = serializer.I32(temp_Lbp2TutorialUnlockButtonUnleashed);
+                Lbp2TutorialUnlockButtonUnleashed = temp_Lbp2TutorialUnlockButtonUnleashed;
             }
 
             if (version >= 0x28c)
-                Serializer.Serialize(ref HiddenCategories);
+            {            }
+                Serializer.Serialize(ref temp_HiddenCategories);
+                temp_HiddenCategories = temp_HiddenCategories;
+                HiddenCategories = temp_HiddenCategories;
 
             if (subVersion >= 0x160)
-                Serializer.Serialize(ref CollectedBubbles);
+            {            }
+                Serializer.Serialize(ref temp_CollectedBubbles);
+                temp_CollectedBubbles = temp_CollectedBubbles;
+                CollectedBubbles = temp_CollectedBubbles;
 
             if (version >= 0x2f5 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_WATER_LEVELS))
-                Serializer.Serialize(ref NumWaterLevelsPlayed);
+            {
+                NumWaterLevelsPlayed = serializer.I32(NumWaterLevelsPlayed);
+            }
 
             if (version >= 0x3cf)
-                Serializer.Serialize(ref AutoFilterOn);
+            {
+                AutoFilterOn = serializer.I32(AutoFilterOn);
+            }
 
             if (version >= 0x3d2)
             {
-                Serializer.Serialize(ref HasUsed6Axis);
-                Serializer.Serialize(ref HasUsedMove);
+                HasUsed6Axis = serializer.I32(HasUsed6Axis);
+                HasUsedMove = serializer.I32(HasUsedMove);
             }
 
-            // Serializer.Serialize(ref true); // hasSeenCrossCompatInfo
-            // Serializer.Serialize(ref false); // wantsCrossCompatDownloadNotification
+            // Serializer.Serialize(ref temp_bool_true); // hasSeenCrossCompatInfo
+            // Serializer.Serialize(ref temp_bool_false);
+            temp_bool_false = temp_bool_false; // wantsCrossCompatDownloadNotification
 
             if (version >= 0x3a3)
             {
-                PaintProperties = Serializer.Serialize(ref PaintProperties);
-                PlayerDataLabels = Serializer.Serialize(ref PlayerDataLabels);
+                PaintProperties = serializer.I32(PaintProperties);
+                PlayerDataLabels = serializer.I32(PlayerDataLabels);
             }
 
             if (version >= 0x3c9 || revision.Has(Branch.Double11, (int)Revisions.D_1DATALABELS))
             {
                 if (revision.Has(Branch.Double11, (int)Revisions.D13_G_CONNECTIVITY))
                 {
-                    Serializer.Serialize(ref Total3GUpStream);
-                    Serializer.Serialize(ref Total3GDownStream);
+                    Total3GUpStream = serializer.I32(Total3GUpStream);
+                    Total3GDownStream = serializer.I32(Total3GDownStream);
                 }
 
                 if (revision.Has(Branch.Double11, (int)Revisions.D1_TOUCH_CREATE))
                 {
-                    Serializer.Serialize(ref CreateRearTouchPan);
-                    Serializer.Serialize(ref CreateRearTouchPinchZoom);
-                    Serializer.Serialize(ref CreateRearTapZoom);
+                    CreateRearTouchPan = serializer.I32(CreateRearTouchPan);                    temp_CreateRearTouchPinchZoom = serializer.I32(temp_CreateRearTouchPinchZoom);
+                    CreateRearTouchPinchZoom = temp_CreateRearTouchPinchZoom;                    temp_CreateRearTapZoom = serializer.I32(temp_CreateRearTapZoom);
+                    CreateRearTapZoom = temp_CreateRearTapZoom;
                 
                     if (revision.Has(Branch.Double11, (int)Revisions.D1_CREATE_WARNING))
-                        Serializer.Serialize(ref CreateFrameRateWarningMessages);
+                    {
+                        CreateFrameRateWarningMessages = serializer.I32(CreateFrameRateWarningMessages);
+                    }
 
                     if (revision.Has(Branch.Double11, (int)Revisions.D1_CREATE_BETA))
                     {
-                        OnlineBetaNetworkTimestamp = Serializer.Serialize(ref OnlineBetaNetworkTimestamp);
-                        Serializer.Serialize(ref OnlineBetaPlayTimeSinceOnline);
-                        Serializer.Serialize(ref OnlineBetaBootsSinceOnline);
+                        OnlineBetaNetworkTimestamp = serializer.I32(OnlineBetaNetworkTimestamp);
+                        OnlineBetaPlayTimeSinceOnline = serializer.I32(OnlineBetaPlayTimeSinceOnline);
+                        OnlineBetaBootsSinceOnline = serializer.I32(OnlineBetaBootsSinceOnline);
                     }
                 }
             }
 
             if (version >= 0x3e2)
-                Serializer.Serialize(ref DistanceMovedWhilstAttracted);
+            {
+                DistanceMovedWhilstAttracted = serializer.I32(DistanceMovedWhilstAttracted);
+            }
 
             if (version >= 0x3e4)
             {
-                Serializer.Serialize(ref BeakersUsedPart1);
-                Serializer.Serialize(ref BeakersUsedPart2);
+                BeakersUsedPart1 = serializer.I32(BeakersUsedPart1);
+                BeakersUsedPart2 = serializer.I32(BeakersUsedPart2);
             }
 
             if (version >= 0x3ec)
-                Serializer.Serialize(ref ProfileFlags);
-
-            if (version >= 0x3f2)
             {
-                Serializer.Serialize(ref GoldMedalsAwarded);
-                Serializer.Serialize(ref GoldMedalStoryArcPins);
+                ProfileFlags = serializer.I32(ProfileFlags);
             }
 
             if (version >= 0x3f2)
             {
-                Serializer.Serialize(ref TwitterEnabled);
-                Serializer.Serialize(ref FacebookEnabled);
-                Serializer.Serialize(ref TwitterAccessToken);
-                Serializer.Serialize(ref TwitterAccessTokenSecret);
+                GoldMedalsAwarded = serializer.I32(GoldMedalsAwarded);
+                GoldMedalStoryArcPins = serializer.I32(GoldMedalStoryArcPins);
+            }
+
+            if (version >= 0x3f2)
+            {
+                TwitterEnabled = serializer.I32(TwitterEnabled);
+                FacebookEnabled = serializer.I32(FacebookEnabled);
+                TwitterAccessToken = serializer.I32(TwitterAccessToken);
+                TwitterAccessTokenSecret = serializer.I32(TwitterAccessTokenSecret);
             }
 
             if (version >= 0x3f3)
-                Serializer.Serialize(ref PlayedLBP2);
+            {
+                PlayedLBP2 = serializer.I32(PlayedLBP2);
+            }
 
             if (version >= 0x3f4)
             {
-                Serializer.Serialize(ref CreateChallengeTutorialSeen);
-                Serializer.Serialize(ref PlayChallengeTutorialSeen);
+                CreateChallengeTutorialSeen = serializer.I32(CreateChallengeTutorialSeen);
+                PlayChallengeTutorialSeen = serializer.I32(PlayChallengeTutorialSeen);
             }
 
             if (version is >= 0x3f5 and < 0x3f9)
             {
                 if (!Serializer.IsWriting())
-                    LastLegacyImportedProfileHashLBP2 = new Sha1[Serializer.GetInput().I32()];
+                    LastLegacyImportedProfileHashLBP2 = new Sha1[Serializer.GetCurrentSerializer().GetInput().I32()];
                 else 
-                    Serializer.GetOutput().I32(LastLegacyImportedProfileHashLBP2.Length);
+                    Serializer.GetCurrentSerializer().GetOutput().I32(LastLegacyImportedProfileHashLBP2.Length);
                 for (var i = 0; i < LastLegacyImportedProfileHashLBP2.Length; ++i)
                     Serializer.Serialize(ref LastLegacyImportedProfileHashLBP2[i]);
             }
 
             if (version >= 0x3f7)
-                Serializer.Serialize(ref OwnedLBP);
+            {
+                OwnedLBP = serializer.I32(OwnedLBP);
+            }
 
             if (subVersion >= 0xef)
-                Serializer.Serialize(ref DceUuidState);
+            {
+                DceUuidState = serializer.I32(DceUuidState);
+            }
 
             if (subVersion >= 0x15b)
-                Serializer.Serialize(ref LastPlayedPPP);
+            {
+                LastPlayedPPP = serializer.I32(LastPlayedPPP);
+            }
 
             if (subVersion >= 0x20e)
             {
-                LastPlayedPlanet = Serializer.Serialize(ref LastPlayedPlanet);
-                Serializer.Serialize(ref LastPlayedEarthAdv);
-                Serializer.Serialize(ref HasSeenDiveInBetaMessage);
+                LastPlayedPlanet = serializer.I32(LastPlayedPlanet);
+                LastPlayedEarthAdv = serializer.I32(LastPlayedEarthAdv);
+                HasSeenDiveInBetaMessage = serializer.I32(HasSeenDiveInBetaMessage);
             }
 
             if (subVersion >= 0x183)
-                Serializer.Serialize(ref TouchCreateCursorMode);
+            {
+                TouchCreateCursorMode = serializer.I32(TouchCreateCursorMode);
+            }
 
             if (subVersion >= 0x187)
-                Serializer.Serialize(ref ShowAdvancedEditModeMessageCounter);
+            {
+                ShowAdvancedEditModeMessageCounter = serializer.I32(ShowAdvancedEditModeMessageCounter);
+            }
 
             if (subVersion >= 0x194)
-                Serializer.Serialize(ref ShowAdventureSaveWarning);
+            {
+                ShowAdventureSaveWarning = serializer.I32(ShowAdventureSaveWarning);
+            }
 
             if (subVersion >= 0x19f)
-                Serializer.Serialize(ref TotalFramesInEditMode);
+            {
+                TotalFramesInEditMode = serializer.I32(TotalFramesInEditMode);
+            }
 
             if (subVersion >= 0x1a1)
             {
                 if (!Serializer.IsWriting())
-                    OnlineTutorialsPlayed = new Sha1[Serializer.GetInput().I32()];
+                    OnlineTutorialsPlayed = new Sha1[Serializer.GetCurrentSerializer().GetInput().I32()];
                 else 
-                    Serializer.GetOutput().I32(OnlineTutorialsPlayed.Length);
+                    Serializer.GetCurrentSerializer().GetOutput().I32(OnlineTutorialsPlayed.Length);
                 for (var i = 0; i < OnlineTutorialsPlayed.Length; ++i)
                     Serializer.Serialize(ref OnlineTutorialsPlayed[i]);
 
-                Serializer.Serialize(ref PopitPuzzlesCompleted);
+                PopitPuzzlesCompleted = serializer.I32(PopitPuzzlesCompleted);
             }
 
             if (subVersion >= 0x1aa)
-                Serializer.Serialize(ref TimesaverNoticeViewed);
+            {
+                TimesaverNoticeViewed = serializer.I32(TimesaverNoticeViewed);
+            }
             
             if (subVersion >= 0x1ad)
-                Serializer.Serialize(ref QuestProgressPin);
+            {
+                QuestProgressPin = serializer.I32(QuestProgressPin);
+            }
             
             if (subVersion >= 0x209)
-                Serializer.Serialize(ref ActivityFilterToggled);
+            {
+                ActivityFilterToggled = serializer.I32(ActivityFilterToggled);
+            }
             
             if (subVersion >= 0x212)
-                Serializer.Serialize(ref LastLandingPageFocusItems);
+            {
+                LastLandingPageFocusItems = serializer.I32(LastLandingPageFocusItems);
+            }
             
             if (subVersion >= 0x215)
-                Serializer.Serialize(ref GoPlayCache);
+            {
+                GoPlayCache = serializer.I32(GoPlayCache);
+            }
         }
 
         public override int GetAllocatedSize()
@@ -795,14 +996,14 @@ namespace CwLibNet.Resources
         {
             var serializer = new Serializer(0xFFFF00 + (Inventory.Count * 0xC0),
                 revision, compressionFlags);
-            Serializer.Serialize(ref this);
+            this.Serialize(serializer);
             return new SerializationData(
-                Serializer.GetBuffer(),
+                Serializer.GetCurrentSerializer().GetBuffer(),
                 revision,
                 compressionFlags,
                 ResourceType.LocalProfile,
                 SerializationType.BINARY,
-                Serializer.GetDependencies()
+                Serializer.GetCurrentSerializer().GetDependencies()
             );
         }
 

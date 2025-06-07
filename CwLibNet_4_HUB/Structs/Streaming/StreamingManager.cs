@@ -4,7 +4,8 @@ using CwLibNet.EX;
 using CwLibNet.IO;
 using CwLibNet.Structs.Things;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Streaming;
 
@@ -25,16 +26,20 @@ public class StreamingManager: ISerializable
     public Thing[][] MaintainIslandList;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var subVersion = Serializer.GetRevision().GetSubVersion();
+        var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 
-        EditingThingsList = subVersion switch
+        if (subVersion < 0xa1) 
+            throw new SerializationException("Streaming manager below 0xa1 not supported!");
+            
+        if (subVersion >= 0x46)
+            EditingThingsList = Serializer.SerializeArray(EditingThingsList);
+        
+        if (subVersion >= 0x46)
         {
-            < 0xa1 => throw new SerializationException("Streaming manager below 0xa1 not supported!"),
-            >= 0x46 => Serializer.Serialize(ref EditingThingsList),
-            // _ => EditingThingsList
-        };
+            Serializer.Serialize(ref EditingThingsList);
+        }
 
         switch (subVersion)
         {
@@ -42,8 +47,10 @@ public class StreamingManager: ISerializable
                 // 00c57988 - islands
                 break;
             case >= 0x4d and < 0x73:
-                Serializer.Serialize(ref 0); // numChunks
-                Serializer.Serialize(ref 0); // numChunks
+                int numChunks1 = 0;
+                int numChunks2 = 0;
+                Serializer.Serialize(ref numChunks1); // numChunks
+                Serializer.Serialize(ref numChunks2); // numChunks
                 break;
             case >= 0x73 and < 0x93:
                 // Serializer.Serialize(ref null, ChunkFile.class, true);
@@ -57,10 +64,13 @@ public class StreamingManager: ISerializable
                 break;
             }
             case >= 0x93 and < 0xa1:
-                LevelData = new LevelData[1]; Serializer.Serialize(ref LevelData[0]);
+                LevelData = new LevelData[1]; 
+                var levelDataItem = LevelData[0];
+                Serializer.Serialize(ref levelDataItem);
+                LevelData[0] = levelDataItem;
                 break;
             case > 0xa0:
-                LevelData = Serializer.Serialize(ref LevelData, true);
+                LevelData = Serializer.GetCurrentSerializer().Array(LevelData);
                 break;
         }
 
@@ -72,15 +82,18 @@ public class StreamingManager: ISerializable
                 Serializer.Serialize(ref NumPendingIslands);
                 break;
             case >= 0x4e and <= 0x7e:
-                Serializer.Serialize(ref null);
+                {
+                    int tempNullInt = 0;
+                    Serializer.Serialize(ref tempNullInt);
+                }
                 break;
         }
 
         if (subVersion >= 0x89)
-            FartDesc = Serializer.Serialize(ref FartDesc, ResourceType.FileOfBytes);
+            Serializer.Serialize(ref FartDesc, ResourceType.FileOfBytes);
 
         if (subVersion >= 0x8f)
-            StartingPointPosition = Serializer.Serialize(ref StartingPointPosition);
+            Serializer.Serialize(ref StartingPointPosition);
 
         if (subVersion < 0x160) return;
         Serializer.Serialize(ref StreamingZoneShape);

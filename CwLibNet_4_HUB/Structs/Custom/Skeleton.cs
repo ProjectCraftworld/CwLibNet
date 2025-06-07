@@ -1,7 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Structs.Mesh;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Custom;
 
@@ -19,14 +20,14 @@ public class Skeleton: ISerializable
     private SkeletonType type;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        Bones = Serializer.Serialize(ref Bones);
-        Serializer.Serialize(ref Mirror);
-        Serializer.Serialize(ref MirrorType);
-        CullBones = Serializer.Serialize(ref CullBones);
-        if (Serializer.GetRevision().Before(Branch.Mizuki, (int)Revisions.MZ_BST_REMOVE_SK))
-            Serializer.Serialize(ref type);
+        Bones = serializer.Array(Bones);
+        Mirror = serializer.Shortarray(Mirror);
+        // MirrorType needs special handling for FlipType[]
+        CullBones = serializer.Array(CullBones);
+        if (serializer.GetRevision().Before(Branch.Mizuki, (int)Revisions.MZ_BST_REMOVE_SK))
+            type = serializer.Enum32(type);
     }
 
     public int GetAllocatedSize()

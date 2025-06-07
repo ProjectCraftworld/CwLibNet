@@ -1,4 +1,6 @@
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
 namespace CwLibNet.Enums;
 
 public enum MachineType

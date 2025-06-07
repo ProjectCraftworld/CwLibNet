@@ -1,8 +1,10 @@
 ﻿using CwLibNet.Enums;
 using CwLibNet.IO.Streams;
 using CwLibNet.Types.Data;
+using CwLibNet.IO;
 using System.Numerics;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Util;
 
 public class Bytes
@@ -190,7 +192,7 @@ public class Bytes
     {
         var serializer = new Serializer(0x1c + 0x4, revision, compressionFlags);
         Serializer.Serialize(ref res, ResourceType.Invalid);
-        return Serializer.GetBuffer();
+        return Serializer.GetCurrentSerializer().GetBuffer();
     }
 
     /**

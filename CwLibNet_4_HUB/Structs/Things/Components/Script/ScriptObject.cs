@@ -2,8 +2,9 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.EX;
 using CwLibNet.IO;
-using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Types;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Components.Script;
 
@@ -21,31 +22,31 @@ public class ScriptObject: ISerializable
     }
 
     
-    public void Serialize()
+    public void Serialize(Serializer serializer)
     {
-        Serializer.Serialize(ref Type);
+        serializer.Serialize(ref Type);
         switch (Type)
         {
             case ScriptObjectType.NULL:
                 return;
             case ScriptObjectType.INSTANCE:
-                Value = Serializer.Reference((ScriptInstance) Value);
+                Value = serializer.Reference((ScriptInstance) Value);
                 return;
         }
 
         var reference = 0;
-        if (Serializer.IsWriting())
+        if (serializer.IsWriting())
         {
             if (Value != null)
-                reference = Serializer.GetNextReference();
-            Serializer.GetOutput().I32(reference);
+                reference = serializer.GetNextReference();
+            serializer.GetOutput().I32(reference);
         }
-        else reference = Serializer.GetInput().I32();
+        else reference = serializer.GetInput().I32();
         if (reference == 0) return;
 
-        if (!Serializer.IsWriting())
+        if (!serializer.IsWriting())
         {
-            var value = Serializer.GetPointer<object>(reference);
+            var value = serializer.GetPointer<object>(reference);
             if (value != null)
             {
                 Value = value;
@@ -53,44 +54,50 @@ public class ScriptObject: ISerializable
             }
         }
 
-        Serializer.Log("" + Type);
+        serializer.Log("" + Type);
         switch (Type)
         {
             case ScriptObjectType.NULL:
                 Value = null;
                 break;
             case ScriptObjectType.ARRAY_BOOL:
-                Value = Serializer.Serialize(ref (bool[]) Value);
+                var boolArray = (bool[]) Value;
+                Value = serializer.Serialize(ref boolArray);
                 break;
             case ScriptObjectType.ARRAY_S32:
-                Value = Serializer.Serialize(ref (int[]) Value);
+                var intArray = (int[]) Value;
+                Value = serializer.Serialize(ref intArray);
                 break;
             case ScriptObjectType.ARRAY_F32:
-                Value = Serializer.Serialize(ref (float[]) Value);
+                var floatArray = (float[]) Value;
+                Value = serializer.Serialize(ref floatArray);
                 break;
             case ScriptObjectType.ARRAY_VECTOR4:
-                Value = Serializer.Serialize(ref (Vector4[]) Value);
+                var vectorArray = (Vector4[]) Value;
+                Value = serializer.Serialize(ref vectorArray);
                 break;
             case ScriptObjectType.STRINGW:
-                Value = Serializer.Serialize(ref (String) Value);
+                var stringValue1 = (String) Value;
+                Value = serializer.Serialize(ref stringValue1);
                 break;
             case ScriptObjectType.STRINGA:
-                Value = Serializer.Serialize(ref (String) Value);
+                var stringValue2 = (String) Value;
+                Value = serializer.Serialize(ref stringValue2);
                 break;
             case ScriptObjectType.RESOURCE:
             {
                 var descriptor = (ResourceDescriptor) Value;
 
                 var type = ResourceType.Invalid;
-                if (Serializer.IsWriting()) type = descriptor.GetResourceType();
-                type = ResourceType.FromType(Serializer.Serialize(ref type.Value));
+                if (serializer.IsWriting()) type = descriptor.GetResourceType();
+                type = ResourceType.FromType(serializer.Serialize(ref type.Value));
 
                 if (type.Value != ResourceType.Invalid.Value)
                 {
-                    if (Serializer.IsWriting())
-                        Serializer.Serialize(ref (ResourceDescriptor) Value, type);
+                    if (serializer.IsWriting())
+                        serializer.Serialize(ref (ResourceDescriptor) Value, type);
                     else
-                        Serializer.Serialize(ref Value, null, type);
+                        serializer.Serialize(ref Value, null, type);
                 }
 
                 break;
@@ -102,19 +109,19 @@ public class ScriptObject: ISerializable
                 Value = null;
                 break;
             case ScriptObjectType.ARRAY_SAFE_PTR:
-                Value = Serializer.Array((Thing[]) Value, true);
+                Value = serializer.Array((Thing[]) Value, true);
                 break;
             case ScriptObjectType.ARRAY_OBJECT_REF:
             {
                 var array = (ScriptObject[]) Value;
-                if (!Serializer.IsWriting())
+                if (!serializer.IsWriting())
                 {
-                    array = new ScriptObject[Serializer.GetInput().I32()];
-                    Serializer.SetPointer(reference, array);
+                    array = new ScriptObject[serializer.GetInput().I32()];
+                    serializer.SetPointer(reference, array);
                 }
-                else Serializer.GetOutput().I32(array.Length);
+                else serializer.GetOutput().I32(array.Length);
                 for (var i = 0; i < array.Length; ++i)
-                    Serializer.Serialize(ref array[i]);
+                    serializer.Serialize(ref array[i]);
                 return;
             }
             default:
@@ -123,8 +130,8 @@ public class ScriptObject: ISerializable
                                                  "reflection!");
         }
 
-        if (!Serializer.IsWriting())
-            Serializer.SetPointer(reference, Value);
+        if (!serializer.IsWriting())
+            serializer.SetPointer(reference, Value);
 
     }
 

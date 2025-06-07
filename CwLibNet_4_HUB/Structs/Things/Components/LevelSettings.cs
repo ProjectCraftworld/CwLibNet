@@ -1,6 +1,8 @@
 using System.Numerics;
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Components;
 
 public class LevelSettings: ISerializable
@@ -37,13 +39,17 @@ public class LevelSettings: ISerializable
     
     public float DofFar3 = -100000f;
     
-    public virtual void Serialize(Serializer serializer)
+    public virtual void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
-        SunPosition = Serializer.Serialize(ref SunPosition);
+        Serializer.Serialize(ref SunPosition);
         Serializer.Serialize(ref SunPositionScale);
         Serializer.Serialize(ref SunColor);
         Serializer.Serialize(ref AmbientColor);
@@ -68,7 +74,7 @@ public class LevelSettings: ISerializable
         }
 
         if (version is > 0x324 and < 0x331)
-            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref temp_int);
 
         if (version >= 0x326)
             Serializer.Serialize(ref DofFar); // 0x25
@@ -76,7 +82,7 @@ public class LevelSettings: ISerializable
         switch (version)
         {
             case > 0x324 and < 0x331:
-                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref temp_int);
                 break;
             case >= 0x331:
                 Serializer.Serialize(ref ZEffectAmount);

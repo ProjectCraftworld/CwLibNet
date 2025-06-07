@@ -1,7 +1,9 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Parts;
 
 public class PPhysicsTweak: ISerializable
@@ -132,9 +134,13 @@ public class PPhysicsTweak: ISerializable
     public byte PlayerFilter;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
@@ -149,16 +155,16 @@ public class PPhysicsTweak: ISerializable
             Serializer.Serialize(ref LegacyTweakDampening);
 
         if (version > 0x280)
-            TweakDampening = Serializer.Serialize(ref TweakDampening);
-        Input = Serializer.Serialize(ref Input);
-        MiddleVel = Serializer.Serialize(ref MiddleVel);
+            Serializer.Serialize(ref TweakDampening);
+        Serializer.Serialize(ref Input);
+        Serializer.Serialize(ref MiddleVel);
 
         if (version < 0x281)
-            LegacyDeceleration = Serializer.Serialize(ref LegacyDeceleration);
+            Serializer.Serialize(ref LegacyDeceleration);
         if (version > 0x280)
             Serializer.Serialize(ref VelRange);
         if (version < 0x281)
-            LegacyAcceleration = Serializer.Serialize(ref LegacyAcceleration);
+            Serializer.Serialize(ref LegacyAcceleration);
 
         if (version > 0x280)
         {
@@ -169,7 +175,7 @@ public class PPhysicsTweak: ISerializable
 
         if (version < 0x281)
         {
-            LegacyDeceleration = Serializer.Serialize(ref LegacyDeceleration);
+            Serializer.Serialize(ref LegacyDeceleration);
             Serializer.Serialize(ref LegacyTurnToFace);
         }
 
@@ -191,7 +197,7 @@ public class PPhysicsTweak: ISerializable
             Serializer.Serialize(ref Configuration);
 
         if (version is >= 0x27a and < 0x327)
-            Serializer.Reference(null);
+            Serializer.SerializeReference(null);
 
         if (version > 0x282)
             Serializer.Serialize(ref HideInPlayMode);
@@ -267,16 +273,16 @@ public class PPhysicsTweak: ISerializable
         if (version > 0x3b8 && Configuration == 0xd)
         {
             Serializer.Serialize(ref null, ResourceType.ThingRecording); // recording
-            Serializer.Serialize(ref 0); // playHead
-            if (version < 0x3c4) Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0); // type
-            Serializer.Serialize(ref 0); // dir
+            Serializer.Serialize(ref temp_int); // playHead
+            if (version < 0x3c4) Serializer.Serialize(ref temp_int);
+            Serializer.Serialize(ref temp_int); // type
+            Serializer.Serialize(ref temp_int); // dir
             Serializer.Serialize(ref null); // prevDesiredPos
-            Serializer.Serialize(ref 0); // prevDesiredPosSet
+            Serializer.Serialize(ref temp_int); // prevDesiredPosSet
             Serializer.Serialize(ref null); // startOrientation
-            Serializer.Serialize(ref 0); // speed
+            Serializer.Serialize(ref temp_int); // speed
             if (version > 0x3c4)
-                Serializer.Serialize(ref 0); // pathIsAbsolute
+                Serializer.Serialize(ref temp_int); // pathIsAbsolute
         }
 
         if (revision.IsVita())
@@ -284,7 +290,7 @@ public class PPhysicsTweak: ISerializable
             int vita = revision.GetBranchRevision();
             if (vita >= 0x11) // 0x3c0
                 Serializer.Serialize(ref UsePanel);
-            if (vita is >= 0x11 and < 0x4b) Serializer.Serialize(ref 0); // 0x3c0
+            if (vita is >= 0x11 and < 0x4b) Serializer.Serialize(ref temp_int); // 0x3c0
             if (vita >= 0x1f) // 0x3d4
                 Serializer.Serialize(ref FollowType);
             if (vita >= 0x4b)
@@ -295,39 +301,39 @@ public class PPhysicsTweak: ISerializable
 
         if (subVersion is >= 0x1 and < 0x17)
         {
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref temp_int);
+            Serializer.Serialize(ref temp_int);
+            Serializer.Serialize(ref temp_int);
+            Serializer.Serialize(ref temp_int);
+            Serializer.Serialize(ref temp_int);
+            Serializer.Serialize(ref temp_int);
+            Serializer.Serialize(ref temp_int);
+            Serializer.Serialize(ref temp_int);
+            Serializer.Serialize(ref temp_int);
         }
 
         if (subVersion is >= 0x5 and < 0x17)
         {
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref temp_int);
+            Serializer.Serialize(ref temp_int);
+            Serializer.Serialize(ref temp_int);
         }
 
         // attract-o-gel, ill figure out the fields later
         // attractorData
         if (Configuration == 0xe && version > 0x3e3)
         {
-            Serializer.Serialize(ref 0); // attractDistance
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0); // visualEffectBrightness_On
-            Serializer.Serialize(ref 0); // visualEffectSpeed_On
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0); // visualEffectBrightnessOff
-            Serializer.Serialize(ref 0); // visualEffectSpeed_Off
-            Serializer.Serialize(ref 0); // attractorManualDetach
-            Serializer.Serialize(ref 0); // attractorSoundEffects
-            Serializer.Serialize(ref 0); // attractorVisualEffect
-            Serializer.Serialize(ref 0); // attractorAffectConnected
+            Serializer.Serialize(ref temp_int); // attractDistance
+            Serializer.Serialize(ref temp_int);
+            Serializer.Serialize(ref temp_int); // visualEffectBrightness_On
+            Serializer.Serialize(ref temp_int); // visualEffectSpeed_On
+            Serializer.Serialize(ref temp_int);
+            Serializer.Serialize(ref temp_int); // visualEffectBrightnessOff
+            Serializer.Serialize(ref temp_int); // visualEffectSpeed_Off
+            Serializer.Serialize(ref temp_int); // attractorManualDetach
+            Serializer.Serialize(ref temp_int); // attractorSoundEffects
+            Serializer.Serialize(ref temp_int); // attractorVisualEffect
+            Serializer.Serialize(ref temp_int); // attractorAffectConnected
         }
 
         if (subVersion > 0x56)
@@ -340,7 +346,7 @@ public class PPhysicsTweak: ISerializable
             Serializer.Serialize(ref GridGoalW);
 
         if (subVersion > 0x98)
-            GridGoal = Serializer.Serialize(ref GridGoal);
+            Serializer.Serialize(ref GridGoal);
     }
 
     // TODO: Actually implement

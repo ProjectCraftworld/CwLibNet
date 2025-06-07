@@ -3,7 +3,9 @@ using CwLibNet.IO;
 using CwLibNet.Structs.Mesh;
 using CwLibNet.Structs.Things.Components;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -43,9 +45,11 @@ public class PCostume: ISerializable
     }
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        int[]? vec = null;
+        
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
@@ -53,16 +57,16 @@ public class PCostume: ISerializable
         Serializer.Serialize(ref Material, Material, ResourceType.GfxMaterial);
 
         if (version >= 0x19a)
-            MaterialPlan = Serializer.Serialize(ref MaterialPlan, ResourceType.Plan);
+            Serializer.Serialize(ref MaterialPlan, ResourceType.Plan);
 
         if (Serializer.IsWriting())
         {
-            var vec = MeshPartsHidden.ToArray();
+            vec = MeshPartsHidden.ToArray();
             Serializer.Serialize(ref vec);
         }
         else
         {
-            var Serializer.Serialize(ref null);
+            Serializer.Serialize(ref vec);
             if (vec != null)
             {
                 foreach (var v in vec)
@@ -70,15 +74,15 @@ public class PCostume: ISerializable
             }
         }
 
-        Primitives = Serializer.Serialize(ref Primitives);
+        Serializer.Serialize(ref Primitives);
 
         if (subVersion >= 0xdb)
             Serializer.Serialize(ref CreatureFilter);
 
-        CostumePieces = Serializer.Serialize(ref CostumePieces);
+        Serializer.Serialize(ref CostumePieces);
 
         if (version >= 0x2c5 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_TEMP_COSTUME))
-            TemporaryCostumePiece = Serializer.Serialize(ref TemporaryCostumePiece);
+            Serializer.Serialize(ref TemporaryCostumePiece);
     }
 
     

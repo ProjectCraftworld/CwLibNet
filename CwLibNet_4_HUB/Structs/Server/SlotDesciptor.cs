@@ -1,6 +1,9 @@
 using System.Xml.Linq;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Slot;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Server;
 

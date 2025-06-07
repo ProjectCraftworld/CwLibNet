@@ -1,7 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet.IO.Serializer;
 
 namespace CwLibNet.Resources;
 
@@ -14,42 +15,51 @@ public class RPalette : Resource
 
     public ResourceDescriptor?[]? ConvertedPlans;
 
-    public override void Serialize()
+    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
             
         if (Serializer.IsWriting())
         {
-            var stream = Serializer.GetOutput();
+            var stream = Serializer.GetCurrentSerializer().GetOutput();
             stream.I32(PlanList.Count);
             foreach (var descriptor in PlanList)
-                Serializer.Serialize(ref descriptor, descriptor!.GetResourceType());
+            {
+                var desc = descriptor;
+                Serializer.Serialize(ref desc, descriptor!.GetResourceType());
+            }
         }
         else
         {
-            var count = Serializer.GetInput().I32();
-            PlanList = new List<ResourceDescriptor?>(count);
-            for (var i = 0; i < count; ++i)
-                PlanList.Add(Serializer.Serialize(ref null, ResourceType.Plan));
+            var count = Serializer.GetCurrentSerializer().GetInput().I32();        PlanList = new List<ResourceDescriptor?>(count);
+        for (var i = 0; i < count; ++i)
+        {
+            ResourceDescriptor? temp = null;
+            Serializer.Serialize(ref temp, ResourceType.Plan);
+            PlanList.Add(temp);
+        }
         }
 
         Serializer.Serialize(ref Location);
         Serializer.Serialize(ref Description);
 
-        if (Serializer.GetRevision().GetVersion() >= (int)Revisions.PALETTE_CONVERTED_PLANS)
+        if (Serializer.GetCurrentSerializer().GetRevision().GetVersion() >= (int)Revisions.PALETTE_CONVERTED_PLANS)
         {
             if (Serializer.IsWriting())
             {
-                var stream = Serializer.GetOutput();
+                var stream = Serializer.GetCurrentSerializer().GetOutput();
                 stream.I32(ConvertedPlans?.Length ?? 0);
                 foreach (var descriptor in ConvertedPlans)
-                    Serializer.Serialize(ref descriptor, descriptor!.GetResourceType());
+                {
+                    var desc = descriptor;
+                    Serializer.Serialize(ref desc, descriptor!.GetResourceType());
+                }
             }
             else 
             {
-                var count = Serializer.GetInput().I32();
+                var count = Serializer.GetCurrentSerializer().GetInput().I32();
                 ConvertedPlans = new ResourceDescriptor[count];
                 for (var i = 0; i < count; ++i)
-                    Serializer.Serialize(ref ConvertedPlans[i]);
+                    Serializer.Serialize(ref ConvertedPlans[i], ResourceType.Plan);
             }
         }
     }
@@ -62,14 +72,14 @@ public class RPalette : Resource
     public override SerializationData Build(Revision revision, byte compressionFlags)
     {
         var serializer = new Serializer(GetAllocatedSize(), revision, compressionFlags);
-        Serializer.Serialize(ref this);
+        this.Serialize(serializer);
         return new SerializationData(
-            Serializer.GetBuffer(),
+            Serializer.GetCurrentSerializer().GetBuffer(),
             revision,
             compressionFlags,
             ResourceType.Palette,
             SerializationType.BINARY,
-            Serializer.GetDependencies()
+            Serializer.GetCurrentSerializer().GetDependencies()
         );
     }
 }

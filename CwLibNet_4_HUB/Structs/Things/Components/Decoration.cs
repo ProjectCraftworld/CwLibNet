@@ -3,7 +3,9 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Structs.Things.Parts;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Components;
 
@@ -35,9 +37,9 @@ public class Decoration: ISerializable
     public float ZBias; // Vita
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
@@ -69,7 +71,7 @@ public class Decoration: ISerializable
             Serializer.Serialize(ref PlayModeFrame);
 
         if (version >= 0x25b)
-            PlanGuid = Serializer.Serialize(ref PlanGuid);
+            Serializer.Serialize(ref PlanGuid);
 
         if (revision.Has(Branch.Double11, 0x7c))
             Serializer.Serialize(ref ZBias);

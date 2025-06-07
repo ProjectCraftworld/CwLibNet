@@ -1,7 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.DLC;
 
@@ -19,9 +20,9 @@ public class DLCFile: ISerializable
     public int Flags = DLCFileFlags.NONE;
     public int TypeMask;
         
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
 
         Serializer.Serialize(ref Directory);
         Serializer.Serialize(ref File);
@@ -45,7 +46,8 @@ public class DLCFile: ISerializable
             }
             else
             {
-                var Serializer.Serialize(ref null);
+                int[]? guids = null;
+                Serializer.Serialize(ref guids);
                 if (guids != null)
                 {
                     NonPlanGuids = new List<GUID?>(guids.Length);
@@ -67,7 +69,8 @@ public class DLCFile: ISerializable
         }
         else
         {
-            var Serializer.Serialize(ref null);
+            int[]? guids = null;
+            Serializer.Serialize(ref guids);
             if (guids != null)
             {
                 Guids = new List<GUID?>(guids.Length);

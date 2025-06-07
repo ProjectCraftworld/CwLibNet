@@ -7,7 +7,9 @@ using CwLibNet.Structs.Streaming;
 using CwLibNet.Structs.Things.Components;
 using CwLibNet.Structs.Things.Components.World;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -162,8 +164,8 @@ public class PWorld: ISerializable
             CurrGlobalSettingsBlendFactors[i] = 1.0f;
     }
 
-    public void Serialize() {
-        var revision = Serializer.GetRevision();
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer) {
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
@@ -174,11 +176,11 @@ public class PWorld: ISerializable
         }
 
         if (subVersion is >= 0x72 and <= 0x73) {
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
+            int temp1 = 0; Serializer.Serialize(ref temp1);
+            int temp2 = 0; Serializer.Serialize(ref temp2);
+            int temp3 = 0; Serializer.Serialize(ref temp3);
+            int temp4 = 0; Serializer.Serialize(ref temp4);
+            int temp5 = 0; Serializer.Serialize(ref temp5);
         }
 
         if (subVersion >= 0x70)
@@ -187,11 +189,14 @@ public class PWorld: ISerializable
             Serializer.Serialize(ref OverrideBackdropAmbience);
         
         if (version < 0x14b) {
-            if (Serializer.IsWriting()) Serializer.GetOutput().I32(0);
+            if (Serializer.IsWriting()) Serializer.GetCurrentSerializer().GetOutput().I32(0);
             else {
-                Materials = new ResourceDescriptor[Serializer.GetInput().I32()];
-                for (var i = 0; i < Materials.Length; ++i)
-                    Serializer.Serialize(ref Materials[i]);
+                Materials = new ResourceDescriptor[Serializer.GetCurrentSerializer().GetInput().I32()];
+                for (var i = 0; i < Materials.Length; ++i) {
+                    var tempMaterial = Materials[i];
+                    Serializer.Serialize(ref tempMaterial, ResourceType.Material);
+                    Materials[i] = tempMaterial;
+                }
             }
         }
 
@@ -199,8 +204,8 @@ public class PWorld: ISerializable
             Serializer.Serialize(ref StreamingManager);
         
         if (!revision.IsToolkit() || revision.Before(Branch.Mizuki, (int)Revisions.MZ_SCENE_GRAPH)) {
-            Things = Serializer.Serialize(ref Things);
-            Serializer.Log("END OF WORLD THINGS");
+            Serializer.Serialize(ref Things);
+            Serializer.LogMessage("END OF WORLD THINGS");
 
             Serializer.Serialize(ref MaxVel);
             Serializer.Serialize(ref MaxAVel);
@@ -217,19 +222,19 @@ public class PWorld: ISerializable
             Serializer.Serialize(ref Randy);
 
         if (version < 0x1a4) {
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
+            int temp1 = 0; Serializer.Serialize(ref temp1);
+            int temp2 = 0; Serializer.Serialize(ref temp2);
+            int temp3 = 0; Serializer.Serialize(ref temp3);
+            int temp4 = 0; Serializer.Serialize(ref temp4);
+            int temp5 = 0; Serializer.Serialize(ref temp5);
+            int temp6 = 0; Serializer.Serialize(ref temp6);
+            int temp7 = 0; Serializer.Serialize(ref temp7);
             if (version < 0x14b)
-                Serializer.Array<Thing>(null);
+                Serializer.SerializeArray<Thing>(null);
         }
 
         if (!revision.IsToolkit() || revision.Before(Branch.Mizuki, (int)Revisions.MZ_SCENE_GRAPH)) {
-            Selections = Serializer.Serialize(ref Selections, true);
+            Selections = Serializer.SerializeArray(Selections);
 
             Serializer.Serialize(ref Backdrop);
             Serializer.Serialize(ref BackdropNew);
@@ -255,33 +260,33 @@ public class PWorld: ISerializable
         }
 
         if (version >= 0x16f) {
-            CompleteRewards = Serializer.Serialize(ref CompleteRewards);
-            CollectRewards = Serializer.Serialize(ref CollectRewards);
-            AceRewards = Serializer.Serialize(ref AceRewards);
+            Serializer.Serialize(ref CompleteRewards);
+            Serializer.Serialize(ref CollectRewards);
+            Serializer.Serialize(ref AceRewards);
             if (version >= 0x208) 
                 Serializer.Serialize(ref AreRewardsShareable);
             if (version >= 0x35e)
                 Serializer.Serialize(ref ScoreboardLevelLinkSlot);
-            CompleteUnlocks = Serializer.Serialize(ref CompleteUnlocks);
-            CollectUnlocks = Serializer.Serialize(ref CollectUnlocks);
-            AceUnlocks = Serializer.Serialize(ref AceUnlocks);
+            Serializer.Serialize(ref CompleteUnlocks);
+            Serializer.Serialize(ref CollectUnlocks);
+            Serializer.Serialize(ref AceUnlocks);
         }
 
         if (revision.IsVita()) {
 
             if (revision.Has(Branch.Double11, 0x22) && revision.Before(Branch.Double11, 0x25)) {
-                Serializer.Array<EggLink>(null); // unlocks
-                Serializer.Array<EggLink>(null);  // rewards
-                Serializer.Serialize(ref 0); // timeRequired
+                Serializer.SerializeArray<EggLink>(null); // unlocks
+                Serializer.SerializeArray<EggLink>(null);  // rewards
+                int temp = 0; Serializer.Serialize(ref temp); // timeRequired
             }
 
             if (revision.Has(Branch.Double11, 0x25)) {
-                GoldRewards = Serializer.Serialize(ref GoldRewards);
-                GoldUnlocks = Serializer.Serialize(ref GoldUnlocks);
-                SilverRewards = Serializer.Serialize(ref SilverRewards);
-                SilverUnlocks = Serializer.Serialize(ref SilverUnlocks);
-                BronzeRewards = Serializer.Serialize(ref BronzeRewards);
-                BronzeUnlocks = Serializer.Serialize(ref BronzeUnlocks);
+                Serializer.Serialize(ref GoldRewards);
+                Serializer.Serialize(ref GoldUnlocks);
+                Serializer.Serialize(ref SilverRewards);
+                Serializer.Serialize(ref SilverUnlocks);
+                Serializer.Serialize(ref BronzeRewards);
+                Serializer.Serialize(ref BronzeUnlocks);
 
                 Serializer.Serialize(ref GoldTrophyConditionType);
                 Serializer.Serialize(ref SilverTrophyConditionType);
@@ -312,9 +317,9 @@ public class PWorld: ISerializable
         }
 
         if (version is > 0x16e and < 0x1bf) {
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0);
+            int temp1 = 0; Serializer.Serialize(ref temp1);
+            int temp2 = 0; Serializer.Serialize(ref temp2);
+            int temp3 = 0; Serializer.Serialize(ref temp3);
         }
 
         switch (version)
@@ -322,7 +327,7 @@ public class PWorld: ISerializable
             case > 0x1a3 and < 0x1d1:
                 throw new SerializationException("CGameCamera serialization unsupported!");
             case > 0x1bd and < 0x213:
-                Serializer.Serialize(ref 0);
+                int temp = 0; Serializer.Serialize(ref temp);
                 break;
         }
 
@@ -332,8 +337,8 @@ public class PWorld: ISerializable
             Serializer.Serialize(ref MaxNumPlayers);
 
         if (version >= 0x1db) {
-            DissolvingThings = Serializer.Serialize(ref DissolvingThings, true);
-            OldDissolvingThings = Serializer.Serialize(ref OldDissolvingThings, true);
+            DissolvingThings = Serializer.SerializeArray(DissolvingThings);
+            OldDissolvingThings = Serializer.SerializeArray(OldDissolvingThings);
         }
 
         if (version is >= 0x1de and < 0x345)
@@ -407,7 +412,7 @@ public class PWorld: ISerializable
 
         if (subVersion >= 0xe8) {
             Serializer.Serialize(ref WaterCausticsEnabled);
-            CurrSerializer.Serialize(ref WaterCausticsEnabled);
+            Serializer.Serialize(ref WaterCausticsEnabled);
         }
 
         if (subVersion >= 0xf8) {
@@ -457,7 +462,7 @@ public class PWorld: ISerializable
             // // reflect 4 LoafHandle's short?
             // // firstcrumb short
             // // depth, bytearray?
-            case > 0x281 and < 0x287 when Serializer.Serialize(ref 0) != 0:
+            case > 0x281 and < 0x287 when Serializer.GetCurrentSerializer().GetInput().I32() != 0:
                 throw new SerializationException("CBreadLoaf serialization not supported!");
             case >= 0x2a3:
                 Serializer.Serialize(ref GameMode);
@@ -483,8 +488,8 @@ public class PWorld: ISerializable
             Serializer.Serialize(ref GlobalAudioSettings);
         
         if ((version >= 0x321 && !revision.IsToolkit()) || revision.Before(Branch.Mizuki, (int)Revisions.MZ_SCENE_GRAPH)) {
-            Serializer.Serialize(ref BackdropPlan, BackdropPlan, ResourceType.Plan, true);
-            Serializer.Serialize(ref BackdropNewPlan, BackdropNewPlan, ResourceType.Plan, true);
+            Serializer.Serialize(ref BackdropPlan, ResourceType.Plan, true, true, true);
+            Serializer.Serialize(ref BackdropNewPlan, ResourceType.Plan, true, true, true);
         }
 
         if (version >= 0x352)
@@ -500,7 +505,7 @@ public class PWorld: ISerializable
             Serializer.Serialize(ref UseEvenNewerCheckpointCode);
         
         if (version >= 0x3bd && subVersion <= 0x117)
-            MoveCursors = Serializer.Serialize(ref MoveCursors);
+            Serializer.Serialize(ref MoveCursors);
 
         // version > 0x3c0, rather than 0x3e1 for some reason
         if (revision.Has(Branch.Double11, 0x8))
@@ -547,22 +552,27 @@ public class PWorld: ISerializable
             Serializer.Serialize(ref ContinueMusic);
 
         if (subVersion >= 0x2f)
-            BroadcastMicroChipEntries = Serializer.Serialize(ref BroadcastMicroChipEntries);
+            Serializer.Serialize(ref BroadcastMicroChipEntries);
 
         if (subVersion >= 0x5d)
             Serializer.Serialize(ref ManualJumpDown);
 
-        if (subVersion is >= 0x98 and < 0xe5)
-            Serializer.Serialize(ref null);
-        if (subVersion is >= 0xc3 and < 0xe5)
-            Serializer.Serialize(ref null);
+        if (subVersion is >= 0x98 and < 0xe5) {
+            Thing[]? temp = null;
+            temp = Serializer.SerializeArray(temp);
+        }
+        if (subVersion is >= 0xc3 and < 0xe5) {
+            Thing[]? temp = null;
+            temp = Serializer.SerializeArray(temp);
+        }
         switch (subVersion)
         {
             case >= 0x98 and < 0xe5:
-                Serializer.Serialize(ref null);
+                Thing[]? temp = null;
+                temp = Serializer.SerializeArray(temp);
                 break;
             case >= 0xe5:
-                DeferredDestroys = Serializer.Serialize(ref DeferredDestroys, true);
+                DeferredDestroys = Serializer.SerializeArray(DeferredDestroys);
                 break;
         }
 

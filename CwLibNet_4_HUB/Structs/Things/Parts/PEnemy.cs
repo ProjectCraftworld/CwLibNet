@@ -1,7 +1,9 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Parts;
 
 public class PEnemy: ISerializable
@@ -45,16 +47,20 @@ public class PEnemy: ISerializable
     public int TouchType;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
 
         if (version >= 0x15d)
             Serializer.Serialize(ref PartType);
 
         if (version is > 0x15c and < 0x19f)
-            Serializer.Reference(null);
+            Serializer.SerializeReference(null);
 
         if (version >= 0x16d)
             Serializer.Serialize(ref Radius);
@@ -62,7 +68,7 @@ public class PEnemy: ISerializable
         switch (version)
         {
             case < 0x19e and < 0x1a9:
-                Serializer.Reference(null);
+                Serializer.SerializeReference(null);
                 break;
             case >= 0x19f:
                 Serializer.Serialize(ref SnapVertex);
@@ -71,29 +77,29 @@ public class PEnemy: ISerializable
 
         if (version >= 0x1a9)
         {
-            CenterOffset = Serializer.Serialize(ref CenterOffset);
-            AnimThing = Serializer.Reference(AnimThing);
+            Serializer.Serialize(ref CenterOffset);
+            AnimThing = Serializer.SerializeReference(AnimThing);
             Serializer.Serialize(ref AnimSpeed);
         }
 
         switch (version)
         {
             case > 0x1f1 and < 0x21e:
-                Serializer.Reference(null);
-                Serializer.Reference(null);
-                Serializer.Reference(null);
-                Serializer.Reference(null);
-                Serializer.Serialize(ref 0);
-                Serializer.Reference(null);
-                Serializer.Reference(null);
+                Serializer.SerializeReference(null);
+                Serializer.SerializeReference(null);
+                Serializer.SerializeReference(null);
+                Serializer.SerializeReference(null);
+                Serializer.Serialize(ref temp_int);
+                Serializer.SerializeReference(null);
+                Serializer.SerializeReference(null);
                 Serializer.Serialize(ref null);
-                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref temp_int);
                 Serializer.Serialize(ref null);
-                Serializer.Serialize(ref 0);
-                Serializer.Serialize(ref 0);
-                Serializer.Serialize(ref 0);
-                Serializer.Serialize(ref 0);
-                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref temp_int);
+                Serializer.Serialize(ref temp_int);
+                Serializer.Serialize(ref temp_int);
+                Serializer.Serialize(ref temp_int);
+                Serializer.Serialize(ref temp_int);
                 break;
             case >= 0x246:
                 Serializer.Serialize(ref SourcePlayerNumber);

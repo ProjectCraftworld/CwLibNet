@@ -1,5 +1,7 @@
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Gmat;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Gmat;
 
 public class MaterialWire: ISerializable
@@ -28,7 +30,7 @@ public class MaterialWire: ISerializable
     }
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref BoxFrom);
         Serializer.Serialize(ref BoxTo);

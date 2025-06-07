@@ -1,7 +1,18 @@
+using CwLibNet.Structs.Level;
 using CwLibNet.Types.Data;
+using CwLibNet.IO;
+using CwLibNet.Enums;
+using CwLibNet.Structs.Things.Parts;
+using CwLibNet.EX;
+using CwLibNet.Structs.Inventory;
+using CwLibNet.Types;
+using System.Numerics;
 
-using static net.torutheredfox.craftworld.serialization.Serializer;
-namespace CwLibNet.Resources;
+using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Profile;
+using CwLibNet.Structs.Things;
+using CwLibNet.Resources;
 
 public class RLevel: Resource
 {
@@ -65,9 +76,13 @@ public class RLevel: Resource
     }
 
     
-    public override void Serialize()
+    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
@@ -78,15 +93,14 @@ public class RLevel: Resource
         if (version > 0x3e6)
         {
             if (!Serializer.IsWriting())
-                CrossPlayVitaDependencyHashes = new Sha1?[Serializer.GetInput().I32()];
+                CrossPlayVitaDependencyHashes = new Sha1?[Serializer.GetCurrentSerializer().GetInput().I32()];
             else
             {
                 CrossPlayVitaDependencyHashes ??= [];
-                Serializer.GetOutput().I32(CrossPlayVitaDependencyHashes.Length);
+                Serializer.GetCurrentSerializer().GetOutput().I32(CrossPlayVitaDependencyHashes.Length);
             }
             for (var i = 0; i < CrossPlayVitaDependencyHashes.Length; ++i)
-                CrossPlayVitaDependencyHashes[i] =
-                    Serializer.Serialize(ref CrossPlayVitaDependencyHashes[i]);
+                Serializer.Serialize(ref CrossPlayVitaDependencyHashes[i]);
         }
 
         Serializer.Serialize(ref WorldThing);
@@ -104,30 +118,28 @@ public class RLevel: Resource
 
         if (revision.Has(Branch.Double11, 0x70))
         {
-            MusicGuid = Serializer.Serialize(ref MusicGuid);
-            MusicSettingsGuid = Serializer.Serialize(ref MusicSettingsGuid);
+            Serializer.Serialize(ref MusicGuid);
+            Serializer.Serialize(ref MusicSettingsGuid);
             Serializer.Serialize(ref MusicStemVolumes);
         }
 
         if (subVersion is > 0x34 and < 0x91)
-            Serializer.Serialize(ref false);
+            Serializer.Serialize(ref temp_bool_false);
         if (subVersion is > 0x34 and < 0xb3)
-            Serializer.Serialize(ref false);
+            Serializer.Serialize(ref temp_bool_false);
         if (subVersion is > 0x94 and < 0x12a)
-            Serializer.Serialize(ref false); // savedThroughPusher
+            Serializer.Serialize(ref temp_bool_false); // savedThroughPusher
 
-        DceUuid = subVersion switch
-        {
-            >= 0xf1 and <= 0xf9 => throw new SerializationException("Legacy adventure data not supported in " +
-                                                                    "serialization!"),
-            >= 0xfa => Serializer.Serialize(ref DceUuid),
-            _ => DceUuid
-        };
+        if (subVersion >= 0xf1 && subVersion <= 0xf9)
+            throw new SerializationException("Legacy adventure data not supported in serialization!");
+        else if (subVersion >= 0xfa)
+            Serializer.Serialize(ref DceUuid);
 
         switch (subVersion)
         {
             case >= 0x161 and < 0x169:
-                Serializer.Serialize(ref null, ResourceType.AdventureSharedData);
+                ResourceDescriptor? nullResource = null;
+                Serializer.Serialize(ref nullResource, ResourceType.AdventureSharedData);
                 break;
             case >= 0x169:
                 Serializer.Serialize(ref AdventureData);
@@ -579,14 +591,14 @@ public class RLevel: Resource
         // 16MB buffer for generation of levels, since the allocated size will get
         // stuck in a recursive loop until I fix it.
         var serializer = new Serializer(0x1000000, revision, compressionFlags);
-        Serializer.Serialize(ref this);
+        this.Serialize(serializer);
         return new SerializationData(
-            Serializer.GetBuffer(),
+            Serializer.GetCurrentSerializer().GetBuffer(),
             revision,
             compressionFlags,
             ResourceType.Level,
             SerializationType.BINARY,
-            Serializer.GetDependencies()
+            Serializer.GetCurrentSerializer().GetDependencies()
         );
     }
 }

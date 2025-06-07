@@ -1,6 +1,10 @@
+using System.Numerics;
+using CwLibNet.Enums;
+using CwLibNet.IO;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Gmat;
 using CwLibNet.Types.Data;
-
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Resources;
 
 public class RGfxMaterial: Resource
@@ -75,10 +79,10 @@ public class RGfxMaterial: Resource
     }
 
     
-    public override void Serialize()
+    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
 
-        var revision = Serializer.GetRevision();
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
@@ -87,7 +91,7 @@ public class RGfxMaterial: Resource
         Serializer.Serialize(ref AlphaLayer);
         if (version >= (int)Revisions.GFXMATERIAL_ALPHA_MODE)
             Serializer.Serialize(ref AlphaMode);
-        Serializer.Serialize(ref ShadowCastMode);
+        Serializer.SerializeEnum8(ref ShadowCastMode);
         Serializer.Serialize(ref BumpLevel);
         Serializer.Serialize(ref CosinePower);
         Serializer.Serialize(ref ReflectionBlur);
@@ -124,7 +128,7 @@ public class RGfxMaterial: Resource
         {
             if (serializeCode)
             {
-                var stream = Serializer.GetOutput();
+                var stream = Serializer.GetCurrentSerializer().GetOutput();
                 var offset = 0;
                 for (var i = 0; i < sourceOffsets; ++i)
                 {
@@ -149,7 +153,7 @@ public class RGfxMaterial: Resource
         {
             if (serializeCode)
             {
-                var stream = Serializer.GetInput();
+                var stream = Serializer.GetCurrentSerializer().GetInput();
                 var blobOffsets = new int[sourceOffsets];
                 for (var i = 0; i < sourceOffsets; ++i)
                     blobOffsets[i] = stream.I32();
@@ -194,11 +198,13 @@ public class RGfxMaterial: Resource
 
             Textures = new ResourceDescriptor[MaxTextures];
             for (var i = 0; i < MaxTextures; ++i)
-                Serializer.Serialize(ref Textures[i]);
+            {
+                Textures[i] = Serializer.GetCurrentSerializer().Resource(Textures[i], ResourceType.Texture);
+            }
         }
 
-        Serializer.Serialize(ref WrapS);
-        Serializer.Serialize(ref WrapT);
+        Serializer.SerializeEnumArray(ref WrapS);
+        Serializer.SerializeEnumArray(ref WrapT);
         Serializer.Serialize(ref Boxes);
         Serializer.Serialize(ref Wires);
 
@@ -206,7 +212,7 @@ public class RGfxMaterial: Resource
             Serializer.Serialize(ref SoundEnum);
 
         if (version >= (int)Revisions.PARAMETER_ANIMATIONS)
-            ParameterAnimations = Serializer.Serialize(ref ParameterAnimations);
+            Serializer.Serialize(ref ParameterAnimations);
 
         if (revision.Has(Branch.Double11, (int)Revisions.D1_UV_OFFSCALE))
         {
@@ -250,14 +256,14 @@ public class RGfxMaterial: Resource
     {
         var serializer = new Serializer(GetAllocatedSize(), revision,
                 compressionFlags);
-        Serializer.Serialize(ref this);
+        this.Serialize(serializer);
         return new SerializationData(
-                Serializer.GetBuffer(),
+                Serializer.GetCurrentSerializer().GetBuffer(),
                 revision,
                 compressionFlags,
                 ResourceType.GfxMaterial,
                 SerializationType.BINARY,
-                Serializer.GetDependencies()
+                Serializer.GetCurrentSerializer().GetDependencies()
         );
     }
 

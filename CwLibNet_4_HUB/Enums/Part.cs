@@ -1,6 +1,9 @@
-﻿using CwLibNet.Structs.Things.Parts;
+﻿using CwLibNet.IO;
+using CwLibNet.Structs.Things.Parts;
 
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
 namespace CwLibNet.Enums;
 
 public struct Part(string name, int index, int version, Type? serializable) : IEquatable<Part>
@@ -185,7 +188,7 @@ public struct Part(string name, int index, int version, Type? serializable) : IE
     public bool Serialize<T>(ISerializable?[] parts, int version, long flags, Serializer serializer) where T : ISerializable
     {
         /* The Thing doesn't have this part, so it's "successful". */
-        if (!HasPart(Serializer.GetRevision().Head, flags, version))
+        if (!HasPart(Serializer.GetCurrentSerializer().GetRevision().Head, flags, version))
             return true;
 
         var part = (T?)parts[Index];
@@ -197,18 +200,22 @@ public struct Part(string name, int index, int version, Type? serializable) : IE
                 if (part != null) return false;
                 else
                 {
-                    Serializer.Serialize(ref 0);
+                    int tempZero = 0;
+                    Serializer.Serialize(ref tempZero);
                     return true;
                 }
             }
             if (!Serializer.IsWriting())
             {
-                return Serializer.Serialize(ref 0) == 0;
+                int tempZero = 0;
+                Serializer.Serialize(ref tempZero);
+                return tempZero == 0;
             }
             return false;
         }
 
-        parts[Index] = Serializer.Serialize(ref part);
+        Serializer.Serialize(ref part);
+        parts[Index] = part;
 
         return true;
     }

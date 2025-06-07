@@ -1,7 +1,9 @@
 using System.Numerics;
 using CwLibNet.IO;
 using CwLibNet.Structs.Things.Components.Popit;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Components;
 
@@ -44,12 +46,16 @@ public class Poppet: ISerializable
 
     public Thing[]? TweakObjects;
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 
         Serializer.Serialize(ref IsInUse);
-        ModeStack = Serializer.Serialize(ref ModeStack);
+        Serializer.Serialize(ref ModeStack);
 
         if (version < 0x2ed)
         {
@@ -61,7 +67,7 @@ public class Poppet: ISerializable
                 // revision - 0x185 < 0x35
                 // scriptobjectuid
                 case >= 0x185 and < 0x1ba:
-                    Serializer.Serialize(ref 0); // c32
+                    Serializer.Serialize(ref temp_int); // c32
                     break;
             }
 
@@ -70,11 +76,11 @@ public class Poppet: ISerializable
             if (version < 0x18f)
                 Serializer.Serialize(ref null);
             if (version is >= 0x148 and < 0x185)
-                Serializer.Reference(null);
+                Serializer.SerializeReference(null);
 
             if (version >= 0x147)
             {
-                TweakObject = Serializer.Reference(TweakObject);
+                TweakObject = Serializer.SerializeReference(TweakObject);
                 Serializer.Serialize(ref BackupCameraZoneTargetBox);
                 BackupCameraZonePitchAngle =
                     Serializer.Serialize(ref BackupCameraZonePitchAngle);
@@ -82,7 +88,7 @@ public class Poppet: ISerializable
                 Serializer.Serialize(ref CameraZoneZoomSpeed);
                 Serializer.Serialize(ref TweakObjectPlacement);
                 if (version < 0x211)
-                    Serializer.Serialize(ref false);
+                    Serializer.Serialize(ref temp_bool_false);
             }
 
             switch (version)
@@ -92,9 +98,9 @@ public class Poppet: ISerializable
                     break;
                 case > 0x1dc:
                 {
-                    if (version < 0x232) Serializer.Serialize(ref false);
-                    MarqueeSelectOrigin = Serializer.Serialize(ref MarqueeSelectOrigin);
-                    MarqueeSelectList = Serializer.Serialize(ref MarqueeSelectList);
+                    if (version < 0x232) Serializer.Serialize(ref temp_bool_false);
+                    Serializer.Serialize(ref MarqueeSelectOrigin);
+                    Serializer.Serialize(ref MarqueeSelectList);
                     break;
                 }
             }
@@ -105,14 +111,14 @@ public class Poppet: ISerializable
                     Serializer.Serialize(ref OverrideMaterial);
                     break;
                 case >= 0x1b8 and < 0x1e2:
-                    Serializer.Serialize(ref 0);
+                    Serializer.Serialize(ref temp_int);
                     break;
             }
 
             switch (version)
             {
                 case >= 0x1ba and < 0x1e2:
-                    Serializer.Serialize(ref 0);
+                    Serializer.Serialize(ref temp_int);
                     break;
                 case >= 0x232:
                     Serializer.Serialize(ref Raycast);
@@ -123,7 +129,7 @@ public class Poppet: ISerializable
                 Serializer.Serialize(ref DangerMode);
             if (version >= 0x236)
             {
-                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref temp_int);
                 Serializer.Serialize(ref null);
                 if (version >= 0x23a)
                     Serializer.Serialize(ref null);
@@ -134,9 +140,9 @@ public class Poppet: ISerializable
 
         Serializer.Serialize(ref Raycast);
         if (version > 0x2ec)
-            FrozenList = Serializer.Serialize(ref FrozenList);
+            Serializer.Serialize(ref FrozenList);
         if (version > 0x2f1)
-            HiddenList = Serializer.Serialize(ref HiddenList);
+            Serializer.Serialize(ref HiddenList);
         if (version >= 0x311)
         {
             Serializer.Serialize(ref OverrideMaterial);
@@ -144,7 +150,7 @@ public class Poppet: ISerializable
         }
 
         if (version >= 0x3a0)
-            TweakObjects = Serializer.Serialize(ref TweakObjects);
+            Serializer.Serialize(ref TweakObjects);
     }
 
     public int GetAllocatedSize()

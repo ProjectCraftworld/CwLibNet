@@ -2,7 +2,9 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Structs.Things.Components;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -34,9 +36,13 @@ public class PRef: ISerializable
     }
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 
         if (version < 0x160)
             Serializer.Serialize(ref Thing);
@@ -54,9 +60,9 @@ public class PRef: ISerializable
         if (version is >= 0x13d and < 0x321)
             Serializer.Serialize(ref StripChildren);
 
-        if (version is > 0x171 and < 0x180) Serializer.Serialize(ref 0);
+        if (version is > 0x171 and < 0x180) Serializer.Serialize(ref temp_int);
         if (version is <= 0x17f or >= 0x19e) return;
-        Serializer.Serialize(ref 0);
+        Serializer.Serialize(ref temp_int);
         Serializer.Serialize(ref default(NetworkPlayerID));
     }
 

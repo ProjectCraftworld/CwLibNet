@@ -1,7 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Profile;
 
@@ -16,9 +17,9 @@ public class DataLabelValue: ISerializable
     public byte[]? Ternary;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var head = revision.GetVersion();
 
         Serializer.Serialize(ref CreatorId);
@@ -34,10 +35,10 @@ public class DataLabelValue: ISerializable
                 if (Serializer.IsWriting())
                 {
                     var value = Analogue != null && Analogue.Length != 0 ? Analogue[0] : 0.0f;
-                    Serializer.GetOutput().F32(value);
+                    Serializer.GetCurrentSerializer().GetOutput().F32(value);
                 }
                 else
-                    Analogue = [Serializer.GetInput().F32()];
+                    Analogue = [Serializer.GetCurrentSerializer().GetInput().F32()];
             }
 
             if (revision.Has(Branch.Double11, (int)Revisions.D1_LABEL_TERNARY))

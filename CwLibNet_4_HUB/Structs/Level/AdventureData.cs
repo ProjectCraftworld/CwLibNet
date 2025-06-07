@@ -2,7 +2,8 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Structs.Slot;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Level;
 
@@ -17,9 +18,9 @@ public class AdventureData: ISerializable
     public List<StartPoint> startPointList = [];
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var subVersion = Serializer.GetRevision().GetSubVersion();
+        var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 
         if (subVersion > 0xaf)
             Serializer.Serialize(ref adventureFixedID);
@@ -32,18 +33,25 @@ public class AdventureData: ISerializable
 
         if (subVersion > 0xa6)
         {
-            var numItems = Serializer.Serialize(ref questDescriptors != null ?
-                questDescriptors.Count : 0);
+            int numItems = questDescriptors?.Count ?? 0;
+            Serializer.Serialize(ref numItems);
             if (Serializer.IsWriting())
             {
                 foreach (var descriptor in questDescriptors)
-                    Serializer.Serialize(ref descriptor, ResourceType.Quest, true);
+                {
+                    var temp = descriptor;
+                    Serializer.Serialize(ref temp, ResourceType.Quest, true, false, false);
+                }
             }
             else
             {
                 questDescriptors = new(numItems);
                 for (var i = 0; i < numItems; ++i)
-                    questDescriptors.Add(Serializer.Serialize(ref null, ResourceType.Quest));
+                {
+                    ResourceDescriptor? nullQuest = null;
+                    Serializer.Serialize(ref nullQuest, ResourceType.Quest);
+                    questDescriptors.Add(nullQuest);
+                }
             }
         }
 

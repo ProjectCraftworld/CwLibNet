@@ -83,10 +83,20 @@ public class FileArchive: Fart
 
         var table = GenerateFat(fat);
 
+        // First, preserve the existing data up to FatOffset
+        byte[] existingData;
+        using (var readStream = new FileStream(File, FileMode.Open, FileAccess.Read))
+        {
+            existingData = new byte[FatOffset];
+            readStream.Read(existingData, 0, (int)FatOffset);
+        }
+
         var stream = new FileStream(File, FileMode.Create, FileAccess.Write);
 
         var fatOffset = FatOffset;
 
+        // Write the existing data first
+        stream.Write(existingData, 0, existingData.Length);
         stream.Seek(offset, SeekOrigin.Begin);
         foreach (var buffer in buffers)
         {

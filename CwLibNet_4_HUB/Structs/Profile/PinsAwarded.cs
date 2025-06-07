@@ -1,6 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Profile 
 {
     public class PinsAwarded : ISerializable
@@ -19,9 +20,9 @@ namespace CwLibNet.Structs.Profile
         public byte SlappedAsBits;
         public int SimonSaysProgress;
 
-        public void Serialize()
+        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
         {
-            var revision = Serializer.GetRevision();
+            var revision = Serializer.GetCurrentSerializer().GetRevision();
             var version = revision.GetVersion();
             var subVersion = revision.GetSubVersion();
 

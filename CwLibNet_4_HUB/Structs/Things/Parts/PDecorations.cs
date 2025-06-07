@@ -1,6 +1,8 @@
 using CwLibNet.IO;
 using CwLibNet.Structs.Things.Components;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -16,9 +18,9 @@ public class PDecorations: ISerializable
     }
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        Decorations = Serializer.Serialize(ref Decorations);
+        Serializer.Serialize(ref Decorations);
     }
 
     // TODO: Actually implement

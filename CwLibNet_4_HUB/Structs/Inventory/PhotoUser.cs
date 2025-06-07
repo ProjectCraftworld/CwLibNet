@@ -1,6 +1,7 @@
 using System.Numerics;
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Inventory;
 
 public class PhotoUser: ISerializable
@@ -22,7 +23,7 @@ public class PhotoUser: ISerializable
     }
 
 
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref PSID);
         Serializer.Serialize(ref User);

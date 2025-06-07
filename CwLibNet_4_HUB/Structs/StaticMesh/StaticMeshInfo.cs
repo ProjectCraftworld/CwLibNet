@@ -2,7 +2,8 @@
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
 using System.Numerics;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.StaticMesh;
 
 public class UnknownStruct : ISerializable
@@ -12,9 +13,9 @@ public class UnknownStruct : ISerializable
     public Vector3? Min, Max;
     public short StructIndexA, StructIndexB, FirstPrimitive, NumPrimitives;
 
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        Min = Serializer.Serialize(ref Min);
+        Serializer.Serialize(ref Min);
         Serializer.Serialize(ref StructIndexA);
         Serializer.Serialize(ref StructIndexB);
 
@@ -27,7 +28,7 @@ public class UnknownStruct : ISerializable
         // Does -1 indicate an instance of a submesh
         // and otherwise a group of submeshes?
 
-        Max = Serializer.Serialize(ref Max);
+        Serializer.Serialize(ref Max);
         Serializer.Serialize(ref FirstPrimitive);
         Serializer.Serialize(ref NumPrimitives);
     }
@@ -50,21 +51,22 @@ public class StaticMeshInfo : ISerializable
     public StaticPrimitive[]? Primitives;
     public UnknownStruct[]? Unknown;
 
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        Serializer.Serialize(ref Lightmap, Lightmap, ResourceType.Texture);
-        Serializer.Serialize(ref Risemap, Risemap, ResourceType.Texture);
-        Serializer.Serialize(ref Fallmap, Fallmap, ResourceType.Texture);
+        Serializer.Serialize(ref Lightmap, ResourceType.Texture, true, false, false);
+        Serializer.Serialize(ref Risemap, ResourceType.Texture, true, false, false);
+        Serializer.Serialize(ref Fallmap, ResourceType.Texture, true, false, false);
 
         Serializer.Serialize(ref PrimitiveCount);
         Serializer.Serialize(ref UnknownStructCount);
         Serializer.Serialize(ref IndexBufferSize);
         Serializer.Serialize(ref VertexStreamSize);
 
-        Primitives = Serializer.Serialize(ref Primitives);
-        Unknown = Serializer.Serialize(ref Unknown);
+        Serializer.Serialize(ref Primitives);
+        Serializer.Serialize(ref Unknown);
 
-        Serializer.Serialize(ref 0x48454c50); // "HELP", no idea, used as a marker?
+        var tempMarker = 0x48454c50; // "HELP", no idea, used as a marker?
+        Serializer.Serialize(ref tempMarker);
     }
 
     public int GetAllocatedSize()

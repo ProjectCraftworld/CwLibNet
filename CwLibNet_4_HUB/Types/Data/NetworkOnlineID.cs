@@ -1,5 +1,6 @@
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Types.Data;
 
 public class NetworkOnlineId : ISerializable
@@ -19,18 +20,23 @@ public class NetworkOnlineId : ISerializable
         Array.Copy(System.Text.Encoding.ASCII.GetBytes(psid), 0, data, 0, psid.Length);
     }
 
-    public void Serialize() 
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer) 
     {
-        var lengthPrefixed = Serializer.GetRevision().GetVersion() < 0x234;
+        var lengthPrefixed = Serializer.GetCurrentSerializer().GetRevision().GetVersion() < 0x234;
         if (lengthPrefixed) 
         {
-            Serializer.Serialize(ref (byte)data!.Length);
+            byte dataLength = (byte)data!.Length;
+            Serializer.Serialize(ref dataLength);
         }
-        data = Serializer.Serialize(ref data);
+        Serializer.Serialize(ref data);
 
         Serializer.Serialize(ref term);
-        if (lengthPrefixed) Serializer.Serialize(ref (byte)dummy.Length);
-        dummy = Serializer.Serialize(ref dummy);
+        if (lengthPrefixed) 
+        {
+            byte dummyLength = (byte)dummy.Length;
+            Serializer.Serialize(ref dummyLength);
+        }
+        Serializer.Serialize(ref dummy);
     }
 
     public int GetAllocatedSize() 

@@ -1,6 +1,10 @@
 using CwLibNet.Types.Data;
+using CwLibNet.IO;
+using CwLibNet.Enums;
 
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Slot;
 namespace CwLibNet.Resources;
 
 public class RSlotList : Resource
@@ -24,10 +28,10 @@ public class RSlotList : Resource
     }
 
 
-    public override void Serialize()
+    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref slots);
-        if (Serializer.GetRevision().GetVersion() >= (int)Revisions.PRODUCTION_BUILD)
+        if (Serializer.GetCurrentSerializer().GetRevision().GetVersion() >= (int)Revisions.PRODUCTION_BUILD)
             Serializer.Serialize(ref FromProductionBuild);
     }
 
@@ -47,14 +51,14 @@ public class RSlotList : Resource
     {
         Serializer serializer = new(GetAllocatedSize(), revision,
             compressionFlags);
-        Serializer.Serialize(ref this);
+        this.Serialize(serializer);
         return new SerializationData(
-            Serializer.GetBuffer(),
+            Serializer.GetCurrentSerializer().GetBuffer(),
             revision,
             compressionFlags,
             ResourceType.SlotList,
             SerializationType.BINARY,
-            Serializer.GetDependencies()
+            Serializer.GetCurrentSerializer().GetDependencies()
         );
     }
 

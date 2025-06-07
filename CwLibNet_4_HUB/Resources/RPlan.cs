@@ -1,6 +1,15 @@
+using CwLibNet.Structs.Inventory;
+using CwLibNet.Structs.Things.Parts;
 using CwLibNet.Types.Data;
+using CwLibNet.IO;
+using System.Numerics;
+using CwLibNet.Enums;
+using CwLibNet.EX;
 
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Profile;
+using CwLibNet.Structs.Things;
 namespace CwLibNet.Resources;
 
 public class RPlan : Resource
@@ -53,41 +62,44 @@ public class RPlan : Resource
         ThingData = [];
     }
 
-    public override void Serialize()
+    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var head = revision.GetVersion();
         if (!Serializer.IsWriting())
         {
-            DependencyCache.AddRange(Serializer.GetDependencies());
-            Serializer.ClearDependencies();
+            DependencyCache.UnionWith(Serializer.GetCurrentSerializer().GetDependencies());
+            Serializer.GetCurrentSerializer().ClearDependencies();
         }
 
         if (!Serializer.IsWriting())
         {
-            CompressionFlags = Serializer.GetCompressionFlags();
+            CompressionFlags = Serializer.GetCurrentSerializer().GetCompressionFlags();
             Revision = revision;
         }
 
         if (revision.GetSubVersion() >= (int)Revisions.STREAMING_PLAN)
             Serializer.Serialize(ref IsUsedForStreaming);
         if (Serializer.IsWriting())
-            Serializer.Serialize(ref Serializer.GetRevision().Head);
+        {
+            var revisionHead = Serializer.GetCurrentSerializer().GetRevision().Head;
+            Serializer.Serialize(ref revisionHead);
+        }
         else
-            Serializer.GetInput().I32();
+            Serializer.GetCurrentSerializer().GetInput().I32();
         Serializer.Serialize(ref ThingData);
         if (head >= (int)Revisions.PLAN_DETAILS && !IsUsedForStreaming)
         {
             Serializer.Serialize(ref InventoryData);
             if (revision.Has(Branch.Leerdammer, (int)Revisions.LD_LAMS_KEYS) || head >= (int)Revisions.LAMS_KEYS)
             {
-                InventoryData.Location = Serializer.Serialize(ref InventoryData.Location);
-                InventoryData.Category = Serializer.Serialize(ref InventoryData.Category);
+                Serializer.Serialize(ref InventoryData.Location);
+                Serializer.Serialize(ref InventoryData.Category);
             }
             else
             {
-                InventoryData.LocationTag = Serializer.Serialize(ref InventoryData.LocationTag);
-                InventoryData.CategoryTag = Serializer.Serialize(ref InventoryData.CategoryTag);
+                Serializer.Serialize(ref InventoryData.LocationTag);
+                Serializer.Serialize(ref InventoryData.CategoryTag);
                 if (!Serializer.IsWriting())
                 {
                     InventoryData.Location = RTranslationTable.MakeLamsKeyID(InventoryData.LocationTag);
@@ -98,9 +110,9 @@ public class RPlan : Resource
 
         if (!Serializer.IsWriting())
         {
-            foreach (var descriptor in Serializer.GetDependencies())
+            foreach (var descriptor in Serializer.GetCurrentSerializer().GetDependencies())
                 DependencyCache.Remove(descriptor);
-            Serializer.ClearDependencies();
+            Serializer.GetCurrentSerializer().ClearDependencies();
         }
     }
 
@@ -122,16 +134,16 @@ public class RPlan : Resource
     public override SerializationData Build(Revision revision, byte compressionFlags)
     {
         var serializer = new Serializer(GetAllocatedSize() + 0x8000, revision, compressionFlags);
-        Serializer.Serialize(ref this);
+        this.Serialize(serializer);
         foreach (var descriptor in DependencyCache)
-            Serializer.AddDependency(descriptor);
-        return new SerializationData(Serializer.GetBuffer(), revision, compressionFlags, ResourceType.Plan, SerializationType.BINARY, Serializer.GetDependencies());
+            Serializer.GetCurrentSerializer().AddDependency(descriptor);
+        return new SerializationData(Serializer.GetCurrentSerializer().GetBuffer(), revision, compressionFlags, ResourceType.Plan, SerializationType.BINARY, Serializer.GetCurrentSerializer().GetDependencies());
     }
 
     public virtual Thing[]? GetThings()
     {
         var serializer = new Serializer(ThingData, Revision, CompressionFlags);
-        var things = Serializer.Array<Thing>(null, true);
+        var things = serializer.Array<Thing>(null, true);
         if (Revision.GetVersion() >= 0x341)
         {
             foreach (var thing in things!)
@@ -152,9 +164,9 @@ public class RPlan : Resource
     public void SetThings(Thing[]? things)
     {
         Serializer serializer = new(0x800000, Revision, CompressionFlags);
-        Serializer.Serialize(ref things, true);
-        ThingData = Serializer.GetBuffer();
-        var dependencies = Serializer.GetDependencies();
+        serializer.Thingarray(things);
+        ThingData = serializer.GetBuffer();
+        var dependencies = serializer.GetDependencies();
         DependencyCache.Clear();
         DependencyCache = [..dependencies];
     }
@@ -162,12 +174,12 @@ public class RPlan : Resource
     public void SetThing(Thing? thing)
     {
         Serializer serializer = new(0x800000, Revision, CompressionFlags);
-        Serializer.Reference(thing);
-        var things = Serializer.GetThings();
+        serializer.Reference(thing);
+        var things = serializer.GetThings();
         serializer = new Serializer(0x800000, Revision, CompressionFlags);
-        Serializer.Serialize(ref things, true);
-        ThingData = Serializer.GetBuffer();
-        var dependencies = Serializer.GetDependencies();
+        serializer.Thingarray(things);
+        ThingData = serializer.GetBuffer();
+        var dependencies = serializer.GetDependencies();
         DependencyCache.Clear();
         DependencyCache = [..dependencies];
     }

@@ -1,6 +1,8 @@
 using System.Numerics;
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Components.Popit;
 
 public class RaycastResults: ISerializable
@@ -16,7 +18,7 @@ public class RaycastResults: ISerializable
     public int OnCostumePiece, DecorationIdx;
     public bool SwitchConnector;
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Hitpoint);
         Serializer.Serialize(ref Normal);
@@ -25,8 +27,8 @@ public class RaycastResults: ISerializable
         Serializer.Serialize(ref BaryV);
         Serializer.Serialize(ref TriIndex);
 
-        HitThing = Serializer.Reference(HitThing);
-        RefThing = Serializer.Reference(RefThing);
+        HitThing = Serializer.SerializeReference(HitThing);
+        RefThing = Serializer.SerializeReference(RefThing);
 
         Serializer.Serialize(ref OnCostumePiece);
         Serializer.Serialize(ref DecorationIdx);

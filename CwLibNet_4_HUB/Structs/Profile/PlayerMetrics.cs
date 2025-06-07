@@ -1,6 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Profile 
 {
     public class PlayerMetrics : ISerializable
@@ -29,9 +30,13 @@ namespace CwLibNet.Structs.Profile
 
         public long[]? Stats;
 
-        public void Serialize()
+        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
         {
-            var revision = Serializer.GetRevision();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+            var revision = Serializer.GetCurrentSerializer().GetRevision();
             var head = revision.GetVersion();
 
             if (head > 0x16f) 
@@ -49,7 +54,7 @@ namespace CwLibNet.Structs.Profile
             {
                 if (Serializer.IsWriting())
                 {
-                    var stream = Serializer.GetOutput();
+                    var stream = Serializer.GetCurrentSerializer().GetOutput();
                     var keys = new HashSet<int>(LevelTimesMap.Keys);
                     stream.I32(keys.Count);
                     foreach (var key in keys)
@@ -60,7 +65,7 @@ namespace CwLibNet.Structs.Profile
                 }
                 else 
                 {
-                    var stream = Serializer.GetInput();
+                    var stream = Serializer.GetCurrentSerializer().GetInput();
                     var count = stream.I32();
                     LevelTimesMap = new Dictionary<int, int>(count);
                     for (var i = 0; i < count; i++)
@@ -91,14 +96,14 @@ namespace CwLibNet.Structs.Profile
             {
                 if (!revision.IsLeerdammer() || revision.Before(Branch.Leerdammer, (int)Revisions.LD_REMOVED_ENEMY_STAT))
                 {
-                    Serializer.Serialize(ref 0); // enemy kills
+                    Serializer.Serialize(ref temp_int); // enemy kills
                 }
             }
 
             if (head > 0x1de) 
                 Serializer.Serialize(ref PointsCollected);
             if (head > 0x1f7)
-                Stats = Serializer.Serialize(ref Stats);
+                Stats = Serializer.GetCurrentSerializer().Longarray(Stats);
         }
 
         public int GetAllocatedSize() 

@@ -1,7 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Mesh;
 
@@ -64,19 +65,22 @@ public class Primitive: ISerializable
     }
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 
-        Material = Serializer.Serialize(ref Material, ResourceType.GfxMaterial);
+        Serializer.Serialize(ref Material, ResourceType.GfxMaterial);
 
         switch (version)
         {
             case < 0x149:
-                Serializer.Serialize(ref null, ResourceType.GfxMaterial);
+                {
+                    ResourceDescriptor? tempNull = null;
+                    Serializer.Serialize(ref tempNull, ResourceType.GfxMaterial);
+                }
                 break;
             case >= (int)Revisions.MESH_TEXTURE_ALTERNATIVES:
-                TextureAlternatives = Serializer.Serialize(ref TextureAlternatives, ResourceType.TextureList);
+                Serializer.Serialize(ref TextureAlternatives, ResourceType.TextureList);
                 break;
         }
 

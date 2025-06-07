@@ -4,7 +4,9 @@ using CwLibNet.IO;
 using CwLibNet.Structs.Things.Components.Shapes;
 using CwLibNet.Types.Data;
 using CwLibNet.Util;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -141,9 +143,13 @@ public class PShape: ISerializable
     }
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
@@ -155,7 +161,7 @@ public class PShape: ISerializable
                 Serializer.Serialize(ref OldMaterial, OldMaterial, ResourceType.Material);
                 break;
             case < 0x13c:
-                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref temp_int);
                 break;
         }
 
@@ -166,10 +172,10 @@ public class PShape: ISerializable
         if (version <= 0x389)
         {
             if (Serializer.IsWriting())
-                Serializer.GetOutput().V4(Colors.FromARGB((int)Color));
+                Serializer.GetCurrentSerializer().GetOutput().V4(Colors.FromARGB((int)Color));
             else
             {
-                var color = Serializer.GetInput().V4();
+                var color = Serializer.GetCurrentSerializer().GetInput().V4();
                 Color = (uint)Colors.GetARGB(color);
             }
         }
@@ -188,7 +194,7 @@ public class PShape: ISerializable
         Serializer.Serialize(ref BevelSize);
 
         if (version < 0x13c)
-            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref temp_int);
 
         if (version is <= 0x340 or >= 0x38e)
             Serializer.Serialize(ref Com);
@@ -208,10 +214,10 @@ public class PShape: ISerializable
             if (version < 0x38a)
             {
                 if (Serializer.IsWriting())
-                    Serializer.GetOutput().V4(Colors.FromARGB(ColorOff));
+                    Serializer.GetCurrentSerializer().GetOutput().V4(Colors.FromARGB(ColorOff));
                 else
                 {
-                    var color = Serializer.GetInput().V4();
+                    var color = Serializer.GetCurrentSerializer().GetInput().V4();
                     ColorOff = Colors.GetARGB(color);
                 }
             }
@@ -224,15 +230,15 @@ public class PShape: ISerializable
         else
         {
             if (Serializer.IsWriting())
-                Serializer.GetOutput().I16((short)LethalType);
-            else LethalType = (LethalType)Serializer.GetInput().U16();
+                Serializer.GetCurrentSerializer().GetOutput().I16((short)LethalType);
+            else LethalType = (LethalType)Serializer.GetCurrentSerializer().GetInput().U16();
         }
 
         if (version < 0x2b5)
         {
             if (!Serializer.IsWriting())
             {
-                var stream = Serializer.GetInput();
+                var stream = Serializer.GetCurrentSerializer().GetInput();
                 Flags = 0;
                 if (stream.Boole()) Flags |= (short)ShapeFlags.COLLIDABLE_GAME;
                 if (version >= 0x224 && stream.Boole())
@@ -241,7 +247,7 @@ public class PShape: ISerializable
             }
             else
             {
-                var stream = Serializer.GetOutput();
+                var stream = Serializer.GetCurrentSerializer().GetOutput();
                 stream.Boole((Flags & ShapeFlags.COLLIDABLE_GAME) != 0);
                 if (version >= 0x224)
                     stream.Boole((Flags & ShapeFlags.COLLIDABLE_POPPET) != 0);
@@ -251,8 +257,8 @@ public class PShape: ISerializable
 
         if (version < 0x13c)
         {
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref 0); // Is this a float, or is it just because it's an early
+            Serializer.Serialize(ref temp_int);
+            Serializer.Serialize(ref temp_int); // Is this a float, or is it just because it's an early
             // revision?
         }
 
@@ -260,9 +266,9 @@ public class PShape: ISerializable
 
         if (version is >= 0x29d and < 0x30c)
         {
-            Serializer.Serialize(ref 0); // restitution
+            Serializer.Serialize(ref temp_int); // restitution
             if (version < 0x2b5)
-                Serializer.Serialize(ref 0); // unk
+                Serializer.Serialize(ref temp_int); // unk
         }
 
         if (version >= 0x2a3)
@@ -318,7 +324,7 @@ public class PShape: ISerializable
         }
 
         if (subVersion is >= 0x42 and < 0xc6)
-            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref temp_int);
 
         if (subVersion >= 0x42)
             Serializer.Serialize(ref Ghosty);
@@ -349,7 +355,7 @@ public class PShape: ISerializable
                 break;
             // Unknown value
             case >= 0x120 and < 0x135:
-                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref temp_int);
                 break;
         }
 

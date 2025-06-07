@@ -1,6 +1,9 @@
 using CwLibNet.Enums;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Slot;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Slot;
 
@@ -14,13 +17,13 @@ public class Pack
     public long TimeStamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // seconds since epoch
     public bool CrossBuyCompatible;
 
-    public void Serialize() 
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer) 
     {
-        Serializer.Serialize(ref ContentsType);
-        Serializer.Serialize(ref Mesh, Mesh, ResourceType.Mesh, true);
+        Serializer.SerializeEnum32(ref ContentsType);
+        Serializer.Serialize(ref Mesh, ResourceType.Mesh, true, false, false);
         Serializer.Serialize(ref Slot);
         Serializer.Serialize(ref ContentId);
-        TimeStamp = Serializer.Serialize(ref TimeStamp);
-        if (Serializer.GetRevision().IsVita()) Serializer.Serialize(ref CrossBuyCompatible); 
+        Serializer.Serialize(ref TimeStamp);
+        if (Serializer.GetCurrentSerializer().GetRevision().IsVita()) Serializer.Serialize(ref CrossBuyCompatible); 
     }
 }

@@ -2,7 +2,9 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -24,17 +26,21 @@ public class WhipSim : ISerializable
         public float AttachedZOffset;
 
 
-        public void Serialize()
+        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
         {
-            CreatureThing = Serializer.Reference(CreatureThing);
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+            CreatureThing = Serializer.SerializeReference(CreatureThing);
             Serializer.Serialize(ref BaseHandleMatrix);
-            PrevDir = Serializer.Serialize(ref PrevDir);
-            CurrDir = Serializer.Serialize(ref CurrDir);
+            Serializer.Serialize(ref PrevDir);
+            Serializer.Serialize(ref CurrDir);
             Serializer.Serialize(ref StateTimer);
             Serializer.Serialize(ref State);
-            AttachedThing = Serializer.Reference(AttachedThing);
-            AttachedLocalPos = Serializer.Serialize(ref AttachedLocalPos);
-            AttachedLocalNormal = Serializer.Serialize(ref AttachedLocalNormal);
+            AttachedThing = Serializer.SerializeReference(AttachedThing);
+            Serializer.Serialize(ref AttachedLocalPos);
+            Serializer.Serialize(ref AttachedLocalNormal);
             Serializer.Serialize(ref AttachedLocalAngle);
             Serializer.Serialize(ref AttachedScale);
             Serializer.Serialize(ref PlayedFailToFireSound);
@@ -58,12 +64,12 @@ public class WhipSim : ISerializable
         public Vector3? SpringThingPosition;
 
 
-        public void Serialize()
+        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
         {
-            SpringThing = Serializer.Reference(SpringThing);
+            SpringThing = Serializer.SerializeReference(SpringThing);
             Serializer.Serialize(ref SpringTimer);
-            SpringDirection = Serializer.Serialize(ref SpringDirection);
-            SpringThingPosition = Serializer.Serialize(ref SpringThingPosition);
+            Serializer.Serialize(ref SpringDirection);
+            Serializer.Serialize(ref SpringThingPosition);
         }
 
 
@@ -333,19 +339,24 @@ public class PCreature : ISerializable
     public byte SpringForce, SpringStateTimer;
 
 
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        int temp_int = 0;
+        float temp_float_0 = 0.0f;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+        
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
         Serializer.Serialize(ref Config, Config, ResourceType.SettingsCharacter);
         if (version < 0x155)
         {
-            if (Serializer.IsWriting()) Serializer.GetOutput().I32(0);
+            if (Serializer.IsWriting()) Serializer.GetCurrentSerializer().GetOutput().I32(0);
             else
             {
-                var stream = Serializer.GetInput();
+                var stream = Serializer.GetCurrentSerializer().GetInput();
                 var count = stream.I32();
                 for (var i = 0; i < count; ++i)
                     stream.V3();
@@ -355,11 +366,11 @@ public class PCreature : ISerializable
         Serializer.Serialize(ref JumpFrame);
 
         Serializer.Serialize(ref GroundDistance);
-        GroundNormal = Serializer.Serialize(ref GroundNormal);
+        Serializer.Serialize(ref GroundNormal);
 
-        GrabJoint = Serializer.Reference(GrabJoint);
-        if (version < 0x13c) Serializer.Reference(null);
-        JumpingOff = Serializer.Reference(JumpingOff);
+        GrabJoint = Serializer.SerializeReference(GrabJoint);
+        if (version < 0x13c) Serializer.SerializeReference(null);
+        JumpingOff = Serializer.SerializeReference(JumpingOff);
 
         Serializer.Serialize(ref State);
         if (subVersion >= 0x132)
@@ -377,28 +388,28 @@ public class PCreature : ISerializable
         switch (version)
         {
             case < 0x146:
-                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref temp_int);
                 break;
             case > 0x145 and < 0x1f0:
-                Serializer.Serialize(ref 0);
-                Serializer.Serialize(ref 0);
-                Serializer.Serialize(ref false);
-                Serializer.Serialize(ref false);
-                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref temp_int);
+                Serializer.Serialize(ref temp_int);
+                Serializer.Serialize(ref temp_bool_false);
+                Serializer.Serialize(ref temp_bool_false);
+                Serializer.Serialize(ref temp_int);
                 break;
         }
 
         Serializer.Serialize(ref PlayerAwareness);
         Serializer.Serialize(ref MoveDirection);
 
-        if (version < 0x15d) Serializer.Serialize(ref 0);
+        if (version < 0x15d) Serializer.Serialize(ref temp_int);
         if (version < 0x1f0)
         {
-            Serializer.Serialize(ref 0); // Some array of actual thing pointers, should be 0 length
-            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref temp_int); // Some array of actual thing pointers, should be 0 length
+            Serializer.Serialize(ref temp_int);
         }
 
-        ForceThatSmashedCreature = Serializer.Serialize(ref ForceThatSmashedCreature);
+        Serializer.Serialize(ref ForceThatSmashedCreature);
         Serializer.Serialize(ref CrushFrames);
 
         Serializer.Serialize(ref AwarenessRadius);
@@ -416,16 +427,16 @@ public class PCreature : ISerializable
 
         if (version >= 0x15d)
         {
-            LegList = Serializer.Serialize(ref LegList);
+            Serializer.Serialize(ref LegList);
             if (version < 0x166)
             {
                 Serializer.Serialize(ref null);
                 Serializer.Serialize(ref null);
             }
 
-            LifeSourceList = Serializer.Serialize(ref LifeSourceList);
-            LifeCreature = Serializer.Reference(LifeCreature);
-            AiCreature = Serializer.Reference(AiCreature);
+            Serializer.Serialize(ref LifeSourceList);
+            LifeCreature = Serializer.SerializeReference(LifeCreature);
+            AiCreature = Serializer.SerializeReference(AiCreature);
         }
 
         if (version >= 0x163)
@@ -434,18 +445,18 @@ public class PCreature : ISerializable
             Serializer.Serialize(ref JumpIntervalPhase);
         }
 
-        if (version is > 0x162 and < 0x16d) Serializer.Serialize(ref false);
+        if (version is > 0x162 and < 0x16d) Serializer.Serialize(ref temp_bool_false);
 
         if (version >= 0x169) Serializer.Serialize(ref MeshDirty);
 
         if (version >= 0x166)
         {
-            EyeList = Serializer.Serialize(ref EyeList);
-            BrainAiList = Serializer.Serialize(ref BrainAiList);
-            BrainLifeList = Serializer.Serialize(ref BrainLifeList);
+            Serializer.Serialize(ref EyeList);
+            Serializer.Serialize(ref BrainAiList);
+            Serializer.Serialize(ref BrainLifeList);
         }
 
-        if (version is > 0x177 and < 0x1e3) Serializer.Serialize(ref 0);
+        if (version is > 0x177 and < 0x1e3) Serializer.Serialize(ref temp_int);
 
         if (version >= 0x19c)
             Serializer.Serialize(ref ReactToLethal);
@@ -457,12 +468,12 @@ public class PCreature : ISerializable
         }
 
         if (version is > 0x1ed and < 0x225)
-            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref temp_int);
 
-        if (version >= 0x1fc) GroundNormalRaw = Serializer.Serialize(ref GroundNormalRaw);
+        if (version >= 0x1fc) Serializer.Serialize(ref GroundNormalRaw);
         if (version >= 0x212)
         {
-            GroundNormalSmooth = Serializer.Serialize(ref GroundNormalSmooth);
+            Serializer.Serialize(ref GroundNormalSmooth);
             Serializer.Serialize(ref BodyAdjustApplied);
         }
 
@@ -473,12 +484,12 @@ public class PCreature : ISerializable
             Serializer.Serialize(ref null, ResourceType.Plan);
 
         if (version >= 0x243)
-            GunDirAndDashVec = Serializer.Serialize(ref GunDirAndDashVec);
+            Serializer.Serialize(ref GunDirAndDashVec);
         if (subVersion >= 0x19e)
             Serializer.Serialize(ref GunDirAndDashVecW);
 
         if (version >= 0x246)
-            ResourceThing = Serializer.Reference(ResourceThing);
+            ResourceThing = Serializer.SerializeReference(ResourceThing);
 
         if (version >= 0x247)
             Serializer.Serialize(ref GunFireFrame);
@@ -487,9 +498,9 @@ public class PCreature : ISerializable
         if (version >= 0x24a)
             Serializer.Serialize(ref BulletImmuneTimer);
         if (version >= 0x24d)
-            BulletEmitter0 = Serializer.Reference(BulletEmitter0);
+            BulletEmitter0 = Serializer.SerializeReference(BulletEmitter0);
         if (version >= 0x3a2)
-            BulletEmitter1 = Serializer.Reference(BulletEmitter1);
+            BulletEmitter1 = Serializer.SerializeReference(BulletEmitter1);
         if (version >= 0x24e)
             Serializer.Serialize(ref BulletPosIndex); // game
         // .bulletposindex_dashboots_hoverboard_unionval
@@ -506,10 +517,10 @@ public class PCreature : ISerializable
         {
             Serializer.Serialize(ref FireRate);
             Serializer.Serialize(ref GunAccuracy);
-            BulletEmitOffset = Serializer.Serialize(ref BulletEmitOffset);
+            Serializer.Serialize(ref BulletEmitOffset);
             Serializer.Serialize(ref BulletEmitRotation);
-            GunThing = Serializer.Reference(GunThing);
-            GunTrigger = Serializer.Reference(GunTrigger);
+            GunThing = Serializer.SerializeReference(GunThing);
+            GunTrigger = Serializer.SerializeReference(GunTrigger);
             Serializer.Serialize(ref LastGunTriggerUid);
         }
 
@@ -537,23 +548,23 @@ public class PCreature : ISerializable
 
         if (version >= 0x273)
         {
-            Head = Serializer.Reference(Head);
-            ToolTetherJoint = Serializer.Reference(ToolTetherJoint);
+            Head = Serializer.SerializeReference(Head);
+            ToolTetherJoint = Serializer.SerializeReference(ToolTetherJoint);
             Serializer.Serialize(ref ToolTetherWidth);
-            Jetpack = Serializer.Reference(Jetpack);
+            Jetpack = Serializer.SerializeReference(Jetpack);
             Serializer.Serialize(ref WallJumpDir);
-            WallJumpPos = Serializer.Serialize(ref WallJumpPos);
+            Serializer.Serialize(ref WallJumpPos);
 
             if (!Serializer.IsWriting())
-                BootContactForceList = new Vector3[Serializer.GetInput().I32()];
+                BootContactForceList = new Vector3[Serializer.GetCurrentSerializer().GetInput().I32()];
             else
             {
                 BootContactForceList ??= [];
-                Serializer.GetOutput().I32(BootContactForceList.Length);
+                Serializer.GetCurrentSerializer().GetOutput().I32(BootContactForceList.Length);
             }
 
             for (var i = 0; i < BootContactForceList.Length; ++i)
-                Serializer.Serialize(ref BootContactForceList[i]).Value;
+                Serializer.Serialize(ref BootContactForceList[i]);
 
 
             Serializer.Serialize(ref GunType);
@@ -561,10 +572,10 @@ public class PCreature : ISerializable
         }
 
         if (version is >= 0x29e and < 0x336)
-            LastDirectControlPrompt = Serializer.Reference(LastDirectControlPrompt);
+            LastDirectControlPrompt = Serializer.SerializeReference(LastDirectControlPrompt);
 
         if (version > 0x2e4)
-            DirectControlPrompt = Serializer.Reference(DirectControlPrompt);
+            DirectControlPrompt = Serializer.SerializeReference(DirectControlPrompt);
 
         if (version is >= 0x29e and < 0x336)
         {
@@ -580,7 +591,7 @@ public class PCreature : ISerializable
                 Serializer.Serialize(ref DirectControlMode);
                 break;
             case >= 0x2c1 and < 0x336:
-                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref temp_int);
                 break;
         }
 
@@ -611,7 +622,7 @@ public class PCreature : ISerializable
             switch (vita)
             {
                 case < 0x53:
-                    Serializer.Serialize(ref 0);
+                    Serializer.Serialize(ref temp_int);
                     break;
                 case >= 0x53:
                     Serializer.Serialize(ref ShootAtTouch);
@@ -625,7 +636,7 @@ public class PCreature : ISerializable
                 Serializer.Serialize(ref null, ResourceType.Plan);
                 break;
             case >= 0xaa:
-                AlternateFormWorld = Serializer.Reference(AlternateFormWorld);
+                AlternateFormWorld = Serializer.SerializeReference(AlternateFormWorld);
                 break;
         }
 
@@ -634,12 +645,12 @@ public class PCreature : ISerializable
 
         if (subVersion is >= 0xd7 and < 0xea)
         {
-            Serializer.Reference(null);
-            Serializer.Reference(null);
+            Serializer.SerializeReference(null);
+            Serializer.SerializeReference(null);
         }
 
         if (subVersion >= 0xdf)
-            HookHatBogey = Serializer.Reference(HookHatBogey);
+            HookHatBogey = Serializer.SerializeReference(HookHatBogey);
 
         if (subVersion >= 0x196)
         {

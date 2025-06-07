@@ -5,7 +5,9 @@ using CwLibNet.Types.Data;
 using CwLibNet.Structs.Server;
 using CwLibNet.Util;
 using CwLibNet.Resources;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Slot;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Slot;
 
@@ -129,13 +131,17 @@ public class Slot : ISerializable
         MaxPlayers = (byte)Math.Clamp(descriptor.Maxplayers, 1, 4);
     }
 
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
-        Id = Serializer.Serialize(ref Id);
+        Serializer.Serialize(ref Id);
 
         Serializer.Serialize(ref Root, Root, ResourceType.Level, true);
         if (subVersion >= (int)Revisions.ADVENTURE)
@@ -144,7 +150,7 @@ public class Slot : ISerializable
 
         Location = (Vector4)Serializer.Serialize(ref Location);
 
-        AuthorId = Serializer.Serialize(ref AuthorId);
+        Serializer.Serialize(ref AuthorId);
         if (version >= 0x13b)
             Serializer.Serialize(ref AuthorName);
 
@@ -154,9 +160,9 @@ public class Slot : ISerializable
         Serializer.Serialize(ref Name);
         Serializer.Serialize(ref Description);
 
-        PrimaryLinkLevel = Serializer.Serialize(ref PrimaryLinkLevel);
+        Serializer.Serialize(ref PrimaryLinkLevel);
         if (version >= 0x134)
-            Group = Serializer.Serialize(ref Group);
+            Serializer.Serialize(ref Group);
 
         Serializer.Serialize(ref InitiallyLocked);
 
@@ -172,19 +178,19 @@ public class Slot : ISerializable
                 Serializer.Serialize(ref PlanetDecorations, PlanetDecorations, ResourceType.Plan, true);
                 break;
             case < 0x188:
-                Serializer.Serialize(ref 0); // Unknown
+                Serializer.Serialize(ref temp_int); // Unknown
                 break;
         }
 
         if (version > 0x1de)
             Serializer.Serialize(ref DeveloperLevelType);
         else
-            Serializer.Serialize(ref false); // SideMission
+            Serializer.Serialize(ref temp_bool_false); // SideMission
 
         switch (version)
         {
             case > 0x1ad and < 0x1b9:
-                Serializer.Serialize(ref 0); // Unknown
+                Serializer.Serialize(ref temp_int); // Unknown
                 break;
             case > 0x1b8 and < 0x36c:
                 Serializer.Serialize(ref GameProgressionStatus);
@@ -235,8 +241,8 @@ public class Slot : ISerializable
                 Serializer.Serialize(ref CustomRewardEnabled);
 
                 if (!Serializer.IsWriting())
-                    RewardConditionDescription = new string[Serializer.GetInput().I32()];
-                else Serializer.GetOutput().I32(RewardConditionDescription.Length);
+                    RewardConditionDescription = new string[Serializer.GetCurrentSerializer().GetInput().I32()];
+                else Serializer.GetCurrentSerializer().GetOutput().I32(RewardConditionDescription.Length);
                 for (var i = 0; i < RewardConditionDescription.Length; ++i)
                     Serializer.Serialize(ref RewardConditionDescription[i]);
 
@@ -244,8 +250,8 @@ public class Slot : ISerializable
                 Serializer.Serialize(ref AmountNeededCustomReward);
 
                 if (!Serializer.IsWriting())
-                    CustomRewardDescription = new string[Serializer.GetInput().I32()];
-                else Serializer.GetOutput().I32(CustomRewardDescription.Length);
+                    CustomRewardDescription = new string[Serializer.GetCurrentSerializer().GetInput().I32()];
+                else Serializer.GetCurrentSerializer().GetOutput().I32(CustomRewardDescription.Length);
                 for (var i = 0; i < CustomRewardDescription.Length; ++i)
                     Serializer.Serialize(ref CustomRewardDescription[i]);
             }
@@ -282,7 +288,7 @@ public class Slot : ISerializable
         if (subVersion >= (int)Revisions.SLOT_ENTRANCE_DATA)
         {
             Serializer.Serialize(ref EntranceName);
-            OriginalSlotId = Serializer.Serialize(ref OriginalSlotId);
+            Serializer.Serialize(ref OriginalSlotId);
         }
 
         if (subVersion >= (int)Revisions.SLOT_BADGE_SIZE)

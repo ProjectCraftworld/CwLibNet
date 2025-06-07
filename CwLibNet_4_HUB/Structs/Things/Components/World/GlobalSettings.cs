@@ -1,6 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Components.World;
 
 public class GlobalSettings: ISerializable
@@ -12,14 +14,14 @@ public class GlobalSettings: ISerializable
     public bool NonLinearFog; // Vita
 
 
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref LightingFactor);
         Serializer.Serialize(ref ColorCorrectionFactor);
         Serializer.Serialize(ref FogFactor);
         Serializer.Serialize(ref FogTintFactor);
         Serializer.Serialize(ref DarknessFactor);
-        if (Serializer.GetRevision().Has(Branch.Double11, 0x78))
+        if (Serializer.GetCurrentSerializer().GetRevision().Has(Branch.Double11, 0x78))
             Serializer.Serialize(ref NonLinearFog);
     }
 

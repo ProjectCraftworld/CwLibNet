@@ -3,7 +3,9 @@ using CwLibNet.IO;
 using CwLibNet.Resources;
 using CwLibNet.Structs.Mesh;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Components;
 
@@ -26,35 +28,35 @@ public class CostumePiece: ISerializable
     }
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
-        var subVersion = Serializer.GetRevision().GetSubVersion();
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
+        var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 
         Serializer.Serialize(ref Mesh, Mesh, ResourceType.Mesh);
         Serializer.Serialize(ref CategoriesUsed);
 
         if (subVersion < 0x105)
         {
-            var size = Serializer.Serialize(ref MorphParamRemap != null ?
-                MorphParamRemap.Length : 0);
+            int size = MorphParamRemap != null ? MorphParamRemap.Length : 0;
+            Serializer.Serialize(ref size);
             if (Serializer.IsWriting() && size != 0)
             {
-                var stream = Serializer.GetOutput();
+                var stream = Serializer.GetCurrentSerializer().GetOutput();
                 foreach (var param in MorphParamRemap)
                     stream.I32(param);
             }
             else if (!Serializer.IsWriting())
             {
                 MorphParamRemap = new byte[size];
-                var stream = Serializer.GetInput();
+                var stream = Serializer.GetCurrentSerializer().GetInput();
                 for (var i = 0; i < size; ++i)
                     MorphParamRemap[i] = (byte) (stream.I32() & 0xFF);
             }
         }
         else Serializer.Serialize(ref MorphParamRemap);
 
-        Primitives = Serializer.Serialize(ref Primitives);
+        Serializer.Serialize(ref Primitives);
 
         if (version >= 0x19a)
             Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true);

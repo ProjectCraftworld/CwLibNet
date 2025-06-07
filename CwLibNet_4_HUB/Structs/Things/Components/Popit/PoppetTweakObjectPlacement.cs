@@ -2,7 +2,9 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Components.Popit;
 
@@ -26,11 +28,11 @@ public class PoppetTweakObjectPlacement: ISerializable
     public float Scale;
 
     public int LastGridMoveFrame, LastGridRotateFrame, LastGridScaleFrame;
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 
-        ObjectList = Serializer.Serialize(ref ObjectList);
+        Serializer.Serialize(ref ObjectList);
         Serializer.Serialize(ref StartMatrix);
 
         if (version < 0x160)
@@ -38,7 +40,7 @@ public class PoppetTweakObjectPlacement: ISerializable
         else
             Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true, false, false);
 
-        ProxyObject = Serializer.Reference(ProxyObject);
+        ProxyObject = Serializer.SerializeReference(ProxyObject);
         Serializer.Serialize(ref BackZ);
         Serializer.Serialize(ref Thickness);
         Serializer.Serialize(ref BackToZPos);

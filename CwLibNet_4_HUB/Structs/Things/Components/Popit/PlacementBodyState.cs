@@ -1,5 +1,7 @@
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Components.Popit;
 
 public class PlacementBodyState: ISerializable
@@ -9,10 +11,10 @@ public class PlacementBodyState: ISerializable
     public Thing? Thing;
     public Thing? OldParent;
     public int Frozen;
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        Thing = Serializer.Reference(Thing);
-        OldParent = Serializer.Reference(OldParent);
+        Thing = Serializer.SerializeReference(Thing);
+        OldParent = Serializer.SerializeReference(OldParent);
         Serializer.Serialize(ref Frozen);
     }
 

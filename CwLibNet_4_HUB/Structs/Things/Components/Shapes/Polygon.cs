@@ -1,6 +1,8 @@
 using System.Numerics;
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Components.Shapes;
 
 public class Polygon: ISerializable
@@ -31,18 +33,22 @@ public class Polygon: ISerializable
     public int[]? Loops = [4];
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        if (Serializer.GetRevision().GetVersion() < 0x341)
+        if (Serializer.GetCurrentSerializer().GetRevision().GetVersion() < 0x341)
         {
             RequiresZ = true;
             if (Serializer.IsWriting())
             {
                 if (Vertices == null)
-                    Serializer.GetOutput().I32(0);
-                else Serializer.Serialize(ref Vertices.Length);
+                    Serializer.GetCurrentSerializer().GetOutput().I32(0);
+                else 
+                {
+                    int tempLength = Vertices.Length;
+                    Serializer.Serialize(ref tempLength);
+                }
             }
-            else Vertices = new Vector3?[Serializer.GetInput().I32()];
+            else Vertices = new Vector3?[Serializer.GetCurrentSerializer().GetInput().I32()];
             if (Vertices != null)
                 for (var i = 0; i < Vertices.Length; ++i)
                     Serializer.Serialize(ref Vertices[i]);
@@ -52,7 +58,7 @@ public class Polygon: ISerializable
 
         if (Serializer.IsWriting())
         {
-            var _stream = Serializer.GetOutput();
+            var _stream = Serializer.GetCurrentSerializer().GetOutput();
             if (Vertices != null && Vertices.Length != 0)
             {
                 _stream.I32(Vertices.Length);
@@ -73,7 +79,7 @@ public class Polygon: ISerializable
             return;
         }
 
-        var stream = Serializer.GetInput();
+        var stream = Serializer.GetCurrentSerializer().GetInput();
         Vertices = new Vector3?[stream.I32()];
         RequiresZ = stream.Boole();
         if (Vertices.Length != 0)

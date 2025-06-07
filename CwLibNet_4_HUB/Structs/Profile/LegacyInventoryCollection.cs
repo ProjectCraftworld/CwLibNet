@@ -1,5 +1,6 @@
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Profile 
 {
     public class LegacyInventoryCollection : ISerializable 
@@ -11,9 +12,9 @@ namespace CwLibNet.Structs.Profile
         public int CollectionId;
         public int ActionOnItemSelect;
 
-        public void Serialize() 
+        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer) 
         {
-            InventoryViews = Serializer.Array(InventoryViews, true) ?? []; // Ensure non-null assignment
+            InventoryViews = Serializer.SerializeArray(InventoryViews, true) ?? []; // Ensure non-null assignment
             Serializer.Serialize(ref CurrentPageNumber);
             Serializer.Serialize(ref CollectionId);
             Serializer.Serialize(ref ActionOnItemSelect);

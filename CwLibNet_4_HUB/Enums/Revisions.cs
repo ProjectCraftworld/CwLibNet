@@ -1,4 +1,10 @@
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet.IO;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Profile;
+using CwLibNet.Structs.Slot;
+using CwLibNet.Structs.Things;
+using CwLibNet.Types.Data;
 ﻿namespace CwLibNet.Enums;
 
 public enum Revisions

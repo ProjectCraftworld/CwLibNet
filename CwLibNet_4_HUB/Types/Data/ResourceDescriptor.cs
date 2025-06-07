@@ -1,6 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.Util;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Types.Data;
 

@@ -1,7 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.DLC;
 
@@ -12,9 +13,9 @@ public class DLCGUID: ISerializable
     public GUID? GUID;
     public int Flags = DLCFileFlags.NONE;
 
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        GUID = Serializer.Serialize(ref GUID);
+        Serializer.Serialize(ref GUID);
         Serializer.Serialize(ref Flags);
     }
 

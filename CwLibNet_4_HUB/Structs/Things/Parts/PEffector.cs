@@ -1,6 +1,8 @@
 using System.Numerics;
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Parts;
 
 public class PEffector: ISerializable
@@ -15,13 +17,13 @@ public class PEffector: ISerializable
     public float ModScale = 1.0f;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        PosVel = Serializer.Serialize(ref PosVel);
+        Serializer.Serialize(ref PosVel);
         Serializer.Serialize(ref AngVel);
         Serializer.Serialize(ref Viscosity);
         Serializer.Serialize(ref Density);
-        Gravity = Serializer.Serialize(ref Gravity);
+        Serializer.Serialize(ref Gravity);
         Serializer.Serialize(ref PushBack);
         Serializer.Serialize(ref Swimmable);
         Serializer.Serialize(ref ViscosityCheap);

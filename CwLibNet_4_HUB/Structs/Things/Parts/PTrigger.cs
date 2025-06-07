@@ -1,6 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Parts;
 
 public class PTrigger: ISerializable
@@ -31,9 +33,13 @@ public class PTrigger: ISerializable
         RadiusMultiplier = radius;
     }
 
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
@@ -44,37 +50,37 @@ public class PTrigger: ISerializable
         {
             if (Serializer.IsWriting())
             {
-                var stream = Serializer.GetOutput();
+                var stream = Serializer.GetCurrentSerializer().GetOutput();
                 stream.I32(InThings?.Length ?? 0);
                 if (InThings != null)
                 {
                     foreach (var thing in InThings)
                     {
-                        Serializer.Reference(thing);
+                        Serializer.SerializeReference(thing);
                         stream.S32(0);
                     }
                 }
             }
             else
             {
-                var stream = Serializer.GetInput();
+                var stream = Serializer.GetCurrentSerializer().GetInput();
                 InThings = new Thing[stream.I32()];
                 for (var i = 0; i < InThings.Length; ++i)
                 {
-                    Serializer.Serialize(ref InThings[i])!;
+                    Serializer.Serialize(ref InThings[i]);
                     stream.S32(); // mThingAction
                 }
             }
         }
         else
         {
-            InThings = Serializer.Serialize(ref InThings);
+            Serializer.Serialize(ref InThings);
         }
 
         Serializer.Serialize(ref RadiusMultiplier);
 
         if (version < 0x1d5)
-            Serializer.Serialize(ref 0); // zLayers?
+            Serializer.Serialize(ref temp_int); // zLayers?
 
         if (subVersion >= 0x2a)
             Serializer.Serialize(ref ZRangeHundreds);

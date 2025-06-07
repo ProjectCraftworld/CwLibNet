@@ -1,7 +1,9 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -62,9 +64,13 @@ public class PCheckpoint: ISerializable
     public bool PersistLives;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
@@ -72,9 +78,9 @@ public class PCheckpoint: ISerializable
         else
         {
             if (Serializer.IsWriting())
-                Serializer.GetOutput().Boole((ActiveFlags & 0xf) != 0);
+                Serializer.GetCurrentSerializer().GetOutput().Boole((ActiveFlags & 0xf) != 0);
             else
-                ActiveFlags = (byte)(Serializer.GetInput().Boole() ? 0xf : (byte) 0);
+                ActiveFlags = (byte)(Serializer.GetCurrentSerializer().GetInput().Boole() ? 0xf : (byte) 0);
         }
 
         Serializer.Serialize(ref ActivationFrame);
@@ -82,7 +88,7 @@ public class PCheckpoint: ISerializable
         if (version < 0x1f3)
         {
             Serializer.Reference<Thing>(null);
-            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref temp_int);
         }
 
         if (version >= 0x1a7)
@@ -95,7 +101,7 @@ public class PCheckpoint: ISerializable
 
         if (version >= 0x1f3)
         {
-            SpawningList = Serializer.Serialize(ref SpawningList, true);
+            SpawningList = Serializer.Thingarray(SpawningList);
             Serializer.Serialize(ref SpawningDelay);
         }
 
@@ -106,7 +112,7 @@ public class PCheckpoint: ISerializable
             Serializer.Serialize(ref TeamFilter);
 
         if (subVersion is >= 0x1 and < 0x127)
-            Serializer.Serialize(ref 0); // persistPoint
+            Serializer.Serialize(ref temp_int); // persistPoint
 
         if (subVersion >= 0x88)
         {
@@ -137,7 +143,7 @@ public class PCheckpoint: ISerializable
             Serializer.Serialize(ref LinkVisibleOnPlanet);
 
         if (subVersion is >= 0x108 and < 0x129)
-            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref temp_int);
 
         if (subVersion >= 0xcb)
             Serializer.Serialize(ref Name);

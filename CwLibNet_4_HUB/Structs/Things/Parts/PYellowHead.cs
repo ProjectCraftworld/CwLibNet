@@ -3,7 +3,10 @@ using CwLibNet.Enums;
 using CwLibNet.EX;
 using CwLibNet.IO;
 using CwLibNet.Structs.Things.Components;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using CwLibNet.Types.Data;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -31,31 +34,55 @@ public class PYellowHead: ISerializable
     public int CreatureToSpawnAs;
     public bool SpawnAsAlternateForm;
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var version = Serializer.GetRevision().GetVersion();
-        var subVersion = Serializer.GetRevision().GetSubVersion();
+        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
+        var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 
-        Head = Serializer.Reference(Head);
+        Head = Serializer.SerializeReference(Head);
         if (version > 0x1fc)
-            LegacyToolTetherJoint = Serializer.Reference(LegacyToolTetherJoint);
+            LegacyToolTetherJoint = Serializer.SerializeReference(LegacyToolTetherJoint);
         else
-            Serializer.Serialize(ref 0);
+        {
+            int tempZero = 0;
+            Serializer.Serialize(ref tempZero);
+        }
 
-        if (version < 0x13c) Serializer.Serialize(ref null);
-        if (version < 0x8c) Serializer.Serialize(ref 0);
-        if (version < 0x1d6) Serializer.Serialize(ref null, ResourceType.GfxMaterial);
+        if (version < 0x13c) 
+        {
+            ResourceDescriptor? tempNull = null;
+            Serializer.Serialize(ref tempNull, ResourceType.FileOfBytes);
+        }
+        if (version < 0x8c) 
+        {
+            int tempZero = 0;
+            Serializer.Serialize(ref tempZero);
+        }
+        if (version < 0x1d6) 
+        {
+            ResourceDescriptor? tempNull = null;
+            Serializer.Serialize(ref tempNull, ResourceType.GfxMaterial, false, false, false);
+        }
 
         Serializer.Serialize(ref LegacyToolTetherWidth);
         Serializer.Serialize(ref PlayerNumber);
 
-        if (version < 0x155) Serializer.Serialize(ref 0);
-        if (version < 0x20c) Serializer.Serialize(ref false);
+        if (version < 0x155) 
+        {
+            int tempZero = 0;
+            Serializer.Serialize(ref tempZero);
+        }
+        if (version < 0x20c) 
+        {
+            bool tempFalse = false;
+            Serializer.Serialize(ref tempFalse);
+        }
         switch (version)
         {
             case < 0x161:
             case 0x170:
-                Serializer.Serialize(ref false);
+                bool tempFalse = false;
+                Serializer.Serialize(ref tempFalse);
                 break;
         }
 
@@ -68,7 +95,11 @@ public class PYellowHead: ISerializable
         if (version < 0x3da)
             Serializer.Serialize(ref SensorHistory);
 
-        if (version < 0x203) Serializer.Serialize(ref 0.0f);
+        if (version < 0x203) 
+        {
+            float tempZeroFloat = 0.0f;
+            Serializer.Serialize(ref tempZeroFloat);
+        }
 
         if (version < 0x3da)
             Serializer.Serialize(ref NewestSense);
@@ -76,21 +107,25 @@ public class PYellowHead: ISerializable
         switch (version)
         {
             case >= 0x146 and < 0x16b:
-                Serializer.Serialize(ref 0);
+                int tempZero = 0;
+                Serializer.Serialize(ref tempZero);
                 break;
             case >= 0x16b:
                 Serializer.Serialize(ref RequestedSuicide);
                 break;
         }
 
-        LegacyJetpack = Serializer.Reference(LegacyJetpack);
+        LegacyJetpack = Serializer.SerializeReference(LegacyJetpack);
 
         switch (version)
         {
             case > 0x134 and < 0x164:
-                Serializer.Serialize(ref 0); // Primary
-                Serializer.Serialize(ref 0); // Secondary
-                Serializer.Serialize(ref 0); // Tertiary
+                int tempPrimary = 0;
+                int tempSecondary = 0;
+                int tempTertiary = 0;
+                Serializer.Serialize(ref tempPrimary); // Primary
+                Serializer.Serialize(ref tempSecondary); // Secondary
+                Serializer.Serialize(ref tempTertiary); // Tertiary
                 break;
             case > 0x193:
                 Serializer.Serialize(ref OnScreenCounter);
@@ -98,7 +133,10 @@ public class PYellowHead: ISerializable
         }
 
         if (version is > 0x1ba and < 0x1fd)
-            Serializer.Serialize(ref 0);
+        {
+            int tempZero = 0;
+            Serializer.Serialize(ref tempZero);
+        }
 
         if (version > 0x1d0)
             Serializer.Serialize(ref OnScreenStatus);
@@ -110,19 +148,28 @@ public class PYellowHead: ISerializable
         {
             if (version < 0x2df)
                 Serializer.Serialize(ref Recording);
-            Recordee = Serializer.Reference(Recordee);
+            Recordee = Serializer.SerializeReference(Recordee);
         }
 
         if (version > 0x359)
             Serializer.Serialize(ref LastTimeSlappedAPlayer);
 
-        if (subVersion is >= 0x83 and < 0x8b) Serializer.Serialize(ref 0);
+        if (subVersion is >= 0x83 and < 0x8b) 
+        {
+            int tempZero = 0;
+            Serializer.Serialize(ref tempZero);
+        }
         AnimSetKey = subVersion switch
         {
             >= 0x88 and < 0xa3 => throw new SerializationException("Unknown serialization object in PYellowHead!"),
-            > 0xa5 => Serializer.Serialize(ref AnimSetKey),
+            > 0xa5 => AnimSetKey,
             _ => AnimSetKey
         };
+        
+        if (subVersion > 0xa5)
+        {
+            Serializer.Serialize(ref AnimSetKey);
+        }
 
         if (subVersion > 0xd2)
             Serializer.Serialize(ref MonstrousHeadScale);

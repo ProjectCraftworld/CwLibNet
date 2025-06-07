@@ -2,7 +2,10 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.Structs.Slot;
 using CwLibNet.Structs.Things.Components;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Profile;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -21,9 +24,9 @@ public class PGameplayData: ISerializable
     public short TreasureCount = 1;
 
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 

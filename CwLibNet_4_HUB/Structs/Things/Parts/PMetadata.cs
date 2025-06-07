@@ -4,7 +4,9 @@ using CwLibNet.Resources;
 using CwLibNet.Structs.Inventory;
 using CwLibNet.Structs.Things.Components;
 using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using CwLibNet.IO.Serializer;
+using CwLibNet.Structs.Things;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -33,9 +35,13 @@ public class PMetadata: ISerializable
     public bool Referencable;
     public bool AllowEmit;
     
-    public void Serialize()
+    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        int temp_int = 0;
+        bool temp_bool_true = true;
+        bool temp_bool_false = false;
+
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
 
         var hasDepreciatedValue = (version < 0x297 && !revision.IsLeerdammer()) || (revision.IsLeerdammer() && !revision.Has(Branch.Leerdammer, (int)Revisions.LD_RESOURCES));
@@ -79,12 +85,12 @@ public class PMetadata: ISerializable
             Serializer.Serialize(ref PrimaryIndex);
         Serializer.Serialize(ref FluffCost);
 
-        if (hasDepreciatedValue) Serializer.Serialize(ref 0); // unknown
+        if (hasDepreciatedValue) Serializer.Serialize(ref temp_int); // unknown
         
         if (Serializer.IsWriting())
-            Serializer.GetOutput().I32(Type.GetFlags());
+            Serializer.GetCurrentSerializer().GetOutput().I32(Type.GetFlags());
         else
-            Type = InvObjectBody.FromFlags(Serializer.GetInput().I32(), Serializer.GetRevision());
+            Type = InvObjectBody.FromFlags(Serializer.GetCurrentSerializer().GetInput().I32(), Serializer.GetCurrentSerializer().GetRevision());
         
         Serializer.Serialize(ref SubType);
         Serializer.Serialize(ref CreationDate);

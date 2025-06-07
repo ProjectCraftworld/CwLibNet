@@ -1,5 +1,7 @@
-﻿using CwLibNet.Types.Data;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+﻿using CwLibNet.IO.Serializer;
+using CwLibNet.Types.Data;
+using CwLibNet.IO;
+using static CwLibNet.IO.Serializer.Serializer;
 
 namespace CwLibNet.IO;
 
@@ -16,7 +18,7 @@ public abstract class Resource : ISerializable
     /// <returns>Serialization data</returns>
     public abstract SerializationData Build(Revision revision, byte compressionFlags);
 
-    public abstract void Serialize(Serializer.Serializer serializer);
+    public abstract void Serialize(CwLibNet.IO.Serializer.Serializer serializer);
         
     public abstract int GetAllocatedSize();
 }

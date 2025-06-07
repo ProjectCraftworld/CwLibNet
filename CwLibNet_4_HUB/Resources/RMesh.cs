@@ -7,7 +7,8 @@ using CwLibNet.Structs.Custom;
 using CwLibNet.Structs.Mesh;
 using CwLibNet.Types.Data;
 using CwLibNet.Util;
-using static net.torutheredfox.craftworld.serialization.Serializer;
+using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet.IO.Serializer;
 
 namespace CwLibNet.Resources;
 
@@ -320,9 +321,9 @@ public class RMesh: Resource
             VertexColors[i] = 0xFFFFFFFF;
     }
 
-    public override void Serialize()
+    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetRevision();
+        var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
@@ -349,7 +350,7 @@ public class RMesh: Resource
         if (Serializer.IsWriting())
         {
             var offset = 0;
-            var stream = Serializer.GetOutput();
+            var stream = Serializer.GetCurrentSerializer().GetOutput();
             stream.I32(offset);
             foreach (var t in Streams)
             {
@@ -362,7 +363,7 @@ public class RMesh: Resource
         }
         else
         {
-            var stream = Serializer.GetInput();
+            var stream = Serializer.GetCurrentSerializer().GetInput();
             // We're skipping source stream offsets.
             for (var i = 0; i < StreamCount + 1; ++i)
                 stream.I32();
@@ -379,23 +380,23 @@ public class RMesh: Resource
             Serializer.Serialize(ref TriangleAdjacencyInfos);
 
         Serializer.Serialize(ref Primitives);
-        Bones = Serializer.Serialize(ref Bones);
+        Serializer.Serialize(ref Bones);
 
         Serializer.Serialize(ref MirrorBones);
-        Serializer.Serialize(ref MirrorBoneFlipTypes);
+        Serializer.SerializeEnumArray(ref MirrorBoneFlipTypes);
         Serializer.Serialize(ref MirrorMorphs);
 
-        Serializer.Serialize(ref PrimitiveType);
+        PrimitiveType = Serializer.GetCurrentSerializer().Enum8(PrimitiveType);
 
         Serializer.Serialize(ref SoftbodyCluster);
-        SoftbodySprings = Serializer.Serialize(ref SoftbodySprings);
-        SoftbodyEquivs = Serializer.Serialize(ref SoftbodyEquivs);
+        Serializer.Serialize(ref SoftbodySprings);
+        Serializer.Serialize(ref SoftbodyEquivs);
 
         // Don't write mass field if there's no softbody data on the this.
         if (Serializer.IsWriting())
         {
             if (HasSoftbodyData()) Serializer.Serialize(ref Mass);
-            else Serializer.GetOutput().I32(0);
+            else Serializer.GetCurrentSerializer().GetOutput().I32(0);
         }
         else Serializer.Serialize(ref Mass);
 
@@ -414,22 +415,27 @@ public class RMesh: Resource
         Serializer.Serialize(ref SoftbodyContainingBoundBoxMin);
         Serializer.Serialize(ref SoftbodyContainingBoundBoxMax);
 
-        CullBones = Serializer.Serialize(ref CullBones);
+        Serializer.Serialize(ref CullBones);
         Serializer.Serialize(ref RegionIDsToHide);
 
         Serializer.Serialize(ref CostumeCategoriesUsed);
         if (version >= 0x141)
-            Serializer.Serialize(ref HairMorphs);
+            HairMorphs = Serializer.GetCurrentSerializer().Enum32(HairMorphs);
         Serializer.Serialize(ref BevelVertexCount);
         Serializer.Serialize(ref ImplicitBevelSprings);
 
         if (revision.Has(Branch.Double11, (int)Revisions.D1_VERTEX_COLORS))
         {
             if (!Serializer.IsWriting())
-                VertexColors = new uint[Serializer.GetInput().I32()];
-            else Serializer.GetOutput().I32(VertexColors.Length);
+                VertexColors = new uint[Serializer.GetCurrentSerializer().GetInput().I32()];
+            else Serializer.GetCurrentSerializer().GetOutput().I32(VertexColors.Length);
             for (var i = 0; i < VertexColors.Length; ++i)
-                Serializer.Serialize(ref VertexColors[i]);
+            {
+                if (Serializer.IsWriting())
+                    Serializer.GetCurrentSerializer().GetOutput().U32(VertexColors[i]);
+                else
+                    VertexColors[i] = (uint)Serializer.GetCurrentSerializer().GetInput().U32();
+            }
         }
         else if (!Serializer.IsWriting())
         {
@@ -439,7 +445,7 @@ public class RMesh: Resource
         }
 
         if (subVersion >= (int)Revisions.MESH_SKELETON_TYPE)
-            Serializer.Serialize(ref SkeletonType);
+            SkeletonType = Serializer.GetCurrentSerializer().Enum8(SkeletonType);
     }
 
     public override int GetAllocatedSize()
@@ -487,14 +493,14 @@ public class RMesh: Resource
     {
         var serializer = new Serializer(GetAllocatedSize() + 0x8000, revision,
             compressionFlags);
-        Serializer.Serialize(ref this);
+        this.Serialize(serializer);
         return new SerializationData(
-            Serializer.GetBuffer(),
+            Serializer.GetCurrentSerializer().GetBuffer(),
             revision,
             compressionFlags,
             ResourceType.Mesh,
             SerializationType.BINARY,
-            Serializer.GetDependencies()
+            Serializer.GetCurrentSerializer().GetDependencies()
         );
     }
 
