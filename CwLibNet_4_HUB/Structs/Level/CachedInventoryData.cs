@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Level;
 
 public class CachedInventoryData: ISerializable
@@ -13,19 +12,19 @@ public class CachedInventoryData: ISerializable
     public byte U0, U1, V0, V1;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
+        var version = Serializer.GetRevision().GetVersion();
 
-        Category = serializer.U32(Category);
-        Location = serializer.U32(Location);
+        Serializer.Serialize(ref Category);
+        Serializer.Serialize(ref Location);
         if (version <= 0x39d) return;
-        CachedToolType = serializer.I32(CachedToolType);
+        Serializer.Serialize(ref CachedToolType);
 
-        U0 = serializer.I8(U0);
-        U1 = serializer.I8(U1);
-        V0 = serializer.I8(V0);
-        V1 = serializer.I8(V1);
+        Serializer.Serialize(ref U0);
+        Serializer.Serialize(ref U1);
+        Serializer.Serialize(ref V0);
+        Serializer.Serialize(ref V1);
     }
 
     

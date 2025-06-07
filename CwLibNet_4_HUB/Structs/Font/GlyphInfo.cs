@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Font;
 
 public class GlyphInfo: ISerializable
@@ -16,13 +15,13 @@ public class GlyphInfo: ISerializable
 
     public virtual void Serialize(Serializer serializer)
     {
-        Character = serializer.I16(Character);
-        BoxLeft = serializer.I8(BoxLeft);
-        BoxTop = serializer.I8(BoxTop);
-        BoxW = serializer.I8(BoxW);
-        BoxH = serializer.I8(BoxH);
-        Offset = serializer.I32(Offset);
-        NextGlyph = serializer.I16((short)NextGlyph);
+        Serializer.Serialize(ref Character);
+        Serializer.Serialize(ref BoxLeft);
+        Serializer.Serialize(ref BoxTop);
+        Serializer.Serialize(ref BoxW);
+        Serializer.Serialize(ref BoxH);
+        Serializer.Serialize(ref Offset);
+        NextGlyph = Serializer.Serialize(ref (short)NextGlyph);
     }
 
     public virtual int GetAllocatedSize()

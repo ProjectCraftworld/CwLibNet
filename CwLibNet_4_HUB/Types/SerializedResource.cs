@@ -1,7 +1,6 @@
 using CwLibNet.Enums;
 using CwLibNet.EX;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.IO.Streams;
 using CwLibNet.Resources;
 using CwLibNet.Structs.StaticMesh;
@@ -10,6 +9,7 @@ using CwLibNet.Structs.Things;
 using CwLibNet.Types.Data;
 using CwLibNet.Util;
 using Xxtea;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Types;
 
@@ -165,7 +165,7 @@ public class SerializedResource
     {
         var serializer = new Serializer(data, revision, compressionFlags);
         foreach (var descriptor in dependencies)
-            serializer.AddDependency(descriptor);
+            Serializer.AddDependency(descriptor);
         return serializer;
     }
 
@@ -189,7 +189,7 @@ public class SerializedResource
     public T LoadResource<T>() where T : ISerializable
     {
         var serializer = GetSerializer();
-        return serializer.Struct<T>(default);
+        return Serializer.Serialize(ref default(T));
     }
 
     /**
@@ -438,7 +438,7 @@ public class SerializedResource
         {
             var resource = new SerializedResource(data);
             var serializer = resource.GetSerializer();
-//            Object _struct = serializer.Struct(null,
+//            Object _struct = Serializer.Serialize(ref null,
 //                resource.getResourceType().Compressable);
             var @struct = serializer.GetType().GetMethod("Struct")?.MakeGenericMethod(resource.GetResourceType().Compressable).Invoke(serializer, null);
             if (@struct is RPlan plan)

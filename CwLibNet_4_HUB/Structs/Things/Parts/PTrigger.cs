@@ -1,7 +1,6 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Parts;
 
 public class PTrigger: ISerializable
@@ -32,67 +31,67 @@ public class PTrigger: ISerializable
         RadiusMultiplier = radius;
     }
 
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
 
-        TriggerType = serializer.Enum8(TriggerType);
+        Serializer.Serialize(ref TriggerType);
 
         if (revision.Has(Branch.Double11, 0x17))
         {
-            if (serializer.IsWriting())
+            if (Serializer.IsWriting())
             {
-                var stream = serializer.GetOutput();
+                var stream = Serializer.GetOutput();
                 stream.I32(InThings?.Length ?? 0);
                 if (InThings != null)
                 {
                     foreach (var thing in InThings)
                     {
-                        serializer.Thing(thing);
+                        Serializer.Reference(thing);
                         stream.S32(0);
                     }
                 }
             }
             else
             {
-                var stream = serializer.GetInput();
+                var stream = Serializer.GetInput();
                 InThings = new Thing[stream.I32()];
                 for (var i = 0; i < InThings.Length; ++i)
                 {
-                    InThings[i] = serializer.Thing(null)!;
+                    Serializer.Serialize(ref InThings[i])!;
                     stream.S32(); // mThingAction
                 }
             }
         }
         else
         {
-            InThings = serializer.Thingarray(InThings);
+            InThings = Serializer.Serialize(ref InThings);
         }
 
-        RadiusMultiplier = serializer.F32(RadiusMultiplier);
+        Serializer.Serialize(ref RadiusMultiplier);
 
         if (version < 0x1d5)
-            serializer.I32(0); // zLayers?
+            Serializer.Serialize(ref 0); // zLayers?
 
         if (subVersion >= 0x2a)
-            ZRangeHundreds = serializer.I8(ZRangeHundreds);
+            Serializer.Serialize(ref ZRangeHundreds);
 
-        AllZLayers = serializer.Bool(AllZLayers);
+        Serializer.Serialize(ref AllZLayers);
 
         if (version >= 0x19b)
         {
-            HysteresisMultiplier = serializer.F32(HysteresisMultiplier);
-            Enabled = serializer.Bool(Enabled);
+            Serializer.Serialize(ref HysteresisMultiplier);
+            Serializer.Serialize(ref Enabled);
         }
 
         if (version >= 0x322)
-            ZOffset = serializer.F32(ZOffset);
+            Serializer.Serialize(ref ZOffset);
 
         if (subVersion >= 0x90 || revision.Has(Branch.Double11, 0x30))
-            ScoreValue = serializer.S32(ScoreValue);
+            Serializer.Serialize(ref ScoreValue);
     }
 
     public int GetAllocatedSize()

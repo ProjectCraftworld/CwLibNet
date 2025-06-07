@@ -1,7 +1,6 @@
 using System.Numerics;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Components.Popit;
 
 public class RaycastResults: ISerializable
@@ -17,21 +16,21 @@ public class RaycastResults: ISerializable
     public int OnCostumePiece, DecorationIdx;
     public bool SwitchConnector;
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Hitpoint = serializer.V4(Hitpoint);
-        Normal = serializer.V4(Normal);
+        Serializer.Serialize(ref Hitpoint);
+        Serializer.Serialize(ref Normal);
 
-        BaryU = serializer.F32(BaryU);
-        BaryV = serializer.F32(BaryV);
-        TriIndex = serializer.I32(TriIndex);
+        Serializer.Serialize(ref BaryU);
+        Serializer.Serialize(ref BaryV);
+        Serializer.Serialize(ref TriIndex);
 
-        HitThing = serializer.Thing(HitThing);
-        RefThing = serializer.Thing(RefThing);
+        HitThing = Serializer.Reference(HitThing);
+        RefThing = Serializer.Reference(RefThing);
 
-        OnCostumePiece = serializer.S32(OnCostumePiece);
-        DecorationIdx = serializer.I32(DecorationIdx);
-        SwitchConnector = serializer.Bool(SwitchConnector);
+        Serializer.Serialize(ref OnCostumePiece);
+        Serializer.Serialize(ref DecorationIdx);
+        Serializer.Serialize(ref SwitchConnector);
     }
 
     public int GetAllocatedSize()

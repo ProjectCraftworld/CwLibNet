@@ -1,9 +1,9 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.Extensions;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Resources;
 using CwLibNet.Structs.Animation;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Mesh;
 
@@ -48,29 +48,29 @@ public class Bone: AnimBone
     }
 
     
-    public override void Serialize(Serializer serializer)
+    public override void Serialize()
     {
 
-        name = serializer.Str(name, MaxBoneNameLength);
-        Flags = serializer.I32(Flags);
+        Serializer.Serialize(ref name);
+        Serializer.Serialize(ref Flags);
 
         base.Serialize(serializer);
 
-        SkinPoseMatrix = serializer.M44(SkinPoseMatrix);
-        InvSkinPoseMatrix = serializer.M44(InvSkinPoseMatrix);
+        Serializer.Serialize(ref SkinPoseMatrix);
+        Serializer.Serialize(ref InvSkinPoseMatrix);
 
-        ObbMin = serializer.V4(ObbMin);
-        ObbMax = serializer.V4(ObbMax);
+        Serializer.Serialize(ref ObbMin);
+        Serializer.Serialize(ref ObbMax);
 
-        ShapeVerts = serializer.Array(ShapeVerts);
-        ShapeInfos = serializer.Array(ShapeInfos);
+        ShapeVerts = Serializer.Serialize(ref ShapeVerts);
+        ShapeInfos = Serializer.Serialize(ref ShapeInfos);
 
-        ShapeMinZ = serializer.F32(ShapeMinZ);
-        ShapeMaxZ = serializer.F32(ShapeMaxZ);
+        Serializer.Serialize(ref ShapeMinZ);
+        Serializer.Serialize(ref ShapeMaxZ);
 
-        BoundBoxMin = serializer.V4(BoundBoxMin);
-        BoundBoxMax = serializer.V4(BoundBoxMax);
-        BoundSphere = serializer.V4(BoundSphere);
+        Serializer.Serialize(ref BoundBoxMin);
+        Serializer.Serialize(ref BoundBoxMax);
+        Serializer.Serialize(ref BoundSphere);
     }
 
     public string? GetName()

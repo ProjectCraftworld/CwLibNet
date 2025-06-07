@@ -1,7 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Things.Components.Switches;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -26,27 +26,27 @@ public class PSwitchKey: ISerializable
     public SwitchKeyType Type = SwitchKeyType.MAGNETIC;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
-        var subVersion = serializer.GetRevision().GetSubVersion();
+        var version = Serializer.GetRevision().GetVersion();
+        var subVersion = Serializer.GetRevision().GetSubVersion();
 
-        ColorIndex = serializer.S32(ColorIndex);
+        Serializer.Serialize(ref ColorIndex);
         if (version >= 0x2dc)
-            Name = serializer.Wstr(Name);
+            Serializer.Serialize(ref Name);
 
         if (subVersion < 0x132 && version > 0x1bc)
         {
-            if (version < 0x3ed) HideInPlayMode = serializer.Bool(HideInPlayMode);
-            else if (serializer.IsWriting())
+            if (version < 0x3ed) Serializer.Serialize(ref HideInPlayMode);
+            else if (Serializer.IsWriting())
             {
                 var flags = HideInPlayMode ? 0x80 : 0x0;
                 if (IsDummy) flags |= 0x40;
-                serializer.GetOutput().U8(flags);
+                Serializer.GetOutput().U8(flags);
             }
             else
             {
-                var flags = serializer.GetInput().U8();
+                var flags = Serializer.GetInput().U8();
                 HideInPlayMode = (flags & 0x80) != 0;
                 IsDummy = (flags & 0x40) != 0;
             }
@@ -54,28 +54,28 @@ public class PSwitchKey: ISerializable
         else
         {
             if (version > 0x1bc)
-                HideInPlayMode = serializer.Bool(HideInPlayMode);
+                Serializer.Serialize(ref HideInPlayMode);
             if (subVersion >= 0x132)
-                IsDummy = serializer.Bool(IsDummy);
+                Serializer.Serialize(ref IsDummy);
         }
 
         // isActiveBoolOldForSerialisation
         if (version is > 0x272 and < 0x2c4)
         {
-            if (serializer.IsWriting())
+            if (Serializer.IsWriting())
             {
                 var isActive = IsActive != null;
                 if (isActive) isActive = IsActive is not { Activation: 0.0f };
-                serializer.GetOutput().Boole(isActive);
+                Serializer.GetOutput().Boole(isActive);
             }
-            else serializer.GetInput().Boole();
+            else Serializer.GetInput().Boole();
         }
 
         if (version is > 0x29f and < 0x2c4)
-            serializer.Struct(IsActive);
+            Serializer.Serialize(ref IsActive);
 
         if (version is > 0x27c and < 0x2dc)
-            serializer.Enum32(Type);
+            Serializer.Serialize(ref Type);
     }
 
     

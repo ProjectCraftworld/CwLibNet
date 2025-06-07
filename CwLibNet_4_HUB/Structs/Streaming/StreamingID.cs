@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Streaming;
 
 public class StreamingID: ISerializable
@@ -11,10 +10,10 @@ public class StreamingID: ISerializable
     public int Type;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Name = serializer.Wstr(Name);
-        Type = serializer.I32(Type);
+        Serializer.Serialize(ref Name);
+        Serializer.Serialize(ref Type);
     }
 
     

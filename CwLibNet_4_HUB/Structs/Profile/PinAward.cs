@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Profile 
 {
     public class PinAward : ISerializable 
@@ -9,10 +8,10 @@ namespace CwLibNet.Structs.Profile
 
         public int pinID, awardCount;
 
-        public void Serialize(Serializer serializer) 
+        public void Serialize() 
         {
-            pinID = serializer.I32(pinID);
-            awardCount = serializer.I32(awardCount);
+            Serializer.Serialize(ref pinID);
+            Serializer.Serialize(ref awardCount);
         }
 
         public int GetAllocatedSize() 

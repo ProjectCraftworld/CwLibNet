@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Mesh;
 
 public class SoftbodySpring: ISerializable
@@ -20,11 +19,11 @@ public class SoftbodySpring: ISerializable
     }
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        A = serializer.I16(A);
-        B = serializer.I16(B);
-        RestLengthSq = serializer.F32(RestLengthSq);
+        Serializer.Serialize(ref A);
+        Serializer.Serialize(ref B);
+        Serializer.Serialize(ref RestLengthSq);
     }
 
     

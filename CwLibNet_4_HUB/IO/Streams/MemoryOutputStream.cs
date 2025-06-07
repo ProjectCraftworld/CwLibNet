@@ -2,6 +2,7 @@
 using CwLibNet.Types.Data;
 using System.Numerics;
 using System.Text;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.IO.Streams;
 

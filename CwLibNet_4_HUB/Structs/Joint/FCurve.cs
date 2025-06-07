@@ -1,8 +1,7 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Joint;
 
 public class FCurve: ISerializable
@@ -15,12 +14,12 @@ public class FCurve: ISerializable
     public CurveType Type = CurveType.CONSTANT;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        X = serializer.V4(X);
-        Y = serializer.V4(Y);
-        P = serializer.V4(P);
-        Type = serializer.Enum32(Type);
+        Serializer.Serialize(ref X);
+        Serializer.Serialize(ref Y);
+        Serializer.Serialize(ref P);
+        Serializer.Serialize(ref Type);
     }
 
     

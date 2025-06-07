@@ -1,9 +1,9 @@
 using CwLibNet.Enums;
 using CwLibNet.EX;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Inventory;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Profile;
 
@@ -67,40 +67,40 @@ public class InventoryItem: ISerializable
     }
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Plan = serializer.Resource(Plan, ResourceType.Plan, true);
+        Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true);
         if (Plan != null)
-            serializer.AddDependency(Plan);
+            Serializer.AddDependency(Plan);
 
-        if (serializer.GetRevision().GetSubVersion() >= (int)Revisions.ITEM_GUID)
-            Guid = serializer.Guid(Guid);
+        if (Serializer.GetRevision().GetSubVersion() >= (int)Revisions.ITEM_GUID)
+            Guid = Serializer.Serialize(ref Guid);
 
-        Details = serializer.Struct(Details);
+        Serializer.Serialize(ref Details);
 
-        var version = serializer.GetRevision().GetVersion();
+        var version = Serializer.GetRevision().GetVersion();
 
         if (version >= (int)Revisions.ITEM_FLAGS)
         {
-            Uid = serializer.I32(Uid, true);
+            Uid = Serializer.Serialize(ref Uid);
             if (version < (int)Revisions.REMOVE_LBP1_TUTORIALS)
             {
-                if (serializer.IsWriting())
+                if (Serializer.IsWriting())
                 {
-                    serializer.GetOutput().I32((int)TutorialLevel, true);
-                    serializer.GetOutput().I32((int)TutorialVideo, true);
+                    Serializer.GetOutput().I32((int)TutorialLevel, true);
+                    Serializer.GetOutput().I32((int)TutorialVideo, true);
                 }
                 else
                 {
                     TutorialLevel =
-                        (TutorialLevel)serializer.GetInput().I32(true);
+                        (TutorialLevel)Serializer.GetInput().I32(true);
                     TutorialVideo =
-                        (TutorialLevel)serializer.GetInput().I32(true);
+                        (TutorialLevel)Serializer.GetInput().I32(true);
                 }
             }
-            Flags = serializer.I32(Flags, true);
+            Flags = Serializer.Serialize(ref Flags);
             if (version >= (int)Revisions.USER_CATEGORIES)
-                UserCategoryIndex = serializer.I32(UserCategoryIndex, true);
+                UserCategoryIndex = Serializer.Serialize(ref UserCategoryIndex);
         }
         else throw new SerializationException("InventoryItem's below r565 are not supported!");
     }

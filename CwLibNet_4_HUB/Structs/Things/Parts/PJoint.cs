@@ -1,8 +1,8 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -55,102 +55,102 @@ public class PJoint: ISerializable
     public bool CanBeTweakedByPoppetPowerup, CreatedByPoppetPowerup;
 
     public bool OldJointOutputBehavior;
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
-        A = serializer.Reference(A);
-        B = serializer.Reference(B);
-        AContact = serializer.V3(AContact);
-        BContact = serializer.V3(BContact);
-        Length = serializer.F32(Length);
-        Angle = serializer.F32(Angle);
-        OffsetTime = serializer.F32(OffsetTime);
-        InvertAngle = serializer.Bool(InvertAngle);
-        Settings = serializer.Resource(Settings, ResourceType.Joint);
-        BoneIdx = serializer.Intarray(BoneIdx);
-        BoneLengths = serializer.V4(BoneLengths);
-        Type = serializer.I32(Type);
-        Strength = serializer.F32(Strength);
+        Serializer.Serialize(ref A);
+        Serializer.Serialize(ref B);
+        AContact = Serializer.Serialize(ref AContact);
+        BContact = Serializer.Serialize(ref BContact);
+        Serializer.Serialize(ref Length);
+        Serializer.Serialize(ref Angle);
+        Serializer.Serialize(ref OffsetTime);
+        Serializer.Serialize(ref InvertAngle);
+        Serializer.Serialize(ref Settings, Settings, ResourceType.Joint);
+        Serializer.Serialize(ref BoneIdx);
+        Serializer.Serialize(ref BoneLengths);
+        Serializer.Serialize(ref Type);
+        Serializer.Serialize(ref Strength);
 
         if (version < 0x18d)
-            serializer.F32(0); // Unknown
+            Serializer.Serialize(ref 0); // Unknown
         else
         {
-            Stiff = serializer.Bool(Stiff);
-            SlideDir = serializer.V3(SlideDir);
+            Serializer.Serialize(ref Stiff);
+            SlideDir = Serializer.Serialize(ref SlideDir);
         }
 
-        AnimationPattern = serializer.I32(AnimationPattern);
-        AnimationRange = serializer.F32(AnimationRange);
-        AnimationTime = serializer.F32(AnimationTime);
-        AnimationPhase = serializer.F32(AnimationPhase);
-        AnimationSpeed = serializer.F32(AnimationSpeed);
-        AnimationPause = serializer.F32(AnimationPause);
+        Serializer.Serialize(ref AnimationPattern);
+        Serializer.Serialize(ref AnimationRange);
+        Serializer.Serialize(ref AnimationTime);
+        Serializer.Serialize(ref AnimationPhase);
+        Serializer.Serialize(ref AnimationSpeed);
+        Serializer.Serialize(ref AnimationPause);
 
-        AAngleOffset = serializer.F32(AAngleOffset);
-        BAngleOffset = serializer.F32(BAngleOffset);
+        Serializer.Serialize(ref AAngleOffset);
+        Serializer.Serialize(ref BAngleOffset);
 
-        ModStartFrames = serializer.F32(ModStartFrames);
-        ModDeltaFrames = serializer.F32(ModDeltaFrames);
-        ModScale = serializer.F32(ModScale);
+        Serializer.Serialize(ref ModStartFrames);
+        Serializer.Serialize(ref ModDeltaFrames);
+        Serializer.Serialize(ref ModScale);
 
         if (version < 0x2c4)
-            ModDriven = serializer.Bool(ModDriven);
+            Serializer.Serialize(ref ModDriven);
 
         if (version < 0x307)
         {
-            InteractPlayMode = serializer.I8(InteractPlayMode);
-            InteractEditMode = serializer.I8(InteractEditMode);
+            Serializer.Serialize(ref InteractPlayMode);
+            Serializer.Serialize(ref InteractEditMode);
         }
 
-        RenderScale = serializer.F32(RenderScale);
+        Serializer.Serialize(ref RenderScale);
 
         if (version > 0x169)
-            JointSoundEnum = serializer.I32(JointSoundEnum);
+            Serializer.Serialize(ref JointSoundEnum);
 
         switch (version)
         {
             case > 0x280:
-                TweakTargetMaxLength = serializer.F32(TweakTargetMaxLength);
-                TweakTargetMinLength = serializer.F32(TweakTargetMinLength);
+                Serializer.Serialize(ref TweakTargetMaxLength);
+                Serializer.Serialize(ref TweakTargetMinLength);
                 break;
             case > 0x21c:
-                TweakTargetMaxLength = serializer.I32((int)Math.Round(TweakTargetMaxLength));
-                TweakTargetMinLength = serializer.I32((int)Math.Round(TweakTargetMinLength));
+                TweakTargetMaxLength = Serializer.Serialize(ref (int)Math.Round(TweakTargetMaxLength));
+                TweakTargetMinLength = Serializer.Serialize(ref (int)Math.Round(TweakTargetMinLength));
                 break;
         }
 
         if (version > 0x21e)
-            CurrentlyEditing = serializer.Bool(CurrentlyEditing);
+            Serializer.Serialize(ref CurrentlyEditing);
 
         if (version is > 0x22f and < 0x2c4)
-            ModScaleActive = serializer.Bool(ModScaleActive);
+            Serializer.Serialize(ref ModScaleActive);
 
         if (version > 0x25c)
-            HideInPlayMode = serializer.Bool(HideInPlayMode);
+            Serializer.Serialize(ref HideInPlayMode);
 
         if (version > 0x2c3)
-            Behaviour = serializer.I32(Behaviour);
+            Serializer.Serialize(ref Behaviour);
 
         if (subVersion >= 0xed)
         {
-            if (serializer.IsWriting())
+            if (Serializer.IsWriting())
             {
-                var stream = serializer.GetOutput();
+                var stream = Serializer.GetOutput();
                 if (RailKnotVector != null)
                 {
                     stream.I32(RailKnotVector.Length);
                     foreach (var vector in RailKnotVector)
-                        serializer.V3(vector);
+                        Serializer.Serialize(ref vector);
                 }
                 else stream.I32(0);
             }
             else
             {
-                var stream = serializer.GetInput();
+                var stream = Serializer.GetInput();
                 RailKnotVector = new Vector3[stream.I32()];
                 for (var i = 0; i < RailKnotVector.Length; ++i)
                     RailKnotVector[i] = stream.V3();
@@ -158,16 +158,16 @@ public class PJoint: ISerializable
         }
 
         if (subVersion >= 0x197)
-            RailInteractions = serializer.I8(RailInteractions);
+            Serializer.Serialize(ref RailInteractions);
 
         if (subVersion >= 0x19f)
         {
-            CanBeTweakedByPoppetPowerup = serializer.Bool(CanBeTweakedByPoppetPowerup);
-            CreatedByPoppetPowerup = serializer.Bool(CreatedByPoppetPowerup);
+            Serializer.Serialize(ref CanBeTweakedByPoppetPowerup);
+            Serializer.Serialize(ref CreatedByPoppetPowerup);
         }
 
         if (subVersion >= 0x1a4)
-            OldJointOutputBehavior = serializer.Bool(OldJointOutputBehavior);
+            Serializer.Serialize(ref OldJointOutputBehavior);
     }
     
     public PJoint() { }

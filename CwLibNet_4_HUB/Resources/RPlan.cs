@@ -1,13 +1,6 @@
-using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.Extensions;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Inventory;
-using CwLibNet.Structs.Things;
-using CwLibNet.Structs.Things.Parts;
 using CwLibNet.Types.Data;
 
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Resources;
 
 public class RPlan : Resource
@@ -60,42 +53,42 @@ public class RPlan : Resource
         ThingData = [];
     }
 
-    public override void Serialize(Serializer serializer)
+    public override void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var head = revision.GetVersion();
-        if (!serializer.IsWriting())
+        if (!Serializer.IsWriting())
         {
-            DependencyCache.AddRange(serializer.GetDependencies());
-            serializer.ClearDependencies();
+            DependencyCache.AddRange(Serializer.GetDependencies());
+            Serializer.ClearDependencies();
         }
 
-        if (!serializer.IsWriting())
+        if (!Serializer.IsWriting())
         {
-            CompressionFlags = serializer.GetCompressionFlags();
+            CompressionFlags = Serializer.GetCompressionFlags();
             Revision = revision;
         }
 
         if (revision.GetSubVersion() >= (int)Revisions.STREAMING_PLAN)
-            IsUsedForStreaming = serializer.Bool(IsUsedForStreaming);
-        if (serializer.IsWriting())
-            serializer.I32(serializer.GetRevision().Head);
+            Serializer.Serialize(ref IsUsedForStreaming);
+        if (Serializer.IsWriting())
+            Serializer.Serialize(ref Serializer.GetRevision().Head);
         else
-            serializer.GetInput().I32();
-        ThingData = serializer.Bytearray(ThingData);
+            Serializer.GetInput().I32();
+        Serializer.Serialize(ref ThingData);
         if (head >= (int)Revisions.PLAN_DETAILS && !IsUsedForStreaming)
         {
-            InventoryData = serializer.Struct(InventoryData);
+            Serializer.Serialize(ref InventoryData);
             if (revision.Has(Branch.Leerdammer, (int)Revisions.LD_LAMS_KEYS) || head >= (int)Revisions.LAMS_KEYS)
             {
-                InventoryData.Location = serializer.U32(InventoryData.Location);
-                InventoryData.Category = serializer.U32(InventoryData.Category);
+                InventoryData.Location = Serializer.Serialize(ref InventoryData.Location);
+                InventoryData.Category = Serializer.Serialize(ref InventoryData.Category);
             }
             else
             {
-                InventoryData.LocationTag = serializer.Str(InventoryData.LocationTag);
-                InventoryData.CategoryTag = serializer.Str(InventoryData.CategoryTag);
-                if (!serializer.IsWriting())
+                InventoryData.LocationTag = Serializer.Serialize(ref InventoryData.LocationTag);
+                InventoryData.CategoryTag = Serializer.Serialize(ref InventoryData.CategoryTag);
+                if (!Serializer.IsWriting())
                 {
                     InventoryData.Location = RTranslationTable.MakeLamsKeyID(InventoryData.LocationTag);
                     InventoryData.Category = RTranslationTable.MakeLamsKeyID(InventoryData.CategoryTag);
@@ -103,11 +96,11 @@ public class RPlan : Resource
             }
         }
 
-        if (!serializer.IsWriting())
+        if (!Serializer.IsWriting())
         {
-            foreach (var descriptor in serializer.GetDependencies())
+            foreach (var descriptor in Serializer.GetDependencies())
                 DependencyCache.Remove(descriptor);
-            serializer.ClearDependencies();
+            Serializer.ClearDependencies();
         }
     }
 
@@ -129,16 +122,16 @@ public class RPlan : Resource
     public override SerializationData Build(Revision revision, byte compressionFlags)
     {
         var serializer = new Serializer(GetAllocatedSize() + 0x8000, revision, compressionFlags);
-        serializer.Struct(this);
+        Serializer.Serialize(ref this);
         foreach (var descriptor in DependencyCache)
-            serializer.AddDependency(descriptor);
-        return new SerializationData(serializer.GetBuffer(), revision, compressionFlags, ResourceType.Plan, SerializationType.BINARY, serializer.GetDependencies());
+            Serializer.AddDependency(descriptor);
+        return new SerializationData(Serializer.GetBuffer(), revision, compressionFlags, ResourceType.Plan, SerializationType.BINARY, Serializer.GetDependencies());
     }
 
     public virtual Thing[]? GetThings()
     {
         var serializer = new Serializer(ThingData, Revision, CompressionFlags);
-        var things = serializer.Array<Thing>(null, true);
+        var things = Serializer.Array<Thing>(null, true);
         if (Revision.GetVersion() >= 0x341)
         {
             foreach (var thing in things!)
@@ -159,9 +152,9 @@ public class RPlan : Resource
     public void SetThings(Thing[]? things)
     {
         Serializer serializer = new(0x800000, Revision, CompressionFlags);
-        serializer.Array(things, true);
-        ThingData = serializer.GetBuffer();
-        var dependencies = serializer.GetDependencies();
+        Serializer.Serialize(ref things, true);
+        ThingData = Serializer.GetBuffer();
+        var dependencies = Serializer.GetDependencies();
         DependencyCache.Clear();
         DependencyCache = [..dependencies];
     }
@@ -169,12 +162,12 @@ public class RPlan : Resource
     public void SetThing(Thing? thing)
     {
         Serializer serializer = new(0x800000, Revision, CompressionFlags);
-        serializer.Reference(thing);
-        var things = serializer.GetThings();
+        Serializer.Reference(thing);
+        var things = Serializer.GetThings();
         serializer = new Serializer(0x800000, Revision, CompressionFlags);
-        serializer.Array(things, true);
-        ThingData = serializer.GetBuffer();
-        var dependencies = serializer.GetDependencies();
+        Serializer.Serialize(ref things, true);
+        ThingData = Serializer.GetBuffer();
+        var dependencies = Serializer.GetDependencies();
         DependencyCache.Clear();
         DependencyCache = [..dependencies];
     }

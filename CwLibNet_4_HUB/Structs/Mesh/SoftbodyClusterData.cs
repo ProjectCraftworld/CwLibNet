@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Numerics;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Mesh;
 
 public class SoftbodyClusterData: ISerializable, IEnumerable<SoftbodyCluster>
@@ -12,13 +11,13 @@ public class SoftbodyClusterData: ISerializable, IEnumerable<SoftbodyCluster>
     public List<SoftbodyCluster> Clusters = [];
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
         // The actual way this is serialized makes it annoying to
         // edit anything in a standard object oriented way, so
         // we'll just be encapsulating the data in separate cluster classes.
 
-        if (serializer.IsWriting())
+        if (Serializer.IsWriting())
         {
             // We need to prepare all the arrays for serialization.
             var _clusterCount = Clusters.Count;
@@ -47,7 +46,7 @@ public class SoftbodyClusterData: ISerializable, IEnumerable<SoftbodyCluster>
             }
 
             // Begin to actually serialize the data to the array.
-            var _stream = serializer.GetOutput();
+            var _stream = Serializer.GetOutput();
 
             _stream.I32(_clusterCount);
 
@@ -68,7 +67,7 @@ public class SoftbodyClusterData: ISerializable, IEnumerable<SoftbodyCluster>
             return;
         }
 
-        var stream = serializer.GetInput();
+        var stream = Serializer.GetInput();
 
         var clusterCount = stream.I32();
         Clusters = new List<SoftbodyCluster>(clusterCount);

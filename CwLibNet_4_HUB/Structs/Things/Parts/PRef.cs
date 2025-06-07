@@ -1,8 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Things.Components;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -34,30 +34,30 @@ public class PRef: ISerializable
     }
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
+        var version = Serializer.GetRevision().GetVersion();
 
         if (version < 0x160)
-            Thing = serializer.Struct(Thing);
-        else Plan = serializer.Resource(Plan, ResourceType.Plan, true, false, false);
+            Serializer.Serialize(ref Thing);
+        else Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true, false, false);
 
-        OldLifetime = serializer.I32(OldLifetime);
+        Serializer.Serialize(ref OldLifetime);
         if (version >= 0x1c9)
-            OldAliveFrames = serializer.I32(OldAliveFrames);
+            Serializer.Serialize(ref OldAliveFrames);
         if (version < 0x321)
-            ChildrenSelectable = serializer.Bool(ChildrenSelectable);
+            Serializer.Serialize(ref ChildrenSelectable);
 
         if (version < 0x19e)
-            serializer.Array<Thing>(null, true);
+            Serializer.Array<Thing>(null, true);
 
         if (version is >= 0x13d and < 0x321)
-            StripChildren = serializer.Bool(StripChildren);
+            Serializer.Serialize(ref StripChildren);
 
-        if (version is > 0x171 and < 0x180) serializer.U8(0);
+        if (version is > 0x171 and < 0x180) Serializer.Serialize(ref 0);
         if (version is <= 0x17f or >= 0x19e) return;
-        serializer.U8(0);
-        serializer.Struct<NetworkPlayerID>(null);
+        Serializer.Serialize(ref 0);
+        Serializer.Serialize(ref default(NetworkPlayerID));
     }
 
     // TODO: Actually implement

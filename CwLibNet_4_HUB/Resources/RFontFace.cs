@@ -1,10 +1,10 @@
 using SkiaSharp;
 using CwLibNet.Enums;
-using CwLibNet.IO.Serializer;
 using CwLibNet.IO.Streams;
 using CwLibNet.Structs.Font;
 using CwLibNet.Types.Data;
 using CwLibNet.Util;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Resources;
 
@@ -29,11 +29,11 @@ public class RFontFace
         stream.I32();
 
         var serializer = new Serializer(stream, new Revision(Revision));
-        GlyphIndex = serializer.Shortarray(GlyphIndex);
-        GlyphPageUsed = serializer.Intarray(GlyphPageUsed);
+        GlyphIndex = Serializer.Serialize(ref GlyphIndex);
+        GlyphPageUsed = Serializer.Serialize(ref GlyphPageUsed);
 
         // Deserialize the array properly
-        Glyphs = serializer.Array(Glyphs);
+        Glyphs = Serializer.Serialize(ref Glyphs);
 
         if (Revision > 0x272)
             IsCompressed = stream.Boole();

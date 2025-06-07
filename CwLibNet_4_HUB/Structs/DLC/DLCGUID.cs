@@ -1,7 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.DLC;
 
@@ -12,10 +12,10 @@ public class DLCGUID: ISerializable
     public GUID? GUID;
     public int Flags = DLCFileFlags.NONE;
 
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        GUID = serializer.Guid(GUID);
-        Flags = serializer.I32(Flags);
+        GUID = Serializer.Serialize(ref GUID);
+        Serializer.Serialize(ref Flags);
     }
 
     public int GetAllocatedSize()

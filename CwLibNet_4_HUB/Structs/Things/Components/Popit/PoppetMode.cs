@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Components.Popit;
 
 public class PoppetMode: ISerializable
@@ -9,23 +8,23 @@ public class PoppetMode: ISerializable
 
     public int Mode, SubMode;
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
+        var version = Serializer.GetRevision().GetVersion();
 
-        Mode = serializer.I32(Mode);
-        SubMode = serializer.I32(SubMode);
+        Serializer.Serialize(ref Mode);
+        Serializer.Serialize(ref SubMode);
 
         switch (version)
         {
             case < 0x18b:
-                serializer.I32(0);
+                Serializer.Serialize(ref 0);
                 break;
             case > 0x1b7 and < 0x1ba:
-                serializer.I32(0);
-                serializer.I32(0);
-                serializer.I32(0);
-                serializer.I32(0);
+                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref 0);
                 break;
         }
     }

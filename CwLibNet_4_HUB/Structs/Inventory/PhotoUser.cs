@@ -1,7 +1,6 @@
 using System.Numerics;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Inventory;
 
 public class PhotoUser: ISerializable
@@ -23,11 +22,11 @@ public class PhotoUser: ISerializable
     }
 
 
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        PSID = serializer.Str(PSID, 0x14);
-        User  = serializer.Wstr(User);
-        Bounds = serializer.V4(Bounds);
+        Serializer.Serialize(ref PSID);
+        Serializer.Serialize(ref User);
+        Serializer.Serialize(ref Bounds);
     }
 
     public int GetAllocatedSize()

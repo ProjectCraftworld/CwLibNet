@@ -1,10 +1,6 @@
-using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Gmat;
 using CwLibNet.Types.Data;
 
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Resources;
 
 public class RGfxMaterial: Resource
@@ -79,56 +75,56 @@ public class RGfxMaterial: Resource
     }
 
     
-    public override void Serialize(Serializer serializer)
+    public override void Serialize()
     {
 
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
-        Flags = serializer.I32(Flags);
-        AlphaTestLevel = serializer.F32(AlphaTestLevel);
-        AlphaLayer = serializer.I8(AlphaLayer);
+        Serializer.Serialize(ref Flags);
+        Serializer.Serialize(ref AlphaTestLevel);
+        Serializer.Serialize(ref AlphaLayer);
         if (version >= (int)Revisions.GFXMATERIAL_ALPHA_MODE)
-            AlphaMode = serializer.I8(AlphaMode);
-        ShadowCastMode = serializer.Enum8(ShadowCastMode);
-        BumpLevel = serializer.F32(BumpLevel);
-        CosinePower = serializer.F32(CosinePower);
-        ReflectionBlur = serializer.F32(ReflectionBlur);
-        RefractiveIndex = serializer.F32(RefractiveIndex);
+            Serializer.Serialize(ref AlphaMode);
+        Serializer.Serialize(ref ShadowCastMode);
+        Serializer.Serialize(ref BumpLevel);
+        Serializer.Serialize(ref CosinePower);
+        Serializer.Serialize(ref ReflectionBlur);
+        Serializer.Serialize(ref RefractiveIndex);
 
         if (subVersion >= (int)Revisions.FRESNEL)
         {
-            RefractiveFresnelFalloffPower = serializer.F32(RefractiveFresnelFalloffPower);
-            RefractiveFresnelMultiplier = serializer.F32(RefractiveFresnelMultiplier);
-            RefractiveFresnelOffset = serializer.F32(RefractiveFresnelOffset);
-            RefractiveFresnelShift = serializer.F32(RefractiveFresnelShift);
+            Serializer.Serialize(ref RefractiveFresnelFalloffPower);
+            Serializer.Serialize(ref RefractiveFresnelMultiplier);
+            Serializer.Serialize(ref RefractiveFresnelOffset);
+            Serializer.Serialize(ref RefractiveFresnelShift);
             if (subVersion >= (int)Revisions.FUZZ)
             {
-                FuzzLengthAndRefractiveFlag = serializer.I8(FuzzLengthAndRefractiveFlag);
+                Serializer.Serialize(ref FuzzLengthAndRefractiveFlag);
                 if (subVersion >= (int)Revisions.FUZZ_LIGHTING)
                 {
-                    TranslucencyDensity = serializer.I8(TranslucencyDensity);
-                    FuzzSwirlAngle = serializer.I8(FuzzSwirlAngle);
-                    FuzzSwirlAmplitude = serializer.I8(FuzzSwirlAmplitude);
-                    FuzzLightingBias = serializer.I8(FuzzLightingBias);
-                    FuzzLightingScale = serializer.I8(FuzzLightingScale);
-                    IridesenceRoughness = serializer.I8(IridesenceRoughness);
+                    Serializer.Serialize(ref TranslucencyDensity);
+                    Serializer.Serialize(ref FuzzSwirlAngle);
+                    Serializer.Serialize(ref FuzzSwirlAmplitude);
+                    Serializer.Serialize(ref FuzzLightingBias);
+                    Serializer.Serialize(ref FuzzLightingScale);
+                    Serializer.Serialize(ref IridesenceRoughness);
                 }
             }
         }
 
         if (revision.Has(Branch.Mizuki, (int)Revisions.MZ_GLSL_SHADERS))
-            serializer.Str(Glsl);
+            Serializer.Serialize(ref Glsl);
 
         var serializeCode = !revision.IsToolkit() || revision.Before(Branch.Mizuki,
                 (int)Revisions.MZ_REMOVE_GFX_CODE);
         var sourceOffsets = GetBlobOffsetCount(revision);
-        if (serializer.IsWriting())
+        if (Serializer.IsWriting())
         {
             if (serializeCode)
             {
-                var stream = serializer.GetOutput();
+                var stream = Serializer.GetOutput();
                 var offset = 0;
                 for (var i = 0; i < sourceOffsets; ++i)
                 {
@@ -147,13 +143,13 @@ public class RGfxMaterial: Resource
                     stream.Bytes(Code);
             }
             for (var i = 0; i < MaxTextures; ++i)
-                serializer.Resource(Textures[i], ResourceType.Texture);
+                Serializer.Serialize(ref Textures[i], ResourceType.Texture);
         }
         else
         {
             if (serializeCode)
             {
-                var stream = serializer.GetInput();
+                var stream = Serializer.GetInput();
                 var blobOffsets = new int[sourceOffsets];
                 for (var i = 0; i < sourceOffsets; ++i)
                     blobOffsets[i] = stream.I32();
@@ -198,41 +194,41 @@ public class RGfxMaterial: Resource
 
             Textures = new ResourceDescriptor[MaxTextures];
             for (var i = 0; i < MaxTextures; ++i)
-                Textures[i] = serializer.Resource(null, ResourceType.Texture);
+                Serializer.Serialize(ref Textures[i]);
         }
 
-        WrapS = serializer.Enumarray(WrapS);
-        WrapT = serializer.Enumarray(WrapT);
-        Boxes = serializer.Arraylist(Boxes);
-        Wires = serializer.Arraylist(Wires);
+        Serializer.Serialize(ref WrapS);
+        Serializer.Serialize(ref WrapT);
+        Serializer.Serialize(ref Boxes);
+        Serializer.Serialize(ref Wires);
 
         if (version >= (int)Revisions.GFXMATERIAL_ALPHA_MODE)
-            SoundEnum = serializer.I32(SoundEnum);
+            Serializer.Serialize(ref SoundEnum);
 
         if (version >= (int)Revisions.PARAMETER_ANIMATIONS)
-            ParameterAnimations = serializer.Array(ParameterAnimations);
+            ParameterAnimations = Serializer.Serialize(ref ParameterAnimations);
 
         if (revision.Has(Branch.Double11, (int)Revisions.D1_UV_OFFSCALE))
         {
             for (var i = 0; i < UV_OFFSETS; ++i)
-                UvOffsets[i] = serializer.F16(UvOffsets[i]);
+                Serializer.Serialize(ref UvOffsets[i]);
             for (var i = 0; i < UV_SCALES; ++i)
-                UvScales[i] = serializer.F16(UvScales[i]);
+                Serializer.Serialize(ref UvScales[i]);
         }
 
         if (revision.Has(Branch.Double11, (int)Revisions.D1_PERFDATA))
         {
-            CycleCount[0] = serializer.I8(CycleCount[0]);
-            CycleCount[1] = serializer.I8(CycleCount[1]);
+            Serializer.Serialize(ref CycleCount[0]);
+            Serializer.Serialize(ref CycleCount[1]);
 
-            ConditionalTexLookups[0] = serializer.I8(ConditionalTexLookups[0]);
-            ConditionalTexLookups[1] = serializer.I8(ConditionalTexLookups[1]);
+            Serializer.Serialize(ref ConditionalTexLookups[0]);
+            Serializer.Serialize(ref ConditionalTexLookups[1]);
 
-            UnconditionalTexLookups[0] = serializer.I8(UnconditionalTexLookups[0]);
-            UnconditionalTexLookups[1] = serializer.I8(UnconditionalTexLookups[1]);
+            Serializer.Serialize(ref UnconditionalTexLookups[0]);
+            Serializer.Serialize(ref UnconditionalTexLookups[1]);
 
-            NonDependentTexLookups[0] = serializer.I8(NonDependentTexLookups[0]);
-            NonDependentTexLookups[1] = serializer.I8(NonDependentTexLookups[1]);
+            Serializer.Serialize(ref NonDependentTexLookups[0]);
+            Serializer.Serialize(ref NonDependentTexLookups[1]);
         }
     }
 
@@ -254,14 +250,14 @@ public class RGfxMaterial: Resource
     {
         var serializer = new Serializer(GetAllocatedSize(), revision,
                 compressionFlags);
-        serializer.Struct(this);
+        Serializer.Serialize(ref this);
         return new SerializationData(
-                serializer.GetBuffer(),
+                Serializer.GetBuffer(),
                 revision,
                 compressionFlags,
                 ResourceType.GfxMaterial,
                 SerializationType.BINARY,
-                serializer.GetDependencies()
+                Serializer.GetDependencies()
         );
     }
 

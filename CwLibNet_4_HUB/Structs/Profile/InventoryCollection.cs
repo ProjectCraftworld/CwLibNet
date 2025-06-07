@@ -1,7 +1,6 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Profile 
 {
     public class InventoryCollection : ISerializable 
@@ -14,13 +13,13 @@ namespace CwLibNet.Structs.Profile
 
         public bool PoppetPowerupSelection;
 
-        public void Serialize(Serializer serializer)
+        public void Serialize()
         {
-            InventoryCollectionIndex = serializer.I32(InventoryCollectionIndex);
-            InventoryPageInstances = serializer.Array(InventoryPageInstances);
-            CurrentPageNumber = serializer.I32(CurrentPageNumber);
-            if (serializer.GetRevision().GetSubVersion() >= (int)Revisions.COLLECTION_POPPET_POWERUP)
-                PoppetPowerupSelection = serializer.Bool(PoppetPowerupSelection);
+            Serializer.Serialize(ref InventoryCollectionIndex);
+            InventoryPageInstances = Serializer.Serialize(ref InventoryPageInstances);
+            Serializer.Serialize(ref CurrentPageNumber);
+            if (Serializer.GetRevision().GetSubVersion() >= (int)Revisions.COLLECTION_POPPET_POWERUP)
+                Serializer.Serialize(ref PoppetPowerupSelection);
         }
 
         public int GetAllocatedSize() 

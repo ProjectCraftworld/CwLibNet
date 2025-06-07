@@ -1,6 +1,6 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Slot;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Profile 
 {
@@ -15,14 +15,14 @@ namespace CwLibNet.Structs.Profile
         public byte awardCollectAll;
         public byte awardAcedLevel;
 
-        public void Serialize(Serializer serializer)
+        public void Serialize()
         {
-            levelID = serializer.Struct<SlotID>(levelID);
-            planetID = serializer.Struct<SlotID>(planetID);
-            numBubbleCollected = serializer.I8(numBubbleCollected);
-            awardLevelComplete = serializer.I8(awardLevelComplete);
-            awardCollectAll = serializer.I8(awardCollectAll);
-            awardAcedLevel = serializer.I8(awardAcedLevel);
+            levelID = Serializer.Serialize(ref levelID);
+            planetID = Serializer.Serialize(ref planetID);
+            Serializer.Serialize(ref numBubbleCollected);
+            Serializer.Serialize(ref awardLevelComplete);
+            Serializer.Serialize(ref awardCollectAll);
+            Serializer.Serialize(ref awardAcedLevel);
         }
 
         public int GetAllocatedSize() 

@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Components.Decals;
 
 public class PaintControlPoint: ISerializable
@@ -10,12 +9,12 @@ public class PaintControlPoint: ISerializable
     public byte X, Y, StartRadius, EndRadius;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        X = serializer.I8(X);
-        Y = serializer.I8(Y);
-        StartRadius = serializer.I8(StartRadius);
-        EndRadius = serializer.I8(EndRadius);
+        Serializer.Serialize(ref X);
+        Serializer.Serialize(ref Y);
+        Serializer.Serialize(ref StartRadius);
+        Serializer.Serialize(ref EndRadius);
     }
 
     

@@ -1,8 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Slot;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Inventory;
 
@@ -17,14 +17,14 @@ public class PhotoMetadata: ISerializable
     public PhotoUser[]? Users;
     public long Timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Photo = serializer.Resource(Photo, ResourceType.Texture, true);
-        Level = serializer.Struct(Level);
-        LevelName = serializer.Wstr(LevelName);
-        LevelHash = serializer.Sha1(LevelHash);
-        Timestamp = serializer.I64(Timestamp);
-        Users = serializer.Array(Users);
+        Serializer.Serialize(ref Photo, Photo, ResourceType.Texture, true);
+        Serializer.Serialize(ref Level);
+        Serializer.Serialize(ref LevelName);
+        LevelHash = Serializer.Serialize(ref LevelHash);
+        Serializer.Serialize(ref Timestamp);
+        Users = Serializer.Serialize(ref Users);
     }
 
     public int GetAllocatedSize()

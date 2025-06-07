@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Slot;
 
 public class Label : ISerializable
@@ -18,10 +17,10 @@ public class Label : ISerializable
         Order = order;
     }
 
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Key = serializer.I32(Key);
-        Order = serializer.I32(Order);
+        Serializer.Serialize(ref Key);
+        Serializer.Serialize(ref Order);
     }
 
     public int GetAllocatedSize()

@@ -1,6 +1,6 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Slot;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Profile
 {
@@ -11,10 +11,10 @@ namespace CwLibNet.Structs.Profile
         public SlotID from = new();
         public SlotID to = new();
 
-        public void Serialize(Serializer serializer)
+        public void Serialize()
         {
-            from = serializer.Struct<SlotID>(from);
-            to = serializer.Struct<SlotID>(to);
+            from = Serializer.Serialize(ref from);
+            to = Serializer.Serialize(ref to);
         }
 
         public int GetAllocatedSize()

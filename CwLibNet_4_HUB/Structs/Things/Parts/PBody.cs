@@ -1,8 +1,7 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Parts;
 
 public class PBody: ISerializable
@@ -29,63 +28,63 @@ public class PBody: ISerializable
      */
     public Thing? EditingPlayer;
 
-    public void Serialize(Serializer serializer) {
+    public void Serialize() {
 
-        var version = serializer.GetRevision().GetVersion();
-        var subVersion = serializer.GetRevision().GetSubVersion();
+        var version = Serializer.GetRevision().GetVersion();
+        var subVersion = Serializer.GetRevision().GetSubVersion();
 
         // A lot of fields were removed in 0x13c, across a lot of structures,
         // so I have no idea what they are, nor they do matter in any
         // version of the game anymore.
 
         if (version < 0x13c)
-            serializer.V3(null);
+            Serializer.Serialize(ref null);
 
-        PosVel = serializer.V3(PosVel);
+        PosVel = Serializer.Serialize(ref PosVel);
 
         if (version < 0x13c) {
-            serializer.F32(0.0f);
-            serializer.F32(0.0f);
+            Serializer.Serialize(ref 0.0f);
+            Serializer.Serialize(ref 0.0f);
         }
 
-        AngVel = serializer.F32(AngVel);
+        Serializer.Serialize(ref AngVel);
 
         if (version < 0x13c) {
-            serializer.F32(0.0f);
-            serializer.V3(null);
+            Serializer.Serialize(ref 0.0f);
+            Serializer.Serialize(ref null);
 
-            if (serializer.IsWriting()) serializer.GetOutput().I32(0);
+            if (Serializer.IsWriting()) Serializer.GetOutput().I32(0);
             else {
-                var stream = serializer.GetInput();
+                var stream = Serializer.GetInput();
                 var count = stream.I32();
                 for (var i = 0; i < count; ++i)
                     stream.V3();
             }
 
-            serializer.Resource(null, ResourceType.Material);
+            Serializer.Serialize(ref null, ResourceType.Material);
 
-            serializer.U8(0);
-            serializer.F32(0.0f);
-            serializer.V4(null);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0.0f);
+            Serializer.Serialize(ref null);
 
-            serializer.Resource(null, ResourceType.Texture);
+            Serializer.Serialize(ref null, ResourceType.Texture);
 
-            serializer.F32(0.0f);
-            serializer.I32(0);
+            Serializer.Serialize(ref 0.0f);
+            Serializer.Serialize(ref 0);
 
-            serializer.I32(0);
-            serializer.M44(null);
-            serializer.I32(0);
-            serializer.F32(0.0f);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref null);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0.0f);
         }
 
         if (version >= 0x147)
-            Frozen = serializer.I32(Frozen);
+            Serializer.Serialize(ref Frozen);
         else
-            serializer.Bool(false);
+            Serializer.Serialize(ref false);
         
         if ((version >= 0x22c && subVersion < 0x84) || subVersion >= 0x8b)
-            EditingPlayer = serializer.Reference(EditingPlayer);
+            Serializer.Serialize(ref EditingPlayer);
     }
     
     public int GetAllocatedSize() { return BaseAllocationSize; }

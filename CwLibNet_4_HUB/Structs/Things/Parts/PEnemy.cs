@@ -1,8 +1,7 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Parts;
 
 public class PEnemy: ISerializable
@@ -46,74 +45,74 @@ public class PEnemy: ISerializable
     public int TouchType;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
 
         if (version >= 0x15d)
-            PartType = serializer.Enum32(PartType, true);
+            Serializer.Serialize(ref PartType);
 
         if (version is > 0x15c and < 0x19f)
-            serializer.Thing(null);
+            Serializer.Reference(null);
 
         if (version >= 0x16d)
-            Radius = serializer.F32(Radius);
+            Serializer.Serialize(ref Radius);
 
         switch (version)
         {
             case < 0x19e and < 0x1a9:
-                serializer.Thing(null);
+                Serializer.Reference(null);
                 break;
             case >= 0x19f:
-                SnapVertex = serializer.I32(SnapVertex);
+                Serializer.Serialize(ref SnapVertex);
                 break;
         }
 
         if (version >= 0x1a9)
         {
-            CenterOffset = serializer.V3(CenterOffset);
-            AnimThing = serializer.Thing(AnimThing);
-            AnimSpeed = serializer.F32(AnimSpeed);
+            CenterOffset = Serializer.Serialize(ref CenterOffset);
+            AnimThing = Serializer.Reference(AnimThing);
+            Serializer.Serialize(ref AnimSpeed);
         }
 
         switch (version)
         {
             case > 0x1f1 and < 0x21e:
-                serializer.Thing(null);
-                serializer.Thing(null);
-                serializer.Thing(null);
-                serializer.Thing(null);
-                serializer.I32(0);
-                serializer.Thing(null);
-                serializer.Thing(null);
-                serializer.V3(null);
-                serializer.S32(0);
-                serializer.V3(null);
-                serializer.F32(0);
-                serializer.F32(0);
-                serializer.F32(0);
-                serializer.S32(0);
-                serializer.S32(0);
+                Serializer.Reference(null);
+                Serializer.Reference(null);
+                Serializer.Reference(null);
+                Serializer.Reference(null);
+                Serializer.Serialize(ref 0);
+                Serializer.Reference(null);
+                Serializer.Reference(null);
+                Serializer.Serialize(ref null);
+                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref null);
+                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref 0);
                 break;
             case >= 0x246:
-                SourcePlayerNumber = serializer.I32(SourcePlayerNumber);
+                Serializer.Serialize(ref SourcePlayerNumber);
                 break;
         }
 
         if (version >= 0x265)
-            NewWalkConstraintMass = serializer.Bool(NewWalkConstraintMass);
+            Serializer.Serialize(ref NewWalkConstraintMass);
         if (version >= 0x31e)
-            SmokeColor = serializer.I32(SmokeColor);
+            Serializer.Serialize(ref SmokeColor);
         if (version >= 0x39a)
-            SmokeBrightness = serializer.F32(SmokeBrightness);
+            Serializer.Serialize(ref SmokeBrightness);
 
         if (!revision.IsVita()) return; // 0x3c0
         int vita = revision.GetBranchRevision();
         if (vita >= 0x2)
-            TouchSensitive = serializer.Bool(TouchSensitive);
+            Serializer.Serialize(ref TouchSensitive);
         if (vita >= 0x3)
-            TouchType = serializer.I32(TouchType);
+            Serializer.Serialize(ref TouchType);
     }
 
     

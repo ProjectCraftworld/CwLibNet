@@ -1,9 +1,9 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Profile;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Streaming;
 
@@ -27,23 +27,23 @@ public class ChunkFile: ISerializable
     public List<Sha1>? Hashes = [];
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var subVersion = serializer.GetRevision().GetSubVersion();
+        var subVersion = Serializer.GetRevision().GetSubVersion();
 
         switch (subVersion)
         {
             case >= 0x73 and <= 0x130:
             {
                 ResourceDescriptor descriptor = null;
-                if (serializer.IsWriting())
+                if (Serializer.IsWriting())
                 {
                     if (ChunkHash != null)
                         descriptor = new ResourceDescriptor(ChunkHash,
                             ResourceType.StreamingChunk);
                 }
-                descriptor = serializer.Resource(descriptor, ResourceType.StreamingChunk, true);
-                if (!serializer.IsWriting())
+                Serializer.Serialize(ref descriptor, descriptor, ResourceType.StreamingChunk, true);
+                if (!Serializer.IsWriting())
                 {
                     if (descriptor != null && descriptor.IsHash())
                         ChunkHash = descriptor.GetSHA1();
@@ -55,89 +55,89 @@ public class ChunkFile: ISerializable
             }
             case > 0x130:
             {
-                ChunkHash = serializer.Sha1(ChunkHash);
-                if (serializer.IsWriting() && ChunkHash != null)
-                    serializer.AddDependency(new ResourceDescriptor(ChunkHash,
+                ChunkHash = Serializer.Serialize(ref ChunkHash);
+                if (Serializer.IsWriting() && ChunkHash != null)
+                    Serializer.AddDependency(new ResourceDescriptor(ChunkHash,
                         ResourceType.StreamingChunk));
                 break;
             }
         }
 
         if (subVersion > 0x72)
-            CheckpointList = serializer.Arraylist(CheckpointList);
+            Serializer.Serialize(ref CheckpointList);
 
         if (subVersion > 0xeb)
-            QuestTrackerList = serializer.Arraylist(QuestTrackerList);
+            Serializer.Serialize(ref QuestTrackerList);
 
         if (subVersion > 0x118)
-            QuestSwitchList = serializer.Arraylist(QuestSwitchList);
+            Serializer.Serialize(ref QuestSwitchList);
 
         if (subVersion > 0x11d)
-            CollectablesList = serializer.Arraylist(CollectablesList);
+            Serializer.Serialize(ref CollectablesList);
 
         if (subVersion >= 0xde)
         {
-            var numItems = serializer.I32(UserResources != null ?
+            var numItems = Serializer.Serialize(ref UserResources != null ?
                 UserResources.Count : 0);
-            if (serializer.IsWriting())
+            if (Serializer.IsWriting())
             {
                 foreach (var descriptor in UserResources)
-                    serializer.Resource(descriptor, descriptor.GetResourceType(), true, false,
+                    Serializer.Serialize(ref descriptor, descriptor.GetResourceType(), true, false,
                         true);
             }
             else
             {
                 UserResources = new List<ResourceDescriptor?>(numItems);
                 for (var i = 0; i < numItems; ++i)
-                    UserResources.Add(serializer.Resource(null, null, true, false, true));
+                    UserResources.Add(Serializer.Serialize(ref null, null, true, false, true));
             }
         }
 
         if (subVersion > 0x72)
         {
-            Min = serializer.V3(Min);
-            Max = serializer.V3(Max);
+            Min = Serializer.Serialize(ref Min);
+            Max = Serializer.Serialize(ref Max);
         }
 
         if (subVersion > 0x10d)
         {
-            HasObjectSaver = serializer.Bool(HasObjectSaver);
-            DeleteObjectSavers = serializer.Bool(DeleteObjectSavers);
-            DeleteOtherThings = serializer.Bool(DeleteOtherThings);
+            Serializer.Serialize(ref HasObjectSaver);
+            Serializer.Serialize(ref DeleteObjectSavers);
+            Serializer.Serialize(ref DeleteOtherThings);
         }
 
         if (subVersion > 0x133)
-            AntiStreaming = serializer.Bool(AntiStreaming);
+            Serializer.Serialize(ref AntiStreaming);
 
         if (subVersion <= 0x169) return;
         {
             {
-                var numItems = serializer.I32(Guids != null ? Guids.Count : 0);
-                if (serializer.IsWriting())
+                var numItems = Serializer.Serialize(ref Guids != null ? Guids.Count : 0);
+                if (Serializer.IsWriting())
                 {
                     foreach (var guid in Guids!)
-                        serializer.GetOutput().Guid(guid);
+                        Serializer.GetOutput().Guid(guid);
                 }
                 else
                 {
                     Guids = new List<GUID?>(numItems);
                     for (var i = 0; i < numItems; ++i)
-                        Guids.Add(serializer.GetInput().Guid());
+                        Guids.Add(Serializer.GetInput().Guid());
                 }
             }
 
             {
-                var numItems = serializer.I32(Hashes?.Count ?? 0);
-                if (serializer.IsWriting())
+                var numItems = Serializer.Serialize(ref Hashes?.Count ?? 0);
+                if (Serializer.IsWriting())
                 {
                     foreach (var sha1 in Hashes!)
-                        serializer.GetOutput().Sha1(sha1);
+                        Serializer.GetOutput().Sha1(sha1);
                 }
                 else
                 {
                     Hashes = new List<Sha1>(numItems);
                     for (var i = 0; i < numItems; ++i)
-                        Hashes.Add(serializer.GetInput().Sha1()!);
+                        Hashes.Add(Serializer.GetInput().Sha1()!);
                 }
             }
         }

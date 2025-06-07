@@ -7,8 +7,45 @@ using CwLibNet.Singleton;
 using CwLibNet.Structs.Font;
 using CwLibNet.Structs.Things;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.IO.Serializer;
+
+
+public enum SERIALIZER_RESULT
+{
+    OK,
+    GENERIC_ERROR,
+    EXCESSIVE_DATA,
+    INSUFFICIENT_DATA,
+    EXCESSIVE_ALLOCATIONS,
+    FORMAT_TOO_NEW,
+    FORMAT_TOO_OLD,
+    COULDNT_OPEN_FILE,
+    FILEIO_FAILURE,
+    NETWORK_FAILURE,
+    NOT_IMPLEMENTED,
+    COULDNT_GET_GUID,
+    UNINITIALISED,
+    NAN,
+    INVALID,
+    RESOURCE_IN_WRONG_STATE,
+    OUT_OF_GFX_MEMORY,
+    OUT_OF_SYNC,
+    DECOMPRESSION_FAIL,
+    COMPRESSION_FAIL,
+    APPLICATION_QUITTING,
+    OUT_OF_MEM,
+    JOB_CANCELLED,
+    NULL_POINTER,
+}
+
+public static class COMPRESSION_FLAG
+{
+    public static byte USE_COMPRESSED_INTEGERS = 1 << 0;
+    public static byte USE_COMPRESSED_VECTORS = 1 << 1;
+    public static byte USE_COMPRESSED_MATRICES = 1 << 2;
+}
 
 /// <summary>
 /// Reversible serializer for assets, also handles
@@ -211,7 +248,7 @@ public class Serializer
 
         return input.I16();
     }
-        
+
     /// <summary>
     /// (De)serializes a ushort to/from the stream.
     /// </summary>
@@ -753,8 +790,8 @@ public class Serializer
         var bytes = input.U8();
         var vector = new long[count];
         for (var i = 0; i < bytes; ++i)
-        for (var j = 0; j < count; ++j)
-            vector[j] |= (long)input.U8() << (i * 8);
+            for (var j = 0; j < count; ++j)
+                vector[j] |= (long)input.U8() << (i * 8);
         return vector;
     }
 
@@ -805,8 +842,8 @@ public class Serializer
         var bytes = input.U8();
         var vector = new int[count];
         for (var i = 0; i < bytes; ++i)
-        for (var j = 0; j < count; ++j)
-            vector[j] |= input.U8() << (i * 8);
+            for (var j = 0; j < count; ++j)
+                vector[j] |= input.U8() << (i * 8);
 
         return vector;
     }
@@ -816,7 +853,7 @@ public class Serializer
     /// </summary>
     /// <param name="value">Enum value</param>
     /// <returns>(De)serialized enum value</returns>
-    public T? Enum8<T>(T? value) where T: Enum
+    public T? Enum8<T>(T? value) where T : Enum
     {
         if (isWriting)
         {
@@ -832,7 +869,7 @@ public class Serializer
     /// </summary>
     /// <param name="value">Enum value</param>
     /// <returns>(De)serialized enum value</returns>
-    public T Enum32<T>(T value) where T: Enum
+    public T Enum32<T>(T value) where T : Enum
     {
         if (!isWriting) return input.Enum32<T>();
         output.Enum32(value);
@@ -846,7 +883,7 @@ public class Serializer
     /// <param name="value">Enum value</param>
     /// <param name="signed">Whether to (de)serialize s32</param>
     /// <returns>(De)serialized enum value</returns>
-    public T Enum32<T>(T value, bool signed) where T: Enum
+    public T Enum32<T>(T value, bool signed) where T : Enum
     {
         if (!isWriting) return input.Enum32<T>(signed);
         output.Enum32(value, signed);
@@ -859,7 +896,7 @@ public class Serializer
     /// </summary>
     /// <param name="values">Enum values</param>
     /// <returns>(De)serialized enum value</returns>
-    public T[] Enumarray<T>(T[] values) where T: Enum
+    public T[] Enumarray<T>(T[] values) where T : Enum
     {
         if (!isWriting) return input.Enumarray<T>();
         output.Enumarray(values);
@@ -872,7 +909,7 @@ public class Serializer
     /// </summary>
     /// <param name="value">Structure to serialize</param>
     /// <returns>(De)serialized structure</returns>
-    public T? Reference<T>(T? value) where T: ISerializable
+    public T? Reference<T>(T? value) where T : ISerializable
     {
         if (isWriting)
         {
@@ -923,7 +960,7 @@ public class Serializer
     /// </summary>
     /// <param name="value">Structure to serialize</param>
     /// <returns>(De)serialized structure</returns>
-    public T Struct<T>(T? value) where T: ISerializable
+    public T Struct<T>(T? value) where T : ISerializable
     {
         if (!isWriting || value == null)
         {
@@ -995,7 +1032,7 @@ public class Serializer
     /// <param name="T">Array base serializable type</param>
     /// <param name="isReference">Whether the array base structure is a reference type</param>
     /// <returns>(De)serialized array</returns>
-    public T[]? Array<T>(T[]? values, bool isReference) where T:ISerializable
+    public T[]? Array<T>(T[]? values, bool isReference) where T : ISerializable
     {
         if (isWriting)
         {
@@ -1037,7 +1074,8 @@ public class Serializer
         return serializables;
     }
 
-    public long I64(long value, bool force64 = false) {
+    public long I64(long value, bool force64 = false)
+    {
         if (!isWriting) return input.I64(force64);
         output?.I64(value, force64);
         return value;
@@ -1148,5 +1186,214 @@ public class Serializer
     {
         ResourceDescriptor?[] descriptors = [.. dependencies];
         return descriptors;
+    }
+
+    // Static serialization methods to match Craftworld HUB pattern
+    private static Serializer? currentSerializer;
+
+    public static void SetCurrentSerializer(Serializer serializer)
+    {
+        currentSerializer = serializer;
+    }
+
+    public static Serializer GetCurrentSerializer()
+    {
+        return currentSerializer ?? throw new InvalidOperationException("No current serializer set");
+    }
+
+    public static bool IsWriting()
+    {
+        return GetCurrentSerializer().IsWriting();
+    }
+
+    public static Revision GetRevision()
+    {
+        return GetCurrentSerializer().GetRevision();
+    }
+
+    public static MemoryInputStream GetInput()
+    {
+        return GetCurrentSerializer().GetInput();
+    }
+
+    public static MemoryOutputStream GetOutput()
+    {
+        return GetCurrentSerializer().GetOutput();
+    }
+
+    // Static Serialize methods for different types
+    public static void Serialize(ref bool value)
+    {
+        value = GetCurrentSerializer().Bool(value);
+    }
+
+    public static void Serialize(ref byte value)
+    {
+        value = GetCurrentSerializer().I8(value);
+    }
+
+    public static void Serialize(ref short value)
+    {
+        value = GetCurrentSerializer().I16(value);
+    }
+
+    public static void Serialize(ref ushort value)
+    {
+        value = GetCurrentSerializer().I16(value);
+    }
+
+    public static void Serialize(ref int value)
+    {
+        value = GetCurrentSerializer().I32(value);
+    }
+
+    public static void Serialize(ref long value)
+    {
+        value = GetCurrentSerializer().I64(value);
+    }
+
+    public static void Serialize(ref float value)
+    {
+        value = GetCurrentSerializer().F32(value);
+    }
+
+    public static void Serialize(ref string? value)
+    {
+        value = GetCurrentSerializer().Str(value);
+    }
+
+    public static void Serialize(ref Vector2 value)
+    {
+        value = GetCurrentSerializer().V2(value);
+    }
+
+    public static void Serialize(ref Vector3? value)
+    {
+        value = GetCurrentSerializer().V3(value);
+    }
+
+    public static void Serialize(ref Vector4? value)
+    {
+        value = GetCurrentSerializer().V4(value);
+    }
+
+    public static void Serialize(ref Vector4[]? value)
+    {
+        value = GetCurrentSerializer().Vectorarray(value);
+    }
+
+    public static void Serialize(ref Matrix4x4? value)
+    {
+        value = GetCurrentSerializer().M44(value);
+    }
+
+    public static void Serialize(ref GUID? value)
+    {
+        value = GetCurrentSerializer().Guid(value);
+    }
+
+    public static void Serialize(ref Sha1? value)
+    {
+        value = GetCurrentSerializer().Sha1(value);
+    }
+
+    public static void Serialize(ref ResourceDescriptor? value, ResourceType type)
+    {
+        value = GetCurrentSerializer().Resource(value, type);
+    }
+
+    public static void Serialize(ref ResourceDescriptor? value, ResourceType type, bool isDescriptor, bool cp, bool t)
+    {
+        value = GetCurrentSerializer().Resource(value, type, isDescriptor, cp, t);
+    }
+
+    public static void Serialize<T>(ref T? value) where T : ISerializable
+    {
+        value = GetCurrentSerializer().Struct(value);
+    }
+
+    public static void Serialize<T>(ref T[]? value) where T : ISerializable
+    {
+        value = GetCurrentSerializer().Array(value);
+    }
+
+    public static void Serialize<T>(ref List<T>? value) where T : ISerializable
+    {
+        value = GetCurrentSerializer().Arraylist(value);
+    }
+
+    public static void Serialize<T>(ref T value) where T : Enum
+    {
+        value = GetCurrentSerializer().Enum32(value);
+    }
+
+    public static T? Reference<T>(T? value) where T : ISerializable
+    {
+        return GetCurrentSerializer().Reference(value);
+    }
+
+    // Additional static methods for common types
+    public static void Serialize(ref Thing? value)
+    {
+        value = GetCurrentSerializer().Thing(value);
+    }
+
+    public static void Serialize(ref Thing[]? value)
+    {
+        value = GetCurrentSerializer().Thingarray(value);
+    }
+
+    public static void Serialize(ref List<Thing>? value)
+    {
+        value = GetCurrentSerializer().Thinglist(value);
+    }
+
+    public static void Serialize(ref int[]? value)
+    {
+        value = GetCurrentSerializer().Intarray(value);
+    }
+
+    public static void Serialize(ref float[]? value)
+    {
+        value = GetCurrentSerializer().Floatarray(value);
+    }
+
+    public static void Serialize(ref bool[]? value)
+    {
+        value = GetCurrentSerializer().Boolarray(value);
+    }
+
+    public static void Serialize(ref byte[]? value)
+    {
+        value = GetCurrentSerializer().Bytearray(value);
+    }
+
+    public static void Serialize(ref Matrix4x4[]? array)
+    {
+        if (currentSerializer == null) return;
+        
+        if (!IsWriting())
+        {
+            var length = GetInput().I32();
+            array = new Matrix4x4[length];
+            for (int i = 0; i < length; i++)
+            {
+                Serialize(ref array[i]);
+            }
+        }
+        else
+        {
+            var length = array?.Length ?? 0;
+            GetOutput().I32(length);
+            if (array != null)
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    var temp = array[i];
+                    Serialize(ref temp);
+                    array[i] = temp;
+                }
+            }
+        }
     }
 }

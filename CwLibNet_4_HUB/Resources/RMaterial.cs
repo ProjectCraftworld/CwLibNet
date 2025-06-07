@@ -1,7 +1,7 @@
 ﻿using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Resources;
 
@@ -52,95 +52,95 @@ public class RMaterial: Resource
     public bool circuitBoard, disableCSG;
 
 
-    public override void Serialize(Serializer serializer)
+    public override void Serialize()
     {
 
-        var head = serializer.GetRevision().GetVersion();
+        var head = Serializer.GetRevision().GetVersion();
 
-        traction = serializer.F32(traction);
-        density = serializer.F32(density);
+        Serializer.Serialize(ref traction);
+        Serializer.Serialize(ref density);
 
         if (head < 0x13c)
         {
-            field000 = serializer.I8(field000);
-            field001 = serializer.I8(field001);
+            Serializer.Serialize(ref field000);
+            Serializer.Serialize(ref field001);
         }
 
         // if (head >= 0x292)
-        restitution = serializer.F32(restitution);
+        Serializer.Serialize(ref restitution);
         // else
-        //     serializer.F32(0); // Is this supposed to be restitution still?
+        //     Serializer.Serialize(ref 0); // Is this supposed to be restitution still?
 
-        slidingFriction = serializer.F32(slidingFriction);
-
-        if (head < 0x13c)
-            field002 = serializer.F32(field002);
-
-        rollingFriction = serializer.F32(rollingFriction);
+        Serializer.Serialize(ref slidingFriction);
 
         if (head < 0x13c)
-        {
-            field003 = serializer.I8(field003);
-            field004 = serializer.I8(field004);
-            field005 = serializer.I8(field005);
-            field006 = serializer.I8(field006);
-            field007 = serializer.I8(field007);
-        }
+            Serializer.Serialize(ref field002);
 
-        soundEnum = serializer.I32(soundEnum);
-
-        grabbable = serializer.Bool(grabbable);
+        Serializer.Serialize(ref rollingFriction);
 
         if (head < 0x13c)
         {
-            field008 = serializer.I8(field008);
-            field009 = serializer.I8(field009);
+            Serializer.Serialize(ref field003);
+            Serializer.Serialize(ref field004);
+            Serializer.Serialize(ref field005);
+            Serializer.Serialize(ref field006);
+            Serializer.Serialize(ref field007);
         }
 
-        gravityMultiplier = serializer.F32(gravityMultiplier);
-        airResistanceMultiplier = serializer.F32(airResistanceMultiplier);
+        Serializer.Serialize(ref soundEnum);
+
+        Serializer.Serialize(ref grabbable);
+
+        if (head < 0x13c)
+        {
+            Serializer.Serialize(ref field008);
+            Serializer.Serialize(ref field009);
+        }
+
+        Serializer.Serialize(ref gravityMultiplier);
+        Serializer.Serialize(ref airResistanceMultiplier);
 
         if (head < 0x167)
-            field010 = serializer.F32(field010); // breakResistance?
+            Serializer.Serialize(ref field010); // breakResistance?
 
-        limb = serializer.Bool(limb);
+        Serializer.Serialize(ref limb);
 
         if (head < 0x1d3)
-            field011 = serializer.I8(field011); // creativeZone?
+            Serializer.Serialize(ref field011); // creativeZone?
 
-        shiftGrip = serializer.Bool(shiftGrip);
+        Serializer.Serialize(ref shiftGrip);
 
-        collideType = serializer.I32(collideType);
-        collideIgnore = serializer.I32(collideIgnore);
+        Serializer.Serialize(ref collideType);
+        Serializer.Serialize(ref collideIgnore);
 
-        dissolvable = serializer.Bool(dissolvable);
-        explodable = serializer.Bool(explodable);
-        cuttableByExplosion = serializer.Bool(cuttableByExplosion);
+        Serializer.Serialize(ref dissolvable);
+        Serializer.Serialize(ref explodable);
+        Serializer.Serialize(ref cuttableByExplosion);
 
         if (head >= 0x167)
         {
-            breakable = serializer.Bool(breakable);
-            breakMinVel = serializer.F32(breakMinVel);
-            breakMinForce = serializer.F32(breakMinForce);
+            Serializer.Serialize(ref breakable);
+            Serializer.Serialize(ref breakMinVel);
+            Serializer.Serialize(ref breakMinForce);
 
-            explosionMinRadius = serializer.F32(explosionMinRadius);
-            explosionMaxRadius = serializer.F32(explosionMaxRadius);
-            explosionMaxVel = serializer.F32(explosionMaxVel);
+            Serializer.Serialize(ref explosionMinRadius);
+            Serializer.Serialize(ref explosionMaxRadius);
+            Serializer.Serialize(ref explosionMaxVel);
             if (head >= 0x168)
-                explosionMaxAngVel = serializer.F32(explosionMaxAngVel);
-            explosionMaxForce = serializer.F32(explosionMaxForce);
+                Serializer.Serialize(ref explosionMaxAngVel);
+            Serializer.Serialize(ref explosionMaxForce);
         }
 
         if (head >= 0x13c)
-            maxForce = serializer.F32(maxForce);
+            Serializer.Serialize(ref maxForce);
 
         if (head >= 0x244)
-            bullet = serializer.Bool(bullet);
+            Serializer.Serialize(ref bullet);
 
         if (head >= 0x27b)
         {
-            circuitBoard = serializer.Bool(circuitBoard);
-            disableCSG = serializer.Bool(disableCSG);
+            Serializer.Serialize(ref circuitBoard);
+            Serializer.Serialize(ref disableCSG);
         }
     }
 
@@ -155,14 +155,14 @@ public class RMaterial: Resource
     {
         Serializer serializer = new(GetAllocatedSize(), revision,
             compressionFlags);
-        serializer.Struct(this);
+        Serializer.Serialize(ref this);
         return new SerializationData(
-            serializer.GetBuffer(),
+            Serializer.GetBuffer(),
             revision,
             compressionFlags,
             ResourceType.Material,
             SerializationType.BINARY,
-            serializer.GetDependencies()
+            Serializer.GetDependencies()
         );
     }
 }

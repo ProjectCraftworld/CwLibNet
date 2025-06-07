@@ -1,7 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -33,19 +33,19 @@ public class PAudioWorld: ISerializable
     public int CategoryGuid;
     public bool ActivatedLastFrame;
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
-        var subVersion = serializer.GetRevision().GetSubVersion();
+        var version = Serializer.GetRevision().GetVersion();
+        var subVersion = Serializer.GetRevision().GetSubVersion();
 
-        SoundName = serializer.Str(SoundName);
+        Serializer.Serialize(ref SoundName);
 
-        InitialVolume = serializer.F32(InitialVolume);
-        InitialPitch = serializer.F32(InitialPitch);
-        InitialParam1 = serializer.F32(InitialParam1);
+        Serializer.Serialize(ref InitialVolume);
+        Serializer.Serialize(ref InitialPitch);
+        Serializer.Serialize(ref InitialParam1);
 
-        MaxFalloff = serializer.F32(MaxFalloff);
-        ImpactTolerance = serializer.F32(ImpactTolerance);
+        Serializer.Serialize(ref MaxFalloff);
+        Serializer.Serialize(ref ImpactTolerance);
 
         if (version < 0x2c4)
         {
@@ -53,52 +53,52 @@ public class PAudioWorld: ISerializable
             var triggerByImpact = PlayMode == PlayMode.TRIGGER_BY_IMPACT;
             var triggerByDestroy = PlayMode == PlayMode.TRIGGER_BY_DESTROY;
 
-            triggerByFalloff = serializer.Bool(triggerByFalloff);
-            triggerByImpact = serializer.Bool(triggerByImpact);
+            Serializer.Serialize(ref triggerByFalloff);
+            Serializer.Serialize(ref triggerByImpact);
             if (version < 0x165)
-                serializer.Bool(false); // unk
-            TriggerBySwitch = serializer.Bool(TriggerBySwitch);
+                Serializer.Serialize(ref false); // unk
+            Serializer.Serialize(ref TriggerBySwitch);
             switch (version)
             {
                 case < 0x165:
-                    serializer.Bool(false);
+                    Serializer.Serialize(ref false);
                     break;
                 case >= 0x1ad:
-                    triggerByDestroy = serializer.Bool(triggerByDestroy);
+                    Serializer.Serialize(ref triggerByDestroy);
                     break;
             }
 
-            if (!serializer.IsWriting())
+            if (!Serializer.IsWriting())
             {
                 if (triggerByFalloff) PlayMode = PlayMode.TRIGGER_BY_FALLOFF;
                 if (triggerByImpact) PlayMode = PlayMode.TRIGGER_BY_IMPACT;
                 if (triggerByDestroy) PlayMode = PlayMode.TRIGGER_BY_DESTROY;
             }
         }
-        else PlayMode = serializer.Enum32(PlayMode);
+        else Serializer.Serialize(ref PlayMode);
 
-        ParamAffectVol = serializer.Bool(ParamAffectVol);
-        ParamAffectPitch = serializer.Bool(ParamAffectPitch);
-        ParamAffectParam = serializer.Bool(ParamAffectParam);
+        Serializer.Serialize(ref ParamAffectVol);
+        Serializer.Serialize(ref ParamAffectPitch);
+        Serializer.Serialize(ref ParamAffectParam);
 
         if (version >= 0x165)
-            IsLocal = serializer.Bool(IsLocal);
+            Serializer.Serialize(ref IsLocal);
         if (version >= 0x198)
-            HideInPlayMode = serializer.Bool(HideInPlayMode);
+            Serializer.Serialize(ref HideInPlayMode);
 
         if (version >= 0x2c4)
-            Behavior = serializer.I32(Behavior);
+            Serializer.Serialize(ref Behavior);
 
         if (version >= 0x380)
-            SoundNames = serializer.Guid(SoundNames);
+            SoundNames = Serializer.Serialize(ref SoundNames);
 
         if (version >= 0x380)
-            MeshColor = serializer.I32(MeshColor);
+            Serializer.Serialize(ref MeshColor);
 
         if (subVersion >= 0x178)
-            CategoryGuid = serializer.I32(CategoryGuid);
+            Serializer.Serialize(ref CategoryGuid);
         if (subVersion >= 0x191)
-            ActivatedLastFrame = serializer.Bool(ActivatedLastFrame);
+            Serializer.Serialize(ref ActivatedLastFrame);
     }
 
     public int GetAllocatedSize()

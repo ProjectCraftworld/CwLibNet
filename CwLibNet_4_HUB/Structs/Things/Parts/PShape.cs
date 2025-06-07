@@ -1,10 +1,10 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Things.Components.Shapes;
 using CwLibNet.Types.Data;
 using CwLibNet.Util;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -141,98 +141,98 @@ public class PShape: ISerializable
     }
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
-        Polygon = serializer.Struct(Polygon);
-        Material = serializer.Resource(Material, ResourceType.Material);
+        Serializer.Serialize(ref Polygon);
+        Serializer.Serialize(ref Material, Material, ResourceType.Material);
         switch (version)
         {
             case >= 0x15c:
-                OldMaterial = serializer.Resource(OldMaterial, ResourceType.Material);
+                Serializer.Serialize(ref OldMaterial, OldMaterial, ResourceType.Material);
                 break;
             case < 0x13c:
-                serializer.U8(0);
+                Serializer.Serialize(ref 0);
                 break;
         }
 
-        Thickness = serializer.F32(Thickness);
+        Serializer.Serialize(ref Thickness);
         if (version >= 0x227)
-            MassDepth = serializer.F32(MassDepth);
+            Serializer.Serialize(ref MassDepth);
 
         if (version <= 0x389)
         {
-            if (serializer.IsWriting())
-                serializer.GetOutput().V4(Colors.FromARGB((int)Color));
+            if (Serializer.IsWriting())
+                Serializer.GetOutput().V4(Colors.FromARGB((int)Color));
             else
             {
-                var color = serializer.GetInput().V4();
+                var color = Serializer.GetInput().V4();
                 Color = (uint)Colors.GetARGB(color);
             }
         }
-        else Color = (uint)serializer.I32((int)Color);
+        else Color = (uint)Serializer.Serialize(ref (int)Color);
 
         switch (version)
         {
             case < 0x13c:
-                serializer.Resource(null, ResourceType.Texture);
+                Serializer.Serialize(ref null, ResourceType.Texture);
                 break;
             case >= 0x301:
-                Brightness = serializer.F32(Brightness);
+                Serializer.Serialize(ref Brightness);
                 break;
         }
 
-        BevelSize = serializer.F32(BevelSize);
+        Serializer.Serialize(ref BevelSize);
 
         if (version < 0x13c)
-            serializer.I32(0);
+            Serializer.Serialize(ref 0);
 
         if (version is <= 0x340 or >= 0x38e)
-            Com = serializer.M44(Com);
+            Serializer.Serialize(ref Com);
 
         if (version <= 0x306)
         {
-            InteractPlayMode = serializer.I8(InteractPlayMode);
-            InteractEditMode = serializer.I8(InteractEditMode);
+            Serializer.Serialize(ref InteractPlayMode);
+            Serializer.Serialize(ref InteractEditMode);
         }
 
         if (version >= 0x303)
-            Behavior = serializer.I32(Behavior);
+            Serializer.Serialize(ref Behavior);
 
 
         if (version >= 0x303)
         {
             if (version < 0x38a)
             {
-                if (serializer.IsWriting())
-                    serializer.GetOutput().V4(Colors.FromARGB(ColorOff));
+                if (Serializer.IsWriting())
+                    Serializer.GetOutput().V4(Colors.FromARGB(ColorOff));
                 else
                 {
-                    var color = serializer.GetInput().V4();
+                    var color = Serializer.GetInput().V4();
                     ColorOff = Colors.GetARGB(color);
                 }
             }
-            else ColorOff = serializer.I32(ColorOff);
-            BrightnessOff = serializer.F32(BrightnessOff);
+            else Serializer.Serialize(ref ColorOff);
+            Serializer.Serialize(ref BrightnessOff);
         }
 
         if (version <= 0x345)
-            LethalType = serializer.Enum32(LethalType, true);
+            Serializer.Serialize(ref LethalType);
         else
         {
-            if (serializer.IsWriting())
-                serializer.GetOutput().I16((short)LethalType);
-            else LethalType = (LethalType)serializer.GetInput().U16();
+            if (Serializer.IsWriting())
+                Serializer.GetOutput().I16((short)LethalType);
+            else LethalType = (LethalType)Serializer.GetInput().U16();
         }
 
         if (version < 0x2b5)
         {
-            if (!serializer.IsWriting())
+            if (!Serializer.IsWriting())
             {
-                var stream = serializer.GetInput();
+                var stream = Serializer.GetInput();
                 Flags = 0;
                 if (stream.Boole()) Flags |= (short)ShapeFlags.COLLIDABLE_GAME;
                 if (version >= 0x224 && stream.Boole())
@@ -241,7 +241,7 @@ public class PShape: ISerializable
             }
             else
             {
-                var stream = serializer.GetOutput();
+                var stream = Serializer.GetOutput();
                 stream.Boole((Flags & ShapeFlags.COLLIDABLE_GAME) != 0);
                 if (version >= 0x224)
                     stream.Boole((Flags & ShapeFlags.COLLIDABLE_POPPET) != 0);
@@ -251,114 +251,114 @@ public class PShape: ISerializable
 
         if (version < 0x13c)
         {
-            serializer.U8(0);
-            serializer.F32(0); // Is this a float, or is it just because it's an early
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0); // Is this a float, or is it just because it's an early
             // revision?
         }
 
-        SoundEnumOverride = serializer.I32(SoundEnumOverride);
+        Serializer.Serialize(ref SoundEnumOverride);
 
         if (version is >= 0x29d and < 0x30c)
         {
-            serializer.F32(0); // restitution
+            Serializer.Serialize(ref 0); // restitution
             if (version < 0x2b5)
-                serializer.U8(0); // unk
+                Serializer.Serialize(ref 0); // unk
         }
 
         if (version >= 0x2a3)
         {
             if (version <= 0x367)
-                PlayerNumberColor = (byte) serializer.I32(PlayerNumberColor);
+                PlayerNumberColor = (byte) Serializer.Serialize(ref PlayerNumberColor);
             else
-                PlayerNumberColor = serializer.I8(PlayerNumberColor);
+                Serializer.Serialize(ref PlayerNumberColor);
         }
 
         if (version >= 0x2b5)
         {
-            Flags = version <= 0x345 ? serializer.I8((byte) Flags) : serializer.I16(Flags);
+            Flags = version <= 0x345 ? Serializer.Serialize(ref (byte) Flags) : Serializer.Serialize(ref Flags);
         }
 
         if (version >= 0x307)
-            ContactCache = serializer.Struct(ContactCache);
+            Serializer.Serialize(ref ContactCache);
 
         if (version >= 0x3bd)
         {
-            Stickiness = serializer.I8(Stickiness);
-            Grabbability = serializer.I8(Grabbability);
-            GrabFilter = serializer.I8(GrabFilter);
+            Serializer.Serialize(ref Stickiness);
+            Serializer.Serialize(ref Grabbability);
+            Serializer.Serialize(ref GrabFilter);
         }
 
         if (version >= 0x3c1)
         {
-            ColorOpacity = serializer.I8(ColorOpacity);
-            ColorOffOpacity = serializer.I8(ColorOffOpacity);
+            Serializer.Serialize(ref ColorOpacity);
+            Serializer.Serialize(ref ColorOffOpacity);
         }
 
         // head > 0x3c0
         if (revision.Has(Branch.Double11, 0x5))
-            Touchability = serializer.I8(Touchability);
+            Serializer.Serialize(ref Touchability);
 
         if (subVersion >= 0x12c)
-            ColorShininess = serializer.I8(ColorShininess);
+            Serializer.Serialize(ref ColorShininess);
 
         if (version >= 0x3e2)
-            CanCollect = serializer.Bool(CanCollect);
+            Serializer.Serialize(ref CanCollect);
 
         if (revision.IsVita())
         {
             int vita = revision.GetBranchRevision();
             if (vita >= 0x26)
-                InvisibleTouch = serializer.Bool(InvisibleTouch);
+                Serializer.Serialize(ref InvisibleTouch);
             if (vita >= 0x34)
-                BouncePadBehavior = serializer.I8(BouncePadBehavior);
+                Serializer.Serialize(ref BouncePadBehavior);
             if (vita >= 0x5f)
-                ZBiasVita = serializer.F32(ZBiasVita);
+                Serializer.Serialize(ref ZBiasVita);
             if (vita >= 0x7a)
-                TouchWhenInvisible = serializer.Bool(TouchWhenInvisible);
+                Serializer.Serialize(ref TouchWhenInvisible);
         }
 
         if (subVersion is >= 0x42 and < 0xc6)
-            serializer.U8(0);
+            Serializer.Serialize(ref 0);
 
         if (subVersion >= 0x42)
-            Ghosty = serializer.Bool(Ghosty);
+            Serializer.Serialize(ref Ghosty);
 
         if (subVersion >= 0x186)
-            DefaultClimbable = serializer.Bool(DefaultClimbable);
+            Serializer.Serialize(ref DefaultClimbable);
         if (subVersion >= 0x4b)
-            CurrentlyClimbable = serializer.Bool(CurrentlyClimbable);
+            Serializer.Serialize(ref CurrentlyClimbable);
 
         if (subVersion >= 0x63)
-            HeadDucking = serializer.Bool(HeadDucking);
+            Serializer.Serialize(ref HeadDucking);
         if (subVersion >= 0x82)
-            IsLbp2Shape = serializer.Bool(IsLbp2Shape);
+            Serializer.Serialize(ref IsLbp2Shape);
         if (subVersion >= 0x8a)
-            IsStatic = serializer.Bool(IsStatic);
+            Serializer.Serialize(ref IsStatic);
         if (subVersion >= 0xe6)
-            CollidableSackboy = serializer.Bool(CollidableSackboy);
+            Serializer.Serialize(ref CollidableSackboy);
         if (subVersion >= 0x11a)
         {
-            PartOfPowerUp = serializer.Bool(PartOfPowerUp);
-            CameraExcluderIsSticky = serializer.Bool(CameraExcluderIsSticky);
+            Serializer.Serialize(ref PartOfPowerUp);
+            Serializer.Serialize(ref CameraExcluderIsSticky);
         }
 
         switch (subVersion)
         {
             case >= 0x19a:
-                Ethereal = serializer.Bool(Ethereal);
+                Serializer.Serialize(ref Ethereal);
                 break;
             // Unknown value
             case >= 0x120 and < 0x135:
-                serializer.U8(0);
+                Serializer.Serialize(ref 0);
                 break;
         }
 
         if (subVersion >= 0x149)
-            ZBias = serializer.I8(ZBias);
+            Serializer.Serialize(ref ZBias);
 
         if (subVersion < 0x14c) return;
-        FireDensity = serializer.I8(FireDensity);
-        FireLifetime = serializer.I8(FireLifetime);
+        Serializer.Serialize(ref FireDensity);
+        Serializer.Serialize(ref FireLifetime);
     }
 
     

@@ -2,6 +2,7 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.Structs.Slot;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Presets;
 

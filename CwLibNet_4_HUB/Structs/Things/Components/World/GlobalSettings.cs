@@ -1,7 +1,6 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Components.World;
 
 public class GlobalSettings: ISerializable
@@ -13,15 +12,15 @@ public class GlobalSettings: ISerializable
     public bool NonLinearFog; // Vita
 
 
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        LightingFactor = serializer.F32(LightingFactor);
-        ColorCorrectionFactor = serializer.F32(ColorCorrectionFactor);
-        FogFactor = serializer.F32(FogFactor);
-        FogTintFactor = serializer.F32(FogTintFactor);
-        DarknessFactor = serializer.F32(DarknessFactor);
-        if (serializer.GetRevision().Has(Branch.Double11, 0x78))
-            NonLinearFog = serializer.Bool(NonLinearFog);
+        Serializer.Serialize(ref LightingFactor);
+        Serializer.Serialize(ref ColorCorrectionFactor);
+        Serializer.Serialize(ref FogFactor);
+        Serializer.Serialize(ref FogTintFactor);
+        Serializer.Serialize(ref DarknessFactor);
+        if (Serializer.GetRevision().Has(Branch.Double11, 0x78))
+            Serializer.Serialize(ref NonLinearFog);
     }
 
     public int GetAllocatedSize()

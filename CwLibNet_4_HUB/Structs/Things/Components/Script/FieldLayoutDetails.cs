@@ -1,7 +1,6 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Components.Script;
 
 public class FieldLayoutDetails: ISerializable
@@ -35,33 +34,33 @@ public class FieldLayoutDetails: ISerializable
     }
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
+        var version = Serializer.GetRevision().GetVersion();
 
-        Name = serializer.Str(Name);
+        Serializer.Serialize(ref Name);
 
-        if (serializer.IsWriting())
+        if (Serializer.IsWriting())
         {
             var flags = ModifierBody.GetFlags(Modifiers);
-            if (version >= 0x3d9) serializer.GetOutput().I16(flags);
-            else serializer.GetOutput().I32(flags);
+            if (version >= 0x3d9) Serializer.GetOutput().I16(flags);
+            else Serializer.GetOutput().I32(flags);
         }
         else
         {
-            var flags = version >= 0x3d9 ? serializer.GetInput().I16() :
-                serializer.GetInput().I32();
+            var flags = version >= 0x3d9 ? Serializer.GetInput().I16() :
+                Serializer.GetInput().I32();
             Modifiers = ModifierBody.fromValue(flags);
         }
 
-        MachineType = serializer.Enum32(MachineType);
+        Serializer.Serialize(ref MachineType);
         if (version >= 0x145)
-            FishType = serializer.Enum32(FishType);
+            Serializer.Serialize(ref FishType);
 
-        DimensionCount = serializer.I8(DimensionCount);
-        ArrayBaseMachineType = serializer.Enum32(ArrayBaseMachineType);
+        Serializer.Serialize(ref DimensionCount);
+        Serializer.Serialize(ref ArrayBaseMachineType);
 
-        InstanceOffset = serializer.I32(InstanceOffset);
+        Serializer.Serialize(ref InstanceOffset);
     }
 
     

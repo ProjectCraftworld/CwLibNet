@@ -1,7 +1,6 @@
 using System.Numerics;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Parts;
 
 /**
@@ -52,22 +51,22 @@ public class PPos: ISerializable
         LocalPosition = pos;
     }
 
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
+        var version = Serializer.GetRevision().GetVersion();
 
-        ThingOfWhichIAmABone = serializer.Reference(ThingOfWhichIAmABone);
-        AnimHash = serializer.I32(AnimHash);
+        Serializer.Serialize(ref ThingOfWhichIAmABone);
+        Serializer.Serialize(ref AnimHash);
 
         if (version < 0x341)
-            LocalPosition = serializer.M44(LocalPosition);
-        WorldPosition = serializer.M44(WorldPosition);
+            Serializer.Serialize(ref LocalPosition);
+        Serializer.Serialize(ref WorldPosition);
 
         LocalPosition ??= WorldPosition;
 
         // Unknown value, depreciated very early
         if (version < 0x155)
-            serializer.I32(0);
+            Serializer.Serialize(ref 0);
     }
 
     public int GetAllocatedSize()

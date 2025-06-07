@@ -1,7 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Profile 
 {
@@ -17,20 +17,20 @@ namespace CwLibNet.Structs.Profile
         public short behaviorFlags;
         public byte trophyToUnlockLBP1;
 
-        public void Serialize(Serializer serializer) 
+        public void Serialize() 
         {
-            id = serializer.U32(id);
-            progressType = serializer.U32(progressType);
-            category = serializer.U32(category);
-            titleLamsKey = serializer.U32(titleLamsKey);
-            descriptionLamsKey = serializer.U32(descriptionLamsKey);
-            icon = serializer.Resource(icon, ResourceType.Texture);
-            initialProgressValue = serializer.U32(initialProgressValue);
-            targetValue = serializer.U32(targetValue);
-            trophyToUnlock = serializer.I8(trophyToUnlock);
-            behaviorFlags = serializer.I16(behaviorFlags);
-            if (serializer.GetRevision().GetVersion() >= 0x3f7)
-                trophyToUnlockLBP1 = serializer.I8(trophyToUnlockLBP1);
+            Serializer.Serialize(ref id);
+            Serializer.Serialize(ref progressType);
+            Serializer.Serialize(ref category);
+            Serializer.Serialize(ref titleLamsKey);
+            Serializer.Serialize(ref descriptionLamsKey);
+            Serializer.Serialize(ref icon, icon, ResourceType.Texture);
+            Serializer.Serialize(ref initialProgressValue);
+            Serializer.Serialize(ref targetValue);
+            Serializer.Serialize(ref trophyToUnlock);
+            Serializer.Serialize(ref behaviorFlags);
+            if (Serializer.GetRevision().GetVersion() >= 0x3f7)
+                Serializer.Serialize(ref trophyToUnlockLBP1);
         }
 
         public int GetAllocatedSize() 

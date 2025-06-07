@@ -1,8 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Slot;
 using CwLibNet.Structs.Things.Components;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -21,25 +21,25 @@ public class PGameplayData: ISerializable
     public short TreasureCount = 1;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
         if (subVersion >= 0xef && version > 0x2d0)
-            GameplayType = serializer.Enum32(GameplayType);
+            Serializer.Serialize(ref GameplayType);
 
-        FluffCost = serializer.S32(FluffCost);
-        EggLink = serializer.Reference(EggLink);
-        KeyLink = serializer.Reference(KeyLink);
+        Serializer.Serialize(ref FluffCost);
+        Serializer.Serialize(ref EggLink);
+        Serializer.Serialize(ref KeyLink);
 
         if (version >= 0x2d1 && subVersion < 0xef)
-            GameplayType = serializer.Enum32(GameplayType);
+            Serializer.Serialize(ref GameplayType);
 
         if (subVersion < 0xf3) return;
-        TreasureType = serializer.I32(TreasureType);
-        TreasureCount = serializer.I16(TreasureCount);
+        Serializer.Serialize(ref TreasureType);
+        Serializer.Serialize(ref TreasureCount);
     }
 
     

@@ -2,8 +2,8 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.EX;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Components.Script;
 
@@ -15,38 +15,38 @@ public class ScriptInstance: ISerializable
     public InstanceLayout? InstanceLayout = new();
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
+        var version = Serializer.GetRevision().GetVersion();
 
-        Script = serializer.Resource(Script, ResourceType.Script);
+        Serializer.Serialize(ref Script, Script, ResourceType.Script);
 
         var serialize = true;
         if (version > 0x1a0)
         {
-            if (serializer.IsWriting()) serialize = InstanceLayout != null;
-            serialize = serializer.Bool(serialize);
+            if (Serializer.IsWriting()) serialize = InstanceLayout != null;
+            Serializer.Serialize(ref serialize);
         }
 
         if (!serialize) return;
         var reference = 0;
-        if (serializer.IsWriting())
+        if (Serializer.IsWriting())
         {
             if (InstanceLayout != null)
-                reference = serializer.GetNextReference();
-            serializer.GetOutput().I32(reference);
+                reference = Serializer.GetNextReference();
+            Serializer.GetOutput().I32(reference);
         }
-        else reference = serializer.GetInput().I32();
+        else reference = Serializer.GetInput().I32();
         if (reference == 0) return;
 
-        if (!serializer.IsWriting())
+        if (!Serializer.IsWriting())
         {
-            var layout = serializer.GetPointer<InstanceLayout>(reference);
+            var layout = Serializer.GetPointer<InstanceLayout>(reference);
             if (layout == null)
             {
                 layout = new InstanceLayout();
                 InstanceLayout = layout;
-                serializer.SetPointer(reference, layout);
+                Serializer.SetPointer(reference, layout);
                 layout.Serialize(serializer);
             }
             else
@@ -56,57 +56,57 @@ public class ScriptInstance: ISerializable
 
         var reflectDivergent = false;
         if (version > 0x19c)
-            reflectDivergent = serializer.Bool(reflectDivergent);
+            Serializer.Serialize(ref reflectDivergent);
         var fields =
             InstanceLayout.GetFieldsForReflection(reflectDivergent);
-        var writing = serializer.IsWriting();
+        var writing = Serializer.IsWriting();
 
 
-        serializer.Log(string.Join('\n', fields.Select(f => $"{reference:X8}:{f}")));
+        Serializer.Log(string.Join('\n', fields.Select(f => $"{reference:X8}:{f}")));
         foreach (var field in fields)
         {
-            if (version is > 0x198 and < 0x19d) serializer.U8(0);
-            serializer.Log(field.Name + " " + field.MachineType);
+            if (version is > 0x198 and < 0x19d) Serializer.Serialize(ref 0);
+            Serializer.Log(field.Name + " " + field.MachineType);
             switch (field.MachineType)
             {
                 case MachineType.BOOL:
-                    field.Value = serializer.Bool(writing && (bool) field.Value!);
+                    field.Value = Serializer.Serialize(ref writing && (bool) field.Value!);
                     break;
                 case MachineType.CHAR:
-                    field.Value = serializer.I16(writing ? (short)field.Value! : (short)0);
+                    field.Value = Serializer.Serialize(ref writing ? (short)field.Value! : (short)0);
                     break;
                 case MachineType.S32:
-                    field.Value = serializer.I32(writing ? (int) field.Value! : 0);
-                    if (serializer.IsWriting() && field.FishType == BuiltinType.GUID && (int) field.Value != 0)
+                    field.Value = Serializer.Serialize(ref writing ? (int) field.Value! : 0);
+                    if (Serializer.IsWriting() && field.FishType == BuiltinType.GUID && (int) field.Value != 0)
                     {
                         switch (field.Name)
                         {
                             case "FSB":
-                                serializer.AddDependency(new ResourceDescriptor(new GUID((int) field.Value & 0xffffffffL), ResourceType.Filename));
+                                Serializer.AddDependency(new ResourceDescriptor(new GUID((int) field.Value & 0xffffffffL), ResourceType.Filename));
                                 break;
                             case "SettingsFile":
-                                serializer.AddDependency(new ResourceDescriptor(new GUID((int) field.Value & 0xffffffffL), ResourceType.MusicSettings));
+                                Serializer.AddDependency(new ResourceDescriptor(new GUID((int) field.Value & 0xffffffffL), ResourceType.MusicSettings));
                                 break;
                             default:
-                                serializer.AddDependency(new ResourceDescriptor(new GUID((int) field.Value & 0xffffffffL), ResourceType.FileOfBytes));
+                                Serializer.AddDependency(new ResourceDescriptor(new GUID((int) field.Value & 0xffffffffL), ResourceType.FileOfBytes));
                                 break;
                         }
                     }
                     break;
                 case MachineType.F32:
-                    field.Value = serializer.F32(writing ? (float) field.Value! : 0);
+                    field.Value = Serializer.Serialize(ref writing ? (float) field.Value! : 0);
                     break;
                 case MachineType.V4:
-                    field.Value = serializer.V4((Vector4) field.Value!);
+                    field.Serializer.Serialize(ref Value) field.Value!);
                     break;
                 case MachineType.M44:
-                    field.Value = serializer.M44((Matrix4x4) field.Value!);
+                    field.Serializer.Serialize(ref Value) field.Value!);
                     break;
                 case MachineType.OBJECT_REF:
-                    field.Value = serializer.Struct((ScriptObject) field.Value!);
+                    field.Value = Serializer.Serialize(ref (ScriptObject) field.Value!);
                     break;
                 case MachineType.SAFE_PTR:
-                    field.Value = serializer.Reference((Thing) field.Value!);
+                    field.Value = Serializer.Reference((Thing) field.Value!);
                     break;
                 default:
                     throw new SerializationException("Unhandled machine type in " +

@@ -1,8 +1,8 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -62,73 +62,72 @@ public class PSpriteLight: ISerializable
     public Vector3? BeamDir;
     public Vector3? Azimuth;
 
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
-        var subVersion = serializer.GetRevision().GetSubVersion();
+        var version = Serializer.GetRevision().GetVersion();
+        var subVersion = Serializer.GetRevision().GetSubVersion();
 
-        Color = serializer.V4(Color);
+        Serializer.Serialize(ref Color);
         if (version >= 0x2fd)
-            ColorOff = serializer.V4(ColorOff);
-        Multiplier = serializer.F32(Multiplier);
+            Serializer.Serialize(ref ColorOff);
+        Serializer.Serialize(ref Multiplier);
         if (version >= 0x30a)
-            MultiplierOff = serializer.F32(MultiplierOff);
+            Serializer.Serialize(ref MultiplierOff);
 
-        GlowRadius = serializer.F32(GlowRadius);
-        FarDist = serializer.F32(FarDist);
-        SourceSize = serializer.F32(SourceSize);
-        falloffTexture = serializer.Resource(falloffTexture,
-            ResourceType.Texture);
+        Serializer.Serialize(ref GlowRadius);
+        Serializer.Serialize(ref FarDist);
+        Serializer.Serialize(ref SourceSize);
+        falloffTexture = Serializer.Serialize(ref falloffTexture, ResourceType.Texture);
 
-        LookAt = serializer.Thing(LookAt);
-        Spotlight = serializer.Bool(Spotlight);
+        LookAt = Serializer.Reference(LookAt);
+        Serializer.Serialize(ref Spotlight);
 
         if (version < 0x337)
         {
-            EnableFogShadows = serializer.Bool(EnableFogShadows);
-            EnableFog = serializer.Bool(EnableFog);
+            Serializer.Serialize(ref EnableFogShadows);
+            Serializer.Serialize(ref EnableFog);
         }
 
         if (version >= 0x139)
-            FogAmount = serializer.F32(FogAmount);
+            Serializer.Serialize(ref FogAmount);
 
         if (version >= 0x13a)
         {
             if (version < 0x2c4)
-                OnDest = serializer.F32(OnDest);
-            OnSpeed = serializer.F32(OnSpeed);
-            OffSpeed = serializer.F32(OffSpeed);
-            FlickerProb = serializer.F32(FlickerProb);
-            FlickerAmount = serializer.F32(FlickerAmount);
+                Serializer.Serialize(ref OnDest);
+            Serializer.Serialize(ref OnSpeed);
+            Serializer.Serialize(ref OffSpeed);
+            Serializer.Serialize(ref FlickerProb);
+            Serializer.Serialize(ref FlickerAmount);
         }
 
         if (version >= 0x2c4)
-            Behavior = serializer.I32(Behavior);
+            Serializer.Serialize(ref Behavior);
 
         if (subVersion >= 0x113)
-            HighBeam = serializer.Bool(HighBeam);
+            Serializer.Serialize(ref HighBeam);
 
         if (subVersion >= 0x146)
-            Tracker = serializer.Bool(Tracker);
+            Serializer.Serialize(ref Tracker);
 
         if (subVersion >= 0x14a)
-            TrackerType = serializer.I8(TrackerType);
+            Serializer.Serialize(ref TrackerType);
 
         if (subVersion >= 0x151)
         {
-            CausticStrength = serializer.F32(CausticStrength);
-            CausticWidth = serializer.F32(CausticWidth);
+            Serializer.Serialize(ref CausticStrength);
+            Serializer.Serialize(ref CausticWidth);
         }
 
         if (subVersion < 0x16f) return;
-        TrackingLimit = serializer.F32(TrackingLimit);
-        TrackingAccel = serializer.F32(TrackingAccel);
-        TrackingSpeed = serializer.F32(TrackingSpeed);
-        MovementInput = serializer.S32(MovementInput);
-        LightingInput = serializer.S32(MovementInput);
+        Serializer.Serialize(ref TrackingLimit);
+        Serializer.Serialize(ref TrackingAccel);
+        Serializer.Serialize(ref TrackingSpeed);
+        Serializer.Serialize(ref MovementInput);
+        Serializer.Serialize(ref MovementInput);
 
-        BeamDir = serializer.V3(BeamDir);
-        Azimuth = serializer.V3(Azimuth);
+        BeamDir = Serializer.Serialize(ref BeamDir);
+        Azimuth = Serializer.Serialize(ref Azimuth);
     }
 
     public int GetAllocatedSize()

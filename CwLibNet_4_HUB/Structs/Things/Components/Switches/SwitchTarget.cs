@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Components.Switches;
 
 public class SwitchTarget: ISerializable
@@ -20,11 +19,11 @@ public class SwitchTarget: ISerializable
     }
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Thing = serializer.Thing(Thing);
-        if (serializer.GetRevision().GetVersion() > 0x326)
-            Port = serializer.I32(Port);
+        Thing = Serializer.Reference(Thing);
+        if (Serializer.GetRevision().GetVersion() > 0x326)
+            Serializer.Serialize(ref Port);
     }
 
     

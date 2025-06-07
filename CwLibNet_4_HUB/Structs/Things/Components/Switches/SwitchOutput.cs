@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Components.Switches;
 
 public class SwitchOutput: ISerializable
@@ -14,14 +13,14 @@ public class SwitchOutput: ISerializable
     public string? UserDefinedName;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
+        var version = Serializer.GetRevision().GetVersion();
 
-        Activation = serializer.Struct(Activation);
-        TargetList = serializer.Array(TargetList);
+        Serializer.Serialize(ref Activation);
+        TargetList = Serializer.Serialize(ref TargetList);
         if (version >= 0x34d)
-            UserDefinedName = serializer.Wstr(UserDefinedName);
+            Serializer.Serialize(ref UserDefinedName);
     }
 
     

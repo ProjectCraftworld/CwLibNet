@@ -1,8 +1,8 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
 using CwLibNet.Enums;
 using CwLibNet.Structs.Slot;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Resources;
 
@@ -58,14 +58,14 @@ public class RQuest : ISerializable
     {
         var serializer = new Serializer(GetAllocatedSize(), revision,
             compressionFlags);
-        serializer.Struct<RQuest>(this);
+        Serializer.Serialize(ref this);
         return new SerializationData(
-            serializer.GetBuffer(),
+            Serializer.GetBuffer(),
             revision,
             compressionFlags,
             ResourceType.Quest,
             SerializationType.BINARY,
-            serializer.GetDependencies()
+            Serializer.GetDependencies()
         );
         
     }

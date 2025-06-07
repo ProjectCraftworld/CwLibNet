@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Inventory;
 
 public class CreationHistory : ISerializable
@@ -20,13 +19,13 @@ public class CreationHistory : ISerializable
         Creators = creators;
     }
 
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var isFixed = serializer.GetRevision().GetVersion() > 0x37c;
+        var isFixed = Serializer.GetRevision().GetVersion() > 0x37c;
             
-        if (serializer.IsWriting())
+        if (Serializer.IsWriting())
         {
-            var ostream = serializer.GetOutput();
+            var ostream = Serializer.GetOutput();
             if (Creators != null)
             {
                 ostream.I32(Creators.Length);
@@ -40,7 +39,7 @@ public class CreationHistory : ISerializable
             return;
         }
 
-        var stream = serializer.GetInput();
+        var stream = Serializer.GetInput();
         Creators = new string[stream.I32()];
         for (var i = 0; i < Creators.Length; ++i)
         {

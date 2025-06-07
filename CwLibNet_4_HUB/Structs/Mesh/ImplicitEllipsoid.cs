@@ -1,7 +1,6 @@
 using System.Numerics;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Mesh;
 
 public class ImplicitEllipsoid: ISerializable
@@ -12,11 +11,11 @@ public class ImplicitEllipsoid: ISerializable
     public int ParentBone, AffectWorldOnly;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Transform = serializer.M44(Transform);
-        ParentBone = serializer.I32(ParentBone);
-        AffectWorldOnly = serializer.I32(AffectWorldOnly);
+        Serializer.Serialize(ref Transform);
+        Serializer.Serialize(ref ParentBone);
+        Serializer.Serialize(ref AffectWorldOnly);
     }
 
     

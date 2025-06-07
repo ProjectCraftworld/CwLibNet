@@ -1,7 +1,6 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Profile 
 {
     public class PlayerMetrics : ISerializable
@@ -30,27 +29,27 @@ namespace CwLibNet.Structs.Profile
 
         public long[]? Stats;
 
-        public void Serialize(Serializer serializer)
+        public void Serialize()
         {
-            var revision = serializer.GetRevision();
+            var revision = Serializer.GetRevision();
             var head = revision.GetVersion();
 
             if (head > 0x16f) 
             {
-                TotalTime = serializer.I32(TotalTime);
-                EditingTime = serializer.I32(EditingTime);
-                PlayingTime = serializer.I32(PlayingTime);
-                IdlingTime = serializer.I32(IdlingTime);
+                Serializer.Serialize(ref TotalTime);
+                Serializer.Serialize(ref EditingTime);
+                Serializer.Serialize(ref PlayingTime);
+                Serializer.Serialize(ref IdlingTime);
             }
 
             if (head > 0x183)
-                MultiplayerGamesCount = serializer.I32(MultiplayerGamesCount);
+                Serializer.Serialize(ref MultiplayerGamesCount);
 
             if (revision.Has(Branch.Double11, (int)Revisions.D1_LEVEL_TIMES_MAP)) 
             {
-                if (serializer.IsWriting())
+                if (Serializer.IsWriting())
                 {
-                    var stream = serializer.GetOutput();
+                    var stream = Serializer.GetOutput();
                     var keys = new HashSet<int>(LevelTimesMap.Keys);
                     stream.I32(keys.Count);
                     foreach (var key in keys)
@@ -61,7 +60,7 @@ namespace CwLibNet.Structs.Profile
                 }
                 else 
                 {
-                    var stream = serializer.GetInput();
+                    var stream = Serializer.GetInput();
                     var count = stream.I32();
                     LevelTimesMap = new Dictionary<int, int>(count);
                     for (var i = 0; i < count; i++)
@@ -70,36 +69,36 @@ namespace CwLibNet.Structs.Profile
                     }
                 }
 
-                TotalLevelTime = serializer.I32(TotalLevelTime);
+                Serializer.Serialize(ref TotalLevelTime);
             }
 
             if (head > 0x1c9)
-                PlayerLadderPoints = serializer.F32(PlayerLadderPoints);
+                Serializer.Serialize(ref PlayerLadderPoints);
             if (head > 0x1ab)
-                StoryLevelCompletionCount = serializer.I32(StoryLevelCompletionCount);
+                Serializer.Serialize(ref StoryLevelCompletionCount);
             if (head > 0x1f7)
-                CommunityLevelCompletionCount = serializer.I32(CommunityLevelCompletionCount);
+                Serializer.Serialize(ref CommunityLevelCompletionCount);
             if (head > 0x1ab)
-                LevelCompletionCount = serializer.I32(LevelCompletionCount);
+                Serializer.Serialize(ref LevelCompletionCount);
             
             if (head > 0x1f7)
-                LevelsTaggedCount = serializer.I32(LevelsTaggedCount);
+                Serializer.Serialize(ref LevelsTaggedCount);
             
             if (head > 0x1c9)
-                GamesWithRandomPlayersCount = serializer.I32(GamesWithRandomPlayersCount);
+                Serializer.Serialize(ref GamesWithRandomPlayersCount);
 
             if (head is > 0x1de and < 0x2cb)
             {
                 if (!revision.IsLeerdammer() || revision.Before(Branch.Leerdammer, (int)Revisions.LD_REMOVED_ENEMY_STAT))
                 {
-                    serializer.I32(0); // enemy kills
+                    Serializer.Serialize(ref 0); // enemy kills
                 }
             }
 
             if (head > 0x1de) 
-                PointsCollected = serializer.F32(PointsCollected);
+                Serializer.Serialize(ref PointsCollected);
             if (head > 0x1f7)
-                Stats = serializer.Longarray(Stats);
+                Stats = Serializer.Serialize(ref Stats);
         }
 
         public int GetAllocatedSize() 

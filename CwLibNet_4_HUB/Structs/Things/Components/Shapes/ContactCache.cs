@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Components.Shapes;
 
 public class ContactCache: ISerializable
@@ -13,12 +12,12 @@ public class ContactCache: ISerializable
     public bool CacheDirtyButRecomputed;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Contacts = serializer.Array(Contacts);
-        ContactsSorted = serializer.Bool(ContactsSorted);
-        if (serializer.GetRevision().GetSubVersion() < 0x46)
-            CacheDirtyButRecomputed = serializer.Bool(CacheDirtyButRecomputed);
+        Contacts = Serializer.Serialize(ref Contacts);
+        Serializer.Serialize(ref ContactsSorted);
+        if (Serializer.GetRevision().GetSubVersion() < 0x46)
+            Serializer.Serialize(ref CacheDirtyButRecomputed);
     }
 
     

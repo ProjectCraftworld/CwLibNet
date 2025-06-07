@@ -1,3 +1,4 @@
+using static net.torutheredfox.craftworld.serialization.Serializer;
 ﻿namespace CwLibNet.Types.Data;
 
 public readonly struct GUID : IEquatable<GUID>

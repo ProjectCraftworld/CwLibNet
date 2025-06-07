@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Types.Data
 {
     public class OpenPSID : ISerializable
@@ -17,10 +16,10 @@ namespace CwLibNet.Types.Data
             this.low = low;
         }
 
-        public void Serialize(Serializer serializer)
+        public void Serialize()
         {
-            high = serializer.U64(high);
-            low = serializer.U64(low);
+            Serializer.Serialize(ref high);
+            Serializer.Serialize(ref low);
         }
 
         public int GetAllocatedSize()

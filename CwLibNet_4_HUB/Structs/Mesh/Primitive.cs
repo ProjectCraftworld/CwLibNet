@@ -1,7 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Mesh;
 
@@ -64,29 +64,27 @@ public class Primitive: ISerializable
     }
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
+        var version = Serializer.GetRevision().GetVersion();
 
-        Material = serializer.Resource(Material,
-            ResourceType.GfxMaterial);
+        Material = Serializer.Serialize(ref Material, ResourceType.GfxMaterial);
 
         switch (version)
         {
             case < 0x149:
-                serializer.Resource(null, ResourceType.GfxMaterial);
+                Serializer.Serialize(ref null, ResourceType.GfxMaterial);
                 break;
             case >= (int)Revisions.MESH_TEXTURE_ALTERNATIVES:
-                TextureAlternatives = serializer.Resource(TextureAlternatives,
-                    ResourceType.TextureList);
+                TextureAlternatives = Serializer.Serialize(ref TextureAlternatives, ResourceType.TextureList);
                 break;
         }
 
-        MinVert = serializer.I32(MinVert);
-        MaxVert = serializer.I32(MaxVert);
-        FirstIndex = serializer.I32(FirstIndex);
-        NumIndices = serializer.I32(NumIndices);
-        Region = serializer.I32(Region);
+        Serializer.Serialize(ref MinVert);
+        Serializer.Serialize(ref MaxVert);
+        Serializer.Serialize(ref FirstIndex);
+        Serializer.Serialize(ref NumIndices);
+        Serializer.Serialize(ref Region);
     }
 
     

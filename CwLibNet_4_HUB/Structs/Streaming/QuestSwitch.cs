@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Streaming;
 
 public class QuestSwitch: ISerializable
@@ -13,21 +12,21 @@ public class QuestSwitch: ISerializable
     public int ObjectiveId;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var subVersion = serializer.GetRevision().GetSubVersion();
+        var subVersion = Serializer.GetRevision().GetSubVersion();
 
         if (subVersion > 0x118)
         {
-            QuestId = serializer.Struct(QuestId);
-            QuestAction = serializer.I32(QuestAction);
+            Serializer.Serialize(ref QuestId);
+            Serializer.Serialize(ref QuestAction);
         }
 
         if (subVersion > 0x140)
-            QuestKey = serializer.I32(QuestKey);
+            Serializer.Serialize(ref QuestKey);
 
         if (subVersion > 0x17a)
-            ObjectiveId = serializer.I32(ObjectiveId);
+            Serializer.Serialize(ref ObjectiveId);
     }
 
     

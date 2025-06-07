@@ -1,6 +1,6 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Resources;
 
@@ -17,7 +17,7 @@ public class RAdventureCreateProfile : Resource
         throw new NotImplementedException();
     }
 
-    public override void Serialize(Serializer serializer)
+    public override void Serialize()
     {
         throw new NotImplementedException();
     }

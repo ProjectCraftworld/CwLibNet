@@ -1,8 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.DLC;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Resources;
 
@@ -13,10 +13,10 @@ public class RDLC : Resource
     public List<DLCGUID>? GUIDs = [];
     public List<DLCFile>? Files = [];
 
-    public override void Serialize(Serializer serializer)
+    public override void Serialize()
     {
-        GUIDs = serializer.Arraylist(GUIDs);
-        Files = serializer.Arraylist(Files);
+        Serializer.Serialize(ref GUIDs);
+        Serializer.Serialize(ref Files);
     }
 
     public override int GetAllocatedSize()
@@ -31,14 +31,14 @@ public class RDLC : Resource
     public override SerializationData Build(Revision revision, byte compressionFlags)
     {
         var serializer = new Serializer(GetAllocatedSize(), revision, compressionFlags);
-        serializer.Struct(this);
+        Serializer.Serialize(ref this);
         return new SerializationData(
-            serializer.GetBuffer(),
+            Serializer.GetBuffer(),
             revision,
             compressionFlags,
             ResourceType.DownloadableContent,
             SerializationType.BINARY,
-            serializer.GetDependencies()
+            Serializer.GetDependencies()
         );
     }
 }

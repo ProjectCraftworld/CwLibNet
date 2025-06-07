@@ -1,7 +1,6 @@
 using System.Numerics;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Mesh;
 
 public class MeshShapeVertex: ISerializable
@@ -12,11 +11,11 @@ public class MeshShapeVertex: ISerializable
     public int BoneIndex;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        LocalPos = serializer.V4(LocalPos);
-        LocalNormal = serializer.V4(LocalNormal);
-        BoneIndex = serializer.I32(BoneIndex);
+        Serializer.Serialize(ref LocalPos);
+        Serializer.Serialize(ref LocalNormal);
+        Serializer.Serialize(ref BoneIndex);
     }
 
     

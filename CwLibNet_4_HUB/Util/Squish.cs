@@ -1,4 +1,5 @@
 using CwLibNet.Squish;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Util;
 

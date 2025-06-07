@@ -2,8 +2,8 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.EX;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Components.Script;
 
@@ -21,31 +21,31 @@ public class ScriptObject: ISerializable
     }
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Type = serializer.Enum32(Type);
+        Serializer.Serialize(ref Type);
         switch (Type)
         {
             case ScriptObjectType.NULL:
                 return;
             case ScriptObjectType.INSTANCE:
-                Value = serializer.Reference((ScriptInstance) Value);
+                Value = Serializer.Reference((ScriptInstance) Value);
                 return;
         }
 
         var reference = 0;
-        if (serializer.IsWriting())
+        if (Serializer.IsWriting())
         {
             if (Value != null)
-                reference = serializer.GetNextReference();
-            serializer.GetOutput().I32(reference);
+                reference = Serializer.GetNextReference();
+            Serializer.GetOutput().I32(reference);
         }
-        else reference = serializer.GetInput().I32();
+        else reference = Serializer.GetInput().I32();
         if (reference == 0) return;
 
-        if (!serializer.IsWriting())
+        if (!Serializer.IsWriting())
         {
-            var value = serializer.GetPointer<object>(reference);
+            var value = Serializer.GetPointer<object>(reference);
             if (value != null)
             {
                 Value = value;
@@ -53,68 +53,68 @@ public class ScriptObject: ISerializable
             }
         }
 
-        serializer.Log("" + Type);
+        Serializer.Log("" + Type);
         switch (Type)
         {
             case ScriptObjectType.NULL:
                 Value = null;
                 break;
             case ScriptObjectType.ARRAY_BOOL:
-                Value = serializer.Boolarray((bool[]) Value);
+                Value = Serializer.Serialize(ref (bool[]) Value);
                 break;
             case ScriptObjectType.ARRAY_S32:
-                Value = serializer.Intvector((int[]) Value);
+                Value = Serializer.Serialize(ref (int[]) Value);
                 break;
             case ScriptObjectType.ARRAY_F32:
-                Value = serializer.Floatarray((float[]) Value);
+                Value = Serializer.Serialize(ref (float[]) Value);
                 break;
             case ScriptObjectType.ARRAY_VECTOR4:
-                Value = serializer.Vectorarray((Vector4[]) Value);
+                Value = Serializer.Serialize(ref (Vector4[]) Value);
                 break;
             case ScriptObjectType.STRINGW:
-                Value = serializer.Wstr((String) Value);
+                Value = Serializer.Serialize(ref (String) Value);
                 break;
             case ScriptObjectType.STRINGA:
-                Value = serializer.Str((String) Value);
+                Value = Serializer.Serialize(ref (String) Value);
                 break;
             case ScriptObjectType.RESOURCE:
             {
                 var descriptor = (ResourceDescriptor) Value;
 
                 var type = ResourceType.Invalid;
-                if (serializer.IsWriting()) type = descriptor.GetResourceType();
-                type = ResourceType.FromType(serializer.I32(type.Value));
+                if (Serializer.IsWriting()) type = descriptor.GetResourceType();
+                type = ResourceType.FromType(Serializer.Serialize(ref type.Value));
 
                 if (type.Value != ResourceType.Invalid.Value)
                 {
-                    if (serializer.IsWriting())
-                        serializer.Resource((ResourceDescriptor) Value, type);
+                    if (Serializer.IsWriting())
+                        Serializer.Serialize(ref (ResourceDescriptor) Value, type);
                     else
-                        Value = serializer.Resource(null, type);
+                        Serializer.Serialize(ref Value, null, type);
                 }
 
                 break;
             }
-            // case INSTANCE: object.value = serializer.reference((PScript) object.value,
+            // case INSTANCE: object.value = Serializer.Reference((PScript) object.value,
             // PScript
             // .class); break;
             case ScriptObjectType.AUDIOHANDLE:
                 Value = null;
                 break;
             case ScriptObjectType.ARRAY_SAFE_PTR:
-                Value = serializer.Array((Thing[]) Value, true);
+                Value = Serializer.Array((Thing[]) Value, true);
                 break;
             case ScriptObjectType.ARRAY_OBJECT_REF:
             {
                 var array = (ScriptObject[]) Value;
-                if (!serializer.IsWriting())
+                if (!Serializer.IsWriting())
                 {
-                    array = new ScriptObject[serializer.GetInput().I32()];
-                    serializer.SetPointer(reference, array);
+                    array = new ScriptObject[Serializer.GetInput().I32()];
+                    Serializer.SetPointer(reference, array);
                 }
-                else serializer.GetOutput().I32(array.Length);
+                else Serializer.GetOutput().I32(array.Length);
                 for (var i = 0; i < array.Length; ++i)
-                    array[i] = serializer.Struct(array[i]);
+                    Serializer.Serialize(ref array[i]);
                 return;
             }
             default:
@@ -123,8 +123,8 @@ public class ScriptObject: ISerializable
                                                  "reflection!");
         }
 
-        if (!serializer.IsWriting())
-            serializer.SetPointer(reference, Value);
+        if (!Serializer.IsWriting())
+            Serializer.SetPointer(reference, Value);
 
     }
 

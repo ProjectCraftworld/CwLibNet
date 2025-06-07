@@ -1,7 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -12,11 +12,11 @@ public class PAnimation: ISerializable
     public ResourceDescriptor? Animation;
     public float Velocity, Position;
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Animation = serializer.Resource(Animation, ResourceType.Animation);
-        Velocity = serializer.F32(Velocity);
-        Position = serializer.F32(Position);
+        Serializer.Serialize(ref Animation, Animation, ResourceType.Animation);
+        Serializer.Serialize(ref Velocity);
+        Serializer.Serialize(ref Position);
     }
 
     public int GetAllocatedSize()

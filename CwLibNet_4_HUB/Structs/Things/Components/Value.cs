@@ -1,8 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Slot;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Components;
 
@@ -23,22 +23,22 @@ public class Value: ISerializable
     public byte Color, Size;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Fluff = serializer.I32(Fluff);
-        Icon = serializer.Resource(Icon, ResourceType.Texture);
-        Type = serializer.I32(Type);
-        SubType = serializer.I32(SubType);
-        LinkTo = serializer.Struct(LinkTo);
-        LinkSlotId = serializer.Struct(LinkSlotId);
-        LinkType = serializer.I32(LinkType);
-        LastUsed = serializer.I32(LastUsed);
-        NumUses = serializer.I32(NumUses);
-        Name = serializer.Str(Name);
-        Location = serializer.Str(Location);
-        Category = serializer.Str(Category);
-        Color = serializer.I8(Color);
-        Size = serializer.I8(Size);
+        Serializer.Serialize(ref Fluff);
+        Serializer.Serialize(ref Icon, Icon, ResourceType.Texture);
+        Serializer.Serialize(ref Type);
+        Serializer.Serialize(ref SubType);
+        Serializer.Serialize(ref LinkTo);
+        Serializer.Serialize(ref LinkSlotId);
+        Serializer.Serialize(ref LinkType);
+        Serializer.Serialize(ref LastUsed);
+        Serializer.Serialize(ref NumUses);
+        Serializer.Serialize(ref Name);
+        Serializer.Serialize(ref Location);
+        Serializer.Serialize(ref Category);
+        Serializer.Serialize(ref Color);
+        Serializer.Serialize(ref Size);
     }
 
     public int GetAllocatedSize()

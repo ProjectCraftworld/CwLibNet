@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Components.Popit;
 
 public class ObjectState: ISerializable
@@ -11,24 +10,24 @@ public class ObjectState: ISerializable
     public int BackZ;
     public int FrontZ;
     public int Flags;
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
+        var version = Serializer.GetRevision().GetVersion();
 
-        Thing = serializer.Thing(Thing);
-        BackZ = serializer.S32(BackZ);
-        FrontZ = serializer.S32(FrontZ);
+        Thing = Serializer.Reference(Thing);
+        Serializer.Serialize(ref BackZ);
+        Serializer.Serialize(ref FrontZ);
 
-        if (version < 0x2bd) serializer.Bool(false);
-        if (version is > 0x147 and < 0x2be) serializer.Bool(false);
+        if (version < 0x2bd) Serializer.Serialize(ref false);
+        if (version is > 0x147 and < 0x2be) Serializer.Serialize(ref false);
 
         switch (version)
         {
             case > 0x2bc:
-                Flags = serializer.I32(Flags);
+                Serializer.Serialize(ref Flags);
                 break;
             case > 0x25e:
-                serializer.Bool(false);
+                Serializer.Serialize(ref false);
                 break;
         }
     }

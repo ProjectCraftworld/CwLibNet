@@ -1,7 +1,6 @@
 using System.Numerics;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Streaming;
 
 public class QuestTracker: ISerializable
@@ -15,22 +14,22 @@ public class QuestTracker: ISerializable
     public int ObjectiveKey;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var subVersion = serializer.GetRevision().GetSubVersion();
+        var subVersion = Serializer.GetRevision().GetSubVersion();
 
         if (subVersion > 0xeb)
         {
-            Position = serializer.V3(Position);
-            QuestId = serializer.Struct(QuestId);
+            Position = Serializer.Serialize(ref Position);
+            Serializer.Serialize(ref QuestId);
         }
 
         if (subVersion > 0xf3)
-            ObjectiveId = serializer.Struct(QuestId);
+            Serializer.Serialize(ref QuestId);
 
         if (subVersion <= 0x140) return;
-        QuestKey = serializer.I32(QuestKey);
-        ObjectiveKey = serializer.I32(ObjectiveKey);
+        Serializer.Serialize(ref QuestKey);
+        Serializer.Serialize(ref ObjectiveKey);
 
         // jenkins(?) hash of questID and objectiveID
         // for keys if revision too early

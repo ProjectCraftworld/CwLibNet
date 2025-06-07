@@ -1,7 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Profile;
 
@@ -19,11 +19,11 @@ public class CollectableData: ISerializable
     // 3 = award_ace
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        if (serializer.GetRevision().GetVersion() < 0x1c2) return;
-        Plan = serializer.Resource(Plan, ResourceType.Plan, true);
-        Source = serializer.S32(Source);
+        if (Serializer.GetRevision().GetVersion() < 0x1c2) return;
+        Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true);
+        Serializer.Serialize(ref Source);
     }
 
     

@@ -2,12 +2,12 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.EX;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Slot;
 using CwLibNet.Structs.Streaming;
 using CwLibNet.Structs.Things.Components;
 using CwLibNet.Structs.Things.Components.World;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -162,159 +162,159 @@ public class PWorld: ISerializable
             CurrGlobalSettingsBlendFactors[i] = 1.0f;
     }
 
-    public void Serialize(Serializer serializer) {
-        var revision = serializer.GetRevision();
+    public void Serialize() {
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
         if (subVersion >= 0x6d) {
-            BackdropOffsetX = serializer.F32(BackdropOffsetX);
-            BackdropOffsetY = serializer.F32(BackdropOffsetY);
-            BackdropOffsetZ = serializer.F32(BackdropOffsetZ);
+            Serializer.Serialize(ref BackdropOffsetX);
+            Serializer.Serialize(ref BackdropOffsetY);
+            Serializer.Serialize(ref BackdropOffsetZ);
         }
 
         if (subVersion is >= 0x72 and <= 0x73) {
-            serializer.F32(0);
-            serializer.F32(0);
-            serializer.F32(0);
-            serializer.U8(0);
-            serializer.U8(0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
         }
 
         if (subVersion >= 0x70)
-            BackdropOffsetZAuto = serializer.Bool(BackdropOffsetZAuto);
+            Serializer.Serialize(ref BackdropOffsetZAuto);
         if (subVersion >= 0xe2)
-            OverrideBackdropAmbience = serializer.Str(OverrideBackdropAmbience);
+            Serializer.Serialize(ref OverrideBackdropAmbience);
         
         if (version < 0x14b) {
-            if (serializer.IsWriting()) serializer.GetOutput().I32(0);
+            if (Serializer.IsWriting()) Serializer.GetOutput().I32(0);
             else {
-                Materials = new ResourceDescriptor[serializer.GetInput().I32()];
+                Materials = new ResourceDescriptor[Serializer.GetInput().I32()];
                 for (var i = 0; i < Materials.Length; ++i)
-                    Materials[i] = serializer.Resource(null, ResourceType.Material);
+                    Serializer.Serialize(ref Materials[i]);
             }
         }
 
         if (subVersion >= 0x3f)
-            StreamingManager = serializer.Reference(StreamingManager);
+            Serializer.Serialize(ref StreamingManager);
         
         if (!revision.IsToolkit() || revision.Before(Branch.Mizuki, (int)Revisions.MZ_SCENE_GRAPH)) {
-            Things = serializer.Arraylist(Things, true);
-            serializer.Log("END OF WORLD THINGS");
+            Things = Serializer.Serialize(ref Things);
+            Serializer.Log("END OF WORLD THINGS");
 
-            MaxVel = serializer.F32(MaxVel);
-            MaxAVel = serializer.F32(MaxAVel);
+            Serializer.Serialize(ref MaxVel);
+            Serializer.Serialize(ref MaxAVel);
     
-            Frame = serializer.S32(Frame);
-            if (version >= 0x2e2) SimFrame = serializer.S32(SimFrame);
-            if (version >= 0x377) FrameLevelStarted = serializer.I32(FrameLevelStarted);
+            Serializer.Serialize(ref Frame);
+            if (version >= 0x2e2) Serializer.Serialize(ref SimFrame);
+            if (version >= 0x377) Serializer.Serialize(ref FrameLevelStarted);
 
-            ThingUidCounter = serializer.I32(ThingUidCounter);
+            Serializer.Serialize(ref ThingUidCounter);
         }
 
         
         if (version < 0x32d)
-            Randy = serializer.I32(Randy);
+            Serializer.Serialize(ref Randy);
 
         if (version < 0x1a4) {
-            serializer.F32(0);
-            serializer.F32(0);
-            serializer.F32(0);
-            serializer.F32(0);
-            serializer.F32(0);
-            serializer.F32(0);
-            serializer.I32(0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
             if (version < 0x14b)
-                serializer.Array<Thing>(null);
+                Serializer.Array<Thing>(null);
         }
 
         if (!revision.IsToolkit() || revision.Before(Branch.Mizuki, (int)Revisions.MZ_SCENE_GRAPH)) {
-            Selections = serializer.Array(Selections, true);
+            Selections = Serializer.Serialize(ref Selections, true);
 
-            Backdrop = serializer.Reference(Backdrop);
-            BackdropNew = serializer.Reference(BackdropNew);
-            BackdropTimer = serializer.F32(BackdropTimer);
+            Serializer.Serialize(ref Backdrop);
+            Serializer.Serialize(ref BackdropNew);
+            Serializer.Serialize(ref BackdropTimer);
         }
 
         if (version >= 0x3a3)
-            Lbp2NightDaySwapped = serializer.S32(Lbp2NightDaySwapped);
+            Serializer.Serialize(ref Lbp2NightDaySwapped);
 
         if (version >= 0x14a)
-            IsPaused = serializer.Bool(IsPaused);
+            Serializer.Serialize(ref IsPaused);
 
         if (version >= 0x152) {
-            LightingFactor = serializer.F32(LightingFactor);
-            ColorCorrectionFactor = serializer.F32(ColorCorrectionFactor);
+            Serializer.Serialize(ref LightingFactor);
+            Serializer.Serialize(ref ColorCorrectionFactor);
             if (version >= 0x196) {
-                FogFactor = serializer.F32(FogFactor);
-                FogTintFactor = serializer.F32(FogTintFactor);
-                DarknessFactor = serializer.F32(DarknessFactor);
+                Serializer.Serialize(ref FogFactor);
+                Serializer.Serialize(ref FogTintFactor);
+                Serializer.Serialize(ref DarknessFactor);
                 if (revision.Has(Branch.Double11, 0x78))
-                    NonLinearFog = serializer.Bool(NonLinearFog);
+                    Serializer.Serialize(ref NonLinearFog);
             }
         }
 
         if (version >= 0x16f) {
-            CompleteRewards = serializer.Array(CompleteRewards);
-            CollectRewards = serializer.Array(CollectRewards);
-            AceRewards = serializer.Array(AceRewards);
+            CompleteRewards = Serializer.Serialize(ref CompleteRewards);
+            CollectRewards = Serializer.Serialize(ref CollectRewards);
+            AceRewards = Serializer.Serialize(ref AceRewards);
             if (version >= 0x208) 
-                AreRewardsShareable = serializer.Bool(AreRewardsShareable);
+                Serializer.Serialize(ref AreRewardsShareable);
             if (version >= 0x35e)
-                ScoreboardLevelLinkSlot = serializer.Struct(ScoreboardLevelLinkSlot);
-            CompleteUnlocks = serializer.Array(CompleteUnlocks);
-            CollectUnlocks = serializer.Array(CollectUnlocks);
-            AceUnlocks = serializer.Array(AceUnlocks);
+                Serializer.Serialize(ref ScoreboardLevelLinkSlot);
+            CompleteUnlocks = Serializer.Serialize(ref CompleteUnlocks);
+            CollectUnlocks = Serializer.Serialize(ref CollectUnlocks);
+            AceUnlocks = Serializer.Serialize(ref AceUnlocks);
         }
 
         if (revision.IsVita()) {
 
             if (revision.Has(Branch.Double11, 0x22) && revision.Before(Branch.Double11, 0x25)) {
-                serializer.Array<EggLink>(null); // unlocks
-                serializer.Array<EggLink>(null);  // rewards
-                serializer.S32(0); // timeRequired
+                Serializer.Array<EggLink>(null); // unlocks
+                Serializer.Array<EggLink>(null);  // rewards
+                Serializer.Serialize(ref 0); // timeRequired
             }
 
             if (revision.Has(Branch.Double11, 0x25)) {
-                GoldRewards = serializer.Array(GoldRewards);
-                GoldUnlocks = serializer.Array(GoldUnlocks);
-                SilverRewards = serializer.Array(SilverRewards);
-                SilverUnlocks = serializer.Array(SilverUnlocks);
-                BronzeRewards = serializer.Array(BronzeRewards);
-                BronzeUnlocks = serializer.Array(BronzeUnlocks);
+                GoldRewards = Serializer.Serialize(ref GoldRewards);
+                GoldUnlocks = Serializer.Serialize(ref GoldUnlocks);
+                SilverRewards = Serializer.Serialize(ref SilverRewards);
+                SilverUnlocks = Serializer.Serialize(ref SilverUnlocks);
+                BronzeRewards = Serializer.Serialize(ref BronzeRewards);
+                BronzeUnlocks = Serializer.Serialize(ref BronzeUnlocks);
 
-                GoldTrophyConditionType = serializer.I8(GoldTrophyConditionType);
-                SilverTrophyConditionType = serializer.I8(SilverTrophyConditionType);
-                BronzeTrophyConditionType = serializer.I8(BronzeTrophyConditionType);
+                Serializer.Serialize(ref GoldTrophyConditionType);
+                Serializer.Serialize(ref SilverTrophyConditionType);
+                Serializer.Serialize(ref BronzeTrophyConditionType);
 
-                ScoreRequiredForGoldTrophy = serializer.S32(ScoreRequiredForGoldTrophy);
-                TimeRequiredForGoldTrophy = serializer.F32(TimeRequiredForGoldTrophy);
-                LivesLostRequiredForGoldTrophy = serializer.S32(LivesLostRequiredForGoldTrophy);
+                Serializer.Serialize(ref ScoreRequiredForGoldTrophy);
+                Serializer.Serialize(ref TimeRequiredForGoldTrophy);
+                Serializer.Serialize(ref LivesLostRequiredForGoldTrophy);
 
-                ScoreRequiredForSilverTrophy = serializer.S32(ScoreRequiredForSilverTrophy);
-                TimeRequiredForSilverTrophy = serializer.F32(TimeRequiredForSilverTrophy);
-                LivesLostRequiredForSilverTrophy = serializer.S32(LivesLostRequiredForSilverTrophy);
+                Serializer.Serialize(ref ScoreRequiredForSilverTrophy);
+                Serializer.Serialize(ref TimeRequiredForSilverTrophy);
+                Serializer.Serialize(ref LivesLostRequiredForSilverTrophy);
 
-                ScoreRequiredForBronzeTrophy = serializer.S32(ScoreRequiredForBronzeTrophy);
-                TimeRequiredForBronzeTrophy = serializer.F32(TimeRequiredForBronzeTrophy);
-                LivesLostRequiredForBronzeTrophy = serializer.S32(LivesLostRequiredForBronzeTrophy);
+                Serializer.Serialize(ref ScoreRequiredForBronzeTrophy);
+                Serializer.Serialize(ref TimeRequiredForBronzeTrophy);
+                Serializer.Serialize(ref LivesLostRequiredForBronzeTrophy);
             }
 
             if (revision.Has(Branch.Double11, 0x3d)) {
-                EnableAcing = serializer.Bool(EnableAcing);
-                EnableGoldTrophy = serializer.Bool(EnableGoldTrophy);
-                EnableSilverTrophy = serializer.Bool(EnableSilverTrophy);
-                EnableBronzeTrophy = serializer.Bool(EnableBronzeTrophy);
+                Serializer.Serialize(ref EnableAcing);
+                Serializer.Serialize(ref EnableGoldTrophy);
+                Serializer.Serialize(ref EnableSilverTrophy);
+                Serializer.Serialize(ref EnableBronzeTrophy);
             }
 
             if (revision.Has(Branch.Double11, 0x4c))
-                EnforceMinMaxPlayers = serializer.Bool(EnforceMinMaxPlayers);
+                Serializer.Serialize(ref EnforceMinMaxPlayers);
         }
 
         if (version is > 0x16e and < 0x1bf) {
-            serializer.I32(0);
-            serializer.I32(0);
-            serializer.I32(0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
         }
 
         switch (version)
@@ -322,199 +322,199 @@ public class PWorld: ISerializable
             case > 0x1a3 and < 0x1d1:
                 throw new SerializationException("CGameCamera serialization unsupported!");
             case > 0x1bd and < 0x213:
-                serializer.I32(0);
+                Serializer.Serialize(ref 0);
                 break;
         }
 
         if (version is >= 0x1c2 and < 0x36e)
-            DeathCount = serializer.I32(DeathCount);
+            Serializer.Serialize(ref DeathCount);
         if (version >= 0x1c4)
-            MaxNumPlayers = serializer.I32(MaxNumPlayers);
+            Serializer.Serialize(ref MaxNumPlayers);
 
         if (version >= 0x1db) {
-            DissolvingThings = serializer.Array(DissolvingThings, true);
-            OldDissolvingThings = serializer.Array(OldDissolvingThings, true);
+            DissolvingThings = Serializer.Serialize(ref DissolvingThings, true);
+            OldDissolvingThings = Serializer.Serialize(ref OldDissolvingThings, true);
         }
 
         if (version is >= 0x1de and < 0x345)
-            IsTutorialLevel = serializer.Bool(IsTutorialLevel);
+            Serializer.Serialize(ref IsTutorialLevel);
 
         if (version >= 0x22e) {
-            EverSpawned = serializer.Bool(EverSpawned);
-            SpawnFailureCount = serializer.I32(SpawnFailureCount);
+            Serializer.Serialize(ref EverSpawned);
+            Serializer.Serialize(ref SpawnFailureCount);
         }
 
         if (version >= 0x25a) {
-            TargetGlobalSettings = serializer.Struct(TargetGlobalSettings);
-            FromGlobalSettings = serializer.Struct(FromGlobalSettings);
-            GlobalSettingsBlendFactor = serializer.F32(GlobalSettingsBlendFactor);
-            HasLevelLightingBeenSetup = serializer.Bool(HasLevelLightingBeenSetup);
-            GlobalSettingsThingUid = serializer.I32(GlobalSettingsThingUid);
+            Serializer.Serialize(ref TargetGlobalSettings);
+            Serializer.Serialize(ref FromGlobalSettings);
+            Serializer.Serialize(ref GlobalSettingsBlendFactor);
+            Serializer.Serialize(ref HasLevelLightingBeenSetup);
+            Serializer.Serialize(ref GlobalSettingsThingUid);
         }
 
         if (version >= 0x370)
-            CameraSettings = serializer.Struct(CameraSettings);
+            Serializer.Serialize(ref CameraSettings);
 
         if (version >= 0x26f) {
-            WaterLevel = serializer.F32(WaterLevel);
+            Serializer.Serialize(ref WaterLevel);
             if (version >= 0x278 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_WATER_WAVE))
-                FromWaterLevel = serializer.F32(FromWaterLevel);
-            TargetWaterLevel = serializer.F32(TargetWaterLevel);
+                Serializer.Serialize(ref FromWaterLevel);
+            Serializer.Serialize(ref TargetWaterLevel);
         }
 
         if (version >= 0x270) {
-            WaterWaveMagnitude = serializer.F32(WaterWaveMagnitude);
-            FromWaterWaveMagnitude = serializer.F32(FromWaterWaveMagnitude);
-            TargetWaterWaveMagnitude = serializer.F32(TargetWaterWaveMagnitude);
+            Serializer.Serialize(ref WaterWaveMagnitude);
+            Serializer.Serialize(ref FromWaterWaveMagnitude);
+            Serializer.Serialize(ref TargetWaterWaveMagnitude);
         }
 
         if (version >= 0x26f) {
-            Gravity = serializer.F32(Gravity);
-            FromGravity = serializer.F32(FromGravity);
-            TargetGravity = serializer.F32(TargetGravity);
+            Serializer.Serialize(ref Gravity);
+            Serializer.Serialize(ref FromGravity);
+            Serializer.Serialize(ref TargetGravity);
 
-            CurrGlobalSettingsBlendFactors = serializer.Floatarray(CurrGlobalSettingsBlendFactors);
-            GlobalSettingsThingUiDs = serializer.Intarray(GlobalSettingsThingUiDs);
+            Serializer.Serialize(ref CurrGlobalSettingsBlendFactors);
+            Serializer.Serialize(ref GlobalSettingsThingUiDs);
             if (version >= 0x270)
-                GlobalSettingsThingPriority = serializer.Intarray(GlobalSettingsThingPriority);
+                Serializer.Serialize(ref GlobalSettingsThingPriority);
         }
 
         if (revision.Has(Branch.Double11, 0x2d)) {
-            WaterColor = serializer.S32(WaterColor);
-            WaterBrightness = serializer.F32(WaterBrightness);
+            Serializer.Serialize(ref WaterColor);
+            Serializer.Serialize(ref WaterBrightness);
         } else if (version >= 0x289 || revision.IsLeerdammer()) {
-            WaterTint = serializer.F32(WaterTint);
-            FromWaterTintColor = serializer.V4(FromWaterTintColor);
-            TargetWaterTint = serializer.F32(TargetWaterTint);
+            Serializer.Serialize(ref WaterTint);
+            Serializer.Serialize(ref FromWaterTintColor);
+            Serializer.Serialize(ref TargetWaterTint);
         }
         
         if (version >= 0x289 || revision.IsLeerdammer()) {
-            WaterMurkiness = serializer.F32(WaterMurkiness);
-            FromWaterMurkiness = serializer.F32(FromWaterMurkiness);
-            TargetWaterMurkiness = serializer.F32(TargetWaterMurkiness);
+            Serializer.Serialize(ref WaterMurkiness);
+            Serializer.Serialize(ref FromWaterMurkiness);
+            Serializer.Serialize(ref TargetWaterMurkiness);
         }
 
         if (version >= 0x2b4 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_WATER_BITS)) {
-            WaterBits = serializer.F32(WaterBits);
-            FromWaterBits = serializer.F32(FromWaterBits);
-            TargetWaterBits = serializer.F32(TargetWaterBits);
+            Serializer.Serialize(ref WaterBits);
+            Serializer.Serialize(ref FromWaterBits);
+            Serializer.Serialize(ref TargetWaterBits);
         }
 
         if (version >= 0x34e) {
-            WaterDrainSoundsEnabled = serializer.Bool(WaterDrainSoundsEnabled);
-            CurrWaterDrainSoundsEnabled = serializer.Bool(CurrWaterDrainSoundsEnabled);
+            Serializer.Serialize(ref WaterDrainSoundsEnabled);
+            Serializer.Serialize(ref CurrWaterDrainSoundsEnabled);
         }
 
         if (subVersion >= 0xe8) {
-            WaterCausticsEnabled = serializer.Bool(WaterCausticsEnabled);
-            CurrWaterCausticsEnabled = serializer.Bool(WaterCausticsEnabled);
+            Serializer.Serialize(ref WaterCausticsEnabled);
+            CurrSerializer.Serialize(ref WaterCausticsEnabled);
         }
 
         if (subVersion >= 0xf8) {
-            WaterMainColor = serializer.I32(WaterMainColor);
-            FromWaterMainColor = serializer.I32(FromWaterMainColor);
-            TargetWaterMainColor = serializer.I32(TargetWaterMainColor);
+            Serializer.Serialize(ref WaterMainColor);
+            Serializer.Serialize(ref FromWaterMainColor);
+            Serializer.Serialize(ref TargetWaterMainColor);
 
-            WaterHintColorOne = serializer.I32(WaterHintColorOne);
-            FromWaterHintColorOne = serializer.I32(FromWaterHintColorOne);
-            TargetWaterHintColorOne = serializer.I32(TargetWaterHintColorOne);
+            Serializer.Serialize(ref WaterHintColorOne);
+            Serializer.Serialize(ref FromWaterHintColorOne);
+            Serializer.Serialize(ref TargetWaterHintColorOne);
 
-            WaterHintColorTwo = serializer.I32(WaterHintColorTwo);
-            FromWaterHintColorTwo = serializer.I32(FromWaterHintColorTwo);
-            TargetWaterHintColorTwo = serializer.I32(TargetWaterHintColorTwo);
+            Serializer.Serialize(ref WaterHintColorTwo);
+            Serializer.Serialize(ref FromWaterHintColorTwo);
+            Serializer.Serialize(ref TargetWaterHintColorTwo);
         }
 
         if (subVersion is >= 0xf8 and < 0x189)
-            serializer.Bool(false);
+            Serializer.Serialize(ref false);
 
         if (subVersion >= 0x182) {
-            BackdropEnabled = serializer.Bool(BackdropEnabled);
-            CurrBackdropEnabled = serializer.Bool(CurrBackdropEnabled);
+            Serializer.Serialize(ref BackdropEnabled);
+            Serializer.Serialize(ref CurrBackdropEnabled);
         }
 
         if (version >= 0x29c || revision.Has(Branch.Leerdammer, (int)Revisions.LD_WATER_WAVE))
-            CurrWavePos = serializer.F32(CurrWavePos);
+            Serializer.Serialize(ref CurrWavePos);
         
 
         if (version is > 0x288 and < 0x29c || (revision.IsLeerdammer() && revision.Before(Branch.Leerdammer, (int)Revisions.LD_WATER_WAVE))) {
-            serializer.F32(0);
-            serializer.Bool(false);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref false);
         }
 
         switch (version)
         {
             // CBreadLoaf
-            // serializer.I32(0); // loafAlloc.numHandles
-            // serializer.I32(0); // loafAlloc.freehead
-            // serializer.I32(0); // loafAlloc.numUsed
+            // Serializer.Serialize(ref 0); // loafAlloc.numHandles
+            // Serializer.Serialize(ref 0); // loafAlloc.freehead
+            // Serializer.Serialize(ref 0); // loafAlloc.numUsed
             // // handles?
             // // reflect array 2, loafMin floats
-            // serializer.I32(0); // loafSize
-            // serializer.u16(0); // maxDepth
-            // serializer.u16(0); // first
+            // Serializer.Serialize(ref 0); // loafSize
+            // Serializer.Serialize(ref 0); // maxDepth
+            // Serializer.Serialize(ref 0); // first
             // // reflect array, x via numHandles float
             // // reflect array, y via numHandles float
             // // reflect 4 LoafHandle's short?
             // // firstcrumb short
             // // depth, bytearray?
-            case > 0x281 and < 0x287 when serializer.I32(0) != 0:
+            case > 0x281 and < 0x287 when Serializer.Serialize(ref 0) != 0:
                 throw new SerializationException("CBreadLoaf serialization not supported!");
             case >= 0x2a3:
-                GameMode = serializer.I32(GameMode);
+                Serializer.Serialize(ref GameMode);
                 break;
         }
 
         if (subVersion >= 0x218) 
-            GameModeRequested = serializer.I32(GameModeRequested);
+            Serializer.Serialize(ref GameModeRequested);
 
         if (version >= 0x2b0) 
-            NextSackbotPlayerNumber = serializer.S32(NextSackbotPlayerNumber);
+            Serializer.Serialize(ref NextSackbotPlayerNumber);
 
         switch (version)
         {
             case > 0x2d3 and < 0x2f3:
                 throw new SerializationException("Unsupported structure in serialization");
             case >= 0x2ee:
-                CutsceneCameraManager = serializer.Struct(CutsceneCameraManager);
+                Serializer.Serialize(ref CutsceneCameraManager);
                 break;
         }
 
         if (version >= 0x30c)
-            GlobalAudioSettings = serializer.Struct(GlobalAudioSettings);
+            Serializer.Serialize(ref GlobalAudioSettings);
         
         if ((version >= 0x321 && !revision.IsToolkit()) || revision.Before(Branch.Mizuki, (int)Revisions.MZ_SCENE_GRAPH)) {
-            BackdropPlan = serializer.Resource(BackdropPlan, ResourceType.Plan, true);
-            BackdropNewPlan = serializer.Resource(BackdropNewPlan, ResourceType.Plan, true);
+            Serializer.Serialize(ref BackdropPlan, BackdropPlan, ResourceType.Plan, true);
+            Serializer.Serialize(ref BackdropNewPlan, BackdropNewPlan, ResourceType.Plan, true);
         }
 
         if (version >= 0x352)
-            SubLevel = serializer.Bool(SubLevel);
+            Serializer.Serialize(ref SubLevel);
 
         if (version >= 0x38a)
-            ScoreLocked = serializer.Bool(ScoreLocked);
+            Serializer.Serialize(ref ScoreLocked);
 
         if (version >= 0x38b)
-            DebugTimeInLevel = serializer.S32(DebugTimeInLevel);
+            Serializer.Serialize(ref DebugTimeInLevel);
 
         if (version >= 0x3ac)
-            UseEvenNewerCheckpointCode = serializer.Bool(UseEvenNewerCheckpointCode);
+            Serializer.Serialize(ref UseEvenNewerCheckpointCode);
         
         if (version >= 0x3bd && subVersion <= 0x117)
-            MoveCursors = serializer.Array(MoveCursors);
+            MoveCursors = Serializer.Serialize(ref MoveCursors);
 
         // version > 0x3c0, rather than 0x3e1 for some reason
         if (revision.Has(Branch.Double11, 0x8))
-            GlobalTouchCursor = serializer.I32(GlobalTouchCursor);
+            Serializer.Serialize(ref GlobalTouchCursor);
         if (revision.Has(Branch.Double11, 0xa) && revision.Before(Branch.Double11, 0x28)) 
-            SharedScreen = serializer.Bool(SharedScreen);
+            Serializer.Serialize(ref SharedScreen);
 
         if (subVersion > 0x215)
-            SinglePlayer = serializer.Bool(SinglePlayer);
+            Serializer.Serialize(ref SinglePlayer);
         
         if (version >= 0x3d0) {
-            MinPlayers = serializer.U8(MinPlayers);
-            MaxPlayers = serializer.U8(MaxPlayers);
-            MoveRecommended = serializer.Bool(MoveRecommended);
+            Serializer.Serialize(ref MinPlayers);
+            Serializer.Serialize(ref MaxPlayers);
+            Serializer.Serialize(ref MoveRecommended);
         }
 
         if (revision.IsVita()) {
@@ -522,70 +522,70 @@ public class PWorld: ISerializable
 
             // version > 0x3d4, rathern than 0x3e1 for some reason
             if (vita >= 0x18) 
-                PortraitMode = serializer.Bool(PortraitMode);
+                Serializer.Serialize(ref PortraitMode);
 
             if (vita is >= 0x28 and < 0x47) {
-                if (serializer.U8(0) > 1 && !serializer.IsWriting())
+                if (Serializer.Serialize(ref 0) > 1 && !Serializer.IsWriting())
                     SharedScreen = true;
             }
 
             if (version >= 0x3dd)
-                FixInvalidInOutMoverContacts = serializer.Bool(FixInvalidInOutMoverContacts);
+                Serializer.Serialize(ref FixInvalidInOutMoverContacts);
             
-            if (vita >= 0x47) SharedScreen = serializer.Bool(SharedScreen);
-            if (vita >= 0x39) DisableHud = serializer.Bool(DisableHud);
-            if (vita >= 0x52) DisableShadows = serializer.Bool(DisableShadows);
-            if (vita >= 0x3b) FlipBackground = serializer.Bool(FlipBackground); 
-            if (vita >= 0x4f) MpSeparateScreen = serializer.Bool(MpSeparateScreen);
+            if (vita >= 0x47) Serializer.Serialize(ref SharedScreen);
+            if (vita >= 0x39) Serializer.Serialize(ref DisableHud);
+            if (vita >= 0x52) Serializer.Serialize(ref DisableShadows);
+            if (vita >= 0x3b) Serializer.Serialize(ref FlipBackground); 
+            if (vita >= 0x4f) Serializer.Serialize(ref MpSeparateScreen);
 
         }
 
         if (version >= 0x3dd)
-            FixInvalidInOutMoverContacts = serializer.Bool(FixInvalidInOutMoverContacts);
+            Serializer.Serialize(ref FixInvalidInOutMoverContacts);
 
         if (version >= 0x3f1)
-            ContinueMusic = serializer.Bool(ContinueMusic);
+            Serializer.Serialize(ref ContinueMusic);
 
         if (subVersion >= 0x2f)
-            BroadcastMicroChipEntries = serializer.Array(BroadcastMicroChipEntries);
+            BroadcastMicroChipEntries = Serializer.Serialize(ref BroadcastMicroChipEntries);
 
         if (subVersion >= 0x5d)
-            ManualJumpDown = serializer.I32(ManualJumpDown);
+            Serializer.Serialize(ref ManualJumpDown);
 
         if (subVersion is >= 0x98 and < 0xe5)
-            serializer.Thingarray(null);
+            Serializer.Serialize(ref null);
         if (subVersion is >= 0xc3 and < 0xe5)
-            serializer.Thingarray(null);
+            Serializer.Serialize(ref null);
         switch (subVersion)
         {
             case >= 0x98 and < 0xe5:
-                serializer.Thingarray(null);
+                Serializer.Serialize(ref null);
                 break;
             case >= 0xe5:
-                DeferredDestroys = serializer.Array(DeferredDestroys, true);
+                DeferredDestroys = Serializer.Serialize(ref DeferredDestroys, true);
                 break;
         }
 
         if (subVersion >= 0xcf) {
-            GlobalDofFront = serializer.F32(GlobalDofFront);
-            GlobalDofBack = serializer.F32(GlobalDofBack);
-            GlobalDofSackTrack = serializer.F32(GlobalDofSackTrack);
+            Serializer.Serialize(ref GlobalDofFront);
+            Serializer.Serialize(ref GlobalDofBack);
+            Serializer.Serialize(ref GlobalDofSackTrack);
         }
 
         if (subVersion >= 0xda)
-            EnableSackpocket = serializer.Bool(EnableSackpocket);
+            Serializer.Serialize(ref EnableSackpocket);
 
         if (subVersion >= 0x170)
-            ShowQuestLog = serializer.Bool(ShowQuestLog);
+            Serializer.Serialize(ref ShowQuestLog);
 
         if (subVersion >= 0x11d)
-            ScoreboardUnlockLevelSlot = serializer.Struct(ScoreboardUnlockLevelSlot);
+            Serializer.Serialize(ref ScoreboardUnlockLevelSlot);
 
         if (subVersion >= 0x154)
-            ProgressBoardLevelLinkStartPoint = serializer.Wstr(ProgressBoardLevelLinkStartPoint);
+            Serializer.Serialize(ref ProgressBoardLevelLinkStartPoint);
 
         if (subVersion >= 0x15e)
-            IsLbp3World = serializer.Bool(IsLbp3World);
+            Serializer.Serialize(ref IsLbp3World);
     }
 
     public int GetAllocatedSize() { return 0; }

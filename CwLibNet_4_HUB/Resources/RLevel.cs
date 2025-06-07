@@ -1,16 +1,6 @@
-using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.EX;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Inventory;
-using CwLibNet.Structs.Level;
-using CwLibNet.Structs.Profile;
-using CwLibNet.Structs.Things;
-using CwLibNet.Structs.Things.Parts;
-using CwLibNet.Types;
 using CwLibNet.Types.Data;
 
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Resources;
 
 public class RLevel: Resource
@@ -75,77 +65,77 @@ public class RLevel: Resource
     }
 
     
-    public override void Serialize(Serializer serializer)
+    public override void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
         // Should move this to a common place at some point.
-        if (serializer.IsWriting()) OnStartSave(revision);
+        if (Serializer.IsWriting()) OnStartSave(revision);
 
 
         if (version > 0x3e6)
         {
-            if (!serializer.IsWriting())
-                CrossPlayVitaDependencyHashes = new Sha1?[serializer.GetInput().I32()];
+            if (!Serializer.IsWriting())
+                CrossPlayVitaDependencyHashes = new Sha1?[Serializer.GetInput().I32()];
             else
             {
                 CrossPlayVitaDependencyHashes ??= [];
-                serializer.GetOutput().I32(CrossPlayVitaDependencyHashes.Length);
+                Serializer.GetOutput().I32(CrossPlayVitaDependencyHashes.Length);
             }
             for (var i = 0; i < CrossPlayVitaDependencyHashes.Length; ++i)
                 CrossPlayVitaDependencyHashes[i] =
-                    serializer.Sha1(CrossPlayVitaDependencyHashes[i]);
+                    Serializer.Serialize(ref CrossPlayVitaDependencyHashes[i]);
         }
 
-        WorldThing = serializer.Reference(WorldThing);
+        Serializer.Serialize(ref WorldThing);
         if (version > 0x213)
-            PlayerRecord = serializer.Struct(PlayerRecord);
+            Serializer.Serialize(ref PlayerRecord);
 
         if (version > 0x347)
-            TutorialInventory = serializer.Arraylist(TutorialInventory);
+            Serializer.Serialize(ref TutorialInventory);
         if (version > 0x35c)
-            TutorialInventoryData = serializer.Arraylist(TutorialInventoryData);
+            Serializer.Serialize(ref TutorialInventoryData);
         if (version > 0x39b)
-            TutorialInventoryActive = serializer.Bool(TutorialInventoryActive);
+            Serializer.Serialize(ref TutorialInventoryActive);
         if (version > 0x3b0)
-            CopiedFromSomeoneElse = serializer.Bool(CopiedFromSomeoneElse);
+            Serializer.Serialize(ref CopiedFromSomeoneElse);
 
         if (revision.Has(Branch.Double11, 0x70))
         {
-            MusicGuid = serializer.Guid(MusicGuid);
-            MusicSettingsGuid = serializer.Guid(MusicSettingsGuid);
-            MusicStemVolumes = serializer.Floatarray(MusicStemVolumes);
+            MusicGuid = Serializer.Serialize(ref MusicGuid);
+            MusicSettingsGuid = Serializer.Serialize(ref MusicSettingsGuid);
+            Serializer.Serialize(ref MusicStemVolumes);
         }
 
         if (subVersion is > 0x34 and < 0x91)
-            serializer.Bool(false);
+            Serializer.Serialize(ref false);
         if (subVersion is > 0x34 and < 0xb3)
-            serializer.Bool(false);
+            Serializer.Serialize(ref false);
         if (subVersion is > 0x94 and < 0x12a)
-            serializer.Bool(false); // savedThroughPusher
+            Serializer.Serialize(ref false); // savedThroughPusher
 
         DceUuid = subVersion switch
         {
             >= 0xf1 and <= 0xf9 => throw new SerializationException("Legacy adventure data not supported in " +
                                                                     "serialization!"),
-            >= 0xfa => serializer.Bytearray(DceUuid),
+            >= 0xfa => Serializer.Serialize(ref DceUuid),
             _ => DceUuid
         };
 
         switch (subVersion)
         {
             case >= 0x161 and < 0x169:
-                serializer.Resource(null, ResourceType.AdventureSharedData);
+                Serializer.Serialize(ref null, ResourceType.AdventureSharedData);
                 break;
             case >= 0x169:
-                AdventureData = serializer.Reference(AdventureData);
+                Serializer.Serialize(ref AdventureData);
                 break;
         }
 
         // Should move this to a common place at some point.
-        if (!serializer.IsWriting()) OnLoadFinished(revision);
+        if (!Serializer.IsWriting()) OnLoadFinished(revision);
     }
 
     private bool IsValidLevel()
@@ -589,14 +579,14 @@ public class RLevel: Resource
         // 16MB buffer for generation of levels, since the allocated size will get
         // stuck in a recursive loop until I fix it.
         var serializer = new Serializer(0x1000000, revision, compressionFlags);
-        serializer.Struct(this);
+        Serializer.Serialize(ref this);
         return new SerializationData(
-            serializer.GetBuffer(),
+            Serializer.GetBuffer(),
             revision,
             compressionFlags,
             ResourceType.Level,
             SerializationType.BINARY,
-            serializer.GetDependencies()
+            Serializer.GetDependencies()
         );
     }
 }

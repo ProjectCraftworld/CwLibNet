@@ -1,8 +1,8 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -24,21 +24,21 @@ public class WhipSim : ISerializable
         public float AttachedZOffset;
 
 
-        public void Serialize(Serializer serializer)
+        public void Serialize()
         {
-            CreatureThing = serializer.Thing(CreatureThing);
-            BaseHandleMatrix = serializer.M44(BaseHandleMatrix);
-            PrevDir = serializer.V3(PrevDir);
-            CurrDir = serializer.V3(CurrDir);
-            StateTimer = serializer.I32(StateTimer);
-            State = serializer.I32(State);
-            AttachedThing = serializer.Thing(AttachedThing);
-            AttachedLocalPos = serializer.V3(AttachedLocalPos);
-            AttachedLocalNormal = serializer.V3(AttachedLocalNormal);
-            AttachedLocalAngle = serializer.F32(AttachedLocalAngle);
-            AttachedScale = serializer.F32(AttachedScale);
-            PlayedFailToFireSound = serializer.Bool(PlayedFailToFireSound);
-            AttachedZOffset = serializer.F32(AttachedZOffset);
+            CreatureThing = Serializer.Reference(CreatureThing);
+            Serializer.Serialize(ref BaseHandleMatrix);
+            PrevDir = Serializer.Serialize(ref PrevDir);
+            CurrDir = Serializer.Serialize(ref CurrDir);
+            Serializer.Serialize(ref StateTimer);
+            Serializer.Serialize(ref State);
+            AttachedThing = Serializer.Reference(AttachedThing);
+            AttachedLocalPos = Serializer.Serialize(ref AttachedLocalPos);
+            AttachedLocalNormal = Serializer.Serialize(ref AttachedLocalNormal);
+            Serializer.Serialize(ref AttachedLocalAngle);
+            Serializer.Serialize(ref AttachedScale);
+            Serializer.Serialize(ref PlayedFailToFireSound);
+            Serializer.Serialize(ref AttachedZOffset);
         }
 
 
@@ -58,12 +58,12 @@ public class WhipSim : ISerializable
         public Vector3? SpringThingPosition;
 
 
-        public void Serialize(Serializer serializer)
+        public void Serialize()
         {
-            SpringThing = serializer.Thing(SpringThing);
-            SpringTimer = serializer.I32(SpringTimer);
-            SpringDirection = serializer.V3(SpringDirection);
-            SpringThingPosition = serializer.V3(SpringThingPosition);
+            SpringThing = Serializer.Reference(SpringThing);
+            Serializer.Serialize(ref SpringTimer);
+            SpringDirection = Serializer.Serialize(ref SpringDirection);
+            SpringThingPosition = Serializer.Serialize(ref SpringThingPosition);
         }
 
 
@@ -333,278 +333,277 @@ public class PCreature : ISerializable
     public byte SpringForce, SpringStateTimer;
 
 
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
-        Config = serializer.Resource(Config, ResourceType.SettingsCharacter);
+        Serializer.Serialize(ref Config, Config, ResourceType.SettingsCharacter);
         if (version < 0x155)
         {
-            if (serializer.IsWriting()) serializer.GetOutput().I32(0);
+            if (Serializer.IsWriting()) Serializer.GetOutput().I32(0);
             else
             {
-                var stream = serializer.GetInput();
+                var stream = Serializer.GetInput();
                 var count = stream.I32();
                 for (var i = 0; i < count; ++i)
                     stream.V3();
             }
         }
 
-        JumpFrame = serializer.S32(JumpFrame);
+        Serializer.Serialize(ref JumpFrame);
 
-        GroundDistance = serializer.F32(GroundDistance);
-        GroundNormal = serializer.V3(GroundNormal);
+        Serializer.Serialize(ref GroundDistance);
+        GroundNormal = Serializer.Serialize(ref GroundNormal);
 
-        GrabJoint = serializer.Thing(GrabJoint);
-        if (version < 0x13c) serializer.Thing(null);
-        JumpingOff = serializer.Thing(JumpingOff);
+        GrabJoint = Serializer.Reference(GrabJoint);
+        if (version < 0x13c) Serializer.Reference(null);
+        JumpingOff = Serializer.Reference(JumpingOff);
 
-        State = serializer.I32(State);
+        Serializer.Serialize(ref State);
         if (subVersion >= 0x132)
-            SubState = serializer.I32(SubState);
-        StateTimer = serializer.I32(StateTimer);
+            Serializer.Serialize(ref SubState);
+        Serializer.Serialize(ref StateTimer);
 
-        SpeedModifier = serializer.F32(SpeedModifier);
-        JumpModifier = serializer.F32(JumpModifier);
-        StrengthModifier = serializer.F32(StrengthModifier);
+        Serializer.Serialize(ref SpeedModifier);
+        Serializer.Serialize(ref JumpModifier);
+        Serializer.Serialize(ref StrengthModifier);
 
-        if (version < 0x142) serializer.V4(null);
+        if (version < 0x142) Serializer.Serialize(ref null);
 
-        ZMode = serializer.I32(ZMode);
+        Serializer.Serialize(ref ZMode);
 
         switch (version)
         {
             case < 0x146:
-                serializer.I32(0);
+                Serializer.Serialize(ref 0);
                 break;
             case > 0x145 and < 0x1f0:
-                serializer.I32(0);
-                serializer.I32(0);
-                serializer.Bool(false);
-                serializer.Bool(false);
-                serializer.I32(0);
+                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref false);
+                Serializer.Serialize(ref false);
+                Serializer.Serialize(ref 0);
                 break;
         }
 
-        PlayerAwareness = serializer.S32(PlayerAwareness);
-        MoveDirection = serializer.S32(MoveDirection);
+        Serializer.Serialize(ref PlayerAwareness);
+        Serializer.Serialize(ref MoveDirection);
 
-        if (version < 0x15d) serializer.U8(0);
+        if (version < 0x15d) Serializer.Serialize(ref 0);
         if (version < 0x1f0)
         {
-            serializer.I32(0); // Some array of actual thing pointers, should be 0 length
-            serializer.F32(0);
+            Serializer.Serialize(ref 0); // Some array of actual thing pointers, should be 0 length
+            Serializer.Serialize(ref 0);
         }
 
-        ForceThatSmashedCreature = serializer.V3(ForceThatSmashedCreature);
-        CrushFrames = serializer.I32(CrushFrames);
+        ForceThatSmashedCreature = Serializer.Serialize(ref ForceThatSmashedCreature);
+        Serializer.Serialize(ref CrushFrames);
 
-        AwarenessRadius = serializer.F32(AwarenessRadius);
+        Serializer.Serialize(ref AwarenessRadius);
 
         if (version >= 0x1df)
-            AirTime = serializer.I32(AirTime);
+            Serializer.Serialize(ref AirTime);
         if (version >= 0x354)
         {
-            BouncepadThingUiDs = serializer.Intvector(BouncepadThingUiDs);
-            GrabbedThingUiDs = serializer.Intvector(GrabbedThingUiDs);
+            Serializer.Serialize(ref BouncepadThingUiDs);
+            Serializer.Serialize(ref GrabbedThingUiDs);
         }
 
         if (version >= 0x221)
-            HaveNotTouchedGroundSinceUsingJetpack =
-                serializer.Bool(HaveNotTouchedGroundSinceUsingJetpack);
+            Serializer.Serialize(ref HaveNotTouchedGroundSinceUsingJetpack);
 
         if (version >= 0x15d)
         {
-            LegList = serializer.Thingarray(LegList);
+            LegList = Serializer.Serialize(ref LegList);
             if (version < 0x166)
             {
-                serializer.Thingarray(null);
-                serializer.Thingarray(null);
+                Serializer.Serialize(ref null);
+                Serializer.Serialize(ref null);
             }
 
-            LifeSourceList = serializer.Thingarray(LifeSourceList);
-            LifeCreature = serializer.Thing(LifeCreature);
-            AiCreature = serializer.Thing(AiCreature);
+            LifeSourceList = Serializer.Serialize(ref LifeSourceList);
+            LifeCreature = Serializer.Reference(LifeCreature);
+            AiCreature = Serializer.Reference(AiCreature);
         }
 
         if (version >= 0x163)
         {
-            JumpInterval = serializer.I32(JumpInterval);
-            JumpIntervalPhase = serializer.I32(JumpIntervalPhase);
+            Serializer.Serialize(ref JumpInterval);
+            Serializer.Serialize(ref JumpIntervalPhase);
         }
 
-        if (version is > 0x162 and < 0x16d) serializer.Bool(false);
+        if (version is > 0x162 and < 0x16d) Serializer.Serialize(ref false);
 
-        if (version >= 0x169) MeshDirty = serializer.Bool(MeshDirty);
+        if (version >= 0x169) Serializer.Serialize(ref MeshDirty);
 
         if (version >= 0x166)
         {
-            EyeList = serializer.Thingarray(EyeList);
-            BrainAiList = serializer.Thingarray(BrainAiList);
-            BrainLifeList = serializer.Thingarray(BrainLifeList);
+            EyeList = Serializer.Serialize(ref EyeList);
+            BrainAiList = Serializer.Serialize(ref BrainAiList);
+            BrainLifeList = Serializer.Serialize(ref BrainLifeList);
         }
 
-        if (version is > 0x177 and < 0x1e3) serializer.F32(0);
+        if (version is > 0x177 and < 0x1e3) Serializer.Serialize(ref 0);
 
         if (version >= 0x19c)
-            ReactToLethal = serializer.Bool(ReactToLethal);
+            Serializer.Serialize(ref ReactToLethal);
 
         if (version >= 0x1a9)
         {
-            OldAnimMatrix = serializer.M44(OldAnimMatrix);
-            AnimOffset = serializer.F32(AnimOffset);
+            Serializer.Serialize(ref OldAnimMatrix);
+            Serializer.Serialize(ref AnimOffset);
         }
 
         if (version is > 0x1ed and < 0x225)
-            serializer.S32(0);
+            Serializer.Serialize(ref 0);
 
-        if (version >= 0x1fc) GroundNormalRaw = serializer.V3(GroundNormalRaw);
+        if (version >= 0x1fc) GroundNormalRaw = Serializer.Serialize(ref GroundNormalRaw);
         if (version >= 0x212)
         {
-            GroundNormalSmooth = serializer.V3(GroundNormalSmooth);
-            BodyAdjustApplied = serializer.F32(BodyAdjustApplied);
+            GroundNormalSmooth = Serializer.Serialize(ref GroundNormalSmooth);
+            Serializer.Serialize(ref BodyAdjustApplied);
         }
 
         if (version is >= 0x240 and < 0x2c4)
-            SwitchScale = serializer.F32(SwitchScale);
+            Serializer.Serialize(ref SwitchScale);
 
         if (version is > 0x242 and < 0x24d)
-            serializer.Resource(null, ResourceType.Plan);
+            Serializer.Serialize(ref null, ResourceType.Plan);
 
         if (version >= 0x243)
-            GunDirAndDashVec = serializer.V3(GunDirAndDashVec);
+            GunDirAndDashVec = Serializer.Serialize(ref GunDirAndDashVec);
         if (subVersion >= 0x19e)
-            GunDirAndDashVecW = serializer.F32(GunDirAndDashVecW);
+            Serializer.Serialize(ref GunDirAndDashVecW);
 
         if (version >= 0x246)
-            ResourceThing = serializer.Thing(ResourceThing);
+            ResourceThing = Serializer.Reference(ResourceThing);
 
         if (version >= 0x247)
-            GunFireFrame = serializer.I32(GunFireFrame);
+            Serializer.Serialize(ref GunFireFrame);
         if (version >= 0x248)
-            BulletCount = serializer.I32(BulletCount);
+            Serializer.Serialize(ref BulletCount);
         if (version >= 0x24a)
-            BulletImmuneTimer = serializer.I32(BulletImmuneTimer);
+            Serializer.Serialize(ref BulletImmuneTimer);
         if (version >= 0x24d)
-            BulletEmitter0 = serializer.Thing(BulletEmitter0);
+            BulletEmitter0 = Serializer.Reference(BulletEmitter0);
         if (version >= 0x3a2)
-            BulletEmitter1 = serializer.Thing(BulletEmitter1);
+            BulletEmitter1 = Serializer.Reference(BulletEmitter1);
         if (version >= 0x24e)
-            BulletPosIndex = serializer.I32(BulletPosIndex); // game
+            Serializer.Serialize(ref BulletPosIndex); // game
         // .bulletposindex_dashboots_hoverboard_unionval
         if (version >= 0x24f)
         {
-            MaxBulletCount = serializer.I32(MaxBulletCount);
-            AmmoFillFactor = serializer.F32(AmmoFillFactor);
+            Serializer.Serialize(ref MaxBulletCount);
+            Serializer.Serialize(ref AmmoFillFactor);
         }
 
         if (version >= 0x252)
-            GunDirPrecisionMode = serializer.Bool(GunDirPrecisionMode);
+            Serializer.Serialize(ref GunDirPrecisionMode);
 
         if (version >= 0x320)
         {
-            FireRate = serializer.I32(FireRate);
-            GunAccuracy = serializer.F32(GunAccuracy);
-            BulletEmitOffset = serializer.V3(BulletEmitOffset);
-            BulletEmitRotation = serializer.F32(BulletEmitRotation);
-            GunThing = serializer.Thing(GunThing);
-            GunTrigger = serializer.Thing(GunTrigger);
-            LastGunTriggerUid = serializer.I32(LastGunTriggerUid);
+            Serializer.Serialize(ref FireRate);
+            Serializer.Serialize(ref GunAccuracy);
+            BulletEmitOffset = Serializer.Serialize(ref BulletEmitOffset);
+            Serializer.Serialize(ref BulletEmitRotation);
+            GunThing = Serializer.Reference(GunThing);
+            GunTrigger = Serializer.Reference(GunTrigger);
+            Serializer.Serialize(ref LastGunTriggerUid);
         }
 
         if (version >= 0x272)
-            AirTimeLeft = serializer.I32(AirTimeLeft);
+            Serializer.Serialize(ref AirTimeLeft);
 
         if (version >= 0x2c9 || revision.Has(Branch.Leerdammer, (int)Revisions.LD_SUBMERGED))
         {
-            AmountBodySubmerged = serializer.F32(AmountBodySubmerged);
-            AmountHeadSubmerged = serializer.F32(AmountHeadSubmerged);
+            Serializer.Serialize(ref AmountBodySubmerged);
+            Serializer.Serialize(ref AmountHeadSubmerged);
         }
 
         if (version >= 0x289 || revision.IsLeerdammer())
-            HasScubaGear = serializer.Bool(HasScubaGear);
+            Serializer.Serialize(ref HasScubaGear);
 
         if (version is >= 0x289 and < 0x2c8 || revision.Before(Branch.Leerdammer,
                 (int)Revisions.LD_REMOVED_HEAD_PIECE))
-            HeadPiece = serializer.Resource(HeadPiece, ResourceType.Plan);
+            Serializer.Serialize(ref HeadPiece, HeadPiece, ResourceType.Plan);
 
         if (version >= 0x289 || revision.IsLeerdammer())
-            OutOfWaterJumpBoost = serializer.Bool(OutOfWaterJumpBoost);
+            Serializer.Serialize(ref OutOfWaterJumpBoost);
 
         if (version >= 0x2a9)
-            HandPiece = serializer.Resource(HandPiece, ResourceType.Plan);
+            Serializer.Serialize(ref HandPiece, HandPiece, ResourceType.Plan);
 
         if (version >= 0x273)
         {
-            Head = serializer.Thing(Head);
-            ToolTetherJoint = serializer.Thing(ToolTetherJoint);
-            ToolTetherWidth = serializer.F32(ToolTetherWidth);
-            Jetpack = serializer.Thing(Jetpack);
-            WallJumpDir = serializer.S32(WallJumpDir);
-            WallJumpPos = serializer.V3(WallJumpPos);
+            Head = Serializer.Reference(Head);
+            ToolTetherJoint = Serializer.Reference(ToolTetherJoint);
+            Serializer.Serialize(ref ToolTetherWidth);
+            Jetpack = Serializer.Reference(Jetpack);
+            Serializer.Serialize(ref WallJumpDir);
+            WallJumpPos = Serializer.Serialize(ref WallJumpPos);
 
-            if (!serializer.IsWriting())
-                BootContactForceList = new Vector3[serializer.GetInput().I32()];
+            if (!Serializer.IsWriting())
+                BootContactForceList = new Vector3[Serializer.GetInput().I32()];
             else
             {
                 BootContactForceList ??= [];
-                serializer.GetOutput().I32(BootContactForceList.Length);
+                Serializer.GetOutput().I32(BootContactForceList.Length);
             }
 
             for (var i = 0; i < BootContactForceList.Length; ++i)
-                BootContactForceList[i] = serializer.V3(BootContactForceList[i]).Value;
+                Serializer.Serialize(ref BootContactForceList[i]).Value;
 
 
-            GunType = serializer.S32(GunType);
-            WallJumpMat = serializer.Bool(WallJumpMat);
+            Serializer.Serialize(ref GunType);
+            Serializer.Serialize(ref WallJumpMat);
         }
 
         if (version is >= 0x29e and < 0x336)
-            LastDirectControlPrompt = serializer.Thing(LastDirectControlPrompt);
+            LastDirectControlPrompt = Serializer.Reference(LastDirectControlPrompt);
 
         if (version > 0x2e4)
-            DirectControlPrompt = serializer.Thing(DirectControlPrompt);
+            DirectControlPrompt = Serializer.Reference(DirectControlPrompt);
 
         if (version is >= 0x29e and < 0x336)
         {
             SmoothedDirectControlStick =
-                serializer.V3(SmoothedDirectControlStick);
-            DirectControlAnimFrame = serializer.I16(DirectControlAnimFrame);
-            DirectControlAnimState = serializer.I8(DirectControlAnimState);
+                Serializer.Serialize(ref SmoothedDirectControlStick);
+            Serializer.Serialize(ref DirectControlAnimFrame);
+            Serializer.Serialize(ref DirectControlAnimState);
         }
 
         switch (version)
         {
             case >= 0x29f and < 0x2c1:
-                DirectControlMode = serializer.I8(DirectControlMode);
+                Serializer.Serialize(ref DirectControlMode);
                 break;
             case >= 0x2c1 and < 0x336:
-                serializer.U8(0);
+                Serializer.Serialize(ref 0);
                 break;
         }
 
         if (version >= 0x2a5)
         {
-            ResponsiblePlayer = serializer.I32(ResponsiblePlayer);
-            ResponsibleFramesLeft = serializer.I32(ResponsibleFramesLeft);
+            Serializer.Serialize(ref ResponsiblePlayer);
+            Serializer.Serialize(ref ResponsibleFramesLeft);
         }
 
         if (version >= 0x32c)
-            CanDropPowerup = serializer.Bool(CanDropPowerup);
+            Serializer.Serialize(ref CanDropPowerup);
 
         if (version >= 0x3f0)
-            CapeExtraMaxVelocityCap = serializer.I8(CapeExtraMaxVelocityCap);
+            Serializer.Serialize(ref CapeExtraMaxVelocityCap);
 
         if (version >= 0x35a)
-            Behavior = serializer.I32(Behavior);
+            Serializer.Serialize(ref Behavior);
 
         if (version >= 0x373)
-            EffectDestroy = serializer.I32(EffectDestroy);
+            Serializer.Serialize(ref EffectDestroy);
 
         if (version >= 0x3c0)
-            WhipSim = serializer.Reference(WhipSim);
+            Serializer.Serialize(ref WhipSim);
 
         if (revision.IsVita())
         {
@@ -612,10 +611,10 @@ public class PCreature : ISerializable
             switch (vita)
             {
                 case < 0x53:
-                    serializer.U8(0);
+                    Serializer.Serialize(ref 0);
                     break;
                 case >= 0x53:
-                    ShootAtTouch = serializer.I32(ShootAtTouch);
+                    Serializer.Serialize(ref ShootAtTouch);
                     break;
             }
         }
@@ -623,52 +622,52 @@ public class PCreature : ISerializable
         switch (subVersion)
         {
             case >= 0x88 and <= 0xa4:
-                serializer.Resource(null, ResourceType.Plan);
+                Serializer.Serialize(ref null, ResourceType.Plan);
                 break;
             case >= 0xaa:
-                AlternateFormWorld = serializer.Thing(AlternateFormWorld);
+                AlternateFormWorld = Serializer.Reference(AlternateFormWorld);
                 break;
         }
 
         if (subVersion >= 0xd7)
-            HookHatState = serializer.I32(HookHatState);
+            Serializer.Serialize(ref HookHatState);
 
         if (subVersion is >= 0xd7 and < 0xea)
         {
-            serializer.Thing(null);
-            serializer.Thing(null);
+            Serializer.Reference(null);
+            Serializer.Reference(null);
         }
 
         if (subVersion >= 0xdf)
-            HookHatBogey = serializer.Thing(HookHatBogey);
+            HookHatBogey = Serializer.Reference(HookHatBogey);
 
         if (subVersion >= 0x196)
         {
-            FlyingState = serializer.I32(FlyingState);
-            FlyingTimer = serializer.I32(FlyingTimer);
-            FlyingFlumpFrame = serializer.I32(FlyingFlumpFrame);
-            FlyingImpulseFrame = serializer.I32(FlyingImpulseFrame);
-            FlyingFlapButtonTimer = serializer.I32(FlyingFlapButtonTimer);
-            FlyingBrakeTimer = serializer.I32(FlyingBrakeTimer);
-            FlyingGrabFallTimer = serializer.I32(FlyingGrabFallTimer);
-            FlyingLegScale = serializer.F32(FlyingLegScale);
-            FlyingVels = serializer.V4(FlyingVels);
-            FlyingFlapLockout = serializer.Bool(FlyingFlapLockout);
-            FlyingFallLockout = serializer.Bool(FlyingFallLockout);
-            FlyingInWind = serializer.Bool(FlyingInWind);
-            FlyingThrustLatched = serializer.Bool(FlyingThrustLatched);
-            GlidingTime = serializer.I16(GlidingTime);
+            Serializer.Serialize(ref FlyingState);
+            Serializer.Serialize(ref FlyingTimer);
+            Serializer.Serialize(ref FlyingFlumpFrame);
+            Serializer.Serialize(ref FlyingImpulseFrame);
+            Serializer.Serialize(ref FlyingFlapButtonTimer);
+            Serializer.Serialize(ref FlyingBrakeTimer);
+            Serializer.Serialize(ref FlyingGrabFallTimer);
+            Serializer.Serialize(ref FlyingLegScale);
+            Serializer.Serialize(ref FlyingVels);
+            Serializer.Serialize(ref FlyingFlapLockout);
+            Serializer.Serialize(ref FlyingFallLockout);
+            Serializer.Serialize(ref FlyingInWind);
+            Serializer.Serialize(ref FlyingThrustLatched);
+            Serializer.Serialize(ref GlidingTime);
         }
 
         if (subVersion >= 0x20c)
         {
-            SpringState = serializer.I8(SpringState);
-            SpringHasSprung = serializer.Bool(SpringHasSprung);
-            CurrentSpringData = serializer.Reference(CurrentSpringData);
-            SpringPower = serializer.I8(SpringPower);
-            SpringSeparateForces = serializer.Bool(SpringSeparateForces);
-            SpringForce = serializer.I8(SpringForce);
-            SpringStateTimer = serializer.I8(SpringStateTimer);
+            Serializer.Serialize(ref SpringState);
+            Serializer.Serialize(ref SpringHasSprung);
+            Serializer.Serialize(ref CurrentSpringData);
+            Serializer.Serialize(ref SpringPower);
+            Serializer.Serialize(ref SpringSeparateForces);
+            Serializer.Serialize(ref SpringForce);
+            Serializer.Serialize(ref SpringStateTimer);
         }
     }
 

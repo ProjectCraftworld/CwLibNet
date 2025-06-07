@@ -1,8 +1,8 @@
 using System.Numerics;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Slot;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Streaming;
 
@@ -20,39 +20,39 @@ public class LevelData : ISerializable
     public GUID? FarcGuid;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var subVersion = serializer.GetRevision().GetSubVersion();
+        var subVersion = Serializer.GetRevision().GetSubVersion();
 
         if (subVersion > 0x92)
-            LevelSlot = serializer.Struct(LevelSlot);
+            Serializer.Serialize(ref LevelSlot);
 
         if (subVersion is >= 0x93 and < 0xa1)
-            serializer.I32(0);
+            Serializer.Serialize(ref 0);
 
         if (subVersion > 0x9a)
-            Type = serializer.I32(Type);
+            Serializer.Serialize(ref Type);
 
         if (subVersion >= 0x93)
-            ChunkFileList = serializer.Arraylist(ChunkFileList, true);
+            ChunkFileList = Serializer.Serialize(ref ChunkFileList);
 
         if (subVersion > 0x92)
-            Offset = serializer.V3(Offset);
+            Offset = Serializer.Serialize(ref Offset);
         if (subVersion > 0xa0)
         {
-            Min = serializer.V3(Min);
-            Max = serializer.V3(Max);
+            Min = Serializer.Serialize(ref Min);
+            Max = Serializer.Serialize(ref Max);
         }
 
         if (subVersion > 0xab)
-            Parent = serializer.Reference(Parent);
+            Serializer.Serialize(ref Parent);
 
         if (subVersion < 0x93 || subVersion > 0xa0)
         {
             if (subVersion >= 0x1ac)
-                FarcGuid = serializer.Guid(FarcGuid);
+                FarcGuid = Serializer.Serialize(ref FarcGuid);
         }
-        else serializer.Reference<LevelData>(null);
+        else Serializer.Reference<LevelData>(null);
     }
 
     

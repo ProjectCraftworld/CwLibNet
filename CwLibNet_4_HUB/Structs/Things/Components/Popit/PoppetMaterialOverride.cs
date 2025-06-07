@@ -1,7 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Components.Popit;
 
@@ -18,25 +18,24 @@ public class PoppetMaterialOverride: ISerializable
     public int SoundEnum;
 
     public bool HeadDucking;
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
+        var version = Serializer.GetRevision().GetVersion();
 
         if (version >= 0x2ed)
-            Plan = serializer.Resource(Plan, ResourceType.Plan, true);
+            Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true);
 
-        GfxMaterial = serializer.Resource(GfxMaterial, ResourceType.GfxMaterial);
-        Bevel = serializer.Resource(Bevel, ResourceType.Bevel);
-        PhysicsMaterial = serializer.Resource(PhysicsMaterial,
-            ResourceType.Material);
-        SoundEnum = serializer.I32(SoundEnum);
-        BevelSize = serializer.F32(BevelSize);
+        Serializer.Serialize(ref GfxMaterial, GfxMaterial, ResourceType.GfxMaterial);
+        Serializer.Serialize(ref Bevel, Bevel, ResourceType.Bevel);
+        PhysicsMaterial = Serializer.Serialize(ref PhysicsMaterial, ResourceType.Material);
+        Serializer.Serialize(ref SoundEnum);
+        Serializer.Serialize(ref BevelSize);
 
         if (version < 0x2ed)
-            Plan = serializer.Resource(Plan, ResourceType.Plan, true);
+            Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true);
 
-        if (serializer.GetRevision().GetSubVersion() > 0x62)
-            HeadDucking = serializer.Bool(HeadDucking);
+        if (Serializer.GetRevision().GetSubVersion() > 0x62)
+            Serializer.Serialize(ref HeadDucking);
     }
 
     public int GetAllocatedSize()

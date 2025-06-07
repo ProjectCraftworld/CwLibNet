@@ -1,9 +1,9 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
 using CwLibNet.Util;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -30,51 +30,51 @@ public class PRenderMesh: ISerializable
     public float ParentDistanceFront, ParentDistanceSide;
     public bool IsDirty = true;
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
+        var version = Serializer.GetRevision().GetVersion();
 
-        Mesh = serializer.Resource(Mesh, ResourceType.Mesh);
+        Serializer.Serialize(ref Mesh, Mesh, ResourceType.Mesh);
 
-        BoneThings = serializer.Thingarray(BoneThings);
+        BoneThings = Serializer.Serialize(ref BoneThings);
         
-        Anim = serializer.Resource(Anim, ResourceType.Animation);
-        AnimPos = serializer.F32(AnimPos);
-        AnimSpeed = serializer.F32(AnimSpeed);
-        AnimLoop = serializer.Bool(AnimLoop);
-        LoopStart = serializer.F32(LoopStart);
-        LoopEnd = serializer.F32(LoopEnd);
+        Serializer.Serialize(ref Anim, Anim, ResourceType.Animation);
+        Serializer.Serialize(ref AnimPos);
+        Serializer.Serialize(ref AnimSpeed);
+        Serializer.Serialize(ref AnimLoop);
+        Serializer.Serialize(ref LoopStart);
+        Serializer.Serialize(ref LoopEnd);
         
-        if (version > 0x31a) EditorColor = serializer.I32(EditorColor);
+        if (version > 0x31a) Serializer.Serialize(ref EditorColor);
         else {
-            if (serializer.IsWriting())
-                serializer.GetOutput().V4(Colors.FromARGB(EditorColor));
+            if (Serializer.IsWriting())
+                Serializer.GetOutput().V4(Colors.FromARGB(EditorColor));
             else {
-                var color = serializer.GetInput().V4();
+                var color = Serializer.GetInput().V4();
                 EditorColor = Colors.GetARGB(color);
             }
         }
         
-        CastShadows = serializer.Enum8(CastShadows);
-        RttEnable = serializer.Bool(RttEnable);
+        Serializer.Serialize(ref CastShadows);
+        Serializer.Serialize(ref RttEnable);
         
         if (version > 0x2e2)
-            VisibilityFlags = serializer.I8(VisibilityFlags);
+            Serializer.Serialize(ref VisibilityFlags);
         else {
-            if (serializer.IsWriting())
-                serializer.GetOutput().Boole((VisibilityFlags & (byte)Enums.VisibilityFlags.PLAY_MODE) != 0);
+            if (Serializer.IsWriting())
+                Serializer.GetOutput().Boole((VisibilityFlags & (byte)Enums.VisibilityFlags.PLAY_MODE) != 0);
             else {
                 VisibilityFlags = (byte)Enums.VisibilityFlags.EDIT_MODE;
-                if (serializer.GetInput().Boole())
+                if (Serializer.GetInput().Boole())
                     VisibilityFlags |=  (byte)Enums.VisibilityFlags.PLAY_MODE;
             }
         }
         
-        PoppetRenderScale = serializer.F32(PoppetRenderScale);
+        Serializer.Serialize(ref PoppetRenderScale);
 
         if (version is <= 0x1f5 or >= 0x34d) return;
-        ParentDistanceFront = serializer.F32(ParentDistanceFront);
-        ParentDistanceSide = serializer.F32(ParentDistanceFront);
+        Serializer.Serialize(ref ParentDistanceFront);
+        Serializer.Serialize(ref ParentDistanceFront);
     }
 
     public int GetAllocatedSize()

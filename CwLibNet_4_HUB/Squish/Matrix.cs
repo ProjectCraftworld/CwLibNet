@@ -1,3 +1,4 @@
+using static net.torutheredfox.craftworld.serialization.Serializer;
 /* -----------------------------------------------------------------------------
 
 	Copyright (c) 2006 Simon Brown                          si@sjbrown.co.uk

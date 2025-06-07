@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Animation;
 
 public class AnimBone: ISerializable
@@ -40,10 +39,10 @@ public class AnimBone: ISerializable
     
     public virtual void Serialize(Serializer serializer)
     {
-        AnimHash = serializer.I32(AnimHash);
-        Parent = serializer.S32(Parent);
-        FirstChild = serializer.S32(FirstChild);
-        NextSibling = serializer.S32(NextSibling);
+        Serializer.Serialize(ref AnimHash);
+        Serializer.Serialize(ref Parent);
+        Serializer.Serialize(ref FirstChild);
+        Serializer.Serialize(ref NextSibling);
     }
 
     

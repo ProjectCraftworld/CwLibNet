@@ -2,8 +2,7 @@
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
 using System.Numerics;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.StaticMesh;
 
 public class UnknownStruct : ISerializable
@@ -13,11 +12,11 @@ public class UnknownStruct : ISerializable
     public Vector3? Min, Max;
     public short StructIndexA, StructIndexB, FirstPrimitive, NumPrimitives;
 
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Min = serializer.V3(Min);
-        StructIndexA = serializer.I16(StructIndexA);
-        StructIndexB = serializer.I16(StructIndexB);
+        Min = Serializer.Serialize(ref Min);
+        Serializer.Serialize(ref StructIndexA);
+        Serializer.Serialize(ref StructIndexB);
 
         // If structIndexA/structIndexB is -1
         // then firstPrimitive and numPrimitives is set
@@ -28,9 +27,9 @@ public class UnknownStruct : ISerializable
         // Does -1 indicate an instance of a submesh
         // and otherwise a group of submeshes?
 
-        Max = serializer.V3(Max);
-        FirstPrimitive = serializer.I16(FirstPrimitive);
-        NumPrimitives = serializer.I16(NumPrimitives);
+        Max = Serializer.Serialize(ref Max);
+        Serializer.Serialize(ref FirstPrimitive);
+        Serializer.Serialize(ref NumPrimitives);
     }
 
     public int GetAllocatedSize()
@@ -51,21 +50,21 @@ public class StaticMeshInfo : ISerializable
     public StaticPrimitive[]? Primitives;
     public UnknownStruct[]? Unknown;
 
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Lightmap = serializer.Resource(Lightmap, ResourceType.Texture);
-        Risemap = serializer.Resource(Risemap, ResourceType.Texture);
-        Fallmap = serializer.Resource(Fallmap, ResourceType.Texture);
+        Serializer.Serialize(ref Lightmap, Lightmap, ResourceType.Texture);
+        Serializer.Serialize(ref Risemap, Risemap, ResourceType.Texture);
+        Serializer.Serialize(ref Fallmap, Fallmap, ResourceType.Texture);
 
-        PrimitiveCount = serializer.I32(PrimitiveCount);
-        UnknownStructCount = serializer.I32(UnknownStructCount);
-        IndexBufferSize = serializer.I32(IndexBufferSize);
-        VertexStreamSize = serializer.I32(VertexStreamSize);
+        Serializer.Serialize(ref PrimitiveCount);
+        Serializer.Serialize(ref UnknownStructCount);
+        Serializer.Serialize(ref IndexBufferSize);
+        Serializer.Serialize(ref VertexStreamSize);
 
-        Primitives = serializer.Array(Primitives);
-        Unknown = serializer.Array(Unknown);
+        Primitives = Serializer.Serialize(ref Primitives);
+        Unknown = Serializer.Serialize(ref Unknown);
 
-        serializer.I32(0x48454c50); // "HELP", no idea, used as a marker?
+        Serializer.Serialize(ref 0x48454c50); // "HELP", no idea, used as a marker?
     }
 
     public int GetAllocatedSize()

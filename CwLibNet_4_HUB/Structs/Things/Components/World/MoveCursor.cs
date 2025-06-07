@@ -1,11 +1,10 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Components.World;
 
 public class MoveCursor: ISerializable
 {
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
         throw new NotImplementedException();
     }

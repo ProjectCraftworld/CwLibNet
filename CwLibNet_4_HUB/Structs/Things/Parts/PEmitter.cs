@@ -1,10 +1,10 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Things.Components;
 using CwLibNet.Structs.Things.Components.Switches;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -115,54 +115,54 @@ public class PEmitter: ISerializable
     public byte CleanUpOnDestroyed;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
         if (version < 0x368)
-            PosVel = serializer.V3(PosVel);
-        AngVel = serializer.F32(AngVel);
+            PosVel = Serializer.Serialize(ref PosVel);
+        Serializer.Serialize(ref AngVel);
 
         if (version < 0x137)
         {
-            serializer.F32(0);
-            serializer.F32(0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
         }
 
-        Frequency = serializer.I32(Frequency);
-        Phase = serializer.I32(Phase);
-        Lifetime = serializer.I32(Lifetime);
+        Serializer.Serialize(ref Frequency);
+        Serializer.Serialize(ref Phase);
+        Serializer.Serialize(ref Lifetime);
 
         if (version >= 0x2fe && subVersion < 0x65)
-            RecycleEmittedObjects = serializer.Bool(RecycleEmittedObjects);
+            Serializer.Serialize(ref RecycleEmittedObjects);
         if (subVersion > 0x64)
-            RecycleEmittedObjects = serializer.Bool(RecycleEmittedObjects); // ???
+            Serializer.Serialize(ref RecycleEmittedObjects); // ???
 
         if (version < 0x160)
-            Thing = serializer.Struct(Thing);
+            Serializer.Serialize(ref Thing);
         else
-            Plan = serializer.Resource(Plan, ResourceType.Plan);
+            Serializer.Serialize(ref Plan, Plan, ResourceType.Plan);
 
-        MaxEmitted = serializer.I32(MaxEmitted);
+        Serializer.Serialize(ref MaxEmitted);
         switch (version)
         {
             case >= 0x1c8:
-                MaxEmittedAtOnce = serializer.I32(MaxEmittedAtOnce);
+                Serializer.Serialize(ref MaxEmittedAtOnce);
                 break;
             case < 0x137:
-                serializer.Bool(false);
+                Serializer.Serialize(ref false);
                 break;
         }
 
-        SpeedScaleStartFrame = serializer.F32(SpeedScaleStartFrame);
-        SpeedScaleDeltaFrames = serializer.F32(SpeedScaleDeltaFrames);
-        SpeedScale = serializer.Struct(SpeedScale);
+        Serializer.Serialize(ref SpeedScaleStartFrame);
+        Serializer.Serialize(ref SpeedScaleDeltaFrames);
+        Serializer.Serialize(ref SpeedScale);
 
         if (version < 0x2c4)
-            LastUpdateFrame = serializer.F32(LastUpdateFrame);
-        else if (!serializer.IsWriting())
+            Serializer.Serialize(ref LastUpdateFrame);
+        else if (!Serializer.IsWriting())
             LastUpdateFrame = SpeedScaleStartFrame + SpeedScaleDeltaFrames;
 
         if (version >= 0x137)
@@ -170,52 +170,51 @@ public class PEmitter: ISerializable
             switch (version)
             {
                 case < 0x314:
-                    WorldOffset = serializer.V4(WorldOffset);
-                    WorldRotation = serializer.F32(WorldRotation);
+                    Serializer.Serialize(ref WorldOffset);
+                    Serializer.Serialize(ref WorldRotation);
                     break;
                 case >= 0x38e:
-                    WorldRotationForEditorEmitters =
-                        serializer.F32(WorldRotationForEditorEmitters);
+                    Serializer.Serialize(ref WorldRotationForEditorEmitters);
                     break;
             }
 
-            EmitScale = serializer.F32(EmitScale);
-            LinearVel = serializer.F32(LinearVel);
+            Serializer.Serialize(ref EmitScale);
+            Serializer.Serialize(ref LinearVel);
             if (version < 0x314)
-                ParentThing = serializer.Reference(ParentThing);
+                Serializer.Serialize(ref ParentThing);
         }
 
         if (version >= 0x13f)
-            CurrentEmitted = serializer.I32(CurrentEmitted);
+            Serializer.Serialize(ref CurrentEmitted);
 
         if (version >= 0x144 && subVersion < 0x64)
-            EmitFlip = serializer.Bool(EmitFlip);
+            Serializer.Serialize(ref EmitFlip);
         if (subVersion > 0x64)
-            EmitFlip = serializer.Bool(EmitFlip); // ???
+            Serializer.Serialize(ref EmitFlip); // ???
 
         if (version >= 0x1ce)
         {
-            ParentRelativeOffset = serializer.V4(ParentRelativeOffset);
-            ParentRelativeRotation = serializer.F32(ParentRelativeRotation);
-            WorldZ = serializer.F32(WorldZ);
-            ZOffset = serializer.F32(ZOffset);
-            EmitFrontZ = serializer.F32(EmitFrontZ);
-            EmitBackZ = serializer.F32(EmitBackZ);
+            Serializer.Serialize(ref ParentRelativeOffset);
+            Serializer.Serialize(ref ParentRelativeRotation);
+            Serializer.Serialize(ref WorldZ);
+            Serializer.Serialize(ref ZOffset);
+            Serializer.Serialize(ref EmitFrontZ);
+            Serializer.Serialize(ref EmitBackZ);
         }
 
         if (version >= 0x226 && subVersion < 0x64)
-            HideInPlayMode = serializer.Bool(HideInPlayMode);
+            Serializer.Serialize(ref HideInPlayMode);
         if (subVersion > 0x64)
-            HideInPlayMode = serializer.Bool(HideInPlayMode); // Literally what
+            Serializer.Serialize(ref HideInPlayMode); // Literally what
         // is the point
 
         switch (version)
         {
             case >= 0x230 and < 0x2c4:
-                ModScaleActive = serializer.Bool(ModScaleActive);
+                Serializer.Serialize(ref ModScaleActive);
                 break;
             case >= 0x2c4:
-                Behavior = serializer.I32(Behavior);
+                Serializer.Serialize(ref Behavior);
                 break;
         }
 
@@ -223,72 +222,70 @@ public class PEmitter: ISerializable
         {
             if (version >= 0x38d)
             {
-                EffectCreate = serializer.I8(EffectCreate);
-                EffectDestroy = serializer.I8(EffectDestroy);
+                Serializer.Serialize(ref EffectCreate);
+                Serializer.Serialize(ref EffectDestroy);
             }
             else
             {
-                EffectCreate = (byte) serializer.I32(EffectCreate);
-                EffectDestroy = (byte) serializer.I32(EffectDestroy);
+                EffectCreate = (byte) Serializer.Serialize(ref EffectCreate);
+                EffectDestroy = (byte) Serializer.Serialize(ref EffectDestroy);
             }
         }
 
         if (version >= 0x32e && subVersion < 0x64)
-            IgnoreParentsVelocity = serializer.Bool(IgnoreParentsVelocity);
+            Serializer.Serialize(ref IgnoreParentsVelocity);
         if (subVersion > 0x64)
-            IgnoreParentsVelocity = serializer.Bool(IgnoreParentsVelocity); //
+            Serializer.Serialize(ref IgnoreParentsVelocity); //
         // what the hell is happening here
 
         if (version >= 0x340)
-            EmittedObjectSource = serializer.Reference(EmittedObjectSource);
+            Serializer.Serialize(ref EmittedObjectSource);
 
         if (version >= 0x361 && subVersion < 0x64)
-            EditorEmitter = serializer.Bool(EditorEmitter);
+            Serializer.Serialize(ref EditorEmitter);
         if (subVersion > 0x64)
-            EditorEmitter = serializer.Bool(EditorEmitter); // did every bool
+            Serializer.Serialize(ref EditorEmitter); // did every bool
         // just die or something wtf
 
         if (version >= 0x38d && subVersion < 0x64)
-            IsLimboFlippedForGunEmitter =
-                serializer.Bool(IsLimboFlippedForGunEmitter);
+            Serializer.Serialize(ref IsLimboFlippedForGunEmitter);
         if (subVersion > 0x64)
-            IsLimboFlippedForGunEmitter =
-                serializer.Bool(IsLimboFlippedForGunEmitter); // my god
+            Serializer.Serialize(ref IsLimboFlippedForGunEmitter); // my god
 
         // they renamed this field to backupZOffset in Vita, not fans of swears? :fearful:
         if (version >= 0x3ae)
-            TheFuckingZOffset = serializer.F32(TheFuckingZOffset);
+            Serializer.Serialize(ref TheFuckingZOffset);
 
         if (revision.IsVita())
         {
             int vita = revision.GetBranchRevision();
             if (vita >= 0xf)
-                EmitNode = serializer.I8(EmitNode);
+                Serializer.Serialize(ref EmitNode);
             if (vita >= 0x2f)
-                CleanUpOnDestroyed = serializer.I8(CleanUpOnDestroyed);
+                Serializer.Serialize(ref CleanUpOnDestroyed);
         }
 
         switch (subVersion)
         {
             case >= 0x18e:
-                JustUseTheFuckingZOffset = serializer.Bool(JustUseTheFuckingZOffset);
+                Serializer.Serialize(ref JustUseTheFuckingZOffset);
                 break;
             case >= 0x31 and < 0x65:
-                SoundEnabled = serializer.Bool(SoundEnabled);
+                Serializer.Serialize(ref SoundEnabled);
                 break;
         }
 
         if (subVersion >= 0x65)
-            SoundEnabled = serializer.Bool(SoundEnabled); // seriously, for what
+            Serializer.Serialize(ref SoundEnabled); // seriously, for what
         // reason?
 
         if (subVersion is >= 0x41 and < 0x1a7)
-            serializer.Bool(false);
+            Serializer.Serialize(ref false);
 
         if (subVersion > 0x64)
-            EmitByReferenceInPlayMode = serializer.Bool(EmitByReferenceInPlayMode);
+            Serializer.Serialize(ref EmitByReferenceInPlayMode);
         if (subVersion > 0x75)
-            EmitToNearestRearLayer = serializer.Bool(EmitToNearestRearLayer);
+            Serializer.Serialize(ref EmitToNearestRearLayer);
     }
 
     

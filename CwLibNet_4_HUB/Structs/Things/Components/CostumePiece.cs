@@ -1,9 +1,9 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Resources;
 using CwLibNet.Structs.Mesh;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Components;
 
@@ -26,38 +26,38 @@ public class CostumePiece: ISerializable
     }
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
-        var subVersion = serializer.GetRevision().GetSubVersion();
+        var version = Serializer.GetRevision().GetVersion();
+        var subVersion = Serializer.GetRevision().GetSubVersion();
 
-        Mesh = serializer.Resource(Mesh, ResourceType.Mesh);
-        CategoriesUsed = serializer.I32(CategoriesUsed);
+        Serializer.Serialize(ref Mesh, Mesh, ResourceType.Mesh);
+        Serializer.Serialize(ref CategoriesUsed);
 
         if (subVersion < 0x105)
         {
-            var size = serializer.I32(MorphParamRemap != null ?
+            var size = Serializer.Serialize(ref MorphParamRemap != null ?
                 MorphParamRemap.Length : 0);
-            if (serializer.IsWriting() && size != 0)
+            if (Serializer.IsWriting() && size != 0)
             {
-                var stream = serializer.GetOutput();
+                var stream = Serializer.GetOutput();
                 foreach (var param in MorphParamRemap)
                     stream.I32(param);
             }
-            else if (!serializer.IsWriting())
+            else if (!Serializer.IsWriting())
             {
                 MorphParamRemap = new byte[size];
-                var stream = serializer.GetInput();
+                var stream = Serializer.GetInput();
                 for (var i = 0; i < size; ++i)
                     MorphParamRemap[i] = (byte) (stream.I32() & 0xFF);
             }
         }
-        else MorphParamRemap = serializer.Bytearray(MorphParamRemap);
+        else Serializer.Serialize(ref MorphParamRemap);
 
-        Primitives = serializer.Array(Primitives);
+        Primitives = Serializer.Serialize(ref Primitives);
 
         if (version >= 0x19a)
-            Plan = serializer.Resource(Plan, ResourceType.Plan, true);
+            Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true);
     }
 
     

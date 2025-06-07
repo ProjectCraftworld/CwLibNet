@@ -1,7 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -31,57 +31,56 @@ public class PGroup: ISerializable
     public bool MainSelectableObject;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
-        var isWriting = serializer.IsWriting();
+        var version = Serializer.GetRevision().GetVersion();
+        var isWriting = Serializer.IsWriting();
 
         if (version is >= 0x18e and <= 0x1b0)
-            Things = serializer.Array(Things, true);
+            Things = Serializer.Serialize(ref Things, true);
 
         if (version is >= 0x18e and < 0x341)
         {
-            if (isWriting) serializer.GetOutput().Boole((Flags & GroupFlags.COPYRIGHT) != 0);
-            else if (serializer.GetInput().Boole())
+            if (isWriting) Serializer.GetOutput().Boole((Flags & GroupFlags.COPYRIGHT) != 0);
+            else if (Serializer.GetInput().Boole())
                 Flags |= GroupFlags.COPYRIGHT;
         }
 
         if (version >= 0x18e)
-            Creator = serializer.Struct(Creator);
+            Serializer.Serialize(ref Creator);
 
         if (version is >= 0x25e or 0x252)
-            PlanDescriptor = serializer.Resource(PlanDescriptor, ResourceType.Plan,
-                true);
+            PlanDescriptor = Serializer.Serialize(ref PlanDescriptor, ResourceType.Plan);
 
         if (version is >= 0x25e and < 0x341)
         {
-            if (isWriting) serializer.GetOutput().Boole((Flags & GroupFlags.EDITABLE) != 0);
-            else if (serializer.GetInput().Boole())
+            if (isWriting) Serializer.GetOutput().Boole((Flags & GroupFlags.EDITABLE) != 0);
+            else if (Serializer.GetInput().Boole())
                 Flags |= GroupFlags.EDITABLE;
         }
 
         if (version >= 0x267)
         {
-            Emitter = serializer.Reference(Emitter);
-            Lifetime = serializer.I32(Lifetime);
-            AliveFrames = serializer.I32(AliveFrames);
+            Serializer.Serialize(ref Emitter);
+            Serializer.Serialize(ref Lifetime);
+            Serializer.Serialize(ref AliveFrames);
         }
 
         if (version is >= 0x26e and < 0x341)
         {
             if (isWriting)
-                serializer.GetOutput().Boole((Flags & GroupFlags.PICKUP_ALL_MEMBERS) != 0);
-            else if (serializer.GetInput().Boole())
+                Serializer.GetOutput().Boole((Flags & GroupFlags.PICKUP_ALL_MEMBERS) != 0);
+            else if (Serializer.GetInput().Boole())
                 Flags |= GroupFlags.PICKUP_ALL_MEMBERS;
         }
 
         switch (version)
         {
             case >= 0x30f and < 0x341:
-                MainSelectableObject = serializer.Bool(MainSelectableObject);
+                Serializer.Serialize(ref MainSelectableObject);
                 break;
             case >= 0x341:
-                Flags = serializer.U8(Flags);
+                Serializer.Serialize(ref Flags);
                 break;
         }
     }

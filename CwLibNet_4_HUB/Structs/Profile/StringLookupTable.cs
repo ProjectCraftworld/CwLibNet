@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Profile
 {
     public class StringLookupTable : ISerializable, IEnumerable<SortString>
@@ -12,9 +11,9 @@ namespace CwLibNet.Structs.Profile
         public int[]? RawIndexToSortedIndex;
         public List<SortString> StringList = [];
 
-        public void Serialize(Serializer serializer)
+        public void Serialize()
         {
-            if (serializer.IsWriting())
+            if (Serializer.IsWriting())
             {
                 _sortEnabled = true;
                 _unsorted = false;
@@ -24,10 +23,10 @@ namespace CwLibNet.Structs.Profile
                     RawIndexToSortedIndex[i] = i;
             }
 
-            _unsorted = serializer.Bool(_unsorted);
-            _sortEnabled = serializer.Bool(_sortEnabled);
-            RawIndexToSortedIndex = serializer.Intvector(RawIndexToSortedIndex);
-            StringList = serializer.Arraylist(StringList);
+            Serializer.Serialize(ref _unsorted);
+            Serializer.Serialize(ref _sortEnabled);
+            Serializer.Serialize(ref RawIndexToSortedIndex);
+            Serializer.Serialize(ref StringList);
         }
 
         public int GetAllocatedSize()

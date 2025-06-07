@@ -1,8 +1,8 @@
 ﻿using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
 using CwLibNet.Types.Profile;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Resources;
 
@@ -12,9 +12,9 @@ public class RPins : Resource
 
     public List<Pin>? Pins = [];
 
-    public override void Serialize(Serializer serializer)
+    public override void Serialize()
     {
-        Pins = serializer.Arraylist(Pins);
+        Serializer.Serialize(ref Pins);
     }
 
     public override int GetAllocatedSize()
@@ -26,13 +26,13 @@ public class RPins : Resource
     {
         var serializer = new Serializer(GetAllocatedSize(), revision,
             compressionFlags);
-        serializer.Struct(this);
+        Serializer.Serialize(ref this);
         return new SerializationData(
-            serializer.GetBuffer(),
+            Serializer.GetBuffer(),
             revision,
             compressionFlags,
             ResourceType.Pins,
             SerializationType.BINARY,
-            serializer.GetDependencies());
+            Serializer.GetDependencies());
     }
 }

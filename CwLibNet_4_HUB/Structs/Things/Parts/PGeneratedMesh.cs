@@ -1,8 +1,8 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -93,65 +93,65 @@ public class PGeneratedMesh : ISerializable
         Bevel = bevel;
     }
 
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
-        GfxMaterial = serializer.Resource(GfxMaterial, ResourceType.GfxMaterial);
-        Bevel = serializer.Resource(Bevel, ResourceType.Bevel);
-        UvOffset = serializer.V4(UvOffset);
+        Serializer.Serialize(ref GfxMaterial, GfxMaterial, ResourceType.GfxMaterial);
+        Serializer.Serialize(ref Bevel, Bevel, ResourceType.Bevel);
+        Serializer.Serialize(ref UvOffset);
         if (version >= 0x258)
-            PlanGuid = serializer.Guid(PlanGuid);
+            PlanGuid = Serializer.Serialize(ref PlanGuid);
 
         if (version >= 0x27c && subVersion < 0xfb)
         {
-            if (serializer.IsWriting())
-                serializer.GetOutput().Boole((VisibilityFlags & (byte)Enums.VisibilityFlags.PLAY_MODE) != 0);
+            if (Serializer.IsWriting())
+                Serializer.GetOutput().Boole((VisibilityFlags & (byte)Enums.VisibilityFlags.PLAY_MODE) != 0);
             else
             {
                 VisibilityFlags = (byte)Enums.VisibilityFlags.EDIT_MODE;
-                if (serializer.GetInput().Boole())
+                if (Serializer.GetInput().Boole())
                     VisibilityFlags |= (byte)Enums.VisibilityFlags.PLAY_MODE;
             }
         }
 
         if (subVersion >= 0xfb)
-            VisibilityFlags = serializer.I8(VisibilityFlags);
+            Serializer.Serialize(ref VisibilityFlags);
 
         if (version >= 0x305)
         {
-            TextureAnimationSpeed = serializer.F32(TextureAnimationSpeed);
-            TextureAnimationSpeedOff = serializer.F32(TextureAnimationSpeedOff);
+            Serializer.Serialize(ref TextureAnimationSpeed);
+            Serializer.Serialize(ref TextureAnimationSpeedOff);
         }
 
         if (revision.IsVita())
         {
             int vita = revision.GetBranchRevision();
             if (vita >= 0x6b)
-                UvMode = serializer.I32(UvMode);
+                Serializer.Serialize(ref UvMode);
             if (vita == 0x76)
-                TextureScale = serializer.F32(TextureScale);
+                Serializer.Serialize(ref TextureScale);
         }
 
         if (subVersion >= 0x34)
-            NoBevel = serializer.Bool(NoBevel);
+            Serializer.Serialize(ref NoBevel);
         if (subVersion >= 0x97)
-            Sharded = serializer.Bool(Sharded);
+            Serializer.Serialize(ref Sharded);
         if (subVersion >= 0x13d)
-            IncludeSides = serializer.Bool(IncludeSides);
+            Serializer.Serialize(ref IncludeSides);
         switch (subVersion)
         {
             case >= 0x155:
-                SlideImpactDamping = serializer.I8(SlideImpactDamping);
+                Serializer.Serialize(ref SlideImpactDamping);
                 break;
             case < 0x13d:
                 return;
         }
 
-        SlideSteer = serializer.I8(SlideSteer);
-        SlideSpeed = serializer.I8(SlideSpeed);
+        Serializer.Serialize(ref SlideSteer);
+        Serializer.Serialize(ref SlideSpeed);
     }
 
     public int GetAllocatedSize()

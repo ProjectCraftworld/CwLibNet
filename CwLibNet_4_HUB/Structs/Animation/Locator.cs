@@ -1,7 +1,6 @@
 using System.Numerics;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Animation;
 
 public class Locator: ISerializable
@@ -13,12 +12,12 @@ public class Locator: ISerializable
     public byte Looping, Type;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Position = serializer.V3(Position);
-        Name = serializer.Str(Name);
-        Looping = serializer.I8(Looping);
-        Type = serializer.I8(Type);
+        Position = Serializer.Serialize(ref Position);
+        Serializer.Serialize(ref Name);
+        Serializer.Serialize(ref Looping);
+        Serializer.Serialize(ref Type);
     }
 
     

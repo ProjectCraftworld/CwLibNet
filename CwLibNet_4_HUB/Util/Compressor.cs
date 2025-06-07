@@ -1,5 +1,6 @@
 using CwLibNet.IO.Streams;
 using CwLibNet.EX;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Util;
 

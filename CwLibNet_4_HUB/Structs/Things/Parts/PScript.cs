@@ -1,7 +1,7 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Things.Components.Script;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -25,12 +25,12 @@ public class PScript: ISerializable
     }
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
+        var version = Serializer.GetRevision().GetVersion();
         if (version is > 0x179 and < 0x1a1)
-            serializer.Bool(false); // unknown
-        Instance = serializer.Struct(Instance);
+            Serializer.Serialize(ref false); // unknown
+        Serializer.Serialize(ref Instance);
     }
 
     

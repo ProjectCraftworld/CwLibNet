@@ -1,7 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.DLC;
 
@@ -19,21 +19,21 @@ public class DLCFile: ISerializable
     public int Flags = DLCFileFlags.NONE;
     public int TypeMask;
         
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
 
-        Directory = serializer.Str(Directory);
-        File = serializer.Str(File);
-        ContentId = serializer.Str(ContentId);
-        InGameCommerceId = serializer.Str(InGameCommerceId);
+        Serializer.Serialize(ref Directory);
+        Serializer.Serialize(ref File);
+        Serializer.Serialize(ref ContentId);
+        Serializer.Serialize(ref InGameCommerceId);
         if (revision.GetVersion() >= 0x264)
-            CategoryId = serializer.Str(CategoryId);
-        Flags = serializer.I32(Flags);
+            Serializer.Serialize(ref CategoryId);
+        Serializer.Serialize(ref Flags);
 
         if (revision.GetSubVersion() > 0x20c)
         {
-            if (serializer.IsWriting())
+            if (Serializer.IsWriting())
             {
                 var output = new int[NonPlanGuids.Count];
                 for (var i = 0; i < output.Length; ++i)
@@ -41,11 +41,11 @@ public class DLCFile: ISerializable
                     var guid = NonPlanGuids[i];
                     output[i] = guid == null ? 0 : (int) guid?.Value!;
                 }
-                serializer.Intvector(output);
+                Serializer.Serialize(ref output);
             }
             else
             {
-                var guids = serializer.Intvector(null);
+                var Serializer.Serialize(ref null);
                 if (guids != null)
                 {
                     NonPlanGuids = new List<GUID?>(guids.Length);
@@ -55,7 +55,7 @@ public class DLCFile: ISerializable
             }
         }
 
-        if (serializer.IsWriting())
+        if (Serializer.IsWriting())
         {
             var output = new int[Guids.Count];
             for (var i = 0; i < output.Length; ++i)
@@ -63,11 +63,11 @@ public class DLCFile: ISerializable
                 var guid = Guids[i];
                 output[i] = guid == null ? 0 : (int) guid?.Value!;
             }
-            serializer.Intvector(output);
+            Serializer.Serialize(ref output);
         }
         else
         {
-            var guids = serializer.Intvector(null);
+            var Serializer.Serialize(ref null);
             if (guids != null)
             {
                 Guids = new List<GUID?>(guids.Length);
@@ -77,7 +77,7 @@ public class DLCFile: ISerializable
         }
 
         if (revision.Has(Branch.Double11, 0x85))
-            TypeMask = serializer.I32(TypeMask);
+            Serializer.Serialize(ref TypeMask);
     }
 
     public int GetAllocatedSize()

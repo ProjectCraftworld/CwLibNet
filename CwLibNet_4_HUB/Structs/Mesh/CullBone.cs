@@ -1,7 +1,6 @@
 using System.Numerics;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Mesh;
 
 public class CullBone: ISerializable
@@ -13,11 +12,11 @@ public class CullBone: ISerializable
     public Vector4? BoundBoxMax;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        InvSkinPoseMatrix = serializer.M44(InvSkinPoseMatrix);
-        BoundBoxMin = serializer.V4(BoundBoxMin);
-        BoundBoxMax = serializer.V4(BoundBoxMax);
+        Serializer.Serialize(ref InvSkinPoseMatrix);
+        Serializer.Serialize(ref BoundBoxMin);
+        Serializer.Serialize(ref BoundBoxMax);
     }
 
     

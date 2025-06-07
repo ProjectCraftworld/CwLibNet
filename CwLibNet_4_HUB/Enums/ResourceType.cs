@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using CwLibNet.Resources;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Enums;
 

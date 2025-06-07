@@ -2,10 +2,10 @@ using System.Text;
 using CwLibNet.Enums;
 using CwLibNet.Extensions;
 using CwLibNet.External;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Texture;
 using CwLibNet.Types;
 using SkiaSharp;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Util;
 

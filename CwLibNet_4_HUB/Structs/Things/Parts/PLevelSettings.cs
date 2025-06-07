@@ -1,8 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.EX;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Things.Components;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -18,22 +18,22 @@ public class PLevelSettings: LevelSettings
     public int BackgroundRepeatFlags;
     public float BackgroundSkyHeight;
     
-    public override void Serialize(Serializer serializer)
+    public override void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
         base.Serialize(serializer);
 
         if (version >= 0x153)
-            Presets = serializer.Arraylist(Presets);
+            Serializer.Serialize(ref Presets);
 
         if (version is > 0x152 and < 0x15a)
-            serializer.F32(0);
+            Serializer.Serialize(ref 0);
 
         if (revision.Has(Branch.Double11, 0x78))
-            NonLinearFog = serializer.Bool(NonLinearFog);
+            Serializer.Serialize(ref NonLinearFog);
 
         // 0x154 -> 0x155
         if (!(version is < 0x154 or > 0x155))
@@ -46,23 +46,22 @@ public class PLevelSettings: LevelSettings
             // vignetteBottom
         }
 
-        BackdropAmbience = serializer.Str(BackdropAmbience);
+        Serializer.Serialize(ref BackdropAmbience);
 
         switch (version)
         {
             case < 0x156:
-                serializer.Resource(null, ResourceType.Texture);
+                Serializer.Serialize(ref null, ResourceType.Texture);
                 break;
             case >= 0x2f3:
-                BackdropMesh = serializer.Resource(BackdropMesh,
-                    ResourceType.StaticMesh);
+                BackdropMesh = Serializer.Serialize(ref BackdropMesh, ResourceType.StaticMesh);
                 break;
         }
 
         if (subVersion >= 0xaf)
         {
-            BackgroundRepeatFlags = serializer.I32(BackgroundRepeatFlags);
-            BackgroundSkyHeight = serializer.F32(BackgroundSkyHeight);
+            Serializer.Serialize(ref BackgroundRepeatFlags);
+            Serializer.Serialize(ref BackgroundSkyHeight);
         }
     }
 

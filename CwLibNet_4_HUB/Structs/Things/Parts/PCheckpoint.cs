@@ -1,7 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -62,51 +62,51 @@ public class PCheckpoint: ISerializable
     public bool PersistLives;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
-        if (subVersion > 0x101) ActiveFlags = serializer.I8(ActiveFlags);
+        if (subVersion > 0x101) Serializer.Serialize(ref ActiveFlags);
         else
         {
-            if (serializer.IsWriting())
-                serializer.GetOutput().Boole((ActiveFlags & 0xf) != 0);
+            if (Serializer.IsWriting())
+                Serializer.GetOutput().Boole((ActiveFlags & 0xf) != 0);
             else
-                ActiveFlags = (byte)(serializer.GetInput().Boole() ? 0xf : (byte) 0);
+                ActiveFlags = (byte)(Serializer.GetInput().Boole() ? 0xf : (byte) 0);
         }
 
-        ActivationFrame = serializer.I32(ActivationFrame);
+        Serializer.Serialize(ref ActivationFrame);
 
         if (version < 0x1f3)
         {
-            serializer.Reference<Thing>(null);
-            serializer.I32(0);
+            Serializer.Reference<Thing>(null);
+            Serializer.Serialize(ref 0);
         }
 
         if (version >= 0x1a7)
-            SpawnsLeft = serializer.S32(SpawnsLeft);
+            Serializer.Serialize(ref SpawnsLeft);
         if (version >= 0x1c6)
-            MaxSpawnsLeft = serializer.S32(MaxSpawnsLeft);
+            Serializer.Serialize(ref MaxSpawnsLeft);
 
         if (version >= 0x1eb)
-            InstanceInfiniteSpawns = serializer.Bool(InstanceInfiniteSpawns);
+            Serializer.Serialize(ref InstanceInfiniteSpawns);
 
         if (version >= 0x1f3)
         {
-            SpawningList = serializer.Array(SpawningList, true);
-            SpawningDelay = serializer.I32(SpawningDelay);
+            SpawningList = Serializer.Serialize(ref SpawningList, true);
+            Serializer.Serialize(ref SpawningDelay);
         }
 
         if (version >= 0x1fa)
-            LifeMultiplier = serializer.I32(LifeMultiplier);
+            Serializer.Serialize(ref LifeMultiplier);
 
         if (version >= 0x2ae && subVersion < 0x100)
-            TeamFilter = serializer.I32(TeamFilter);
+            Serializer.Serialize(ref TeamFilter);
 
         if (subVersion is >= 0x1 and < 0x127)
-            serializer.U8(0); // persistPoint
+            Serializer.Serialize(ref 0); // persistPoint
 
         if (subVersion >= 0x88)
         {
@@ -114,14 +114,14 @@ public class PCheckpoint: ISerializable
             if (subVersion <= 0x12a)
             {
                 ResourceDescriptor descriptor = null;
-                if (serializer.IsWriting())
+                if (Serializer.IsWriting())
                 {
                     if (CreatureToSpawnAs != 0)
                         descriptor = new ResourceDescriptor((uint)CreatureToChangeBackTo,
                             ResourceType.Plan);
                 }
-                descriptor = serializer.Resource(descriptor, ResourceType.Plan);
-                if (!serializer.IsWriting())
+                Serializer.Serialize(ref descriptor, descriptor, ResourceType.Plan);
+                if (!Serializer.IsWriting())
                 {
                     if (descriptor != null && descriptor.IsGUID())
                         CreatureToChangeBackTo = (int) descriptor.GetGUID().Value.Value;
@@ -129,43 +129,43 @@ public class PCheckpoint: ISerializable
             }
 
             if (subVersion >= 0xc5)
-                CreatureToSpawnAs = serializer.S32(CreatureToSpawnAs);
+                Serializer.Serialize(ref CreatureToSpawnAs);
         }
         if (subVersion >= 0xcb)
-            IsStartPoint = serializer.Bool(IsStartPoint);
+            Serializer.Serialize(ref IsStartPoint);
         if (subVersion >= 0xd5)
-            LinkVisibleOnPlanet = serializer.Bool(LinkVisibleOnPlanet);
+            Serializer.Serialize(ref LinkVisibleOnPlanet);
 
         if (subVersion is >= 0x108 and < 0x129)
-            serializer.U8(0);
+            Serializer.Serialize(ref 0);
 
         if (subVersion >= 0xcb)
-            Name = serializer.Wstr(Name);
+            Serializer.Serialize(ref Name);
         if (subVersion >= 0xe4)
-            Unk1 = serializer.I32(Unk1);
+            Serializer.Serialize(ref Unk1);
         if (subVersion >= 0xd1)
-            Unk2 = serializer.Wstr(Unk2);
+            Serializer.Serialize(ref Unk2);
 
         if (subVersion >= 0x101)
         {
-            CheckpointType = serializer.I32(CheckpointType);
-            TeamFlags = serializer.I32(TeamFlags);
+            Serializer.Serialize(ref CheckpointType);
+            Serializer.Serialize(ref TeamFlags);
         }
 
         if (revision.Has(Branch.Double11, (int)Revisions.D1_CHECKPOINT_PLAY_AUDIO) || subVersion >= 0x15a)
-            EnableAudio = serializer.Bool(EnableAudio);
+            Serializer.Serialize(ref EnableAudio);
 
         if (subVersion >= 0x191)
-            ContinueMusic = serializer.Bool(ContinueMusic);
+            Serializer.Serialize(ref ContinueMusic);
 
         if (subVersion >= 0x199)
         {
-            CreatureToChangeBackTo = serializer.I32(CreatureToChangeBackTo);
-            ChangeBackGate = serializer.Bool(ChangeBackGate);
+            Serializer.Serialize(ref CreatureToChangeBackTo);
+            Serializer.Serialize(ref ChangeBackGate);
         }
 
         if (subVersion >= 0x19b)
-            PersistLives = serializer.Bool(PersistLives);
+            Serializer.Serialize(ref PersistLives);
     }
 
     

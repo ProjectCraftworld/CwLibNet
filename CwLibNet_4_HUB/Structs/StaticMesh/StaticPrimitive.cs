@@ -2,8 +2,7 @@
 using CwLibNet.IO;
 using CwLibNet.Types.Data;
 using System.Numerics;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.StaticMesh;
 
 public class StaticPrimitive: ISerializable
@@ -19,15 +18,15 @@ public class StaticPrimitive: ISerializable
     /* Not actually serialized, just used for exporting */
     public int NumVerts;
 
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Min = serializer.V4(Min);
-        Max = serializer.V4(Max);
-        Gmat = serializer.Resource(Gmat, ResourceType.GfxMaterial);
-        VertexStart = serializer.I32(VertexStart);
-        IndexStart = serializer.I32(IndexStart);
-        NumIndices = serializer.I32(NumIndices);
-        Type = serializer.Enum8(Type);
+        Serializer.Serialize(ref Min);
+        Serializer.Serialize(ref Max);
+        Serializer.Serialize(ref Gmat, Gmat, ResourceType.GfxMaterial);
+        Serializer.Serialize(ref VertexStart);
+        Serializer.Serialize(ref IndexStart);
+        Serializer.Serialize(ref NumIndices);
+        Serializer.Serialize(ref Type);
     }
 
     public int GetAllocatedSize()

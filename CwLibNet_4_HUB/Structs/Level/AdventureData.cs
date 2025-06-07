@@ -1,8 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Slot;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Level;
 
@@ -17,39 +17,38 @@ public class AdventureData: ISerializable
     public List<StartPoint> startPointList = [];
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var subVersion = serializer.GetRevision().GetSubVersion();
+        var subVersion = Serializer.GetRevision().GetSubVersion();
 
         if (subVersion > 0xaf)
-            adventureFixedID = serializer.I32(adventureFixedID);
+            Serializer.Serialize(ref adventureFixedID);
 
         if (subVersion > 0x93)
         {
-            adventureItemPUIDCounter = serializer.I32(adventureItemPUIDCounter);
-            adventureItems = serializer.Arraylist(adventureItems);
+            Serializer.Serialize(ref adventureItemPUIDCounter);
+            Serializer.Serialize(ref adventureItems);
         }
 
         if (subVersion > 0xa6)
         {
-            var numItems = serializer.I32(questDescriptors != null ?
+            var numItems = Serializer.Serialize(ref questDescriptors != null ?
                 questDescriptors.Count : 0);
-            if (serializer.IsWriting())
+            if (Serializer.IsWriting())
             {
                 foreach (var descriptor in questDescriptors)
-                    serializer.Resource(descriptor, ResourceType.Quest, true);
+                    Serializer.Serialize(ref descriptor, ResourceType.Quest, true);
             }
             else
             {
                 questDescriptors = new(numItems);
                 for (var i = 0; i < numItems; ++i)
-                    questDescriptors.Add(serializer.Resource(null, ResourceType.Quest,
-                        true));
+                    questDescriptors.Add(Serializer.Serialize(ref null, ResourceType.Quest));
             }
         }
 
         if (subVersion >= 0xd1)
-            startPointList = serializer.Arraylist(startPointList);
+            Serializer.Serialize(ref startPointList);
     }
 
     

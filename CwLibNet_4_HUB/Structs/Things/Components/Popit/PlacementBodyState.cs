@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Components.Popit;
 
 public class PlacementBodyState: ISerializable
@@ -10,11 +9,11 @@ public class PlacementBodyState: ISerializable
     public Thing? Thing;
     public Thing? OldParent;
     public int Frozen;
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Thing = serializer.Thing(Thing);
-        OldParent = serializer.Thing(OldParent);
-        Frozen = serializer.I32(Frozen);
+        Thing = Serializer.Reference(Thing);
+        OldParent = Serializer.Reference(OldParent);
+        Serializer.Serialize(ref Frozen);
     }
 
     public int GetAllocatedSize()

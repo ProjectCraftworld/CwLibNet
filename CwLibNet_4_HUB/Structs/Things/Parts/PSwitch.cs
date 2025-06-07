@@ -2,11 +2,11 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.EX;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Profile;
 using CwLibNet.Structs.Things.Components;
 using CwLibNet.Structs.Things.Components.Switches;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -168,52 +168,52 @@ public class PSwitch: ISerializable
     public byte PlayerFilter;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
         if (version < 0x1a5)
         {
-            serializer.Reference<Thing>(null);
-            serializer.Bool(false);
+            Serializer.Reference<Thing>(null);
+            Serializer.Serialize(ref false);
         }
 
-        Inverted = serializer.Bool(Inverted);
-        Radius = serializer.F32(Radius);
+        Serializer.Serialize(ref Inverted);
+        Serializer.Serialize(ref Radius);
 
-        if (version >= 0x382) MinRadius = serializer.F32(MinRadius);
+        if (version >= 0x382) Serializer.Serialize(ref MinRadius);
 
-        ColorIndex = serializer.S32(ColorIndex);
+        Serializer.Serialize(ref ColorIndex);
 
         if (version >= 0x2dc)
-            Name = serializer.Wstr(Name);
+            Serializer.Serialize(ref Name);
 
         if (version >= 0x38f)
-            CrappyOldLbp1Switch = serializer.Bool(CrappyOldLbp1Switch);
-        if (!serializer.IsWriting() && version < 0x309)
+            Serializer.Serialize(ref CrappyOldLbp1Switch);
+        if (!Serializer.IsWriting() && version < 0x309)
             CrappyOldLbp1Switch = true;
 
-        BehaviorOld = serializer.S32(BehaviorOld);
+        Serializer.Serialize(ref BehaviorOld);
 
         if (version < 0x329)
         {
             // I would just use SwitchOutput, but ternary
             // doesn't exist in this struct, despite SwitchSignal having
             // it added in 0x310
-            if (serializer.IsWriting())
+            if (Serializer.IsWriting())
             {
-                var stream = serializer.GetOutput();
+                var stream = Serializer.GetOutput();
                 var output = Outputs != null && Outputs.Length != 0 ?
                     Outputs[0] : new SwitchOutput();
-                serializer.F32(output.Activation.Activation);
+                Serializer.Serialize(ref output.Activation.Activation);
                 if (version > 0x2a2) stream.I32(output.Activation.Player);
-                serializer.Array(output.TargetList);
+                Serializer.Serialize(ref output.TargetList);
             }
             else
             {
-                var stream = serializer.GetInput();
+                var stream = Serializer.GetInput();
                 var output = new SwitchOutput
                 {
                     Activation =
@@ -222,79 +222,76 @@ public class PSwitch: ISerializable
                     }
                 };
                 if (version > 0x2a2)
-                    output.Activation.Player = serializer.I32(output.Activation.Player);
-                output.TargetList = serializer.Array<SwitchTarget>(null);
+                    output.Activation.Player = Serializer.Serialize(ref output.Activation.Player);
+                output.Serializer.Serialize(ref null);
                 Outputs = [output];
             }
         }
-        else Outputs = serializer.Array(Outputs, true);
+        else Outputs = Serializer.Serialize(ref Outputs, true);
 
         if (version is < 0x398 and >= 0x140)
         {
             if (version < 0x160)
-                RefSticker = serializer.Struct(RefSticker);
+                Serializer.Serialize(ref RefSticker);
             else
-                StickerPlan = serializer.Resource(StickerPlan, ResourceType.Plan, true,
-                    false, false);
+                StickerPlan = Serializer.Serialize(ref StickerPlan, ResourceType.Plan);
         }
 
-        if (version is > 0x13f and < 0x1a5) serializer.S32(0);
+        if (version is > 0x13f and < 0x1a5) Serializer.Serialize(ref 0);
 
-        if (version > 0x197) HideInPlayMode = serializer.Bool(HideInPlayMode);
+        if (version > 0x197) Serializer.Serialize(ref HideInPlayMode);
         if (version > 0x1a4)
         {
-            Type = serializer.Enum32(Type, true);
-            ReferenceThing = serializer.Reference(ReferenceThing);
-            ManualActivation = serializer.Struct(ManualActivation);
+            Serializer.Serialize(ref Type);
+            Serializer.Serialize(ref ReferenceThing);
+            Serializer.Serialize(ref ManualActivation);
         }
 
         switch (version)
         {
             case >= 0x398 when Type == SwitchType.STICKER || (Type == SwitchType.POCKET_ITEM && subVersion > 0x10):
-                StickerPlan = serializer.Resource(StickerPlan, ResourceType.Plan, true, false,
-                    false);
+                StickerPlan = Serializer.Serialize(ref StickerPlan, ResourceType.Plan);
                 break;
             case > 0x1a4 and < 0x368:
-                PlatformVisualFactor = serializer.F32(PlatformVisualFactor);
+                Serializer.Serialize(ref PlatformVisualFactor);
                 break;
         }
 
-        if (version is > 0x1a4 and < 0x2a0) OldActivation = serializer.F32(OldActivation);
+        if (version is > 0x1a4 and < 0x2a0) Serializer.Serialize(ref OldActivation);
 
-        if (version > 0x1a4) ActivationHoldTime = serializer.S32(ActivationHoldTime);
-        if (version > 0x1a4) RequireAll = serializer.Bool(RequireAll);
+        if (version > 0x1a4) Serializer.Serialize(ref ActivationHoldTime);
+        if (version > 0x1a4) Serializer.Serialize(ref RequireAll);
 
         if (revision.Has(Branch.Double11, 0x2a))
-            ImpactSensorMode = serializer.I8(ImpactSensorMode);
+            Serializer.Serialize(ref ImpactSensorMode);
 
         if (version is > 0x1fa and < 0x327)
         {
-            ConnectorPos = serializer.Vectorarray(ConnectorPos);
+            Serializer.Serialize(ref ConnectorPos);
 
             // connectorGrabbed
-            if (!serializer.IsWriting())
-                ConnectorGrabbed = new bool[serializer.GetInput().I32()];
+            if (!Serializer.IsWriting())
+                ConnectorGrabbed = new bool[Serializer.GetInput().I32()];
             else
             {
                 ConnectorGrabbed ??= [];
-                serializer.GetOutput().I32(ConnectorGrabbed.Length);
+                Serializer.GetOutput().I32(ConnectorGrabbed.Length);
             }
             for (var i = 0; i < ConnectorGrabbed.Length; ++i)
-                ConnectorGrabbed[i] = serializer.Bool(ConnectorGrabbed[i]);
+                Serializer.Serialize(ref ConnectorGrabbed[i]);
 
-            PortPosOffset = serializer.V4(PortPosOffset);
-            LooseConnectorPos = serializer.V4(LooseConnectorPos);
-            LooseConnectorBaseOffset = serializer.V4(LooseConnectorBaseOffset);
-            LooseConnectorGrabbed = serializer.Bool(LooseConnectorGrabbed);
+            Serializer.Serialize(ref PortPosOffset);
+            Serializer.Serialize(ref LooseConnectorPos);
+            Serializer.Serialize(ref LooseConnectorBaseOffset);
+            Serializer.Serialize(ref LooseConnectorGrabbed);
         }
 
         if (version > 0x23d)
         {
-            AngleRange = serializer.F32(AngleRange);
-            IncludeTouching = serializer.S32(IncludeTouching);
+            Serializer.Serialize(ref AngleRange);
+            Serializer.Serialize(ref IncludeTouching);
             if (version >= 0x398 && Type == SwitchType.MICROCHIP && IncludeTouching == 1)
-                StickerPlan = serializer.Resource(StickerPlan, ResourceType.Plan, true,
-                    false, false);
+                StickerPlan = Serializer.Serialize(ref StickerPlan, ResourceType.Plan);
         }
 
         if (subVersion > 0x165 && Type == SwitchType.GAME_LIVE_STREAMING_CHOICE)
@@ -303,135 +300,135 @@ public class PSwitch: ISerializable
             // Wstr[4], Wstr[5] if subVersion >= 0x187?
         }
 
-        if (version > 0x243) BulletsRequired = serializer.S32(BulletsRequired);
+        if (version > 0x243) Serializer.Serialize(ref BulletsRequired);
         switch (version)
         {
             case 0x244:
-                serializer.I32(0); // ???
+                Serializer.Serialize(ref 0); // ???
                 break;
             case > 0x244:
-                BulletsDetected = serializer.S32(BulletsDetected);
+                Serializer.Serialize(ref BulletsDetected);
                 break;
         }
 
         if (version is > 0x245 and < 0x398)
-            BulletPlayerNumber = serializer.I32(BulletPlayerNumber);
+            Serializer.Serialize(ref BulletPlayerNumber);
         if (version > 0x248)
-            BulletRefreshTime = serializer.I32(BulletRefreshTime);
+            Serializer.Serialize(ref BulletRefreshTime);
 
-        if (version >= 0x2f5) ResetWhenFull = serializer.Bool(ResetWhenFull);
+        if (version >= 0x2f5) Serializer.Serialize(ref ResetWhenFull);
 
         if (version is > 0x24a and < 0x327)
-            HideConnectors = serializer.Bool(HideConnectors);
+            Serializer.Serialize(ref HideConnectors);
 
         if (version is > 0x272 and < 0x398)
-            LogicType = serializer.Enum32(LogicType);
+            Serializer.Serialize(ref LogicType);
         if (version is > 0x272 and < 0x369)
-            UpdateFrame = serializer.I32(UpdateFrame);
+            Serializer.Serialize(ref UpdateFrame);
         if (version > 0x272)
-            InputList = serializer.Thingarray(InputList);
+            InputList = Serializer.Serialize(ref InputList);
 
         if (version is > 0x276 and < 0x327)
-            PortThing = serializer.Thing(PortThing);
+            PortThing = Serializer.Reference(PortThing);
 
         if (version > 0x283)
-            IncludeRigidConnectors = serializer.Bool(IncludeRigidConnectors);
+            Serializer.Serialize(ref IncludeRigidConnectors);
 
         if (version is > 0x284 and < 0x327)
         {
-            CustomPortOffset = serializer.V4(CustomPortOffset);
-            CustomConnectorOffset = serializer.V4(CustomConnectorOffset);
+            Serializer.Serialize(ref CustomPortOffset);
+            Serializer.Serialize(ref CustomConnectorOffset);
         }
 
         if (version > 0x28c)
         {
-            TimerCount = serializer.F32(TimerCount);
+            Serializer.Serialize(ref TimerCount);
             if (version < 0x2c4)
-                TimerAutoCount = serializer.I8(TimerAutoCount);
+                Serializer.Serialize(ref TimerAutoCount);
         }
 
         if (version > 0x2ad && subVersion < 0x100)
-            TeamFilter = serializer.I32(TeamFilter);
+            Serializer.Serialize(ref TeamFilter);
 
-        if (version > 0x2c3) Behavior = serializer.Enum32(Behavior);
+        if (version > 0x2c3) Serializer.Serialize(ref Behavior);
 
-        if (version is < 0x329 and > 0x2c3) serializer.S32(0);
+        if (version is < 0x329 and > 0x2c3) Serializer.Serialize(ref 0);
 
         if (version > 0x2c3)
         {
-            RandomBehavior = serializer.I32(RandomBehavior);
-            RandomPattern = serializer.I32(RandomPattern);
-            RandomOnTimeMin = serializer.I32(RandomOnTimeMin);
-            RandomOnTimeMax = serializer.I32(RandomOnTimeMax);
-            RandomOffTimeMin = serializer.I32(RandomOffTimeMin);
-            RandomOffTimeMax = serializer.I32(RandomOffTimeMax);
+            Serializer.Serialize(ref RandomBehavior);
+            Serializer.Serialize(ref RandomPattern);
+            Serializer.Serialize(ref RandomOnTimeMin);
+            Serializer.Serialize(ref RandomOnTimeMax);
+            Serializer.Serialize(ref RandomOffTimeMin);
+            Serializer.Serialize(ref RandomOffTimeMax);
             if (version < 0x3ad)
             {
-                RandomPhaseOn = serializer.U8(RandomPhaseOn);
-                RandomPhaseTime = serializer.S32(RandomPhaseTime);
+                Serializer.Serialize(ref RandomPhaseOn);
+                Serializer.Serialize(ref RandomPhaseTime);
             }
-            RetardedOldJoint = serializer.Bool(RetardedOldJoint);
+            Serializer.Serialize(ref RetardedOldJoint);
         }
 
-        if (version > 0x30f) KeySensorMode = serializer.I32(KeySensorMode);
+        if (version > 0x30f) Serializer.Serialize(ref KeySensorMode);
         if (version > 0x34c)
         {
-            UserDefinedColour = serializer.I32(UserDefinedColour);
-            WiresVisible = serializer.Bool(WiresVisible);
+            Serializer.Serialize(ref UserDefinedColour);
+            Serializer.Serialize(ref WiresVisible);
         }
-        if (version > 0x34f) BulletTypes = serializer.I8(BulletTypes);
-        if (version > 0x390) DetectUnspawnedPlayers = serializer.Bool(DetectUnspawnedPlayers);
+        if (version > 0x34f) Serializer.Serialize(ref BulletTypes);
+        if (version > 0x390) Serializer.Serialize(ref DetectUnspawnedPlayers);
         if (subVersion > 0x216)
-            UnspawnedBehavior = serializer.I8(UnspawnedBehavior);
-        if (version > 0x3a4) PlaySwitchAudio = serializer.Bool(PlaySwitchAudio);
+            Serializer.Serialize(ref UnspawnedBehavior);
+        if (version > 0x3a4) Serializer.Serialize(ref PlaySwitchAudio);
 
         if (revision.IsVita())
         {
             int vita = revision.GetBranchRevision();
 
             if (vita >= 0x1) // > 0x3c0
-                SwitchTouchType = serializer.I32(SwitchTouchType);
+                Serializer.Serialize(ref SwitchTouchType);
 
             if (vita is >= 0x6 and < 0x36) // > 0x3c0
-                serializer.U8(0);
+                Serializer.Serialize(ref 0);
 
             CursorScreenArea = vita switch
             {
                 // > 0x3c0
-                >= 0x9 and < 0x2c => (byte)serializer.U32(CursorScreenArea),
-                >= 0x2c => serializer.I8(CursorScreenArea),
+                >= 0x9 and < 0x2c => (byte)Serializer.Serialize(ref CursorScreenArea),
+                >= 0x2c => Serializer.Serialize(ref CursorScreenArea),
                 _ => CursorScreenArea
             };
 
             if (vita >= 0xb) // > 0x3c0
-                CursorInteractionType = serializer.I8(CursorInteractionType);
+                Serializer.Serialize(ref CursorInteractionType);
             if (vita >= 0xc) // > 0x3c0
-                CursorTouchPanels = serializer.I8(CursorTouchPanels);
+                Serializer.Serialize(ref CursorTouchPanels);
             if (vita >= 0x23) // > 0x3c0
-                CursorTouchIndex = serializer.I8(CursorTouchIndex);
+                Serializer.Serialize(ref CursorTouchIndex);
 
             switch (vita)
             {
                 case < 0x36:
                 {
                     // > 0x3c0
-                    if (vita >= 0x23) serializer.U8(0);
-                    if (vita >= 0x13) serializer.U8(0);
-                    if (vita >= 0x7) serializer.U8(0);
-                    if (vita >= 0x15) serializer.U8(0);
-                    if (vita >= 0x24) serializer.U8(0); // Most of these should correspond to a value in sw.flags
+                    if (vita >= 0x23) Serializer.Serialize(ref 0);
+                    if (vita >= 0x13) Serializer.Serialize(ref 0);
+                    if (vita >= 0x7) Serializer.Serialize(ref 0);
+                    if (vita >= 0x15) Serializer.Serialize(ref 0);
+                    if (vita >= 0x24) Serializer.Serialize(ref 0); // Most of these should correspond to a value in sw.flags
                     break;
                 }
                 case >= 0x36:
-                    Flags = serializer.I8(Flags);
+                    Serializer.Serialize(ref Flags);
                     break;
             }
 
             if (vita >= 0x2b)
-                OutputAndOr = serializer.S32(OutputAndOr);
+                Serializer.Serialize(ref OutputAndOr);
 
             if (vita is >= 0x2b and < 0x36)
-                serializer.U8(0);
+                Serializer.Serialize(ref 0);
 
             // data sampler, although 0x2f shouldn't be the switch type?
             if (revision.IsVita() && (int)Type == 0x2f)
@@ -439,80 +436,80 @@ public class PSwitch: ISerializable
                 Value ??= new DataLabelValue();
 
                 if (vita >= 0x45)
-                    Value.LabelIndex = serializer.I32(Value.LabelIndex);
+                    Serializer.Serialize(ref Value.LabelIndex);
                 if (vita >= 0x46)
                 {
-                    Value.CreatorId = serializer.Struct(Value.CreatorId);
-                    Value.LabelName = serializer.Wstr(Value.LabelName);
+                    Value.CreatorId = Serializer.Serialize(ref Value.CreatorId);
+                    Value.LabelName = Serializer.Serialize(ref Value.LabelName);
                 }
 
                 if (revision.Has(Branch.Double11, (int)Revisions.D1_LABEL_ANALOGUE_ARRAY))
-                    Value.Analogue = serializer.Floatarray(Value.Analogue);
+                    Value.Analogue = Serializer.Serialize(ref Value.Analogue);
                 else if (revision.Has(Branch.Double11, (int)Revisions.D_1DATALABELS))
                 {
-                    if (serializer.IsWriting())
+                    if (Serializer.IsWriting())
                     {
                         var analogue = Value.Analogue != null && Value.Analogue.Length != 0 ?
                             Value.Analogue[0] : 0.0f;
-                        serializer.GetOutput().F32(analogue);
+                        Serializer.GetOutput().F32(analogue);
                     }
-                    else Value.Analogue = [serializer.GetInput().F32()];
+                    else Value.Analogue = [Serializer.GetInput().F32()];
                 }
 
                 if (revision.Has(Branch.Double11, (int)Revisions.D1_LABEL_TERNARY))
-                    Value.Ternary = serializer.Bytearray(Value.Ternary);
+                    Value.Ternary = Serializer.Serialize(ref Value.Ternary);
             }
 
             switch (vita)
             {
                 case >= 0x38 and < 0x41:
-                    serializer.U8(0); // if equal to 0, includeSameChipTags is 1
+                    Serializer.Serialize(ref 0); // if equal to 0, includeSameChipTags is 1
                     break;
                 case >= 0x41:
-                    IncludeSameChipTags = serializer.I8(IncludeSameChipTags);
+                    Serializer.Serialize(ref IncludeSameChipTags);
                     break;
             }
 
             if (vita >= 0x43)
             {
-                GlowFrontCol = serializer.I32(GlowFrontCol);
-                GlowBackCol = serializer.I32(GlowBackCol);
-                GlowActiveCol = serializer.I32(GlowActiveCol);
+                Serializer.Serialize(ref GlowFrontCol);
+                Serializer.Serialize(ref GlowBackCol);
+                Serializer.Serialize(ref GlowActiveCol);
             }
 
             if (vita >= 0x54)
-                PlayerFilter = serializer.I8(PlayerFilter);
+                Serializer.Serialize(ref PlayerFilter);
         }
 
-        if (version > 0x3ec) PlayerMode = serializer.I8(PlayerMode);
+        if (version > 0x3ec) Serializer.Serialize(ref PlayerMode);
 
         if (version > 0x3ee && Type == SwitchType.DATA_SAMPLER)
         {
             Value ??= new DataLabelValue();
 
-            Value.LabelIndex = serializer.I32(Value.LabelIndex);
-            Value.CreatorId = serializer.Struct(Value.CreatorId);
-            Value.LabelName = serializer.Wstr(Value.LabelName);
-            Value.Analogue = serializer.Floatarray(Value.Analogue);
-            Value.Ternary = serializer.Bytearray(Value.Ternary);
+            Serializer.Serialize(ref Value.LabelIndex);
+            Value.CreatorId = Serializer.Serialize(ref Value.CreatorId);
+            Value.LabelName = Serializer.Serialize(ref Value.LabelName);
+            Value.Analogue = Serializer.Serialize(ref Value.Analogue);
+            Value.Ternary = Serializer.Serialize(ref Value.Ternary);
         }
 
         if (subVersion > 0x21)
-            RelativeToSequencer = serializer.Bool(RelativeToSequencer);
+            Serializer.Serialize(ref RelativeToSequencer);
         if (subVersion > 0x2f)
-            LayerRange = serializer.I8(LayerRange);
+            Serializer.Serialize(ref LayerRange);
         if (subVersion > 0x7a)
         {
-            BreakSound = serializer.Bool(BreakSound);
-            ColorTimer = serializer.S32(ColorTimer);
+            Serializer.Serialize(ref BreakSound);
+            Serializer.Serialize(ref ColorTimer);
         }
 
         if (subVersion > 0x67)
-            IsLbp3Switch = serializer.Bool(IsLbp3Switch);
+            Serializer.Serialize(ref IsLbp3Switch);
         if (subVersion > 0x68)
-            RandomNonRepeating = serializer.Bool(RandomNonRepeating);
+            Serializer.Serialize(ref RandomNonRepeating);
         if (subVersion > 0x102)
-            StickerSwitchMode = serializer.I32(StickerSwitchMode);
+            Serializer.Serialize(ref StickerSwitchMode);
     }
 
     // TODO: Actually implement

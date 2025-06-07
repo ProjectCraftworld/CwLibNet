@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Profile
 {
     public class SortString : ISerializable
@@ -20,11 +19,11 @@ namespace CwLibNet.Structs.Profile
             this.Index = index;
         }
 
-        public void Serialize(Serializer serializer)
+        public void Serialize()
         {
-            LamsKeyId = serializer.I32(LamsKeyId);
-            MyString = serializer.Wstr(MyString);
-            Index = serializer.I32(Index);
+            Serializer.Serialize(ref LamsKeyId);
+            Serializer.Serialize(ref MyString);
+            Serializer.Serialize(ref Index);
         }
 
         public int GetAllocatedSize()

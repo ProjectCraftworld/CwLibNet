@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Profile
 {
     public class PinProgress : ISerializable 
@@ -9,10 +8,10 @@ namespace CwLibNet.Structs.Profile
 
         public int progressType, progressCount;
 
-        public void Serialize(Serializer serializer) 
+        public void Serialize() 
         {
-            progressType = serializer.I32(progressType);
-            progressCount = serializer.I32(progressCount);
+            Serializer.Serialize(ref progressType);
+            Serializer.Serialize(ref progressCount);
         }
         public int GetAllocatedSize() 
         {

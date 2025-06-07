@@ -2,8 +2,7 @@
 using CwLibNet.IO.Streams;
 using CwLibNet.Types.Data;
 using System.Numerics;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Util;
 
 public class Bytes
@@ -190,8 +189,8 @@ public class Bytes
         byte compressionFlags)
     {
         var serializer = new Serializer(0x1c + 0x4, revision, compressionFlags);
-        serializer.Resource(res, ResourceType.Invalid, true);
-        return serializer.GetBuffer();
+        Serializer.Serialize(ref res, ResourceType.Invalid);
+        return Serializer.GetBuffer();
     }
 
     /**

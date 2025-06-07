@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Profile
 {
     public class MysteryPodEventSeen : ISerializable
@@ -10,10 +9,10 @@ namespace CwLibNet.Structs.Profile
         public int id;
         public int type;
 
-        public void Serialize(Serializer serializer)
+        public void Serialize()
         {
-            id = serializer.I32(id);
-            type = serializer.I32(type);
+            Serializer.Serialize(ref id);
+            Serializer.Serialize(ref type);
         }
 
         public int GetAllocatedSize()

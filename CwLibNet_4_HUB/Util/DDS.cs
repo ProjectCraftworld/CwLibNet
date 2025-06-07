@@ -1,6 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO.Streams;
 using CwLibNet.Structs.Texture;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Util;
 

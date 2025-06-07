@@ -1,8 +1,8 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Components.Popit;
 
@@ -26,29 +26,29 @@ public class PoppetTweakObjectPlacement: ISerializable
     public float Scale;
 
     public int LastGridMoveFrame, LastGridRotateFrame, LastGridScaleFrame;
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
+        var version = Serializer.GetRevision().GetVersion();
 
-        ObjectList = serializer.Thingarray(ObjectList);
-        StartMatrix = serializer.M44(StartMatrix);
+        ObjectList = Serializer.Serialize(ref ObjectList);
+        Serializer.Serialize(ref StartMatrix);
 
         if (version < 0x160)
-            Thing = serializer.Struct(Thing);
+            Serializer.Serialize(ref Thing);
         else
-            Plan = serializer.Resource(Plan, ResourceType.Plan, true, false, false);
+            Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true, false, false);
 
-        ProxyObject = serializer.Thing(ProxyObject);
-        BackZ = serializer.S32(BackZ);
-        Thickness = serializer.S32(Thickness);
-        BackToZPos = serializer.F32(BackToZPos);
-        Rotate = serializer.F32(Rotate);
-        Scale = serializer.F32(Scale);
+        ProxyObject = Serializer.Reference(ProxyObject);
+        Serializer.Serialize(ref BackZ);
+        Serializer.Serialize(ref Thickness);
+        Serializer.Serialize(ref BackToZPos);
+        Serializer.Serialize(ref Rotate);
+        Serializer.Serialize(ref Scale);
 
         if (version <= 0x26b) return;
-        LastGridMoveFrame = serializer.I32(LastGridMoveFrame);
-        LastGridRotateFrame = serializer.I32(LastGridRotateFrame);
-        LastGridScaleFrame = serializer.I32(LastGridScaleFrame);
+        Serializer.Serialize(ref LastGridMoveFrame);
+        Serializer.Serialize(ref LastGridRotateFrame);
+        Serializer.Serialize(ref LastGridScaleFrame);
     }
 
     public int GetAllocatedSize()

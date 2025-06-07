@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Profile
 {
     public class Treasure : ISerializable
@@ -11,11 +10,11 @@ namespace CwLibNet.Structs.Profile
         public int planID;
         public int timestamp;
 
-        public void Serialize(Serializer serializer) 
+        public void Serialize() 
         {
-            treasureID = serializer.I32(treasureID);
-            planID = serializer.I32(planID);
-            timestamp = serializer.I32(timestamp);
+            Serializer.Serialize(ref treasureID);
+            Serializer.Serialize(ref planID);
+            Serializer.Serialize(ref timestamp);
         }
 
         public int GetAllocatedSize() 

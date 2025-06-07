@@ -1,7 +1,6 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Slot;
 
 public class SlotID: ISerializable
@@ -9,10 +8,10 @@ public class SlotID: ISerializable
     public const int BaseAllocationSize = 0x10;
     public SlotType SlotType = SlotType.DEVELOPER;
     public long SlotNumber;
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        SlotType = serializer.Enum32(SlotType);
-        SlotNumber = serializer.U32(SlotNumber);
+        Serializer.Serialize(ref SlotType);
+        Serializer.Serialize(ref SlotNumber);
     }
 
     public SlotID()

@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Parts;
 
 public class PScriptName : ISerializable
@@ -19,9 +18,9 @@ public class PScriptName : ISerializable
     }
 
 
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Name = serializer.Str(Name);
+        Serializer.Serialize(ref Name);
     }
 
 

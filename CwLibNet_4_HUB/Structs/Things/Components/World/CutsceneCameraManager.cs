@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Components.World;
 
 public class CutsceneCameraManager: ISerializable
@@ -14,30 +13,30 @@ public class CutsceneCameraManager: ISerializable
     
     public bool CurrentCameraTweaking;
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
+        var version = Serializer.GetRevision().GetVersion();
 
-        State = serializer.I32(State);
-        CurrentCutSceneCamera = serializer.Reference(CurrentCutSceneCamera);
-        TimeInCurrentCamera = serializer.S32(TimeInCurrentCamera);
-        EndCountdown = serializer.S32(EndCountdown);
-        TransitionStage = serializer.F32(TransitionStage);
+        Serializer.Serialize(ref State);
+        Serializer.Serialize(ref CurrentCutSceneCamera);
+        Serializer.Serialize(ref TimeInCurrentCamera);
+        Serializer.Serialize(ref EndCountdown);
+        Serializer.Serialize(ref TransitionStage);
 
         switch (version)
         {
             case > 0x2ef and < 0x36e:
-                serializer.Bool(false);
-                serializer.V3(null);
-                serializer.F32(0);
-                serializer.V3(null);
-                serializer.Bool(false);
-                serializer.V3(null);
-                serializer.F32(0);
-                serializer.V3(null);
+                Serializer.Serialize(ref false);
+                Serializer.Serialize(ref null);
+                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref null);
+                Serializer.Serialize(ref false);
+                Serializer.Serialize(ref null);
+                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref null);
                 break;
             case >= 0x3a0:
-                CurrentCameraTweaking = serializer.Bool(CurrentCameraTweaking);
+                Serializer.Serialize(ref CurrentCameraTweaking);
                 break;
         }
     }

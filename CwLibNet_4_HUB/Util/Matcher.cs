@@ -1,3 +1,4 @@
+using static net.torutheredfox.craftworld.serialization.Serializer;
 ﻿namespace CwLibNet.Util;
 
 public class Matcher

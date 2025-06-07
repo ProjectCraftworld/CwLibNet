@@ -1,7 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Profile;
 
@@ -16,37 +16,37 @@ public class DataLabelValue: ISerializable
     public byte[]? Ternary;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var head = revision.GetVersion();
 
-        CreatorId = serializer.Struct(CreatorId);
-        LabelIndex = serializer.I32(LabelIndex);
+        Serializer.Serialize(ref CreatorId);
+        Serializer.Serialize(ref LabelIndex);
 
         if (revision.IsVita())
         {
 
             if (revision.Has(Branch.Double11, (int)Revisions.D1_LABEL_ANALOGUE_ARRAY))
-                Analogue = serializer.Floatarray(Analogue);
+                Serializer.Serialize(ref Analogue);
             else if (revision.Has(Branch.Double11, (int)Revisions.D_1DATALABELS))
             {
-                if (serializer.IsWriting())
+                if (Serializer.IsWriting())
                 {
                     var value = Analogue != null && Analogue.Length != 0 ? Analogue[0] : 0.0f;
-                    serializer.GetOutput().F32(value);
+                    Serializer.GetOutput().F32(value);
                 }
                 else
-                    Analogue = [serializer.GetInput().F32()];
+                    Analogue = [Serializer.GetInput().F32()];
             }
 
             if (revision.Has(Branch.Double11, (int)Revisions.D1_LABEL_TERNARY))
-                Ternary = serializer.Bytearray(Ternary);
+                Serializer.Serialize(ref Ternary);
         }
         else if (head >= (int)Revisions.DATALABELS)
         {
-            Analogue = serializer.Floatarray(Analogue);
-            Ternary = serializer.Bytearray(Ternary);
+            Serializer.Serialize(ref Analogue);
+            Serializer.Serialize(ref Ternary);
         }
     }
 

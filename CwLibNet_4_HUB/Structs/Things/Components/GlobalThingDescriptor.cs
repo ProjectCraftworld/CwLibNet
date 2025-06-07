@@ -1,7 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Components;
 
@@ -11,10 +11,10 @@ public class GlobalThingDescriptor: ISerializable
 
     public ResourceDescriptor? LevelDesc;
     public int Uid;
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        LevelDesc = serializer.Resource(LevelDesc, ResourceType.Level, true, false, false);
-        Uid = serializer.I32(Uid);
+        Serializer.Serialize(ref LevelDesc, LevelDesc, ResourceType.Level, true, false, false);
+        Serializer.Serialize(ref Uid);
     }
 
     public int GetAllocatedSize()

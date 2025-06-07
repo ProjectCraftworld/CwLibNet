@@ -1,7 +1,6 @@
 using System.Numerics;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Components;
 
 public class LevelSettings: ISerializable
@@ -40,58 +39,58 @@ public class LevelSettings: ISerializable
     
     public virtual void Serialize(Serializer serializer)
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
-        SunPosition = serializer.V3(SunPosition);
-        SunPositionScale = serializer.F32(SunPositionScale);
-        SunColor = serializer.V4(SunColor);
-        AmbientColor = serializer.V4(AmbientColor);
-        SunMultiplier = serializer.F32(SunMultiplier);
-        Exposure = serializer.F32(Exposure);
-        FogColor = serializer.V4(FogColor);
-        FogNear = serializer.F32(FogNear);
-        FogFar = serializer.F32(FogFar);
-        RimColor = serializer.V4(RimColor);
+        SunPosition = Serializer.Serialize(ref SunPosition);
+        Serializer.Serialize(ref SunPositionScale);
+        Serializer.Serialize(ref SunColor);
+        Serializer.Serialize(ref AmbientColor);
+        Serializer.Serialize(ref SunMultiplier);
+        Serializer.Serialize(ref Exposure);
+        Serializer.Serialize(ref FogColor);
+        Serializer.Serialize(ref FogNear);
+        Serializer.Serialize(ref FogFar);
+        Serializer.Serialize(ref RimColor);
 
         if (version >= 0x138)
-            RimColor2 = serializer.V4(RimColor2);
+            Serializer.Serialize(ref RimColor2);
 
         if (version >= 0x325)
         {
-            BakedShadowAmount = serializer.F32(BakedShadowAmount); // 0x1f
-            BakedShadowBlur = serializer.F32(BakedShadowBlur); // 0x20
-            BakedAoBias = serializer.F32(BakedAoBias); // 0x21
-            BakedAoScale = serializer.F32(BakedAoScale); // 0x22
-            DynamicAoAmount = serializer.F32(DynamicAoAmount); // 0x23
-            DofNear = serializer.F32(DofNear); // 0x24
+            Serializer.Serialize(ref BakedShadowAmount); // 0x1f
+            Serializer.Serialize(ref BakedShadowBlur); // 0x20
+            Serializer.Serialize(ref BakedAoBias); // 0x21
+            Serializer.Serialize(ref BakedAoScale); // 0x22
+            Serializer.Serialize(ref DynamicAoAmount); // 0x23
+            Serializer.Serialize(ref DofNear); // 0x24
         }
 
         if (version is > 0x324 and < 0x331)
-            serializer.F32(0);
+            Serializer.Serialize(ref 0);
 
         if (version >= 0x326)
-            DofFar = serializer.F32(DofFar); // 0x25
+            Serializer.Serialize(ref DofFar); // 0x25
 
         switch (version)
         {
             case > 0x324 and < 0x331:
-                serializer.F32(0);
+                Serializer.Serialize(ref 0);
                 break;
             case >= 0x331:
-                ZEffectAmount = serializer.F32(ZEffectAmount);
-                ZEffectBright = serializer.F32(ZEffectBright);
-                ZEffectContrast = serializer.F32(ZEffectContrast);
+                Serializer.Serialize(ref ZEffectAmount);
+                Serializer.Serialize(ref ZEffectBright);
+                Serializer.Serialize(ref ZEffectContrast);
                 break;
         }
 
         if (subVersion >= 0x7a)
         {
-            DofNear2 = serializer.F32(DofNear2);
-            DofFar2 = serializer.F32(DofFar2);
+            Serializer.Serialize(ref DofNear2);
+            Serializer.Serialize(ref DofFar2);
             if (subVersion >= 0xce)
-                DofFar3 = serializer.F32(DofFar3);
+                Serializer.Serialize(ref DofFar3);
         }
     }
 

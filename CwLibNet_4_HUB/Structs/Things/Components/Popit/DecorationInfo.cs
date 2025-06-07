@@ -1,7 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Components.Popit;
 
@@ -18,20 +18,20 @@ public class DecorationInfo: ISerializable
     public bool Stamping;
 
     public ResourceDescriptor? Plan;
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
+        var version = Serializer.GetRevision().GetVersion();
 
-        Angle = serializer.F32(Angle);
-        LastDecoration = serializer.I32(LastDecoration);
-        LastDecoratedThing = serializer.Thing(LastDecoratedThing);
-        Decoration = serializer.Resource(Decoration, ResourceType.Mesh);
-        Scale = serializer.F32(Scale);
-        Reversed = serializer.Bool(Reversed);
+        Serializer.Serialize(ref Angle);
+        Serializer.Serialize(ref LastDecoration);
+        LastDecoratedThing = Serializer.Reference(LastDecoratedThing);
+        Serializer.Serialize(ref Decoration, Decoration, ResourceType.Mesh);
+        Serializer.Serialize(ref Scale);
+        Serializer.Serialize(ref Reversed);
         if (version > 0x147)
-            Stamping = serializer.Bool(Stamping);
+            Serializer.Serialize(ref Stamping);
         if (version > 0x177)
-            Plan = serializer.Resource(Plan, ResourceType.Plan, true);
+            Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true);
     }
 
     public int GetAllocatedSize()

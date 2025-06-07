@@ -1,7 +1,7 @@
 using System.Numerics;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Things.Components;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -108,138 +108,137 @@ public class PCameraTweak: ISerializable
     public bool AllowSmoothZTransition;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
-        var subVersion = serializer.GetRevision().GetSubVersion();
+        var version = Serializer.GetRevision().GetVersion();
+        var subVersion = Serializer.GetRevision().GetSubVersion();
 
         if (version < 0x37e)
         {
-            PitchAngle = serializer.V3(PitchAngle);
-            TargetBox = serializer.V4(TargetBox);
+            PitchAngle = Serializer.Serialize(ref PitchAngle);
+            Serializer.Serialize(ref TargetBox);
         }
 
-        TriggerBox = serializer.V4(TriggerBox);
+        Serializer.Serialize(ref TriggerBox);
 
         if (subVersion >= 0x1b)
         {
-            TriggerLayerOffset = serializer.I8(TriggerLayerOffset);
-            TriggerLayerDepth = serializer.I8(TriggerLayerDepth);
+            Serializer.Serialize(ref TriggerLayerOffset);
+            Serializer.Serialize(ref TriggerLayerDepth);
             if (subVersion >= 0x3d)
-                IsCameraZRelative = serializer.Bool(IsCameraZRelative);
+                Serializer.Serialize(ref IsCameraZRelative);
         }
 
         if (version < 0x37e)
-            ZoomDistance = serializer.F32(ZoomDistance);
+            Serializer.Serialize(ref ZoomDistance);
 
-        PositionFactor = serializer.F32(PositionFactor);
+        Serializer.Serialize(ref PositionFactor);
 
         if (version >= 0x1f5)
-            PhotoBoothTimerLength = serializer.I32(PhotoBoothTimerLength);
+            Serializer.Serialize(ref PhotoBoothTimerLength);
 
         // some 0x13d and 0x176 levels somehow don't serialize this,
         // if a level at that revision crashes,
         // it might be this
         if (EnableImproperLoading && version is 0x13d or 0x176)
         {
-            if (!serializer.IsWriting())
-                serializer.Log("ADD CAMERA TYPE HERE", 1);
+            if (!Serializer.IsWriting())
+                Serializer.Log("ADD CAMERA TYPE HERE", 1);
         }
         else
         {
-            CameraType = version < 0x1d7 ? serializer.U8(CameraType) : serializer.S32(CameraType);
+            CameraType = version < 0x1d7 ? Serializer.Serialize(ref CameraType) : Serializer.Serialize(ref CameraType);
         }
 
 
         if (version is > 0x196 and < 0x2c4)
-            ActivationLimit = serializer.F32(ActivationLimit);
+            Serializer.Serialize(ref ActivationLimit);
 
         switch (version)
         {
             case > 0x1b6 and < 0x1d2:
-                serializer.F32(0);
-                serializer.F32(0);
+                Serializer.Serialize(ref 0);
+                Serializer.Serialize(ref 0);
                 break;
             case >= 0x1ff:
-                DisableZoomMode = serializer.Bool(DisableZoomMode);
+                Serializer.Serialize(ref DisableZoomMode);
                 break;
         }
 
         if (version >= 0x26a)
-            RequireAll = serializer.Bool(RequireAll);
+            Serializer.Serialize(ref RequireAll);
 
         if (version >= 0x2ba)
-            MotionControllerZone = serializer.Bool(MotionControllerZone);
+            Serializer.Serialize(ref MotionControllerZone);
 
         if (version >= 0x2c4)
-            Behavior = serializer.I32(Behavior);
+            Serializer.Serialize(ref Behavior);
 
         if (version is >= 0x2f8 and < 0x37e)
-            serializer.U8(0);
+            Serializer.Serialize(ref 0);
 
         if (version >= 0x2eb)
         {
-            CutSceneTransitionType = serializer.I8(CutSceneTransitionType);
-            CutSceneHoldTime = serializer.I32(CutSceneHoldTime);
+            Serializer.Serialize(ref CutSceneTransitionType);
+            Serializer.Serialize(ref CutSceneHoldTime);
         }
 
         if (version >= 0x2eb)
-            CutSceneSkippable = serializer.Bool(CutSceneSkippable);
+            Serializer.Serialize(ref CutSceneSkippable);
 
-        if (serializer.GetRevision().GetSubVersion() >= 0x9f)
-            CutSceneUseHoldTime = serializer.Bool(CutSceneUseHoldTime);
+        if (Serializer.GetRevision().GetSubVersion() >= 0x9f)
+            Serializer.Serialize(ref CutSceneUseHoldTime);
 
         if (version is > 0x2ea and < 0x2f1)
         {
-            serializer.Wstr(null);
-            serializer.S32(0);
+            Serializer.Serialize(ref null);
+            Serializer.Serialize(ref 0);
         }
 
         if (version > 0x2ed)
         {
-            CutSceneTimeSinceUsed = serializer.I8(CutSceneTimeSinceUsed);
-            CutSceneTransitionTime = serializer.I32(CutSceneTransitionTime);
+            Serializer.Serialize(ref CutSceneTimeSinceUsed);
+            Serializer.Serialize(ref CutSceneTransitionTime);
             if (version < 0x35a)
-                serializer.Bool(false);
+                Serializer.Serialize(ref false);
         }
 
         if (version > 0x359)
-            CutSceneColour = serializer.I32(CutSceneColour);
+            Serializer.Serialize(ref CutSceneColour);
 
         if (version > 0x2ed)
-            CutSceneMovieMode = serializer.Bool(CutSceneMovieMode);
+            Serializer.Serialize(ref CutSceneMovieMode);
 
         if (version > 0x2f7)
         {
-            CutSceneDepthOfField = serializer.F32(CutSceneDepthOfField);
-            CutSceneFog = serializer.F32(CutSceneFog);
+            Serializer.Serialize(ref CutSceneDepthOfField);
+            Serializer.Serialize(ref CutSceneFog);
         }
 
         if (version > 0x2f8)
-            CutSceneFov = serializer.F32(CutSceneFov);
+            Serializer.Serialize(ref CutSceneFov);
 
         if (version > 0x315)
-            CutSceneShake = serializer.F32(CutSceneShake);
+            Serializer.Serialize(ref CutSceneShake);
 
         if (version > 0x318)
-            FadeAudio = serializer.Bool(FadeAudio);
+            Serializer.Serialize(ref FadeAudio);
         if (version > 0x33e)
-            OldStyleCameraZone = serializer.Bool(OldStyleCameraZone);
+            Serializer.Serialize(ref OldStyleCameraZone);
 
         if (version > 0x369)
-            CutSceneTrackPlayer = serializer.Bool(CutSceneTrackPlayer);
+            Serializer.Serialize(ref CutSceneTrackPlayer);
         if (version > 0x395)
-            CutSceneSendsSignalOnCancelled =
-                serializer.Bool(CutSceneSendsSignalOnCancelled);
+            Serializer.Serialize(ref CutSceneSendsSignalOnCancelled);
         if (version > 0x396)
-            CutSceneWasActiveLastFrame = serializer.Bool(CutSceneWasActiveLastFrame);
+            Serializer.Serialize(ref CutSceneWasActiveLastFrame);
 
         if (version > 0x37d)
         {
-            Nodes = serializer.Array(Nodes);
+            Nodes = Serializer.Serialize(ref Nodes);
 
             // Fill in the LBP1 data with the first node if it exists
-            if (!serializer.IsWriting() && Nodes is { Length: > 0 })
+            if (!Serializer.IsWriting() && Nodes is { Length: > 0 })
             {
                 var node = Nodes[0];
                 PitchAngle = node.PitchAngle;
@@ -248,7 +247,7 @@ public class PCameraTweak: ISerializable
             }
         }
         // Cache an LBP2 node based on this data
-        else if (!serializer.IsWriting())
+        else if (!Serializer.IsWriting())
         {
             Nodes = new CameraNode[1];
             var node = new CameraNode
@@ -261,11 +260,11 @@ public class PCameraTweak: ISerializable
         }
 
         if (subVersion > 0x7d)
-            FrontDof = serializer.F32(FrontDof);
+            Serializer.Serialize(ref FrontDof);
         if (subVersion > 0x79)
-            SackTrackDof = serializer.F32(SackTrackDof);
+            Serializer.Serialize(ref SackTrackDof);
         if (subVersion > 0x7f)
-            AllowSmoothZTransition = serializer.Bool(AllowSmoothZTransition);
+            Serializer.Serialize(ref AllowSmoothZTransition);
     }
 
     

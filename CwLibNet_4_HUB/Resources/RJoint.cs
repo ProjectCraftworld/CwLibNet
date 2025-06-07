@@ -1,9 +1,6 @@
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Joint;
 using CwLibNet.Types.Data;
 
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Resources;
 
 public class RJoint: Resource
@@ -24,38 +21,38 @@ public class RJoint: Resource
     public ResourceDescriptor mesh;
 
     
-    public override void Serialize(Serializer serializer)
+    public override void Serialize()
     {
-        allowExpand = serializer.Bool(allowExpand);
-        allowContract = serializer.Bool(allowContract);
-        contractFreely = serializer.Bool(contractFreely);
+        Serializer.Serialize(ref allowExpand);
+        Serializer.Serialize(ref allowContract);
+        Serializer.Serialize(ref contractFreely);
 
-        lengthElasticity = serializer.F32(lengthElasticity);
-        lengthPlasticity = serializer.F32(lengthPlasticity);
+        Serializer.Serialize(ref lengthElasticity);
+        Serializer.Serialize(ref lengthPlasticity);
 
-        lengthFunc = serializer.Struct(lengthFunc);
+        Serializer.Serialize(ref lengthFunc);
 
-        angleDeviation = serializer.F32(angleDeviation);
-        angleElasticity = serializer.F32(angleElasticity);
-        anglePlasticity = serializer.F32(anglePlasticity);
-        angleVelocity = serializer.F32(angleVelocity);
+        Serializer.Serialize(ref angleDeviation);
+        Serializer.Serialize(ref angleElasticity);
+        Serializer.Serialize(ref anglePlasticity);
+        Serializer.Serialize(ref angleVelocity);
 
-        angleFunc = serializer.Struct(angleFunc);
+        Serializer.Serialize(ref angleFunc);
 
-        normalizedForces = serializer.Bool(normalizedForces);
-        dontRotateA = serializer.Bool(dontRotateA);
-        dontRotateB = serializer.Bool(dontRotateB);
+        Serializer.Serialize(ref normalizedForces);
+        Serializer.Serialize(ref dontRotateA);
+        Serializer.Serialize(ref dontRotateB);
 
-        breakResistance = serializer.F32(breakResistance);
+        Serializer.Serialize(ref breakResistance);
 
-        gfxMaterial = serializer.Resource(gfxMaterial, ResourceType.GfxMaterial);
+        Serializer.Serialize(ref gfxMaterial, gfxMaterial, ResourceType.GfxMaterial);
 
-        gfxWidth = serializer.F32(gfxWidth);
+        Serializer.Serialize(ref gfxWidth);
 
-        eventNameAngle = serializer.Str(eventNameAngle);
-        eventNameLength = serializer.Str(eventNameLength);
+        Serializer.Serialize(ref eventNameAngle);
+        Serializer.Serialize(ref eventNameLength);
 
-        mesh = serializer.Resource(mesh, ResourceType.Mesh);
+        Serializer.Serialize(ref mesh, mesh, ResourceType.Mesh);
     }
 
     
@@ -69,14 +66,14 @@ public class RJoint: Resource
     {
         var serializer = new Serializer(GetAllocatedSize(), revision,
             compressionFlags);
-        serializer.Struct(this);
+        Serializer.Serialize(ref this);
         return new SerializationData(
-            serializer.GetBuffer(),
+            Serializer.GetBuffer(),
             revision,
             compressionFlags,
             ResourceType.Joint,
             SerializationType.BINARY,
-            serializer.GetDependencies()
+            Serializer.GetDependencies()
         );
     }
 

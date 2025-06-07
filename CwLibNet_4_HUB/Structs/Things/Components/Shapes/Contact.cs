@@ -1,6 +1,6 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Things.Parts;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Components.Shapes;
 
@@ -12,10 +12,10 @@ public class Contact: ISerializable
     public byte Flags;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Shape = serializer.Reference(Shape);
-        Flags = serializer.I8(Flags);
+        Serializer.Serialize(ref Shape);
+        Serializer.Serialize(ref Flags);
     }
 
     

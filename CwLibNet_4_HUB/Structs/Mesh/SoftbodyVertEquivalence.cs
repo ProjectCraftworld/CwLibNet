@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Mesh;
 
 public class SoftbodyVertEquivalence: ISerializable
@@ -18,10 +17,10 @@ public class SoftbodyVertEquivalence: ISerializable
     }
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        First = serializer.I16(First);
-        Count = serializer.I16(Count);
+        Serializer.Serialize(ref First);
+        Serializer.Serialize(ref Count);
     }
 
     

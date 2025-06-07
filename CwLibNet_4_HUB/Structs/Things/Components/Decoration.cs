@@ -1,9 +1,9 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Things.Parts;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Components;
 
@@ -35,44 +35,44 @@ public class Decoration: ISerializable
     public float ZBias; // Vita
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
-        RenderMesh = serializer.Reference(RenderMesh);
+        Serializer.Serialize(ref RenderMesh);
 
-        Offset = serializer.M44(Offset);
-        ParentBone = serializer.I32(ParentBone);
-        ParentTriVert = serializer.I32(ParentTriVert);
+        Serializer.Serialize(ref Offset);
+        Serializer.Serialize(ref ParentBone);
+        Serializer.Serialize(ref ParentTriVert);
 
-        BaryU = serializer.F32(BaryU);
-        BaryV = serializer.F32(BaryV);
+        Serializer.Serialize(ref BaryU);
+        Serializer.Serialize(ref BaryV);
 
-        DecorationAngle = serializer.F32(DecorationAngle);
-        OnCostumePiece = serializer.S32(OnCostumePiece);
-        EarthDecoration = serializer.S32(EarthDecoration);
-        DecorationScale = serializer.F32(DecorationScale);
+        Serializer.Serialize(ref DecorationAngle);
+        Serializer.Serialize(ref OnCostumePiece);
+        Serializer.Serialize(ref EarthDecoration);
+        Serializer.Serialize(ref DecorationScale);
 
         if (version >= 0x214)
-            PlacedBy = serializer.I16(PlacedBy);
-        Reversed = serializer.Bool(Reversed);
+            Serializer.Serialize(ref PlacedBy);
+        Serializer.Serialize(ref Reversed);
 
         if (subVersion >= 0xc4)
-            HasShadow = serializer.Bool(HasShadow);
+            Serializer.Serialize(ref HasShadow);
 
         if (subVersion >= 0x16c)
-            IsQuest = serializer.Bool(IsQuest);
+            Serializer.Serialize(ref IsQuest);
 
         if (version >= 0x215)
-            PlayModeFrame = serializer.I32(PlayModeFrame);
+            Serializer.Serialize(ref PlayModeFrame);
 
         if (version >= 0x25b)
-            PlanGuid = serializer.Guid(PlanGuid);
+            PlanGuid = Serializer.Serialize(ref PlanGuid);
 
         if (revision.Has(Branch.Double11, 0x7c))
-            ZBias = serializer.F32(ZBias);
+            Serializer.Serialize(ref ZBias);
     }
 
     

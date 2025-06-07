@@ -1,8 +1,8 @@
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
 using CwLibNet.Enums;
 using System.Runtime.Serialization;
 using CwLibNet.Structs.Slot;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Adventure;
 
@@ -19,12 +19,12 @@ public class SlotPhotoData : ISerializable
 
     public virtual void Serialize(Serializer serializer)
     {
-        Id = serializer.Struct<SlotID>(Id);
-        var numPhotos = serializer.I32(Photos?.Length ?? 0);
-        if (!serializer.IsWriting()) Photos = new ResourceDescriptor[numPhotos];
+        Id = Serializer.Serialize(ref Id);
+        var numPhotos = Serializer.Serialize(ref Photos?.Length ?? 0);
+        if (!Serializer.IsWriting()) Photos = new ResourceDescriptor[numPhotos];
         for (var i = 0; i < numPhotos; ++i)
         {
-            Photos[i] = serializer.Resource(Photos[i], ResourceType.Plan, true);
+            Serializer.Serialize(ref Photos[i]);
         }
     }
 

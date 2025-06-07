@@ -1,7 +1,6 @@
-﻿using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Things.Parts;
+﻿using CwLibNet.Structs.Things.Parts;
 
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Enums;
 
 public struct Part(string name, int index, int version, Type? serializable) : IEquatable<Part>
@@ -186,30 +185,30 @@ public struct Part(string name, int index, int version, Type? serializable) : IE
     public bool Serialize<T>(ISerializable?[] parts, int version, long flags, Serializer serializer) where T : ISerializable
     {
         /* The Thing doesn't have this part, so it's "successful". */
-        if (!HasPart(serializer.GetRevision().Head, flags, version))
+        if (!HasPart(Serializer.GetRevision().Head, flags, version))
             return true;
 
         var part = (T?)parts[Index];
 
         if (Serializable == null)
         {
-            if (serializer.IsWriting())
+            if (Serializer.IsWriting())
             {
                 if (part != null) return false;
                 else
                 {
-                    serializer.I32(0);
+                    Serializer.Serialize(ref 0);
                     return true;
                 }
             }
-            if (!serializer.IsWriting())
+            if (!Serializer.IsWriting())
             {
-                return serializer.I32(0) == 0;
+                return Serializer.Serialize(ref 0) == 0;
             }
             return false;
         }
 
-        parts[Index] = serializer.Reference(part);
+        parts[Index] = Serializer.Serialize(ref part);
 
         return true;
     }

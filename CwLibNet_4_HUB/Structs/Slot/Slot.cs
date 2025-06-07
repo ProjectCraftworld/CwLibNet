@@ -1,11 +1,11 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
 using CwLibNet.Structs.Server;
 using CwLibNet.Util;
 using CwLibNet.Resources;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Slot;
 
@@ -129,65 +129,65 @@ public class Slot : ISerializable
         MaxPlayers = (byte)Math.Clamp(descriptor.Maxplayers, 1, 4);
     }
 
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
-        Id = serializer.Struct<SlotID>(Id);
+        Id = Serializer.Serialize(ref Id);
 
-        Root = serializer.Resource(Root, ResourceType.Level, true);
+        Serializer.Serialize(ref Root, Root, ResourceType.Level, true);
         if (subVersion >= (int)Revisions.ADVENTURE)
-            Adventure = serializer.Resource(Adventure, ResourceType.Level, true);
-        Icon = serializer.Resource(Icon, ResourceType.Texture, true);
+            Serializer.Serialize(ref Adventure, Adventure, ResourceType.Level, true);
+        Serializer.Serialize(ref Icon, Icon, ResourceType.Texture, true);
 
-        Location = (Vector4)serializer.V4(Location);
+        Location = (Vector4)Serializer.Serialize(ref Location);
 
-        AuthorId = serializer.Struct<NetworkOnlineId>(AuthorId);
+        AuthorId = Serializer.Serialize(ref AuthorId);
         if (version >= 0x13b)
-            AuthorName = serializer.Wstr(AuthorName);
+            Serializer.Serialize(ref AuthorName);
 
         if (version >= 0x183)
-            TranslationTag = serializer.Str(TranslationTag);
+            Serializer.Serialize(ref TranslationTag);
 
-        Name = serializer.Wstr(Name);
-        Description = serializer.Wstr(Description);
+        Serializer.Serialize(ref Name);
+        Serializer.Serialize(ref Description);
 
-        PrimaryLinkLevel = serializer.Struct<SlotID>(PrimaryLinkLevel);
+        PrimaryLinkLevel = Serializer.Serialize(ref PrimaryLinkLevel);
         if (version >= 0x134)
-            Group = serializer.Struct<SlotID>(Group);
+            Group = Serializer.Serialize(ref Group);
 
-        InitiallyLocked = serializer.Bool(InitiallyLocked);
+        Serializer.Serialize(ref InitiallyLocked);
 
         if (version > 0x237)
         {
-            Shareable = serializer.Bool(Shareable);
-            BackgroundGuid = (GUID) serializer.Guid(BackgroundGuid);
+            Serializer.Serialize(ref Shareable);
+            BackgroundGuid = (GUID) Serializer.Serialize(ref BackgroundGuid);
         }
 
         switch (version)
         {
             case >= 0x333:
-                PlanetDecorations = serializer.Resource(PlanetDecorations, ResourceType.Plan, true);
+                Serializer.Serialize(ref PlanetDecorations, PlanetDecorations, ResourceType.Plan, true);
                 break;
             case < 0x188:
-                serializer.U8(0); // Unknown
+                Serializer.Serialize(ref 0); // Unknown
                 break;
         }
 
         if (version > 0x1de)
-            DeveloperLevelType = serializer.Enum32(DeveloperLevelType);
+            Serializer.Serialize(ref DeveloperLevelType);
         else
-            serializer.Bool(false); // SideMission
+            Serializer.Serialize(ref false); // SideMission
 
         switch (version)
         {
             case > 0x1ad and < 0x1b9:
-                serializer.U8(0); // Unknown
+                Serializer.Serialize(ref 0); // Unknown
                 break;
             case > 0x1b8 and < 0x36c:
-                GameProgressionStatus = serializer.Enum32(GameProgressionStatus);
+                Serializer.Serialize(ref GameProgressionStatus);
                 break;
         }
 
@@ -196,103 +196,103 @@ public class Slot : ISerializable
             case <= 0x2c3:
                 return;
             case >= 0x33c:
-                Labels = serializer.Array<Label>(Labels);
+                Serializer.Serialize(ref Labels);
                 break;
         }
 
         if (version >= 0x2ea)
-            CollectabubblesRequired = serializer.Array<Collectabubble>(CollectabubblesRequired);
+            Serializer.Serialize(ref CollectabubblesRequired);
         if (version >= 0x2f4)
-            CollectabubblesContained = serializer.Array<Collectabubble>(CollectabubblesContained);
+            Serializer.Serialize(ref CollectabubblesContained);
 
         if (version >= 0x352)
-            IsSubLevel = serializer.Bool(IsSubLevel);
+            Serializer.Serialize(ref IsSubLevel);
 
         if (version < 0x3d0) return;
 
-        MinPlayers = serializer.I8(MinPlayers);
-        MaxPlayers = serializer.I8(MaxPlayers);
+        Serializer.Serialize(ref MinPlayers);
+        Serializer.Serialize(ref MaxPlayers);
 
         if (subVersion >= (int)Revisions.SLOT_ENFORCE_MINMAX)
-            EnforceMinMaxPlayers = serializer.Bool(EnforceMinMaxPlayers);
+            Serializer.Serialize(ref EnforceMinMaxPlayers);
 
         if (version >= 0x3d0)
-            MoveRecommended = serializer.Bool(MoveRecommended);
+            Serializer.Serialize(ref MoveRecommended);
 
         if (version >= 0x3e9)
-            CrossCompatible = serializer.Bool(CrossCompatible);
+            Serializer.Serialize(ref CrossCompatible);
 
         if (version >= 0x3d1)
-            ShowOnPlanet = serializer.Bool(ShowOnPlanet);
+            Serializer.Serialize(ref ShowOnPlanet);
         if (version >= 0x3d2)
-            LivesOverride = serializer.I8(LivesOverride);
+            Serializer.Serialize(ref LivesOverride);
 
         if (revision.IsVita())
         {
             if (revision.Has(Branch.Double11, (int)Revisions.D1_SLOT_REWARDS))
             {
-                AcingEnabled = serializer.Bool(AcingEnabled);
-                CustomRewardEnabled = serializer.Intarray(CustomRewardEnabled);
+                Serializer.Serialize(ref AcingEnabled);
+                Serializer.Serialize(ref CustomRewardEnabled);
 
-                if (!serializer.IsWriting())
-                    RewardConditionDescription = new string[serializer.GetInput().I32()];
-                else serializer.GetOutput().I32(RewardConditionDescription.Length);
+                if (!Serializer.IsWriting())
+                    RewardConditionDescription = new string[Serializer.GetInput().I32()];
+                else Serializer.GetOutput().I32(RewardConditionDescription.Length);
                 for (var i = 0; i < RewardConditionDescription.Length; ++i)
-                    RewardConditionDescription[i] = serializer.Wstr(RewardConditionDescription[i]);
+                    Serializer.Serialize(ref RewardConditionDescription[i]);
 
-                CustomRewardCondition = serializer.Intarray(CustomRewardCondition);
-                AmountNeededCustomReward = serializer.Floatarray(AmountNeededCustomReward);
+                Serializer.Serialize(ref CustomRewardCondition);
+                Serializer.Serialize(ref AmountNeededCustomReward);
 
-                if (!serializer.IsWriting())
-                    CustomRewardDescription = new string[serializer.GetInput().I32()];
-                else serializer.GetOutput().I32(CustomRewardDescription.Length);
+                if (!Serializer.IsWriting())
+                    CustomRewardDescription = new string[Serializer.GetInput().I32()];
+                else Serializer.GetOutput().I32(CustomRewardDescription.Length);
                 for (var i = 0; i < CustomRewardDescription.Length; ++i)
-                    CustomRewardDescription[i] = serializer.Wstr(CustomRewardDescription[i]);
+                    Serializer.Serialize(ref CustomRewardDescription[i]);
             }
 
             if (revision.Has(Branch.Double11, (int)Revisions.D1_COLLECTABUBBLES))
-                ContainsCollectabubbles = serializer.Bool(ContainsCollectabubbles);
+                Serializer.Serialize(ref ContainsCollectabubbles);
 
             if (revision.Has(Branch.Double11, (int)Revisions.D1_SLOT_ENFORCE_MINMAX))
-                EnforceMinMaxPlayers = serializer.Bool(EnforceMinMaxPlayers);
+                Serializer.Serialize(ref EnforceMinMaxPlayers);
 
             if (revision.Has(Branch.Double11, (int)Revisions.D1_SLOT_SAME_SCREEN))
-                SameScreenGame = serializer.Bool(SameScreenGame);
+                Serializer.Serialize(ref SameScreenGame);
 
             if (revision.Has(Branch.Double11, (int)Revisions.D1_SLOT_DOWNLOAD_DATA))
             {
-                SizeOfResources = serializer.I32(SizeOfResources);
-                SizeOfSubLevels = serializer.I32(SizeOfSubLevels);
-                SubLevels = serializer.Array<SlotID>(SubLevels);
-                SlotList = serializer.Resource(SlotList, ResourceType.SlotList, true);
+                Serializer.Serialize(ref SizeOfResources);
+                Serializer.Serialize(ref SizeOfSubLevels);
+                Serializer.Serialize(ref SubLevels);
+                Serializer.Serialize(ref SlotList, SlotList, ResourceType.SlotList, true);
             }
 
             if (revision.Has(Branch.Double11, (int)Revisions.D1_SLOT_REVISION))
-                Revision = serializer.I16(Revision);
+                Serializer.Serialize(ref Revision);
         }
 
         // if (!revision.IsLBP3()) return;
 
         if (subVersion >= (int)Revisions.SLOT_GAME_MODE)
-            GameMode = serializer.U8(GameMode);
+            Serializer.Serialize(ref GameMode);
 
         if (subVersion >= (int)Revisions.SLOT_GAME_KIT)
-            IsGameKit = serializer.Bool(IsGameKit);
+            Serializer.Serialize(ref IsGameKit);
 
         if (subVersion >= (int)Revisions.SLOT_ENTRANCE_DATA)
         {
-            EntranceName = serializer.Wstr(EntranceName);
-            OriginalSlotId = serializer.Struct<SlotID>(OriginalSlotId);
+            Serializer.Serialize(ref EntranceName);
+            OriginalSlotId = Serializer.Serialize(ref OriginalSlotId);
         }
 
         if (subVersion >= (int)Revisions.SLOT_BADGE_SIZE)
-            CustomBadgeSize = serializer.I8(CustomBadgeSize);
+            Serializer.Serialize(ref CustomBadgeSize);
 
         if (subVersion >= (int)Revisions.SLOT_TRAILER_PATH)
         {
-            LocalPath = serializer.Str(LocalPath);
+            Serializer.Serialize(ref LocalPath);
             if (subVersion >= (int)Revisions.SLOT_TRAILER_PATH)
-                ThumbPath = serializer.Str(ThumbPath);
+                Serializer.Serialize(ref ThumbPath);
         }
     }
 

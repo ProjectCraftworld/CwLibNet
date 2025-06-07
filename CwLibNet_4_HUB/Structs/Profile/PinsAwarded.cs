@@ -1,7 +1,6 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Profile 
 {
     public class PinsAwarded : ISerializable
@@ -20,33 +19,33 @@ namespace CwLibNet.Structs.Profile
         public byte SlappedAsBits;
         public int SimonSaysProgress;
 
-        public void Serialize(Serializer serializer)
+        public void Serialize()
         {
-            var revision = serializer.GetRevision();
+            var revision = Serializer.GetRevision();
             var version = revision.GetVersion();
             var subVersion = revision.GetSubVersion();
 
             if (version >= (int)Revisions.PROFILE_PINS) 
             {
-                PinAwards = serializer.Arraylist(PinAwards);
-                PinProgress = serializer.Arraylist(PinProgress);
-                RecentlyAwardedPinIDs = serializer.Intvector(RecentlyAwardedPinIDs);
-                ProfileDisplayPinIDs = serializer.Intvector(ProfileDisplayPinIDs);
+                Serializer.Serialize(ref PinAwards);
+                Serializer.Serialize(ref PinProgress);
+                Serializer.Serialize(ref RecentlyAwardedPinIDs);
+                Serializer.Serialize(ref ProfileDisplayPinIDs);
             }
             if (version >= (int)Revisions.PIN_FLAGS)
-                PinsFlags = serializer.I8(PinsFlags);
+                Serializer.Serialize(ref PinsFlags);
 
             if (version >= (int)Revisions.WEEKDAYS_PLAYED_PIN)
-                WeekdaysPlayedBits = serializer.I8(WeekdaysPlayedBits);
+                Serializer.Serialize(ref WeekdaysPlayedBits);
 
             if (revision.Has(Branch.Double11, (int)Revisions.D1_MOE_PIN_PROGRESS))
-                MoreOfEverythingPinProgress = serializer.I32(MoreOfEverythingPinProgress);
+                Serializer.Serialize(ref MoreOfEverythingPinProgress);
 
             if (subVersion >= (int)Revisions.SLAPPED_AS_PIN)
-                SlappedAsBits = serializer.I8(SlappedAsBits);
+                Serializer.Serialize(ref SlappedAsBits);
             
             if (subVersion >= (int)Revisions.SIMON_SAYS_PIN)
-                SimonSaysProgress = serializer.I32(SimonSaysProgress);
+                Serializer.Serialize(ref SimonSaysProgress);
         }
 
         public bool HasPin(int id)

@@ -1,9 +1,6 @@
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Things;
 using CwLibNet.Types.Data;
 
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Resources
 {
     public class RSyncedProfile : Resource
@@ -16,11 +13,11 @@ namespace CwLibNet.Resources
             public ResourceDescriptor? MainFormCostume { get; set; }
             public ResourceDescriptor? AltFormCostume { get; set; }
 
-            public void Serialize(Serializer serializer)
+            public void Serialize()
             {
-                Creature = serializer.AdventureCreatureReference(Creature);
-                MainFormCostume = serializer.Resource(MainFormCostume, ResourceType.Plan, true);
-                AltFormCostume = serializer.Resource(AltFormCostume, ResourceType.Plan, true);
+                Creature = Serializer.Reference(Creature);
+                Serializer.Serialize(ref MainFormCostume, MainFormCostume, ResourceType.Plan, true);
+                Serializer.Serialize(ref AltFormCostume, AltFormCostume, ResourceType.Plan, true);
             }
 
             public int GetAllocatedSize()
@@ -47,48 +44,48 @@ namespace CwLibNet.Resources
         public int CreatureToPodAs { get; set; }
         public bool PodAsAlternateForm { get; set; }
 
-        public override void Serialize(Serializer serializer)
+        public override void Serialize()
         {
-            var version = serializer.GetRevision().GetVersion();
-            var subVersion = serializer.GetRevision().GetSubVersion();
+            var version = Serializer.GetRevision().GetVersion();
+            var subVersion = Serializer.GetRevision().GetSubVersion();
 
-            TimePlayed = serializer.I32(TimePlayed);
-            SackboyAvatarWorld = serializer.Thing(SackboyAvatarWorld);
+            Serializer.Serialize(ref TimePlayed);
+            SackboyAvatarWorld = Serializer.Reference(SackboyAvatarWorld);
 
             if (subVersion > 0x17)
-                CreatureAvatars = serializer.Arraylist<CreatureAvatar>(CreatureAvatars);
+                CreatureAvatars = Serializer.Serialize(ref CreatureAvatars);
 
             if (version < 0x193)
-                serializer.Array<Thing>(null, true);
+                Serializer.Array<Thing>(null, true);
 
             if (version < 0x13e)
-                serializer.Resource(null, ResourceType.Texture);
+                Serializer.Serialize(ref null, ResourceType.Texture);
 
-            TimePlayed = serializer.I32(TimePlayed);
-            UniqueNumber = serializer.U64(UniqueNumber);
+            Serializer.Serialize(ref TimePlayed);
+            Serializer.Serialize(ref UniqueNumber);
 
             if (version > 0x163)
             {
-                Primary = serializer.I32(Primary);
-                Secondary = serializer.I32(Secondary);
-                Tertiary = serializer.I32(Tertiary);
+                Serializer.Serialize(ref Primary);
+                Serializer.Serialize(ref Secondary);
+                Serializer.Serialize(ref Tertiary);
                 if (version > 0x3a6)
-                    Emphasis = serializer.I32(Emphasis);
+                    Serializer.Serialize(ref Emphasis);
             }
 
             if (version > 0x1a7)
-                PlayerID = serializer.Struct(PlayerID);
+                Serializer.Serialize(ref PlayerID);
 
             if (version is > 0x1c4 and < 0x213)
-                serializer.I32(0);
+                Serializer.Serialize(ref 0);
 
             if (subVersion >= 0x9e)
-                CreatureToSpawnAs = serializer.AdventureCreatureReference(CreatureToSpawnAs);
+                CreatureToSpawnAs = Serializer.Reference(CreatureToSpawnAs);
             if (subVersion >= 0x18a)
-                SpawnAsAlternateForm = serializer.Bool(SpawnAsAlternateForm);
+                Serializer.Serialize(ref SpawnAsAlternateForm);
             if (subVersion < 0x18d) return;
-            CreatureToPodAs = serializer.AdventureCreatureReference(CreatureToSpawnAs);
-            PodAsAlternateForm = serializer.Bool(PodAsAlternateForm);
+            CreatureToPodAs = Serializer.Reference(CreatureToSpawnAs);
+            Serializer.Serialize(ref PodAsAlternateForm);
         }
 
         public override int GetAllocatedSize()
@@ -101,14 +98,14 @@ namespace CwLibNet.Resources
             // 16MB buffer for generation of levels, since the allocated size will get
             // stuck in a recursive loop until I fix it.
             var serializer = new Serializer(0x1000000, revision, compressionFlags);
-            serializer.Struct(this);
+            Serializer.Serialize(ref this);
             return new SerializationData(
-                serializer.GetBuffer(),
+                Serializer.GetBuffer(),
                 revision,
                 compressionFlags,
                 ResourceType.SyncedProfile,
                 SerializationType.BINARY,
-                serializer.GetDependencies()
+                Serializer.GetDependencies()
             );
         }
     }

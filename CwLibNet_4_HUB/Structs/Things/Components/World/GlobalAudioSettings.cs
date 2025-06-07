@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Components.World;
 
 public class GlobalAudioSettings: ISerializable
@@ -18,40 +17,40 @@ public class GlobalAudioSettings: ISerializable
 
     public string? AmbianceTrack;
     
-    public void Serialize(Serializer serializer) {
+    public void Serialize() {
 
-        var version = serializer.GetRevision().GetVersion();
-        var subVersion = serializer.GetRevision().GetSubVersion();
+        var version = Serializer.GetRevision().GetVersion();
+        var subVersion = Serializer.GetRevision().GetSubVersion();
 
-        Reverb = serializer.S32(Reverb);
+        Serializer.Serialize(ref Reverb);
         if (version < 0x347)
-            serializer.F32(0);
-        MusicVolume = serializer.F32(MusicVolume);
-        SfxVolume = serializer.F32(SfxVolume);
-        BackgroundVolume = serializer.F32(BackgroundVolume);
-        DialogueVolume = serializer.F32(DialogueVolume);
+            Serializer.Serialize(ref 0);
+        Serializer.Serialize(ref MusicVolume);
+        Serializer.Serialize(ref SfxVolume);
+        Serializer.Serialize(ref BackgroundVolume);
+        Serializer.Serialize(ref DialogueVolume);
 
         if (version >= 0x342) {
-            SfxReverbSend = serializer.F32(SfxReverbSend);
-            DialogueReverbSend = serializer.F32(DialogueReverbSend);
+            Serializer.Serialize(ref SfxReverbSend);
+            Serializer.Serialize(ref DialogueReverbSend);
         }
 
         if (version >= 0x347) {
-            MusicReverbSend = serializer.F32(MusicReverbSend);
+            Serializer.Serialize(ref MusicReverbSend);
 
-            SfxFilterLp = serializer.F32(SfxFilterLp);
-            DialogueFilterLp = serializer.F32(DialogueFilterLp);
-            MusicFilterLp = serializer.F32(MusicFilterLp);
+            Serializer.Serialize(ref SfxFilterLp);
+            Serializer.Serialize(ref DialogueFilterLp);
+            Serializer.Serialize(ref MusicFilterLp);
         }
 
         if (subVersion >= 0xd8) {
-            SfxFilterHp = serializer.F32(SfxFilterHp);
-            DialogueFilterHp = serializer.F32(DialogueFilterHp);
-            MusicFilterHp = serializer.F32(MusicFilterHp);
+            Serializer.Serialize(ref SfxFilterHp);
+            Serializer.Serialize(ref DialogueFilterHp);
+            Serializer.Serialize(ref MusicFilterHp);
         }
 
         if (subVersion >= 0xe2)
-            AmbianceTrack = serializer.Str(AmbianceTrack);
+            Serializer.Serialize(ref AmbianceTrack);
     }
 
     public int GetAllocatedSize() { return BaseAllocationSize; }

@@ -1,6 +1,6 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Slot;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Profile
 {
@@ -16,15 +16,15 @@ namespace CwLibNet.Structs.Profile
         public long lastStreamEventTimestamp;
         public long lastViewedTimestamp;
 
-        public void Serialize(Serializer serializer) 
+        public void Serialize() 
         {
-            slotID = serializer.Struct<SlotID>(slotID);
-            lastReviewCount = serializer.S32(lastReviewCount);
-            lastCommentCount = serializer.S32(lastCommentCount);
-            lastPhotoCount = serializer.S32(lastPhotoCount);
-            lastAuthorPhotoCount = serializer.S32(lastAuthorPhotoCount);
-            lastStreamEventTimestamp = serializer.S64(lastStreamEventTimestamp);
-            lastViewedTimestamp = serializer.S64(lastViewedTimestamp);
+            slotID = Serializer.Serialize(ref slotID);
+            Serializer.Serialize(ref lastReviewCount);
+            Serializer.Serialize(ref lastCommentCount);
+            Serializer.Serialize(ref lastPhotoCount);
+            Serializer.Serialize(ref lastAuthorPhotoCount);
+            lastStreamEventTimestamp = Serializer.Serialize(ref lastStreamEventTimestamp);
+            lastViewedTimestamp = Serializer.Serialize(ref lastViewedTimestamp);
         }
 
         public int GetAllocatedSize() 

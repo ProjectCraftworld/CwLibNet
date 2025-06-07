@@ -1,8 +1,8 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
 using CwLibNet.Structs.Slot;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Profile 
 {
@@ -35,66 +35,66 @@ namespace CwLibNet.Structs.Profile
 
         public short GoldTrophyCount, SilverTrophyCount, BronzeTrophyCount;
 
-        public void Serialize(Serializer serializer)
+        public void Serialize()
         {
-            var revision = serializer.GetRevision();
+            var revision = Serializer.GetRevision();
             var version = revision.GetVersion();
             var subVersion = revision.GetSubVersion();
 
-            SlotId = serializer.Struct<SlotID>(SlotId);
+            SlotId = Serializer.Serialize(ref SlotId);
             if (version > 0x1fd)
-                LastPlayedTimestamp = serializer.S64(LastPlayedTimestamp);
+                LastPlayedTimestamp = Serializer.Serialize(ref LastPlayedTimestamp);
             if (version > 0x200)
-                LocalHighScore = serializer.Intarray(LocalHighScore);
+                Serializer.Serialize(ref LocalHighScore);
 
             if (version is > 0x268 and < 0x399) 
             {
-                serializer.Bool(false); // Discovered
-                serializer.Bool(false); // Unlocked
+                Serializer.Serialize(ref false); // Discovered
+                Serializer.Serialize(ref false); // Unlocked
             }
 
             if (version < 0x269) 
             {
-                PlayCount = (short)serializer.I32(PlayCount);
-                CompletionCount = (short)serializer.I32(CompletionCount);
-                AcedCount = (short)serializer.I32(AcedCount);
+                PlayCount = (short)Serializer.Serialize(ref PlayCount);
+                CompletionCount = (short)Serializer.Serialize(ref CompletionCount);
+                AcedCount = (short)Serializer.Serialize(ref AcedCount);
             }
             else 
             {
-                PlayCount = serializer.I16(PlayCount);
-                CompletionCount = serializer.I16(CompletionCount);
-                AcedCount = serializer.I16(AcedCount);
+                Serializer.Serialize(ref PlayCount);
+                Serializer.Serialize(ref CompletionCount);
+                Serializer.Serialize(ref AcedCount);
             }
 
             if (version > 0x1c1) 
-                Collectables = serializer.Array<CollectableData>(Collectables);
+                Serializer.Serialize(ref Collectables);
             if (version > 0x1c3 && subVersion < 0x106)
-                Videos = serializer.Intarray(Videos);
+                Serializer.Serialize(ref Videos);
             
             if (version > 0x363) 
             {
-                LinkedLevels = serializer.Array<SlotID>(LinkedLevels);
-                SubLevels = serializer.Array<SlotID>(SubLevels);
+                Serializer.Serialize(ref LinkedLevels);
+                Serializer.Serialize(ref SubLevels);
             }
 
             if (revision.Has(Branch.Double11, (int)Revisions.D_1DEFERRED_PLAYS))
             {
-                DeferredPlayCount = serializer.I16(DeferredPlayCount);
-                DeferredPlayCountUploaded = serializer.I16(DeferredPlayCountUploaded);
+                Serializer.Serialize(ref DeferredPlayCount);
+                Serializer.Serialize(ref DeferredPlayCountUploaded);
                 if (revision.Has(Branch.Double11, (int)Revisions.D1_UPLOADED_HIGH_SCORE))
-                    UploadedLocalHighScore = serializer.Intarray(UploadedLocalHighScore);
+                    Serializer.Serialize(ref UploadedLocalHighScore);
                 if (revision.Has(Branch.Double11, (int)Revisions.D1_TROPHIES))
                 {
-                    GoldTrophyCount = serializer.I16(GoldTrophyCount);
-                    SilverTrophyCount = serializer.I16(SilverTrophyCount);
-                    BronzeTrophyCount = serializer.I16(BronzeTrophyCount);
+                    Serializer.Serialize(ref GoldTrophyCount);
+                    Serializer.Serialize(ref SilverTrophyCount);
+                    Serializer.Serialize(ref BronzeTrophyCount);
                 }
             }
 
             if (subVersion >= 0x1ad)
             {
-                BestTime = serializer.I32(BestTime);
-                MultiplayerCompletionCount = serializer.I16(MultiplayerCompletionCount);
+                Serializer.Serialize(ref BestTime);
+                Serializer.Serialize(ref MultiplayerCompletionCount);
             }
         }
 

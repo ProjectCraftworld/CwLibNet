@@ -1,8 +1,7 @@
 using System.Numerics;
 using CwLibNet.Extensions;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Gmat;
 
 public class MaterialParameterAnimation: ISerializable
@@ -16,13 +15,13 @@ public class MaterialParameterAnimation: ISerializable
     public byte ComponentsAnimated;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        BaseValue = serializer.V4(BaseValue)!.Value;
+        Serializer.Serialize(ref BaseValue)!.Value;
 
-        if (serializer.IsWriting())
+        if (Serializer.IsWriting())
         {
-            var stream = serializer.GetOutput();
+            var stream = Serializer.GetOutput();
             ComponentsAnimated = CalculateComponentsAnimated();
             if (Keys == null || Keys.Length == 0) stream.I32(0);
             else
@@ -44,7 +43,7 @@ public class MaterialParameterAnimation: ISerializable
         }
         else
         {
-            var stream = serializer.GetInput();
+            var stream = Serializer.GetInput();
             var components = stream.Floatarray();
             name = stream.Str(stream.I32());
             ComponentsAnimated = stream.I8();

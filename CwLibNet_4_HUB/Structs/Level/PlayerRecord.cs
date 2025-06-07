@@ -1,6 +1,6 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Level;
 
@@ -19,11 +19,11 @@ public class PlayerRecord: ISerializable
     }
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        playerIDs = serializer.Array(playerIDs);
-        playerNumbers = serializer.Intarray(playerNumbers);
-        offset = serializer.I32(offset);
+        playerIDs = Serializer.Serialize(ref playerIDs);
+        Serializer.Serialize(ref playerNumbers);
+        Serializer.Serialize(ref offset);
     }
 
     

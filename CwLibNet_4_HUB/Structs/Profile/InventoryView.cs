@@ -1,7 +1,6 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Profile 
 {
     public class InventoryView : ISerializable
@@ -16,15 +15,15 @@ namespace CwLibNet.Structs.Profile
         public InventorySortMode currentSortMode = InventorySortMode.INVALID;
         public InventorySortMode desiredSortMode = InventorySortMode.INVALID;
 
-        public void Serialize(Serializer serializer)
+        public void Serialize()
         {
-            type = serializer.I32(type);
-            subType = serializer.I32(subType);
-            title = serializer.Str(title);
-            heartedOnly = serializer.Bool(heartedOnly);
-            customID = serializer.I32(customID);
-            currentSortMode = serializer.Enum32<InventorySortMode>(currentSortMode);
-            desiredSortMode = serializer.Enum32<InventorySortMode>(desiredSortMode);
+            Serializer.Serialize(ref type);
+            Serializer.Serialize(ref subType);
+            Serializer.Serialize(ref title);
+            Serializer.Serialize(ref heartedOnly);
+            Serializer.Serialize(ref customID);
+            currentSortMode = Serializer.Serialize(ref currentSortMode);
+            desiredSortMode = Serializer.Serialize(ref desiredSortMode);
         }   
 
         public int GetAllocatedSize() 

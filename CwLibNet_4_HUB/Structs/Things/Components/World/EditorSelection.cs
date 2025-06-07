@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Components.World;
 
 public class EditorSelection: ISerializable
@@ -9,10 +8,10 @@ public class EditorSelection: ISerializable
     
     public string? Name;
     public List<Thing>? Things = [];
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Name = serializer.Str(Name);
-        Things = serializer.Arraylist(Things, true);
+        Serializer.Serialize(ref Name);
+        Things = Serializer.Serialize(ref Things);
     }
 
     public int GetAllocatedSize()

@@ -1,6 +1,6 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Slot;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Components;
 
@@ -10,11 +10,11 @@ public class KeyLink: ISerializable
 
     public SlotID? SlotId;
     public int Unknown;
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        SlotId = serializer.Struct(SlotId);
-        if (serializer.GetRevision().GetVersion() < 0x16f)
-            Unknown = serializer.I32(Unknown);
+        Serializer.Serialize(ref SlotId);
+        if (Serializer.GetRevision().GetVersion() < 0x16f)
+            Serializer.Serialize(ref Unknown);
     }
 
     public int GetAllocatedSize()

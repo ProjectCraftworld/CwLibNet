@@ -1,9 +1,9 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Inventory;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Components.Popit;
 
@@ -22,24 +22,24 @@ public class StickerInfo: ISerializable
     public ResourceDescriptor? Plan;
 
     public EyetoyData EyetoyData = new();
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var version = serializer.GetRevision().GetVersion();
+        var version = Serializer.GetRevision().GetVersion();
 
-        Up = serializer.V4(Up);
-        Across = serializer.V4(Across);
-        Texture = serializer.Resource(Texture, ResourceType.Texture);
-        Height = serializer.F32(Height);
-        Width = serializer.F32(Width);
-        Angle = serializer.F32(Angle);
-        Scale = serializer.F32(Scale);
-        Reversed = serializer.Bool(Reversed);
-        Offset = serializer.V4(Offset);
-        Stamping = serializer.Bool(Stamping);
+        Serializer.Serialize(ref Up);
+        Serializer.Serialize(ref Across);
+        Serializer.Serialize(ref Texture, Texture, ResourceType.Texture);
+        Serializer.Serialize(ref Height);
+        Serializer.Serialize(ref Width);
+        Serializer.Serialize(ref Angle);
+        Serializer.Serialize(ref Scale);
+        Serializer.Serialize(ref Reversed);
+        Serializer.Serialize(ref Offset);
+        Serializer.Serialize(ref Stamping);
         if (version > 0x15f)
-            Plan = serializer.Resource(Plan, ResourceType.Plan, true);
+            Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true);
         if (version > 0x24b)
-            EyetoyData = serializer.Struct(EyetoyData);
+            Serializer.Serialize(ref EyetoyData);
     }
 
     public int GetAllocatedSize()

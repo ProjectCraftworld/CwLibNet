@@ -1,8 +1,7 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Things.Parts;
 
 public class PPhysicsTweak: ISerializable
@@ -133,79 +132,79 @@ public class PPhysicsTweak: ISerializable
     public byte PlayerFilter;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 
         if (version < 0x2c4)
-            Activation = serializer.F32(Activation);
+            Serializer.Serialize(ref Activation);
 
-        TweakGravity = serializer.F32(TweakGravity);
+        Serializer.Serialize(ref TweakGravity);
         if (version > 0x2ff)
-            TweakBuoyancy = serializer.F32(TweakBuoyancy);
+            Serializer.Serialize(ref TweakBuoyancy);
 
         if (version < 0x281)
-            LegacyTweakDampening = serializer.F32(LegacyTweakDampening);
+            Serializer.Serialize(ref LegacyTweakDampening);
 
         if (version > 0x280)
-            TweakDampening = serializer.V3(TweakDampening);
-        Input = serializer.V3(Input);
-        MiddleVel = serializer.V3(MiddleVel);
+            TweakDampening = Serializer.Serialize(ref TweakDampening);
+        Input = Serializer.Serialize(ref Input);
+        MiddleVel = Serializer.Serialize(ref MiddleVel);
 
         if (version < 0x281)
-            LegacyDeceleration = serializer.V3(LegacyDeceleration);
+            LegacyDeceleration = Serializer.Serialize(ref LegacyDeceleration);
         if (version > 0x280)
-            VelRange = serializer.F32(VelRange);
+            Serializer.Serialize(ref VelRange);
         if (version < 0x281)
-            LegacyAcceleration = serializer.V3(LegacyAcceleration);
+            LegacyAcceleration = Serializer.Serialize(ref LegacyAcceleration);
 
         if (version > 0x280)
         {
-            AccelStrength = serializer.F32(AccelStrength);
+            Serializer.Serialize(ref AccelStrength);
             if (version > 0x285)
-                DecelStrength = serializer.F32(DecelStrength);
+                Serializer.Serialize(ref DecelStrength);
         }
 
         if (version < 0x281)
         {
-            LegacyDeceleration = serializer.V3(LegacyDeceleration);
-            LegacyTurnToFace = serializer.I32(LegacyTurnToFace);
+            LegacyDeceleration = Serializer.Serialize(ref LegacyDeceleration);
+            Serializer.Serialize(ref LegacyTurnToFace);
         }
 
         if (subVersion > 0xa3)
         {
-            DirectionModifier = serializer.I8(DirectionModifier);
-            MovementModifier = serializer.I8(MovementModifier);
+            Serializer.Serialize(ref DirectionModifier);
+            Serializer.Serialize(ref MovementModifier);
         }
 
-        LocalSpace = serializer.Bool(LocalSpace);
+        Serializer.Serialize(ref LocalSpace);
 
-        if (!serializer.IsWriting() && version < 0x38a && VelRange != 0.0f)
+        if (!Serializer.IsWriting() && version < 0x38a && VelRange != 0.0f)
         {
             AccelStrength /= VelRange;
             DecelStrength /= VelRange;
         }
 
         if (version > 0x278)
-            Configuration = serializer.I32(Configuration);
+            Serializer.Serialize(ref Configuration);
 
         if (version is >= 0x27a and < 0x327)
-            serializer.Thing(null);
+            Serializer.Reference(null);
 
         if (version > 0x282)
-            HideInPlayMode = serializer.Bool(HideInPlayMode);
+            Serializer.Serialize(ref HideInPlayMode);
 
         if (version > 0x28d)
-            ColorIndex = serializer.I32(ColorIndex);
+            Serializer.Serialize(ref ColorIndex);
         if (version > 0x2db)
-            Name = serializer.Wstr(Name);
+            Serializer.Serialize(ref Name);
 
         if (version < 0x3e8)
         {
             if (version > 0x2ad)
-                TeamFilter = serializer.U8(TeamFilter);
+                Serializer.Serialize(ref TeamFilter);
         }
         else
         {
@@ -214,134 +213,134 @@ public class PPhysicsTweak: ISerializable
                 case < 0x132:
                 {
                     if (version >= 0x2ae)
-                        TeamFilter = serializer.U8(TeamFilter);
+                        Serializer.Serialize(ref TeamFilter);
                     break;
                 }
                 case > 0x131:
-                    FollowerPlayerMode = serializer.I32(FollowerPlayerMode);
+                    Serializer.Serialize(ref FollowerPlayerMode);
                     break;
             }
         }
 
 
         if (version > 0x2c5)
-            Behavior = serializer.I32(Behavior);
+            Serializer.Serialize(ref Behavior);
         if (version > 0x2dc)
         {
-            AllowInOut = serializer.Bool(AllowInOut);
-            AllowUpDown = serializer.Bool(AllowUpDown);
-            MinRange = serializer.F32(MinRange);
-            MaxRange = serializer.F32(MaxRange);
-            FollowKey = serializer.Bool(FollowKey);
+            Serializer.Serialize(ref AllowInOut);
+            Serializer.Serialize(ref AllowUpDown);
+            Serializer.Serialize(ref MinRange);
+            Serializer.Serialize(ref MaxRange);
+            Serializer.Serialize(ref FollowKey);
         }
 
         if (version > 0x381)
-            AngleRange = serializer.F32(AngleRange);
+            Serializer.Serialize(ref AngleRange);
 
         if (version > 0x2fe)
-            Flee = serializer.Bool(Flee);
+            Serializer.Serialize(ref Flee);
 
         if (subVersion > 0x6f)
-            Stabiliser = serializer.Bool(Stabiliser);
+            Serializer.Serialize(ref Stabiliser);
         if (subVersion > 0x12f)
         {
-            ShardDephysicalised = serializer.Bool(ShardDephysicalised);
-            ShardPhysicsAudio = serializer.Bool(ShardPhysicsAudio);
+            Serializer.Serialize(ref ShardDephysicalised);
+            Serializer.Serialize(ref ShardPhysicsAudio);
         }
         if (subVersion > 0x43)
-            IsLbp2PhysicsTweak = serializer.Bool(IsLbp2PhysicsTweak);
+            Serializer.Serialize(ref IsLbp2PhysicsTweak);
 
         if (version > 0x36a)
         {
-            MaximumMass = serializer.F32(MaximumMass);
-            CanPush = serializer.Bool(CanPush);
-            ZBehavior = serializer.S32(ZBehavior);
-            LastKnownActivation = serializer.F32(LastKnownActivation);
-            WaitingToMove = serializer.Bool(WaitingToMove);
+            Serializer.Serialize(ref MaximumMass);
+            Serializer.Serialize(ref CanPush);
+            Serializer.Serialize(ref ZBehavior);
+            Serializer.Serialize(ref LastKnownActivation);
+            Serializer.Serialize(ref WaitingToMove);
         }
 
         if (subVersion > 0xf6)
-            ZPhase = serializer.I8(ZPhase);
+            Serializer.Serialize(ref ZPhase);
 
         // move recording, again will figure out the fields later
         // RecordingPlayer
         if (version > 0x3b8 && Configuration == 0xd)
         {
-            serializer.Resource(null, ResourceType.ThingRecording); // recording
-            serializer.F32(0); // playHead
-            if (version < 0x3c4) serializer.U8(0);
-            serializer.U8(0); // type
-            serializer.U8(0); // dir
-            serializer.V3(null); // prevDesiredPos
-            serializer.U8(0); // prevDesiredPosSet
-            serializer.M44(null); // startOrientation
-            serializer.F32(0); // speed
+            Serializer.Serialize(ref null, ResourceType.ThingRecording); // recording
+            Serializer.Serialize(ref 0); // playHead
+            if (version < 0x3c4) Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0); // type
+            Serializer.Serialize(ref 0); // dir
+            Serializer.Serialize(ref null); // prevDesiredPos
+            Serializer.Serialize(ref 0); // prevDesiredPosSet
+            Serializer.Serialize(ref null); // startOrientation
+            Serializer.Serialize(ref 0); // speed
             if (version > 0x3c4)
-                serializer.U8(0); // pathIsAbsolute
+                Serializer.Serialize(ref 0); // pathIsAbsolute
         }
 
         if (revision.IsVita())
         {
             int vita = revision.GetBranchRevision();
             if (vita >= 0x11) // 0x3c0
-                UsePanel = serializer.I32(UsePanel);
-            if (vita is >= 0x11 and < 0x4b) serializer.U8(0); // 0x3c0
+                Serializer.Serialize(ref UsePanel);
+            if (vita is >= 0x11 and < 0x4b) Serializer.Serialize(ref 0); // 0x3c0
             if (vita >= 0x1f) // 0x3d4
-                FollowType = serializer.I32(FollowType);
+                Serializer.Serialize(ref FollowType);
             if (vita >= 0x4b)
-                FollowerDeceleration = serializer.F32(FollowerDeceleration);
+                Serializer.Serialize(ref FollowerDeceleration);
             if (vita >= 0x55)
-                PlayerFilter = serializer.I8(PlayerFilter);
+                Serializer.Serialize(ref PlayerFilter);
         }
 
         if (subVersion is >= 0x1 and < 0x17)
         {
-            serializer.S32(0);
-            serializer.S32(0);
-            serializer.S32(0);
-            serializer.S32(0);
-            serializer.S32(0);
-            serializer.S32(0);
-            serializer.S32(0);
-            serializer.S32(0);
-            serializer.S32(0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
         }
 
         if (subVersion is >= 0x5 and < 0x17)
         {
-            serializer.F32(0);
-            serializer.U8(0);
-            serializer.U8(0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0);
         }
 
         // attract-o-gel, ill figure out the fields later
         // attractorData
         if (Configuration == 0xe && version > 0x3e3)
         {
-            serializer.F32(0); // attractDistance
-            serializer.I32(0);
-            serializer.F32(0); // visualEffectBrightness_On
-            serializer.F32(0); // visualEffectSpeed_On
-            serializer.I32(0);
-            serializer.F32(0); // visualEffectBrightnessOff
-            serializer.F32(0); // visualEffectSpeed_Off
-            serializer.U8(0); // attractorManualDetach
-            serializer.U8(0); // attractorSoundEffects
-            serializer.U8(0); // attractorVisualEffect
-            serializer.U8(0); // attractorAffectConnected
+            Serializer.Serialize(ref 0); // attractDistance
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0); // visualEffectBrightness_On
+            Serializer.Serialize(ref 0); // visualEffectSpeed_On
+            Serializer.Serialize(ref 0);
+            Serializer.Serialize(ref 0); // visualEffectBrightnessOff
+            Serializer.Serialize(ref 0); // visualEffectSpeed_Off
+            Serializer.Serialize(ref 0); // attractorManualDetach
+            Serializer.Serialize(ref 0); // attractorSoundEffects
+            Serializer.Serialize(ref 0); // attractorVisualEffect
+            Serializer.Serialize(ref 0); // attractorAffectConnected
         }
 
         if (subVersion > 0x56)
         {
-            GridSnap = serializer.I16(GridSnap);
-            GridStrength = serializer.I16(GridStrength);
+            Serializer.Serialize(ref GridSnap);
+            Serializer.Serialize(ref GridStrength);
         }
 
         if (subVersion > 0x99)
-            GridGoalW = serializer.F32(GridGoalW);
+            Serializer.Serialize(ref GridGoalW);
 
         if (subVersion > 0x98)
-            GridGoal = serializer.V3(GridGoal);
+            GridGoal = Serializer.Serialize(ref GridGoal);
     }
 
     // TODO: Actually implement

@@ -1,7 +1,6 @@
 using System.Numerics;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Mesh;
 
 public class ImplicitPlane: ISerializable
@@ -13,11 +12,11 @@ public class ImplicitPlane: ISerializable
     public int ParentBone;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        PlaneNormal = serializer.V4(PlaneNormal);
-        PointInPlane = serializer.V4(PointInPlane);
-        ParentBone = serializer.I32(ParentBone);
+        Serializer.Serialize(ref PlaneNormal);
+        Serializer.Serialize(ref PointInPlane);
+        Serializer.Serialize(ref ParentBone);
     }
 
     

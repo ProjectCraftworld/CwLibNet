@@ -1,10 +1,10 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Resources;
 using CwLibNet.Structs.Inventory;
 using CwLibNet.Structs.Things.Components;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -33,31 +33,31 @@ public class PMetadata: ISerializable
     public bool Referencable;
     public bool AllowEmit;
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
 
         var hasDepreciatedValue = (version < 0x297 && !revision.IsLeerdammer()) || (revision.IsLeerdammer() && !revision.Has(Branch.Leerdammer, (int)Revisions.LD_RESOURCES));
 
         if (hasDepreciatedValue)
-            Value = serializer.Struct(Value);
+            Serializer.Serialize(ref Value);
         
         if (revision.Has(Branch.Leerdammer, (int)Revisions.LD_LAMS_KEYS) || version > 0x2ba) {
-            TitleKey = serializer.U32(TitleKey);
-            DescriptionKey = serializer.U32(DescriptionKey);
-            Location = serializer.U32(Location);
-            Category = serializer.U32(Category);
+            Serializer.Serialize(ref TitleKey);
+            Serializer.Serialize(ref DescriptionKey);
+            Serializer.Serialize(ref Location);
+            Serializer.Serialize(ref Category);
         } else {
-            NameTranslationTag = serializer.Str(NameTranslationTag);
+            Serializer.Serialize(ref NameTranslationTag);
             if (version < 0x159)
-                DescTranslationTag = serializer.Str(DescTranslationTag);
-            else if (!serializer.IsWriting())
+                Serializer.Serialize(ref DescTranslationTag);
+            else if (!Serializer.IsWriting())
                 DescTranslationTag = NameTranslationTag + "_DESC";
             
-            LocationTag = serializer.Str(LocationTag);
-            CategoryTag = serializer.Str(CategoryTag);
-            if (!serializer.IsWriting()) {
+            Serializer.Serialize(ref LocationTag);
+            Serializer.Serialize(ref CategoryTag);
+            if (!Serializer.IsWriting()) {
                 if (version < 0x159) {
                     TitleKey =
                         RTranslationTable.MakeLamsKeyID(NameTranslationTag);
@@ -76,26 +76,26 @@ public class PMetadata: ISerializable
         }
         
         if (version >= 0x195)
-            PrimaryIndex = serializer.I32(PrimaryIndex);
-        FluffCost = serializer.I32(FluffCost);
+            Serializer.Serialize(ref PrimaryIndex);
+        Serializer.Serialize(ref FluffCost);
 
-        if (hasDepreciatedValue) serializer.I32(0); // unknown
+        if (hasDepreciatedValue) Serializer.Serialize(ref 0); // unknown
         
-        if (serializer.IsWriting())
-            serializer.GetOutput().I32(Type.GetFlags());
+        if (Serializer.IsWriting())
+            Serializer.GetOutput().I32(Type.GetFlags());
         else
-            Type = InvObjectBody.FromFlags(serializer.GetInput().I32(), serializer.GetRevision());
+            Type = InvObjectBody.FromFlags(Serializer.GetInput().I32(), Serializer.GetRevision());
         
-        SubType = serializer.I32(SubType);
-        CreationDate = serializer.U32(CreationDate);
+        Serializer.Serialize(ref SubType);
+        Serializer.Serialize(ref CreationDate);
         
-        Icon = serializer.Resource(Icon, ResourceType.Texture);
-        PhotoMetadata = serializer.Reference(PhotoMetadata);
+        Serializer.Serialize(ref Icon, Icon, ResourceType.Texture);
+        Serializer.Serialize(ref PhotoMetadata);
         
         if (version >= 0x15f)
-            Referencable = serializer.Bool(Referencable);
+            Serializer.Serialize(ref Referencable);
         if (version >= 0x205)
-            AllowEmit = serializer.Bool(AllowEmit);
+            Serializer.Serialize(ref AllowEmit);
     }
 
     public int GetAllocatedSize()

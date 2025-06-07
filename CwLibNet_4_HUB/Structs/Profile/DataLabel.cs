@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Profile 
 {
     public class DataLabel : ISerializable
@@ -10,10 +9,10 @@ namespace CwLibNet.Structs.Profile
         public int LabelIndex;
         public string? Name;
 
-        public void Serialize(Serializer serializer)
+        public void Serialize()
         {
-            LabelIndex = serializer.I32(LabelIndex);
-            Name = serializer.Wstr(Name);
+            Serializer.Serialize(ref LabelIndex);
+            Serializer.Serialize(ref Name);
         }
 
         public int GetAllocatedSize() 

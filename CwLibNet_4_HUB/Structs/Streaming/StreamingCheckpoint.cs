@@ -1,7 +1,7 @@
 using System.Numerics;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Slot;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Streaming;
 
@@ -15,26 +15,26 @@ public class StreamingCheckpoint : ISerializable
     public SlotID SlotId;
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var subVersion = serializer.GetRevision().GetSubVersion();
+        var subVersion = Serializer.GetRevision().GetSubVersion();
 
         if (subVersion > 0x72)
         {
-            Type = serializer.I32(Type);
-            Position = serializer.V3(Position);
+            Serializer.Serialize(ref Type);
+            Position = Serializer.Serialize(ref Position);
         }
 
         if (subVersion > 0xdc)
-            StartPointName = serializer.Struct(StartPointName);
+            Serializer.Serialize(ref StartPointName);
 
         switch (subVersion)
         {
             case >= 0x13b:
-                SlotId = serializer.Struct(SlotId);
+                Serializer.Serialize(ref SlotId);
                 break;
             case > 0x115 and <= 0x128:
-                serializer.S32(0);
+                Serializer.Serialize(ref 0);
                 break;
         }
     }

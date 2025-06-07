@@ -1,6 +1,5 @@
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-
+using static net.torutheredfox.craftworld.serialization.Serializer;
 namespace CwLibNet.Structs.Gmat;
 
 public class MaterialWire: ISerializable
@@ -29,14 +28,14 @@ public class MaterialWire: ISerializable
     }
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        BoxFrom = serializer.S32(BoxFrom);
-        BoxTo = serializer.S32(BoxTo);
-        PortFrom = serializer.I8(PortFrom);
-        PortTo = serializer.I8(PortTo);
+        Serializer.Serialize(ref BoxFrom);
+        Serializer.Serialize(ref BoxTo);
+        Serializer.Serialize(ref PortFrom);
+        Serializer.Serialize(ref PortTo);
         for (var i = 0; i < SwizzleElementCount; ++i)
-            Swizzle[i] = serializer.I8(Swizzle[i]);
+            Serializer.Serialize(ref Swizzle[i]);
     }
 
     

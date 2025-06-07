@@ -2,8 +2,8 @@ using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.Extensions;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Resources;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Gmat;
 
@@ -105,37 +105,37 @@ public class MaterialBox: ISerializable
     }
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        Type = serializer.I32(Type);
+        Serializer.Serialize(ref Type);
 
-        var head = serializer.GetRevision().GetVersion();
+        var head = Serializer.GetRevision().GetVersion();
 
-        if (!serializer.IsWriting()) @params = new int[ParameterCount];
+        if (!Serializer.IsWriting()) @params = new int[ParameterCount];
         if (head < 0x2a4)
         {
             for (var i = 0; i < LegacyParameterCount; ++i)
-                @params[i] = serializer.I32(@params[i]);
+                @Serializer.Serialize(ref params[i]);
         }
         else
         {
-            serializer.I32(ParameterCount);
+            Serializer.Serialize(ref ParameterCount);
             for (var i = 0; i < ParameterCount; ++i)
-                @params[i] = serializer.I32(@params[i]);
+                @Serializer.Serialize(ref params[i]);
         }
 
-        X = serializer.F32(X);
-        Y = serializer.F32(Y);
-        W = serializer.F32(W);
-        H = serializer.F32(H);
+        Serializer.Serialize(ref X);
+        Serializer.Serialize(ref Y);
+        Serializer.Serialize(ref W);
+        Serializer.Serialize(ref H);
 
         if (head > 0x2a3)
-            SubType = serializer.I32(SubType);
+            Serializer.Serialize(ref SubType);
 
         if (head > 0x2a1)
-            Anim = serializer.Struct(Anim);
+            Serializer.Serialize(ref Anim);
         if (head > 0x2a3)
-            Anim2 = serializer.Struct(Anim2);
+            Serializer.Serialize(ref Anim2);
     }
 
     

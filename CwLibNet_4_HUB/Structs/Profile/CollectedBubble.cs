@@ -1,8 +1,8 @@
 using CwLibNet.Enums;
 
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Profile
 {
@@ -14,11 +14,11 @@ namespace CwLibNet.Structs.Profile
         public int thingUID;
         public ResourceDescriptor plan;
 
-        public void Serialize(Serializer serializer)
+        public void Serialize()
         {
-            level = serializer.Resource(level, ResourceType.Level, true);
-            thingUID = serializer.I32(thingUID);
-            plan = serializer.Resource(plan, ResourceType.Plan, true);
+            Serializer.Serialize(ref level, level, ResourceType.Level, true);
+            Serializer.Serialize(ref thingUID);
+            Serializer.Serialize(ref plan, plan, ResourceType.Plan, true);
         }
 
         public int GetAllocatedSize() 

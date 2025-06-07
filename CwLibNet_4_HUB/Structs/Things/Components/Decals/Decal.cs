@@ -1,8 +1,8 @@
 using System.Numerics;
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Things.Components.Decals;
 
@@ -102,26 +102,26 @@ public class Decal: ISerializable
     }
 
     
-    public void Serialize(Serializer serializer)
+    public void Serialize()
     {
-        var revision = serializer.GetRevision();
+        var revision = Serializer.GetRevision();
         var version = revision.GetVersion();
 
-        Texture = serializer.Resource(Texture, ResourceType.Texture);
-        U = serializer.F32(U);
-        V = serializer.F32(V);
-        Xvecu = serializer.F32(Xvecu);
-        Xvecv = serializer.F32(Xvecv);
-        Yvecu = serializer.F32(Yvecu);
-        Yvecv = serializer.F32(Yvecv);
+        Serializer.Serialize(ref Texture, Texture, ResourceType.Texture);
+        Serializer.Serialize(ref U);
+        Serializer.Serialize(ref V);
+        Serializer.Serialize(ref Xvecu);
+        Serializer.Serialize(ref Xvecv);
+        Serializer.Serialize(ref Yvecu);
+        Serializer.Serialize(ref Yvecv);
 
         switch (version)
         {
             case >= 0x14e and < 0x25c:
             {
-                if (serializer.IsWriting())
+                if (Serializer.IsWriting())
                 {
-                    serializer.GetOutput().I32(
+                    Serializer.GetOutput().I32(
                         (int)((((Color & 0xffff) << 5) & 0xfc00) |
                               ((Color & 0xffff) << 8 & 0xf80000) |
                               ((Color & 0x1f) << 3) |
@@ -130,7 +130,7 @@ public class Decal: ISerializable
                 }
                 else
                 {
-                    var color = serializer.GetInput().I32();
+                    var color = Serializer.GetInput().I32();
 /*
                     color = (short) (
                         (((color >>> 10) & 0x3f) << 5) |
@@ -143,43 +143,43 @@ public class Decal: ISerializable
                 break;
             }
             case >= 0x260:
-                Color = (ushort)serializer.I16((short)Color);
+                Color = (ushort)Serializer.Serialize(ref (short)Color);
                 break;
         }
 
         if (version >= 0x158)
         {
-            Type = serializer.Enum8(Type);
-            MetadataIndex = serializer.I16(MetadataIndex);
+            Serializer.Serialize(ref Type);
+            Serializer.Serialize(ref MetadataIndex);
             if (version <= 0x3ba)
-                NumMetadata = serializer.I16(NumMetadata);
+                Serializer.Serialize(ref NumMetadata);
         }
 
         if (version >= 0x214)
-            PlacedBy = serializer.I16(PlacedBy);
+            Serializer.Serialize(ref PlacedBy);
         if (version >= 0x215)
-            PlayModeFrame = serializer.I32(PlayModeFrame);
+            Serializer.Serialize(ref PlayModeFrame);
 
         if (version >= 0x219)
-            ScorchMark = serializer.Bool(ScorchMark);
+            Serializer.Serialize(ref ScorchMark);
 
         switch (version)
         {
             case >= 0x34c:
-                Plan = serializer.Resource(Plan, ResourceType.Plan, true);
+                Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true);
                 break;
             case >= 0x25b:
             {
-                if (serializer.IsWriting())
+                if (Serializer.IsWriting())
                 {
                     if (Plan == null || Plan.IsHash())
-                        serializer.GetOutput().I32(0);
+                        Serializer.GetOutput().I32(0);
                     else if (Plan.IsGUID())
-                        serializer.GetOutput().Guid(Plan.GetGUID());
+                        Serializer.GetOutput().Guid(Plan.GetGUID());
                 }
                 else
                 {
-                    var guid = serializer.GetInput().Guid();
+                    var guid = Serializer.GetInput().Guid();
                     Plan = guid == null ? null : new ResourceDescriptor(guid.Value, ResourceType.Plan);
                 }
 
@@ -188,9 +188,9 @@ public class Decal: ISerializable
         }
 
         if (revision.Has(Branch.Double11, 0x3f))
-            LocalHitPoint = serializer.V4(LocalHitPoint);
+            Serializer.Serialize(ref LocalHitPoint);
         if (revision.Has(Branch.Double11, 0x7e))
-            DontWantGammaCorrection = serializer.Bool(DontWantGammaCorrection);
+            Serializer.Serialize(ref DontWantGammaCorrection);
     }
 
     public int GetAllocatedSize()

@@ -1,7 +1,7 @@
 using CwLibNet.Enums;
 using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
 using CwLibNet.Types.Data;
+using static net.torutheredfox.craftworld.serialization.Serializer;
 
 namespace CwLibNet.Structs.Profile 
 {
@@ -15,15 +15,15 @@ namespace CwLibNet.Structs.Profile
 
         public bool UseDefaultBackground;
 
-        public void Serialize(Serializer serializer)
+        public void Serialize()
         {
-            TriggerOverride = serializer.I32(TriggerOverride);
-            AngleOverride = serializer.Bool(AngleOverride);
-            StickerSaveSize = serializer.I32(StickerSaveSize);
-            UiHidden = serializer.Bool(UiHidden);
-            LastAutoSave = serializer.Resource(LastAutoSave, ResourceType.Painting);
-            if (serializer.GetRevision().GetVersion() >= (int)Revisions.PTG_USE_DEFAULT_BACKGROUND)
-                UseDefaultBackground = serializer.Bool(UseDefaultBackground);
+            Serializer.Serialize(ref TriggerOverride);
+            Serializer.Serialize(ref AngleOverride);
+            Serializer.Serialize(ref StickerSaveSize);
+            Serializer.Serialize(ref UiHidden);
+            Serializer.Serialize(ref LastAutoSave, LastAutoSave, ResourceType.Painting);
+            if (Serializer.GetRevision().GetVersion() >= (int)Revisions.PTG_USE_DEFAULT_BACKGROUND)
+                Serializer.Serialize(ref UseDefaultBackground);
         }
 
         public int GetAllocatedSize()
