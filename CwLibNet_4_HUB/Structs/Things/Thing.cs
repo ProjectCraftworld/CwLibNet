@@ -42,7 +42,7 @@ public class Thing : ISerializable
     
     public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetCurrentSerializer().GetRevision();
+        var revision = serializer.GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
 

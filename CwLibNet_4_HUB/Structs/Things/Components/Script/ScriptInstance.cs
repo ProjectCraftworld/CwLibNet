@@ -47,7 +47,7 @@ public class ScriptInstance: ISerializable
 
         if (!Serializer.IsWriting())
         {
-            var layout = Serializer.GetPointer<InstanceLayout>(reference);
+            var layout = Serializer.GetCurrentSerializer().GetPointer<InstanceLayout>(reference);
             if (layout == null)
             {
                 layout = new InstanceLayout();
@@ -112,12 +112,12 @@ public class ScriptInstance: ISerializable
                     break;
                 case MachineType.V4:
                     var v4Value = writing ? (Vector4)field.Value! : Vector4.Zero;
-                    Serializer.Serialize(ref v4Value);
+                    serializer.V4(v4Value);
                     field.Value = v4Value;
                     break;
                 case MachineType.M44:
                     var m44Value = writing ? (Matrix4x4)field.Value! : Matrix4x4.Identity;
-                    Serializer.Serialize(ref m44Value);
+                    serializer.M44(m44Value);
                     field.Value = m44Value;
                     break;
                 case MachineType.OBJECT_REF:

@@ -3,6 +3,7 @@ using CwLibNet.Enums;
 using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Things;
+using CwLibNet.Types.Data;
 using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Parts;
 
@@ -197,7 +198,7 @@ public class PPhysicsTweak: ISerializable
             Serializer.Serialize(ref Configuration);
 
         if (version is >= 0x27a and < 0x327)
-            Serializer.SerializeReference(null);
+            Serializer.SerializeReference<Thing>(null);
 
         if (version > 0x282)
             Serializer.Serialize(ref HideInPlayMode);
@@ -272,14 +273,15 @@ public class PPhysicsTweak: ISerializable
         // RecordingPlayer
         if (version > 0x3b8 && Configuration == 0xd)
         {
-            Serializer.Serialize(ref null, ResourceType.ThingRecording); // recording
+            ResourceDescriptor? nullRecording = null;
+            Serializer.Serialize(ref nullRecording, ResourceType.ThingRecording); // recording
             Serializer.Serialize(ref temp_int); // playHead
             if (version < 0x3c4) Serializer.Serialize(ref temp_int);
             Serializer.Serialize(ref temp_int); // type
             Serializer.Serialize(ref temp_int); // dir
-            Serializer.Serialize(ref null); // prevDesiredPos
+            Serializer.SerializeReference<Thing>(null); // prevDesiredPos
             Serializer.Serialize(ref temp_int); // prevDesiredPosSet
-            Serializer.Serialize(ref null); // startOrientation
+            Serializer.SerializeReference<Thing>(null); // startOrientation
             Serializer.Serialize(ref temp_int); // speed
             if (version > 0x3c4)
                 Serializer.Serialize(ref temp_int); // pathIsAbsolute

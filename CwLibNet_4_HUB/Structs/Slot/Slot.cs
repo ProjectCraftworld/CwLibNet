@@ -148,7 +148,7 @@ public class Slot : ISerializable
             Serializer.Serialize(ref Adventure, ResourceType.Level, true, true, true);
         Serializer.Serialize(ref Icon, ResourceType.Texture, true, true, true);
 
-        Serializer.Serialize(ref Location);
+        Location = serializer.V4(Location) ?? new Vector4();
 
         Serializer.Serialize(ref AuthorId);
         if (version >= 0x13b)
@@ -169,7 +169,7 @@ public class Slot : ISerializable
         if (version > 0x237)
         {
             Serializer.Serialize(ref Shareable);
-            Serializer.Serialize(ref BackgroundGuid);
+            BackgroundGuid = (GUID) serializer.Guid(BackgroundGuid);
         }
 
         switch (version)

@@ -368,9 +368,9 @@ public class PCreature : ISerializable
         Serializer.Serialize(ref GroundDistance);
         Serializer.Serialize(ref GroundNormal);
 
-        GrabJoint = Serializer.SerializeReference(GrabJoint);
-        if (version < 0x13c) Serializer.SerializeReference(null);
-        JumpingOff = Serializer.SerializeReference(JumpingOff);
+        GrabJoint = Serializer.SerializeReference<Thing>(GrabJoint);
+        if (version < 0x13c) Serializer.SerializeReference<Thing>(null);
+        JumpingOff = Serializer.SerializeReference<Thing>(JumpingOff);
 
         Serializer.Serialize(ref State);
         if (subVersion >= 0x132)
@@ -381,7 +381,7 @@ public class PCreature : ISerializable
         Serializer.Serialize(ref JumpModifier);
         Serializer.Serialize(ref StrengthModifier);
 
-        if (version < 0x142) Serializer.Serialize(ref null);
+        if (version < 0x142) Serializer.SerializeReference<Thing>(null);
 
         Serializer.Serialize(ref ZMode);
 
@@ -430,13 +430,13 @@ public class PCreature : ISerializable
             Serializer.Serialize(ref LegList);
             if (version < 0x166)
             {
-                Serializer.Serialize(ref null);
-                Serializer.Serialize(ref null);
+                Serializer.SerializeReference<Thing>(null);
+                Serializer.SerializeReference<Thing>(null);
             }
 
             Serializer.Serialize(ref LifeSourceList);
-            LifeCreature = Serializer.SerializeReference(LifeCreature);
-            AiCreature = Serializer.SerializeReference(AiCreature);
+            LifeCreature = Serializer.SerializeReference<Thing>(LifeCreature);
+            AiCreature = Serializer.SerializeReference<Thing>(AiCreature);
         }
 
         if (version >= 0x163)
@@ -481,7 +481,10 @@ public class PCreature : ISerializable
             Serializer.Serialize(ref SwitchScale);
 
         if (version is > 0x242 and < 0x24d)
-            Serializer.Serialize(ref null, ResourceType.Plan);
+        {
+            ResourceDescriptor? nullPlan = null;
+            Serializer.Serialize(ref nullPlan, ResourceType.Plan);
+        }
 
         if (version >= 0x243)
             Serializer.Serialize(ref GunDirAndDashVec);
@@ -564,7 +567,11 @@ public class PCreature : ISerializable
             }
 
             for (var i = 0; i < BootContactForceList.Length; ++i)
-                Serializer.Serialize(ref BootContactForceList[i]);
+            {
+                Vector3? temp = BootContactForceList[i];
+                Serializer.Serialize(ref temp);
+                BootContactForceList[i] = temp ?? Vector3.Zero;
+            }
 
 
             Serializer.Serialize(ref GunType);
@@ -572,15 +579,14 @@ public class PCreature : ISerializable
         }
 
         if (version is >= 0x29e and < 0x336)
-            LastDirectControlPrompt = Serializer.SerializeReference(LastDirectControlPrompt);
+            LastDirectControlPrompt = Serializer.SerializeReference<Thing>(LastDirectControlPrompt);
 
         if (version > 0x2e4)
-            DirectControlPrompt = Serializer.SerializeReference(DirectControlPrompt);
+            DirectControlPrompt = Serializer.SerializeReference<Thing>(DirectControlPrompt);
 
         if (version is >= 0x29e and < 0x336)
         {
-            SmoothedDirectControlStick =
-                Serializer.Serialize(ref SmoothedDirectControlStick);
+            Serializer.Serialize(ref SmoothedDirectControlStick);
             Serializer.Serialize(ref DirectControlAnimFrame);
             Serializer.Serialize(ref DirectControlAnimState);
         }
@@ -633,10 +639,11 @@ public class PCreature : ISerializable
         switch (subVersion)
         {
             case >= 0x88 and <= 0xa4:
-                Serializer.Serialize(ref null, ResourceType.Plan);
+                ResourceDescriptor? nullPlan2 = null;
+                Serializer.Serialize(ref nullPlan2, ResourceType.Plan);
                 break;
             case >= 0xaa:
-                AlternateFormWorld = Serializer.SerializeReference(AlternateFormWorld);
+                AlternateFormWorld = Serializer.SerializeReference<Thing>(AlternateFormWorld);
                 break;
         }
 
@@ -645,12 +652,12 @@ public class PCreature : ISerializable
 
         if (subVersion is >= 0xd7 and < 0xea)
         {
-            Serializer.SerializeReference(null);
-            Serializer.SerializeReference(null);
+            Serializer.SerializeReference<Thing>(null);
+            Serializer.SerializeReference<Thing>(null);
         }
 
         if (subVersion >= 0xdf)
-            HookHatBogey = Serializer.SerializeReference(HookHatBogey);
+            HookHatBogey = Serializer.SerializeReference<Thing>(HookHatBogey);
 
         if (subVersion >= 0x196)
         {

@@ -21,7 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CwLibNet\CwLibNet.csproj" />
+      <ProjectReference Include="..\CwLibNet_4_HUB\CwLibNet.csproj" />
     </ItemGroup>
 
 </Project>

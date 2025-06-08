@@ -76,6 +76,7 @@ public class Serializer
         this.revision = revision;
         compressionFlags = stream.GetCompressionFlags();
         isWriting = false;
+        SetCurrentSerializer(this);
     }
 
     /// <summary>
@@ -90,6 +91,7 @@ public class Serializer
         this.revision = revision;
         compressionFlags = stream.GetCompressionFlags();
         isWriting = true;
+        SetCurrentSerializer(this);
     }
 
     /// <summary>
@@ -105,6 +107,7 @@ public class Serializer
         this.revision = revision;
         this.compressionFlags = compressionFlags;
         isWriting = true;
+        SetCurrentSerializer(this);
     }
 
     /// <summary>
@@ -120,6 +123,7 @@ public class Serializer
         this.revision = revision;
         this.compressionFlags = compressionFlags;
         isWriting = false;
+        SetCurrentSerializer(this);
     }
 
     /// <summary>

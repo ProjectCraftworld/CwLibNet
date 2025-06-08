@@ -47,8 +47,8 @@ public class PBody: ISerializable
 
         if (version < 0x13c)
         {
-            object? tempNull1 = null;
-            Serializer.Serialize(ref tempNull1);
+            int tempNullInt = 0; // Placeholder for object serialization
+            Serializer.Serialize(ref tempNullInt);
         }
 
         Serializer.Serialize(ref PosVel);
@@ -62,8 +62,8 @@ public class PBody: ISerializable
 
         if (version < 0x13c) {
             Serializer.Serialize(ref temp_float_0);
-            object? tempNull2 = null;
-            Serializer.Serialize(ref tempNull2);
+            int tempNullInt = 0; // Placeholder for object serialization
+            Serializer.Serialize(ref tempNullInt);
 
             if (Serializer.IsWriting()) Serializer.GetCurrentSerializer().GetOutput().I32(0);
             else {
@@ -78,8 +78,8 @@ public class PBody: ISerializable
 
             Serializer.Serialize(ref temp_int);
             Serializer.Serialize(ref temp_float_0);
-            object? tempNull4 = null;
-            Serializer.Serialize(ref tempNull4);
+            int tempNullInt2 = 0; // Placeholder for object serialization
+            Serializer.Serialize(ref tempNullInt2);
 
             ResourceDescriptor? tempNull5 = null;
             Serializer.Serialize(ref tempNull5, ResourceType.Texture);
@@ -88,8 +88,8 @@ public class PBody: ISerializable
             Serializer.Serialize(ref temp_int);
 
             Serializer.Serialize(ref temp_int);
-            object? tempNull6 = null;
-            Serializer.Serialize(ref tempNull6);
+            int tempNullInt3 = 0; // Placeholder for object serialization
+            Serializer.Serialize(ref tempNullInt3);
             Serializer.Serialize(ref temp_int);
             Serializer.Serialize(ref temp_float_0);
         }

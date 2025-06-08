@@ -124,8 +124,12 @@ public class PJoint: ISerializable
                 Serializer.Serialize(ref TweakTargetMinLength);
                 break;
             case > 0x21c:
-                TweakTargetMaxLength = Serializer.Serialize(ref (int)Math.Round(TweakTargetMaxLength));
-                TweakTargetMinLength = Serializer.Serialize(ref (int)Math.Round(TweakTargetMinLength));
+                var maxLengthInt = (int)Math.Round(TweakTargetMaxLength);
+                var minLengthInt = (int)Math.Round(TweakTargetMinLength);
+                Serializer.Serialize(ref maxLengthInt);
+                Serializer.Serialize(ref minLengthInt);
+                TweakTargetMaxLength = maxLengthInt;
+                TweakTargetMinLength = minLengthInt;
                 break;
         }
 
@@ -149,8 +153,12 @@ public class PJoint: ISerializable
                 if (RailKnotVector != null)
                 {
                     stream.I32(RailKnotVector.Length);
-                    foreach (var vector in RailKnotVector)
+                    for (int i = 0; i < RailKnotVector.Length; i++)
+                    {
+                        Vector3? vector = RailKnotVector[i];
                         Serializer.Serialize(ref vector);
+                        RailKnotVector[i] = vector ?? Vector3.Zero;
+                    }
                 }
                 else stream.I32(0);
             }

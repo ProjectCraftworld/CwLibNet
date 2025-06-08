@@ -38,7 +38,7 @@ public class PoppetTweakObjectPlacement: ISerializable
         if (version < 0x160)
             Serializer.Serialize(ref Thing);
         else
-            Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true, false, false);
+            Serializer.Serialize(ref Plan, ResourceType.Plan, true, false, false);
 
         ProxyObject = Serializer.SerializeReference(ProxyObject);
         Serializer.Serialize(ref BackZ);

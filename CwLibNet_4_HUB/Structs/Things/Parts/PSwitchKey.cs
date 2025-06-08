@@ -77,7 +77,7 @@ public class PSwitchKey: ISerializable
             Serializer.Serialize(ref IsActive);
 
         if (version is > 0x27c and < 0x2dc)
-            Serializer.Serialize(ref Type);
+            Type = serializer.Enum32(Type);
     }
 
     

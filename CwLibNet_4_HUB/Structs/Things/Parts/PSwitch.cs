@@ -371,7 +371,7 @@ public class PSwitch: ISerializable
         if (version > 0x2ad && subVersion < 0x100)
             Serializer.Serialize(ref TeamFilter);
 
-        if (version > 0x2c3) Serializer.Serialize(ref Behavior);
+        if (version > 0x2c3) Serializer.SerializeEnum32(ref Behavior);
 
         if (version is < 0x329 and > 0x2c3) Serializer.Serialize(ref temp_int);
 
@@ -413,13 +413,14 @@ public class PSwitch: ISerializable
             if (vita is >= 0x6 and < 0x36) // > 0x3c0
                 Serializer.Serialize(ref temp_int);
 
-            CursorScreenArea = vita switch
+            if (vita >= 0x9 && vita < 0x2c) // > 0x3c0
             {
-                // > 0x3c0
-                >= 0x9 and < 0x2c => (byte)Serializer.Serialize(ref CursorScreenArea),
-                >= 0x2c => Serializer.Serialize(ref CursorScreenArea),
-                _ => CursorScreenArea
-            };
+                Serializer.Serialize(ref CursorScreenArea);
+            }
+            else if (vita >= 0x2c)
+            {
+                Serializer.Serialize(ref CursorScreenArea);
+            }
 
             if (vita >= 0xb) // > 0x3c0
                 Serializer.Serialize(ref CursorInteractionType);
@@ -478,7 +479,7 @@ public class PSwitch: ISerializable
                 }
 
                 if (revision.Has(Branch.Double11, (int)Revisions.D1_LABEL_TERNARY))
-                    Value.Ternary = Serializer.Serialize(ref Value.Ternary);
+                    Serializer.Serialize(ref Value.Ternary);
             }
 
             switch (vita)
@@ -509,10 +510,10 @@ public class PSwitch: ISerializable
             Value ??= new DataLabelValue();
 
             Serializer.Serialize(ref Value.LabelIndex);
-            Value.CreatorId = Serializer.Serialize(ref Value.CreatorId);
-            Value.LabelName = Serializer.Serialize(ref Value.LabelName);
-            Value.Analogue = Serializer.Serialize(ref Value.Analogue);
-            Value.Ternary = Serializer.Serialize(ref Value.Ternary);
+            Serializer.Serialize(ref Value.CreatorId);
+            Serializer.Serialize(ref Value.LabelName);
+            Serializer.Serialize(ref Value.Analogue);
+            Serializer.Serialize(ref Value.Ternary);
         }
 
         if (subVersion > 0x21)

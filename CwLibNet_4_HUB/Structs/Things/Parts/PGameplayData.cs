@@ -31,14 +31,14 @@ public class PGameplayData: ISerializable
         var subVersion = revision.GetSubVersion();
 
         if (subVersion >= 0xef && version > 0x2d0)
-            serializer.Enum32(ref GameplayType);
+            serializer.Enum32(GameplayType);
 
         Serializer.Serialize(ref FluffCost);
         Serializer.Serialize(ref EggLink);
         Serializer.Serialize(ref KeyLink);
 
         if (version >= 0x2d1 && subVersion < 0xef)
-            serializer.Enum32(ref GameplayType);
+            serializer.Enum32(GameplayType);
 
         if (subVersion < 0xf3) return;
         Serializer.Serialize(ref TreasureType);

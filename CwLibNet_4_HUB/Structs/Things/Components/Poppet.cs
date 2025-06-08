@@ -60,7 +60,7 @@ public class Poppet: ISerializable
         if (version < 0x2ed)
         {
             if (version < 0x232)
-                Serializer.Serialize(ref null);
+                Serializer.SerializeReference<Thing>(null);
             switch (version)
             {
                 case < 0x135:
@@ -74,13 +74,13 @@ public class Poppet: ISerializable
             Serializer.Serialize(ref Edit);
 
             if (version < 0x18f)
-                Serializer.Serialize(ref null);
+                serializer.Reference<Thing>(null);
             if (version is >= 0x148 and < 0x185)
-                Serializer.SerializeReference(null);
+                serializer.Reference<Thing>(null);
 
             if (version >= 0x147)
             {
-                TweakObject = Serializer.SerializeReference(TweakObject);
+                TweakObject = serializer.Reference<Thing>(TweakObject);
                 Serializer.Serialize(ref BackupCameraZoneTargetBox);
                 BackupCameraZonePitchAngle = Serializer.GetCurrentSerializer().V3(BackupCameraZonePitchAngle);
                 Serializer.Serialize(ref BackupCameraZoneZoomDistance);
@@ -93,7 +93,7 @@ public class Poppet: ISerializable
             switch (version)
             {
                 case > 0x184 and < 0x1dd:
-                    Serializer.Serialize(ref null);
+                    Serializer.SerializeReference<Thing>(null);
                     break;
                 case > 0x1dc:
                 {
@@ -129,9 +129,9 @@ public class Poppet: ISerializable
             if (version >= 0x236)
             {
                 Serializer.Serialize(ref temp_int);
-                Serializer.Serialize(ref null);
+                serializer.Reference<Thing>(null);
                 if (version >= 0x23a)
-                    Serializer.Serialize(ref null);
+                    serializer.Reference<Thing>(null);
             }
 
             return;

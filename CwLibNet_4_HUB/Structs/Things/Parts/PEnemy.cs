@@ -57,10 +57,10 @@ public class PEnemy: ISerializable
         var version = revision.GetVersion();
 
         if (version >= 0x15d)
-            serializer.Enum32(ref PartType);
+            serializer.Enum32(PartType);
 
         if (version is > 0x15c and < 0x19f)
-            Serializer.SerializeReference(null);
+            Serializer.SerializeReference<Thing>(null);
 
         if (version >= 0x16d)
             Serializer.Serialize(ref Radius);
@@ -68,7 +68,7 @@ public class PEnemy: ISerializable
         switch (version)
         {
             case < 0x19e and < 0x1a9:
-                Serializer.SerializeReference(null);
+                Serializer.SerializeReference<Thing>(null);
                 break;
             case >= 0x19f:
                 Serializer.Serialize(ref SnapVertex);
@@ -85,16 +85,16 @@ public class PEnemy: ISerializable
         switch (version)
         {
             case > 0x1f1 and < 0x21e:
-                Serializer.SerializeReference(null);
-                Serializer.SerializeReference(null);
-                Serializer.SerializeReference(null);
-                Serializer.SerializeReference(null);
+                Serializer.SerializeReference<Thing>(null);
+                Serializer.SerializeReference<Thing>(null);
+                Serializer.SerializeReference<Thing>(null);
+                Serializer.SerializeReference<Thing>(null);
                 Serializer.Serialize(ref temp_int);
-                Serializer.SerializeReference(null);
-                Serializer.SerializeReference(null);
-                Serializer.Serialize(ref null);
+                Serializer.SerializeReference<Thing>(null);
+                Serializer.SerializeReference<Thing>(null);
+                Serializer.SerializeReference<Thing>(null);
                 Serializer.Serialize(ref temp_int);
-                Serializer.Serialize(ref null);
+                Serializer.SerializeReference<Thing>(null);
                 Serializer.Serialize(ref temp_int);
                 Serializer.Serialize(ref temp_int);
                 Serializer.Serialize(ref temp_int);

@@ -58,7 +58,8 @@ public class PLevelSettings: LevelSettings
         switch (version)
         {
             case < 0x156:
-                Serializer.Serialize(ref null, ResourceType.Texture);
+                ResourceDescriptor? nullTexture = null;
+                Serializer.Serialize(ref nullTexture, ResourceType.Texture);
                 break;
             case >= 0x2f3:
                 Serializer.Serialize(ref BackdropMesh, ResourceType.StaticMesh);

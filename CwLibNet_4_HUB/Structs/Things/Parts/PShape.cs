@@ -179,12 +179,18 @@ public class PShape: ISerializable
                 Color = (uint)Colors.GetARGB(color);
             }
         }
-        else Color = (uint)Serializer.Serialize(ref (int)Color);
+        else 
+        {
+            int colorInt = (int)Color;
+            Serializer.Serialize(ref colorInt);
+            Color = (uint)colorInt;
+        }
 
         switch (version)
         {
             case < 0x13c:
-                Serializer.Serialize(ref null, ResourceType.Texture);
+                ResourceDescriptor? nullTexture = null;
+                Serializer.Serialize(ref nullTexture, ResourceType.Texture);
                 break;
             case >= 0x301:
                 Serializer.Serialize(ref Brightness);
@@ -226,7 +232,7 @@ public class PShape: ISerializable
         }
 
         if (version <= 0x345)
-            Serializer.Serialize(ref LethalType);
+            LethalType = Serializer.GetCurrentSerializer().Enum32(LethalType, true);
         else
         {
             if (Serializer.IsWriting())
@@ -274,14 +280,23 @@ public class PShape: ISerializable
         if (version >= 0x2a3)
         {
             if (version <= 0x367)
-                PlayerNumberColor = (byte) Serializer.Serialize(ref PlayerNumberColor);
+                Serializer.Serialize(ref PlayerNumberColor);
             else
                 Serializer.Serialize(ref PlayerNumberColor);
         }
 
         if (version >= 0x2b5)
         {
-            Flags = version <= 0x345 ? Serializer.Serialize(ref (byte) Flags) : Serializer.Serialize(ref Flags);
+            if (version <= 0x345)
+            {
+                byte flagsByte = (byte) Flags;
+                Serializer.Serialize(ref flagsByte);
+                Flags = flagsByte;
+            }
+            else
+            {
+                Serializer.Serialize(ref Flags);
+            }
         }
 
         if (version >= 0x307)

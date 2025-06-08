@@ -49,15 +49,18 @@ public struct Part(string name, int index, int version, Type? serializable) : IE
         { "GAMEPLAY_DATA", new Part("GAMEPLAY_DATA", 0x1b, PartHistory.GAMEPLAY_DATA, typeof(PGameplayData)) },
         { "ENEMY", new Part("ENEMY", 0x1c, PartHistory.ENEMY, typeof(PEnemy)) },
         { "GROUP", new Part("GROUP", 0x1d, PartHistory.GROUP, typeof(PGroup)) },
-        { "PHYSICS_TWEAK", new Part("PHYSICS_TWEAK", 0x1e, PartHistory.PHYSICS_TWEAK, typeof(PPhysicsTweak)) }, /*
-        { "NPC", new Part("NPC", 0x1f, PartHistory.NPC, typeof(PNpc)) },
-        { "SWITCH_INPUT", new Part("SWITCH_INPUT", 0x20, PartHistory.SWITCH_INPUT, typeof(PSwitchInput)) },
-        { "MICROCHIP", new Part("MICROCHIP", 0x21, PartHistory.MICROCHIP, typeof(PMicrochip)) },
-        { "MATERIAL_TWEAK", new Part("MATERIAL_TWEAK", 0x22, PartHistory.MATERIAL_TWEAK, typeof(PMaterialTweak)) },
-        { "MATERIAL_OVERRIDE", new Part("MATERIAL_OVERRIDE", 0x23, PartHistory.MATERIAL_OVERRIDE, typeof(PMaterialOverride)) },
-        { "INSTRUMENT", new Part("INSTRUMENT", 0x24, PartHistory.INSTRUMENT, typeof(PInstrument)) },
-        { "SEQUENCER", new Part("SEQUENCER", 0x25, PartHistory.SEQUENCER, typeof(PSequencer)) },
-        { "CONTROLINATOR", new Part("CONTROLINATOR", 0x26, PartHistory.CONTROLINATOR, typeof(PControlinator)) } */
+        { "PHYSICS_TWEAK", new Part("PHYSICS_TWEAK", 0x1e, PartHistory.PHYSICS_TWEAK, typeof(PPhysicsTweak)) },
+        { "NPC", new Part("NPC", 0x1f, PartHistory.NPC, null) },
+        { "SWITCH_INPUT", new Part("SWITCH_INPUT", 0x20, PartHistory.SWITCH_INPUT, null) },
+        { "MICROCHIP", new Part("MICROCHIP", 0x21, PartHistory.MICROCHIP, null) },
+        { "MATERIAL_TWEAK", new Part("MATERIAL_TWEAK", 0x22, PartHistory.MATERIAL_TWEAK, null) },
+        { "MATERIAL_OVERRIDE", new Part("MATERIAL_OVERRIDE", 0x23, PartHistory.MATERIAL_OVERRIDE, null) },
+        { "INSTRUMENT", new Part("INSTRUMENT", 0x24, PartHistory.INSTRUMENT, null) },
+        { "SEQUENCER", new Part("SEQUENCER", 0x25, PartHistory.SEQUENCER, null) },
+        { "CONTROLINATOR", new Part("CONTROLINATOR", 0x26, PartHistory.CONTROLINATOR, null) },
+        { "POPPET_POWERUP", new Part("POPPET_POWERUP", 0x27, PartHistory.POPPET_POWERUP, null) },
+        { "POCKET_ITEM", new Part("POCKET_ITEM", 0x28, PartHistory.POCKET_ITEM, null) },
+        { "CREATOR_ANIM", new Part("CREATOR_ANIM", 0x29, PartHistory.CREATOR_ANIM, null) }
     };
 
     /**

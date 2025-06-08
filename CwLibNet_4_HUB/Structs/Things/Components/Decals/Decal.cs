@@ -153,7 +153,7 @@ public class Decal: ISerializable
 
         if (version >= 0x158)
         {
-            Serializer.Serialize(ref Type);
+            Type = serializer.Enum32(Type);
             Serializer.Serialize(ref MetadataIndex);
             if (version <= 0x3ba)
                 Serializer.Serialize(ref NumMetadata);

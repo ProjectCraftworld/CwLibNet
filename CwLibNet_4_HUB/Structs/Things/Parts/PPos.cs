@@ -59,7 +59,7 @@ public class PPos: ISerializable
         bool temp_bool_true = true;
         bool temp_bool_false = false;
 
-        var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
+        var version = serializer.GetRevision().GetVersion();
 
         Serializer.Serialize(ref ThingOfWhichIAmABone);
         Serializer.Serialize(ref AnimHash);

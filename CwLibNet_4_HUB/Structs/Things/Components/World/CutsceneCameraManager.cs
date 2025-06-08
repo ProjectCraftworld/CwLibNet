@@ -2,6 +2,7 @@ using CwLibNet.IO;
 using CwLibNet.IO.Serializer;
 using CwLibNet.Structs.Things;
 using CwLibNet.Types.Data;
+using CwLibNet.Enums;
 using static CwLibNet.IO.Serializer.Serializer;
 namespace CwLibNet.Structs.Things.Components.World;
 

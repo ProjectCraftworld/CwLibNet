@@ -149,7 +149,7 @@ public class PCameraTweak: ISerializable
         if (EnableImproperLoading && version is 0x13d or 0x176)
         {
             if (!Serializer.IsWriting())
-                Serializer.LogMessage("ADD CAMERA TYPE HERE", 1);
+                Serializer.LogMessage("ADD CAMERA TYPE HERE");
         }
         else
         {
@@ -197,7 +197,7 @@ public class PCameraTweak: ISerializable
 
         if (version is > 0x2ea and < 0x2f1)
         {
-            Serializer.Serialize(ref null);
+            Serializer.SerializeReference<Thing>(null);
             Serializer.Serialize(ref temp_int);
         }
 

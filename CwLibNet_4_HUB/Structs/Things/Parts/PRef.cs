@@ -46,7 +46,7 @@ public class PRef: ISerializable
 
         if (version < 0x160)
             Serializer.Serialize(ref Thing);
-        else Serializer.Serialize(ref Plan, Plan, ResourceType.Plan, true, false, false);
+        else Serializer.Serialize(ref Plan, ResourceType.Plan, true, false, false);
 
         Serializer.Serialize(ref OldLifetime);
         if (version >= 0x1c9)
@@ -55,15 +55,25 @@ public class PRef: ISerializable
             Serializer.Serialize(ref ChildrenSelectable);
 
         if (version < 0x19e)
-            Serializer.Array<Thing>(null, true);
+            serializer.Array<Thing>(null, true);
 
         if (version is >= 0x13d and < 0x321)
             Serializer.Serialize(ref StripChildren);
 
-        if (version is > 0x171 and < 0x180) Serializer.Serialize(ref temp_int);
+        if (version is > 0x171 and < 0x180) 
+        {
+            var tempInt = 0;
+            Serializer.Serialize(ref tempInt);
+        }
         if (version is <= 0x17f or >= 0x19e) return;
-        Serializer.Serialize(ref temp_int);
-        Serializer.Serialize(ref default(NetworkPlayerID));
+        {
+            var tempInt = 0;
+            Serializer.Serialize(ref tempInt);
+        }
+        {
+            var tempNetworkId = default(NetworkPlayerID);
+            Serializer.Serialize(ref tempNetworkId);
+        }
     }
 
     // TODO: Actually implement

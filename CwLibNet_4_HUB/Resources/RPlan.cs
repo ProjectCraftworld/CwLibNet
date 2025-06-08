@@ -64,15 +64,15 @@ public class RPlan : Resource
 
     public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
     {
-        var revision = Serializer.GetCurrentSerializer().GetRevision();
+        var revision = serializer.GetRevision();
         var head = revision.GetVersion();
-        if (!Serializer.IsWriting())
+        if (!serializer.GetIsWriting())
         {
-            DependencyCache.UnionWith(Serializer.GetCurrentSerializer().GetDependencies());
-            Serializer.GetCurrentSerializer().ClearDependencies();
+            DependencyCache.UnionWith(serializer.GetDependencies());
+            serializer.ClearDependencies();
         }
 
-        if (!Serializer.IsWriting())
+        if (!serializer.GetIsWriting())
         {
             CompressionFlags = Serializer.GetCurrentSerializer().GetCompressionFlags();
             Revision = revision;

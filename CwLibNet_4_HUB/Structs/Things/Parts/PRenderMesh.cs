@@ -57,7 +57,7 @@ public class PRenderMesh: ISerializable
             }
         }
         
-        Serializer.Serialize(ref CastShadows);
+        CastShadows = serializer.Enum32(CastShadows);
         Serializer.Serialize(ref RttEnable);
         
         if (version > 0x2e2)

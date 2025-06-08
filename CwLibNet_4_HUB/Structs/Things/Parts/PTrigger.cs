@@ -44,7 +44,7 @@ public class PTrigger: ISerializable
         var subVersion = revision.GetSubVersion();
 
 
-        Serializer.Serialize(ref TriggerType);
+        TriggerType = serializer.Enum32(TriggerType);
 
         if (revision.Has(Branch.Double11, 0x17))
         {

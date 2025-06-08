@@ -233,8 +233,8 @@ public class PEmitter: ISerializable
             }
             else
             {
-                EffectCreate = (byte) Serializer.Serialize(ref EffectCreate);
-                EffectDestroy = (byte) Serializer.Serialize(ref EffectDestroy);
+                EffectCreate = serializer.I8(EffectCreate);
+                EffectDestroy = serializer.I8(EffectDestroy);
             }
         }
 

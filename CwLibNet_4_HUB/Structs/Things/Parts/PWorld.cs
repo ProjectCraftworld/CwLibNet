@@ -429,8 +429,10 @@ public class PWorld: ISerializable
             Serializer.Serialize(ref TargetWaterHintColorTwo);
         }
 
-        if (subVersion is >= 0xf8 and < 0x189)
-            Serializer.Serialize(ref false);
+        if (subVersion is >= 0xf8 and < 0x189) {
+            bool tempBool = false;
+            Serializer.Serialize(ref tempBool);
+        }
 
         if (subVersion >= 0x182) {
             Serializer.Serialize(ref BackdropEnabled);
@@ -442,8 +444,10 @@ public class PWorld: ISerializable
         
 
         if (version is > 0x288 and < 0x29c || (revision.IsLeerdammer() && revision.Before(Branch.Leerdammer, (int)Revisions.LD_WATER_WAVE))) {
-            Serializer.Serialize(ref 0);
-            Serializer.Serialize(ref false);
+            int tempInt = 0;
+            bool tempBool = false;
+            Serializer.Serialize(ref tempInt);
+            Serializer.Serialize(ref tempBool);
         }
 
         switch (version)
@@ -530,7 +534,9 @@ public class PWorld: ISerializable
                 Serializer.Serialize(ref PortraitMode);
 
             if (vita is >= 0x28 and < 0x47) {
-                if (Serializer.Serialize(ref 0) > 1 && !Serializer.IsWriting())
+                int tempInt = 0;
+                Serializer.Serialize(ref tempInt);
+                if (tempInt > 1 && !Serializer.IsWriting())
                     SharedScreen = true;
             }
 
