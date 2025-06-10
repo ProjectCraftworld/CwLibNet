@@ -1,13 +1,13 @@
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.Structs.Slot;
-using CwLibNet.Structs.Things.Components;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Profile;
-using CwLibNet.Structs.Things;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Structs.Slot;
+using CwLibNet4Hub.Structs.Things.Components;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Profile;
+using CwLibNet4Hub.Structs.Things;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Things.Parts;
+namespace CwLibNet4Hub.Structs.Things.Parts;
 
 public class PGameplayData: ISerializable
 {
@@ -24,7 +24,7 @@ public class PGameplayData: ISerializable
     public short TreasureCount = 1;
 
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();

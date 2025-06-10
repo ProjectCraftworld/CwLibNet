@@ -1,8 +1,8 @@
-using CwLibNet.Squish;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Squish;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Util;
+namespace CwLibNet4Hub.Util;
 
 public static class Squish
     {

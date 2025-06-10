@@ -1,4 +1,4 @@
-using static CwLibNet.IO.Serializer.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 /**********************************************************\
 |                                                          |
 | XXTEA.cs                                                 |
@@ -18,7 +18,7 @@ namespace Xxtea;
 
 using System;
 using System.Text;
-using CwLibNet.IO.Serializer;
+using CwLibNet4Hub.IO.Serializer;
 
 public static class XXTEA {
     private static readonly UTF8Encoding utf8 = new();

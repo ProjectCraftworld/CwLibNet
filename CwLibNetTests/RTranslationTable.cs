@@ -1,4 +1,4 @@
-using CwLibNet.Resources;
+using CwLibNet4Hub.Resources;
 
 namespace CwLibNetTests;
 

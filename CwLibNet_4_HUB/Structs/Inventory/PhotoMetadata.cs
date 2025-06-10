@@ -1,11 +1,11 @@
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.Structs.Slot;
-using CwLibNet.Types.Data;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Structs.Slot;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Inventory;
+namespace CwLibNet4Hub.Structs.Inventory;
 
 public class PhotoMetadata: ISerializable
 {
@@ -18,7 +18,7 @@ public class PhotoMetadata: ISerializable
     public PhotoUser[]? Users;
     public long Timestamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Photo, ResourceType.Texture, true, false, false);
         Serializer.Serialize(ref Level);

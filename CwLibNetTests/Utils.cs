@@ -1,6 +1,6 @@
-using CwLibNet.Enums;
-using CwLibNet.Types.Data;
-using CwLibNet.Util;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.Util;
 
 namespace CwLibNetTests;
 

@@ -1,14 +1,14 @@
 ﻿using System.Runtime.Serialization;
-using CwLibNet.Enums;
-using CwLibNet.Structs.Things.Parts;
-using CwLibNet.Types.Data;
-using CwLibNet.Util;
-using ISerializable = CwLibNet.IO.ISerializable;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Things;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.Structs.Things.Parts;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.Util;
+using ISerializable = CwLibNet4Hub.IO.ISerializable;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Things;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Things;
+namespace CwLibNet4Hub.Structs.Things;
 
 public class Thing : ISerializable
 {
@@ -40,7 +40,7 @@ public class Thing : ISerializable
         Uid = uid;
     }
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         var revision = serializer.GetRevision();
         var version = revision.GetVersion();

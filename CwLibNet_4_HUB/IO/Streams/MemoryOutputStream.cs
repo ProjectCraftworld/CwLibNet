@@ -1,11 +1,11 @@
-﻿using CwLibNet.Enums;
-using CwLibNet.Types.Data;
+﻿using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.Types.Data;
 using System.Numerics;
 using System.Text;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.IO.Streams;
+namespace CwLibNet4Hub.IO.Streams;
 
 /**
  * Big-endian binary output stream.
@@ -50,6 +50,14 @@ public class MemoryOutputStream
      */
     public MemoryOutputStream Bytes(byte[]? value)
     {
+        if (value == null) return this;
+        
+        // Check if we need to resize the buffer
+        if (offset + value.Length > buffer.Length)
+        {
+            Array.Resize(ref buffer, Math.Max(buffer.Length * 2, offset + value.Length));
+        }
+        
         Array.Copy(value, 0, buffer, offset, value.Length);
         offset += value.Length;
         return this;
@@ -102,6 +110,12 @@ public class MemoryOutputStream
      */
     public MemoryOutputStream I8(byte value)
     {
+        // Check if we need to resize the buffer
+        if (offset >= buffer.Length)
+        {
+            Array.Resize(ref buffer, Math.Max(buffer.Length * 2, offset + 1));
+        }
+        
         buffer[offset++] = value;
         return this;
     }
@@ -114,6 +128,12 @@ public class MemoryOutputStream
      */
     public MemoryOutputStream U8(int value)
     {
+        // Check if we need to resize the buffer
+        if (offset >= buffer.Length)
+        {
+            Array.Resize(ref buffer, Math.Max(buffer.Length * 2, offset + 1));
+        }
+        
         buffer[offset++] = (byte)(value & 0xFF);
         return this;
     }

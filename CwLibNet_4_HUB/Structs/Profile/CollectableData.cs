@@ -1,10 +1,10 @@
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.Types.Data;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Profile;
+namespace CwLibNet4Hub.Structs.Profile;
 
 public class CollectableData: ISerializable
 {
@@ -20,7 +20,7 @@ public class CollectableData: ISerializable
     // 3 = award_ace
 
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         if (Serializer.GetCurrentSerializer().GetRevision().GetVersion() < 0x1c2) return;
         Serializer.Serialize(ref Plan, ResourceType.Plan, true, false, false);

@@ -1,7 +1,7 @@
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
-namespace CwLibNet.Structs.Level;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+namespace CwLibNet4Hub.Structs.Level;
 
 public class CachedInventoryData: ISerializable
 {
@@ -13,7 +13,7 @@ public class CachedInventoryData: ISerializable
     public byte U0, U1, V0, V1;
 
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 

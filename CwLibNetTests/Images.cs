@@ -1,6 +1,6 @@
-using CwLibNet.Enums;
-using CwLibNet.Resources;
-using CwLibNet.Util;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.Resources;
+using CwLibNet4Hub.Util;
 using SkiaSharp;
 
 namespace CwLibNetTests;

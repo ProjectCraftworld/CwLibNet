@@ -1,12 +1,13 @@
 using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
-using CwLibNet.Structs.Things;
-using CwLibNet.Structs.Things.Parts;
-using CwLibNet.Types.Data;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.IO.Streams;
+using CwLibNet4Hub.Structs.Things;
+using CwLibNet4Hub.Structs.Things.Parts;
+using CwLibNet4Hub.Types.Data;
 
-namespace CwLibNetTests;
+namespace CwLibNetTests
+{
 
 public class SerializerTests
 {
@@ -233,4 +234,6 @@ public class SerializerTests
         Assert.Equal(new Matrix4x4(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16),
             thing.GetPart<PPos>(Part.Parts["POS"])?.WorldPosition);
     }
+}
+
 }

@@ -1,10 +1,10 @@
-﻿using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.Types.Data;
+﻿using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Types.Data;
 using System.Numerics;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
-namespace CwLibNet.Structs.StaticMesh;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+namespace CwLibNet4Hub.Structs.StaticMesh;
 
 public class UnknownStruct : ISerializable
 {
@@ -13,7 +13,7 @@ public class UnknownStruct : ISerializable
     public Vector3? Min, Max;
     public short StructIndexA, StructIndexB, FirstPrimitive, NumPrimitives;
 
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Min);
         Serializer.Serialize(ref StructIndexA);
@@ -51,7 +51,7 @@ public class StaticMeshInfo : ISerializable
     public StaticPrimitive[]? Primitives;
     public UnknownStruct[]? Unknown;
 
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Lightmap, ResourceType.Texture, true, false, false);
         Serializer.Serialize(ref Risemap, ResourceType.Texture, true, false, false);

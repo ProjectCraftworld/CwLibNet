@@ -1,18 +1,18 @@
-using CwLibNet.Enums;
-using CwLibNet.EX;
-using CwLibNet.IO;
-using CwLibNet.IO.Streams;
-using CwLibNet.Resources;
-using CwLibNet.Structs.StaticMesh;
-using CwLibNet.Structs.Texture;
-using CwLibNet.Structs.Things;
-using CwLibNet.Types.Data;
-using CwLibNet.Util;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.EX;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Streams;
+using CwLibNet4Hub.Resources;
+using CwLibNet4Hub.Structs.StaticMesh;
+using CwLibNet4Hub.Structs.Texture;
+using CwLibNet4Hub.Structs.Things;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.Util;
 using Xxtea;
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
 
-namespace CwLibNet.Types;
+namespace CwLibNet4Hub.Types;
 
 public class SerializedResource
 {

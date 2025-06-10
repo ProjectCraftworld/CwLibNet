@@ -1,8 +1,8 @@
 using XSHA1 = System.Security.Cryptography.SHA1;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Types.Data;
+namespace CwLibNet4Hub.Types.Data;
 
 public sealed class Sha1
 {

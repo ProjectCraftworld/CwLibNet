@@ -1,9 +1,9 @@
 using System.Numerics;
-using CwLibNet.Extensions;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
-namespace CwLibNet.Structs.Gmat;
+using CwLibNet4Hub.Extensions;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+namespace CwLibNet4Hub.Structs.Gmat;
 
 public class MaterialParameterAnimation: ISerializable
 {
@@ -16,7 +16,7 @@ public class MaterialParameterAnimation: ISerializable
     public byte ComponentsAnimated;
 
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         Vector4? tempBaseValue = BaseValue;
         Serializer.SerializeV4(ref tempBaseValue);

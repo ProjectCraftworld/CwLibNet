@@ -1,11 +1,11 @@
-using CwLibNet.Enums;
-using CwLibNet.EX;
-using CwLibNet.IO.Streams;
-using CwLibNet.Util;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.EX;
+using CwLibNet4Hub.IO.Streams;
+using CwLibNet4Hub.Util;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Types.Archives;
+namespace CwLibNet4Hub.Types.Archives;
 
 public class FileArchive: Fart
 {

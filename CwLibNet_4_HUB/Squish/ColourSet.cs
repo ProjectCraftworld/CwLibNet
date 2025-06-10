@@ -1,5 +1,5 @@
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
 /* -----------------------------------------------------------------------------
 
 	Copyright (c) 2006 Simon Brown                          si@sjbrown.co.uk
@@ -27,7 +27,7 @@ using CwLibNet.IO.Serializer;
 
    -------------------------------------------------------------------------- */
 
-namespace CwLibNet.Squish;
+namespace CwLibNet4Hub.Squish;
 
 public class ColourSet {
 

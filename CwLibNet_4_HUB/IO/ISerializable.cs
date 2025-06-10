@@ -1,7 +1,7 @@
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
 
-namespace CwLibNet.IO;
+namespace CwLibNet4Hub.IO;
 
 /// <summary>
 /// Interface that specifies that an object can be serialized as a pure data binary structure.
@@ -12,7 +12,7 @@ public interface ISerializable
     /// (De)serializes a structure that implements Serializable.
     /// </summary>
     /// <param name="serializer">Serializer instance</param>
-    void Serialize(CwLibNet.IO.Serializer.Serializer serializer);
+    void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer);
     
     /// <summary>
     /// Calculates the size necessary to store this structure

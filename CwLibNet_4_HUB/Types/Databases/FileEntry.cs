@@ -1,9 +1,9 @@
-using CwLibNet.Types.Data;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Types.Databases;
+namespace CwLibNet4Hub.Types.Databases;
 
 public class FileEntry(string path, Sha1 sha1, long size)
 {

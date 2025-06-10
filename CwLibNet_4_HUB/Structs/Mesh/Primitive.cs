@@ -1,10 +1,10 @@
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.Types.Data;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Mesh;
+namespace CwLibNet4Hub.Structs.Mesh;
 
 public class Primitive: ISerializable
 {
@@ -65,9 +65,15 @@ public class Primitive: ISerializable
     }
 
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
+
+        // Debug: Track primitive serialization
+        if (!Serializer.IsWriting())
+        {
+            Console.WriteLine($"🔍 Primitive - Version: {version} (0x{version:X}), Position before Material: {Serializer.GetCurrentSerializer().GetInput().GetOffset()}");
+        }
 
         Serializer.Serialize(ref Material, ResourceType.GfxMaterial);
 
@@ -75,12 +81,20 @@ public class Primitive: ISerializable
         {
             case < 0x149:
                 {
+                    if (!Serializer.IsWriting())
+                        Console.WriteLine($"🔍 Primitive - Version < 0x149, serializing null TextureAlternatives");
                     ResourceDescriptor? tempNull = null;
                     Serializer.Serialize(ref tempNull, ResourceType.GfxMaterial);
                 }
                 break;
             case >= (int)Revisions.MESH_TEXTURE_ALTERNATIVES:
+                if (!Serializer.IsWriting())
+                    Console.WriteLine($"🔍 Primitive - Version >= MESH_TEXTURE_ALTERNATIVES ({(int)Revisions.MESH_TEXTURE_ALTERNATIVES}), serializing TextureAlternatives");
                 Serializer.Serialize(ref TextureAlternatives, ResourceType.TextureList);
+                break;
+            default:
+                if (!Serializer.IsWriting())
+                    Console.WriteLine($"🔍 Primitive - Version in middle range, NOT serializing TextureAlternatives");
                 break;
         }
 

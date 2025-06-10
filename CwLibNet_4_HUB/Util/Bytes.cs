@@ -1,11 +1,11 @@
-﻿using CwLibNet.Enums;
-using CwLibNet.IO.Streams;
-using CwLibNet.Types.Data;
-using CwLibNet.IO;
+﻿using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO.Streams;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO;
 using System.Numerics;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
-namespace CwLibNet.Util;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+namespace CwLibNet4Hub.Util;
 
 public class Bytes
 {

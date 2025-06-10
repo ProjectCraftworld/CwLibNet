@@ -1,13 +1,13 @@
 using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.EX;
-using CwLibNet.IO;
-using CwLibNet.Structs.Things;
-using CwLibNet.Types.Data;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.EX;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Structs.Things;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Streaming;
+namespace CwLibNet4Hub.Structs.Streaming;
 
 public class StreamingManager: ISerializable
 {
@@ -26,7 +26,7 @@ public class StreamingManager: ISerializable
     public Thing[][] MaintainIslandList;
 
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 

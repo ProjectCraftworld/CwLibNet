@@ -1,6 +1,6 @@
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO.Serializer;
-﻿namespace CwLibNet.Types.Data;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
+﻿namespace CwLibNet4Hub.Types.Data;
 
 public readonly struct GUID : IEquatable<GUID>
 {

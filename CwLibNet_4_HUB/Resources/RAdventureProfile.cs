@@ -1,9 +1,9 @@
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Types.Data;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Types.Data;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Resources;
+namespace CwLibNet4Hub.Resources;
 
 /* TODO: Implement this class */
 public class RAdventureCreateProfile : Resource
@@ -18,7 +18,7 @@ public class RAdventureCreateProfile : Resource
         throw new NotImplementedException();
     }
 
-    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public override void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         throw new NotImplementedException();
     }

@@ -1,5 +1,5 @@
-﻿using CwLibNet.Resources;
-using CwLibNet.Types;
+﻿using CwLibNet4Hub.Resources;
+using CwLibNet4Hub.Types;
 
 namespace CwLibNetTests
 {

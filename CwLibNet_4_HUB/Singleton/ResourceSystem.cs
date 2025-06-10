@@ -1,11 +1,11 @@
-using CwLibNet.Types.Archives;
-using CwLibNet.Types.Data;
-using CwLibNet.Types.Databases;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Types.Archives;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.Types.Databases;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Singleton;
+namespace CwLibNet4Hub.Singleton;
 
 public static class ResourceLogLevel
 {

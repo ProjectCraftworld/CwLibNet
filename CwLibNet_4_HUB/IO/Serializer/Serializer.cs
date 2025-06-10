@@ -1,17 +1,17 @@
 using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.EX;
-using CwLibNet.Extensions;
-using CwLibNet.IO.Streams;
-using CwLibNet.Singleton;
-using CwLibNet.Structs.Font;
-using CwLibNet.Structs.Things;
-using CwLibNet.Types.Data;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.EX;
+using CwLibNet4Hub.Extensions;
+using CwLibNet4Hub.IO.Streams;
+using CwLibNet4Hub.Singleton;
+using CwLibNet4Hub.Structs.Font;
+using CwLibNet4Hub.Structs.Things;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.IO.Serializer;
+namespace CwLibNet4Hub.IO.Serializer;
 
 
 public enum SERIALIZER_RESULT
@@ -662,7 +662,7 @@ public class Serializer
     /// <returns>Resource (de)serialized</returns>
     public ResourceDescriptor? Resource(ResourceDescriptor? value, ResourceType type)
     {
-        return Resource(value, type, false, true, false);
+        return Resource(value, (ResourceType?)type, false, true, false);
     }
 
     /// <summary>
@@ -674,7 +674,7 @@ public class Serializer
     /// <returns>Resource (de)serialized</returns>
     public ResourceDescriptor? Resource(ResourceDescriptor? value, ResourceType type, bool isDescriptor)
     {
-        return Resource(value, type, isDescriptor, true, false);
+        return Resource(value, (ResourceType?)type, isDescriptor, true, false);
     }
 
     /// <summary>
@@ -714,13 +714,31 @@ public class Serializer
                 sha1 = input.Sha1();
             if (t)
                 type = ResourceType.FromType(input.I32());
-            var descriptor = new ResourceDescriptor(guid!.Value, sha1!, type!.Value); // In this part of the code,
-            // I can safely assume "type"
-            // is not null.
+            
+            // Handle the case where type might be null or not have a value
+            if (!type.HasValue)
+            {
+                throw new InvalidOperationException("ResourceType cannot be null when creating ResourceDescriptor. " +
+                    "Either provide a non-null type parameter or set t=true to read type from stream.");
+            }
+            
+            // Be more defensive about accessing type.Value
+            ResourceType typeValue;
+            try
+            {
+                typeValue = type.Value;
+            }
+            catch (InvalidOperationException)
+            {
+                throw new InvalidOperationException("ResourceType value is not available despite HasValue being true. " +
+                    $"t={t}, isDescriptor={isDescriptor}, type.HasValue={type.HasValue}");
+            }
+            
+            var descriptor = new ResourceDescriptor(guid, sha1, typeValue);
             if (!descriptor.IsValid())
                 return null;
             descriptor.SetFlags(flags);
-            if (descriptor.IsHash() || !(isDescriptor && type.Equals(ResourceType.Plan)))
+            if (descriptor.IsHash() || !(isDescriptor && typeValue.Equals(ResourceType.Plan)))
                 dependencies.Add(descriptor);
             return descriptor;
         }
@@ -739,13 +757,18 @@ public class Serializer
                 output.Guid(value.GetGUID());
             if ((flags & HASH) != 0)
                 output.Sha1(value.GetSHA1());
-            if (flags != 0 && !(isDescriptor && type.Equals(ResourceType.Plan)))
+            if (flags != 0 && !(isDescriptor && type.HasValue && type.Value.Equals(ResourceType.Plan)))
                 dependencies.Add(value);
         }
         else
             I8(NONE);
         if (t)
-            output.I32(value!.GetResourceType().Value);
+        {
+            if (value != null)
+                output.I32(value.GetResourceType().Value);
+            else
+                output.I32(0); // Default type when value is null
+        }
         return value;
     }
 
@@ -1022,6 +1045,7 @@ public class Serializer
         }
 
         var count = input.I32();
+        Console.WriteLine($"🔍 Arraylist<T> - Read count: {count}");
         List<T> output = new(count);
         for (var i = 0; i < count; ++i)
         {

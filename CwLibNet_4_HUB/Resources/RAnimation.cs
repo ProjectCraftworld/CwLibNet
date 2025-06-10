@@ -1,14 +1,14 @@
 using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.Extensions;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.IO.Streams;
-using CwLibNet.Structs.Animation;
-using CwLibNet.Types.Data;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.Extensions;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.IO.Streams;
+using CwLibNet4Hub.Structs.Animation;
+using CwLibNet4Hub.Types.Data;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Resources;
+namespace CwLibNet4Hub.Resources;
 
 public class RAnimation: Resource
 {
@@ -82,7 +82,7 @@ public class RAnimation: Resource
     }
 
     
-    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public override void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
         var isWriting = Serializer.IsWriting();

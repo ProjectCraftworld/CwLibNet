@@ -1,11 +1,11 @@
-using CwLibNet.IO;
-using CwLibNet.Types.Data;
-using CwLibNet.Enums;
-using CwLibNet.Structs.Slot;
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO.Serializer;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.Structs.Slot;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
 
-namespace CwLibNet.Resources;
+namespace CwLibNet4Hub.Resources;
 
 public class RQuest : ISerializable
 {
@@ -46,7 +46,7 @@ public class RQuest : ISerializable
     // items
     //     SlotID
     //     int[]
-    public virtual void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public virtual void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
     }
 

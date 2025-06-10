@@ -1,11 +1,11 @@
 using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Gmat;
-using CwLibNet.Types.Data;
-using static CwLibNet.IO.Serializer.Serializer;
-namespace CwLibNet.Resources;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Gmat;
+using CwLibNet4Hub.Types.Data;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+namespace CwLibNet4Hub.Resources;
 
 public class RGfxMaterial: Resource
 {
@@ -79,7 +79,7 @@ public class RGfxMaterial: Resource
     }
 
     
-    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public override void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
 
         var revision = Serializer.GetCurrentSerializer().GetRevision();

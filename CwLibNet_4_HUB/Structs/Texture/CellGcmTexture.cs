@@ -1,10 +1,10 @@
-﻿using CwLibNet.Enums;
-using CwLibNet.External;
-using CwLibNet.IO.Streams;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+﻿using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.External;
+using CwLibNet4Hub.IO.Streams;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Texture;
+namespace CwLibNet4Hub.Structs.Texture;
 
 public class CellGcmTexture
 {

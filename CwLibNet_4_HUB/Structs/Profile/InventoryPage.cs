@@ -1,9 +1,9 @@
-using CwLibNet.IO;
-using CwLibNet.Enums;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Profile 
+namespace CwLibNet4Hub.Structs.Profile 
 {
     public class InventoryPage : ISerializable
     {
@@ -12,7 +12,7 @@ namespace CwLibNet.Structs.Profile
         public int inventoryPageTitleKey;
         public InventorySortMode desiredSortMode = InventorySortMode.INVALID;
 
-        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+        public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
         {
             Serializer.Serialize(ref inventoryPageTitleKey);
             desiredSortMode = serializer.Enum32(desiredSortMode);

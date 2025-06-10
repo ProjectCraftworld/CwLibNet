@@ -1,16 +1,16 @@
-using static CwLibNet.IO.Serializer.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 using System;
 using System.Numerics;
-using CwLibNet.Unity.Bridges;
+using CwLibNet4Hub.Unity.Bridges;
 
 #if UNITY_2021_3_OR_NEWER
 using UnityEngine;
 using Mesh = UnityEngine.Mesh;
 using Vector3 = UnityEngine.Vector3;
-using CwLibNet.IO.Serializer;
+using CwLibNet4Hub.IO.Serializer;
 #endif
 
-namespace CwLibNet.Unity.Bridges
+namespace CwLibNet4Hub.Unity.Bridges
 {
     /// <summary>
     /// Unity compatibility bridge for RMesh.

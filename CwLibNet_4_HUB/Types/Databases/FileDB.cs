@@ -1,12 +1,12 @@
 using System.Collections;
-using CwLibNet.Enums;
-using CwLibNet.Extensions;
-using CwLibNet.IO.Streams;
-using CwLibNet.Types.Data;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.Extensions;
+using CwLibNet4Hub.IO.Streams;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Types.Databases;
+namespace CwLibNet4Hub.Types.Databases;
 
 public class FileDb: IEnumerable<FileDbRow>
 {

@@ -1,11 +1,11 @@
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.DLC;
-using CwLibNet.Types.Data;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.DLC;
+using CwLibNet4Hub.Types.Data;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Resources;
+namespace CwLibNet4Hub.Resources;
 
 public class RDLC : Resource
 {
@@ -14,7 +14,7 @@ public class RDLC : Resource
     public List<DLCGUID>? GUIDs = [];
     public List<DLCFile>? Files = [];
 
-    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public override void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref GUIDs);
         Serializer.Serialize(ref Files);

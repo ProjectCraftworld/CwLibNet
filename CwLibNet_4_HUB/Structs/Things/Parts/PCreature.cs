@@ -1,12 +1,12 @@
 using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.Types.Data;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Things;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Things;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Things.Parts;
+namespace CwLibNet4Hub.Structs.Things.Parts;
 
 public class WhipSim : ISerializable
     {
@@ -26,7 +26,7 @@ public class WhipSim : ISerializable
         public float AttachedZOffset;
 
 
-        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+        public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
         {
         int temp_int = 0;
         bool temp_bool_true = true;
@@ -64,7 +64,7 @@ public class WhipSim : ISerializable
         public Vector3? SpringThingPosition;
 
 
-        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+        public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
         {
             SpringThing = Serializer.SerializeReference(SpringThing);
             Serializer.Serialize(ref SpringTimer);
@@ -339,7 +339,7 @@ public class PCreature : ISerializable
     public byte SpringForce, SpringStateTimer;
 
 
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         int temp_int = 0;
         float temp_float_0 = 0.0f;

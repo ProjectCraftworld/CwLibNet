@@ -1,12 +1,12 @@
 using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.Structs.Slot;
-using CwLibNet.Types.Data;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.Structs.Slot;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Presets;
+namespace CwLibNet4Hub.Presets;
 
 public class SlotPresets
 {

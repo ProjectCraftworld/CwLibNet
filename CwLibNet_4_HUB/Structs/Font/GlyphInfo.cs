@@ -1,7 +1,7 @@
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
-namespace CwLibNet.Structs.Font;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+namespace CwLibNet4Hub.Structs.Font;
 
 public class GlyphInfo: ISerializable
 {
@@ -14,7 +14,7 @@ public class GlyphInfo: ISerializable
 
     public int CacheX, CacheY;
 
-    public virtual void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public virtual void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Character);
         Serializer.Serialize(ref BoxLeft);

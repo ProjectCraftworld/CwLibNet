@@ -1,6 +1,6 @@
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO.Serializer;
-namespace CwLibNet.EX;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
+namespace CwLibNet4Hub.EX;
 
 /// <summary>
 /// Exception thrown when an error occurs during (de)serialization.

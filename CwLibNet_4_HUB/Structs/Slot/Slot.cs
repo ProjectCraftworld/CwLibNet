@@ -1,15 +1,15 @@
 using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.Types.Data;
-using CwLibNet.Structs.Server;
-using CwLibNet.Util;
-using CwLibNet.Resources;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Slot;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.Structs.Server;
+using CwLibNet4Hub.Util;
+using CwLibNet4Hub.Resources;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Slot;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Slot;
+namespace CwLibNet4Hub.Structs.Slot;
 
 public class Slot : ISerializable
 {
@@ -131,7 +131,7 @@ public class Slot : ISerializable
         MaxPlayers = (byte)Math.Clamp(descriptor.Maxplayers, 1, 4);
     }
 
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         int temp_int = 0;
         bool temp_bool_true = true;

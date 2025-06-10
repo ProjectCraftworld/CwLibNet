@@ -1,10 +1,10 @@
-﻿using CwLibNet.IO;
-using CwLibNet.Structs.Things.Parts;
+﻿using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Structs.Things.Parts;
 
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Things;
-namespace CwLibNet.Enums;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Things;
+namespace CwLibNet4Hub.Enums;
 
 public struct Part(string name, int index, int version, Type? serializable) : IEquatable<Part>
 {

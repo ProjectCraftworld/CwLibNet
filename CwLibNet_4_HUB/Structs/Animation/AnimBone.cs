@@ -1,7 +1,7 @@
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
-namespace CwLibNet.Structs.Animation;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+namespace CwLibNet4Hub.Structs.Animation;
 
 public class AnimBone: ISerializable
 {
@@ -38,7 +38,7 @@ public class AnimBone: ISerializable
     }
 
     
-    public virtual void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public virtual void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref AnimHash);
         Serializer.Serialize(ref Parent);

@@ -1,11 +1,11 @@
-using CwLibNet.IO;
-using CwLibNet.Structs.Things.Components.Script;
-using CwLibNet.Types.Data;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Things;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Structs.Things.Components.Script;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Things;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Things.Parts;
+namespace CwLibNet4Hub.Structs.Things.Parts;
 
 public class PScript: ISerializable
 {
@@ -27,7 +27,7 @@ public class PScript: ISerializable
     }
 
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         int temp_int = 0;
         bool temp_bool_true = true;

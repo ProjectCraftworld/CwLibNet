@@ -1,11 +1,11 @@
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.Types.Data;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Things;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Things;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Things.Components.Popit;
+namespace CwLibNet4Hub.Structs.Things.Components.Popit;
 
 public class DecorationInfo: ISerializable
 {
@@ -20,7 +20,7 @@ public class DecorationInfo: ISerializable
     public bool Stamping;
 
     public ResourceDescriptor? Plan;
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
 

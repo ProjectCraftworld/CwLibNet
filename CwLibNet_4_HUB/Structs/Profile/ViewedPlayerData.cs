@@ -1,10 +1,10 @@
-using CwLibNet.IO;
-using CwLibNet.Types.Data;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Slot;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Slot;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Profile
+namespace CwLibNet4Hub.Structs.Profile
 {
     public class ViewedPlayerData : ISerializable
     {
@@ -20,7 +20,7 @@ namespace CwLibNet.Structs.Profile
         public int LastStreamEventTimestamp;
         public long LastViewedTimestamp;
 
-        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+        public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
         {
             Serializer.Serialize(ref OnlineId);
             Serializer.Serialize(ref LastReviewCount);

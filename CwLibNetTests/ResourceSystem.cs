@@ -1,8 +1,9 @@
 ﻿using System.IO;
-using CwLibNet.Enums;
-using CwLibNet.Types.Data;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.Types.Data;
 
-namespace CwLibNetTests;
+namespace CwLibNetTests
+{
 
 public class ResourceSystem
 {
@@ -20,12 +21,14 @@ public class ResourceSystem
         }
 
         // Act
-        CwLibNet.Singleton.ResourceSystem.LoadGameRoot(path);
+        CwLibNet4Hub.Singleton.ResourceSystem.LoadGameRoot(path);
 
-        byte[]? bytes = CwLibNet.Singleton.ResourceSystem.Extract(new ResourceDescriptor(new GUID(1756), ResourceType.Invalid));
+        byte[]? bytes = CwLibNet4Hub.Singleton.ResourceSystem.Extract(new ResourceDescriptor(new GUID(1756), ResourceType.Invalid));
 
         // Assert
-        Assert.True(CwLibNet.Singleton.ResourceSystem.IsInitialized);
+        Assert.True(CwLibNet4Hub.Singleton.ResourceSystem.IsInitialized);
         Assert.NotNull(bytes);
     }
+}
+
 }

@@ -1,10 +1,10 @@
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.Types.Data;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Level;
+namespace CwLibNet4Hub.Structs.Level;
 
 public class AdventureItem: ISerializable
 {
@@ -16,7 +16,7 @@ public class AdventureItem: ISerializable
     public int IconPuid;
 
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 

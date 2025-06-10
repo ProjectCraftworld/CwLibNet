@@ -1,11 +1,11 @@
 using System.Numerics;
-using CwLibNet.IO;
-using CwLibNet.Structs.Slot;
-using CwLibNet.Types.Data;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Structs.Slot;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Streaming;
+namespace CwLibNet4Hub.Structs.Streaming;
 
 public class LevelData : ISerializable
 {
@@ -21,7 +21,7 @@ public class LevelData : ISerializable
     public GUID? FarcGuid;
 
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         int temp_int = 0;
         bool temp_bool_true = true;

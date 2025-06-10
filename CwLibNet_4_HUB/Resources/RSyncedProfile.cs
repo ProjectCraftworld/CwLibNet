@@ -1,10 +1,10 @@
-using CwLibNet.Types.Data;
-using CwLibNet.IO;
-using CwLibNet.Enums;
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Things;
-namespace CwLibNet.Resources
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Enums;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Things;
+namespace CwLibNet4Hub.Resources
 {
     public class RSyncedProfile : Resource
     {
@@ -16,7 +16,7 @@ namespace CwLibNet.Resources
             public ResourceDescriptor? MainFormCostume { get; set; }
             public ResourceDescriptor? AltFormCostume { get; set; }
 
-            public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+            public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
             {
                 int tempCreature = Creature;
                 Serializer.Serialize(ref tempCreature);
@@ -53,7 +53,7 @@ namespace CwLibNet.Resources
         public int CreatureToPodAs { get; set; }
         public bool PodAsAlternateForm { get; set; }
 
-        public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+        public override void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
         {
             var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
             var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();

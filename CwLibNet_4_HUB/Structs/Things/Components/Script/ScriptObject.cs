@@ -1,12 +1,12 @@
 using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.EX;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Types;
-using CwLibNet.Types.Data;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.EX;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Types;
+using CwLibNet4Hub.Types.Data;
 
-namespace CwLibNet.Structs.Things.Components.Script;
+namespace CwLibNet4Hub.Structs.Things.Components.Script;
 
 public class ScriptObject: ISerializable
 {

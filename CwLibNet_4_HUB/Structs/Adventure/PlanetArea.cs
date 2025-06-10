@@ -1,12 +1,12 @@
-using CwLibNet.IO;
-using CwLibNet.Types.Data;
-using CwLibNet.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.Enums;
 using System.Numerics;
-using CwLibNet.Structs.Things;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Structs.Things;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Adventure;
+namespace CwLibNet4Hub.Structs.Adventure;
 
 public class PlanetArea : ISerializable
 {
@@ -21,7 +21,7 @@ public class PlanetArea : ISerializable
     public Vector3[]? SpritelightPositions;
     public Thing? Area;
 
-    public virtual void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public virtual void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 

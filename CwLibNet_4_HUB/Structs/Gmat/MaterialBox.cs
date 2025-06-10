@@ -1,14 +1,14 @@
 using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.Extensions;
-using CwLibNet.IO;
-using CwLibNet.Resources;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Gmat;
-using CwLibNet.Structs.Things;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.Extensions;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Resources;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Gmat;
+using CwLibNet4Hub.Structs.Things;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Gmat;
+namespace CwLibNet4Hub.Structs.Gmat;
 
 public class MaterialBox: ISerializable
 {
@@ -108,7 +108,7 @@ public class MaterialBox: ISerializable
     }
 
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Type);
 

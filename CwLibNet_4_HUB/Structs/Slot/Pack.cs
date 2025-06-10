@@ -1,11 +1,11 @@
-using CwLibNet.Enums;
-using CwLibNet.Types.Data;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Slot;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Slot;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Slot;
+namespace CwLibNet4Hub.Structs.Slot;
 
 public class Pack
 {
@@ -17,7 +17,7 @@ public class Pack
     public long TimeStamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds(); // seconds since epoch
     public bool CrossBuyCompatible;
 
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer) 
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer) 
     {
         Serializer.SerializeEnum32(ref ContentsType);
         Serializer.Serialize(ref Mesh, ResourceType.Mesh, true, false, false);

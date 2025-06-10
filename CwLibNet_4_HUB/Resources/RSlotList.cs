@@ -1,11 +1,11 @@
-using CwLibNet.Types.Data;
-using CwLibNet.IO;
-using CwLibNet.Enums;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Enums;
 
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Slot;
-namespace CwLibNet.Resources;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Slot;
+namespace CwLibNet4Hub.Resources;
 
 public class RSlotList : Resource
 {
@@ -28,7 +28,7 @@ public class RSlotList : Resource
     }
 
 
-    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public override void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref slots);
         if (Serializer.GetCurrentSerializer().GetRevision().GetVersion() >= (int)Revisions.PRODUCTION_BUILD)

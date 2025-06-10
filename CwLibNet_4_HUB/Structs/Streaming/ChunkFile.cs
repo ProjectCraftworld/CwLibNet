@@ -1,13 +1,13 @@
 using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.Structs.Profile;
-using CwLibNet.Types.Data;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Things;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Structs.Profile;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Things;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Streaming;
+namespace CwLibNet4Hub.Structs.Streaming;
 
 public class ChunkFile: ISerializable
 {
@@ -29,7 +29,7 @@ public class ChunkFile: ISerializable
     public List<Sha1>? Hashes = [];
 
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();
 

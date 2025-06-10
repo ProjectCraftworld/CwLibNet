@@ -1,10 +1,10 @@
-using CwLibNet.IO;
-using CwLibNet.Structs.Slot;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Things;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Structs.Slot;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Things;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Things.Components;
+namespace CwLibNet4Hub.Structs.Things.Components;
 
 public class KeyLink: ISerializable
 {
@@ -12,7 +12,7 @@ public class KeyLink: ISerializable
 
     public SlotID? SlotId;
     public int Unknown;
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref SlotId);
         if (Serializer.GetCurrentSerializer().GetRevision().GetVersion() < 0x16f)

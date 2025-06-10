@@ -1,16 +1,16 @@
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Slot;
-using static CwLibNet.IO.Serializer.Serializer;
-namespace CwLibNet.Structs.Slot;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Slot;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+namespace CwLibNet4Hub.Structs.Slot;
 
 public class SlotID: ISerializable
 {
     public const int BaseAllocationSize = 0x10;
     public SlotType SlotType = SlotType.DEVELOPER;
     public long SlotNumber;
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         Serializer.SerializeEnum32(ref SlotType);
         Serializer.Serialize(ref SlotNumber);

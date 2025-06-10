@@ -1,8 +1,8 @@
 using System.Numerics;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
-namespace CwLibNet.Structs.Mesh;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+namespace CwLibNet4Hub.Structs.Mesh;
 
 public class ImplicitEllipsoid: ISerializable
 {
@@ -12,7 +12,7 @@ public class ImplicitEllipsoid: ISerializable
     public int ParentBone, AffectWorldOnly;
 
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Transform);
         Serializer.Serialize(ref ParentBone);

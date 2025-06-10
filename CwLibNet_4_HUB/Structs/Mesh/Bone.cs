@@ -1,13 +1,13 @@
 using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.Extensions;
-using CwLibNet.Resources;
-using CwLibNet.Structs.Animation;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.Extensions;
+using CwLibNet4Hub.Resources;
+using CwLibNet4Hub.Structs.Animation;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Mesh;
+namespace CwLibNet4Hub.Structs.Mesh;
 
 public class Bone: AnimBone
 {
@@ -50,9 +50,8 @@ public class Bone: AnimBone
     }
 
     
-    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public override void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
-
         Serializer.Serialize(ref name);
         Serializer.Serialize(ref Flags);
 

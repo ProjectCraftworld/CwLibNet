@@ -1,13 +1,13 @@
 ﻿using System.Reflection;
-using CwLibNet.Resources;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Slot;
-using CwLibNet.Structs.Things;
-using CwLibNet.Types.Data;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Resources;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Slot;
+using CwLibNet4Hub.Structs.Things;
+using CwLibNet4Hub.Types.Data;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Enums;
+namespace CwLibNet4Hub.Enums;
 
 public struct ResourceType : IEquatable<ResourceType>
 {

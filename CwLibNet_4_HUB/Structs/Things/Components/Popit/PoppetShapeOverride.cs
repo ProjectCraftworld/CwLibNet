@@ -1,9 +1,9 @@
 using System.Numerics;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Things;
-using static CwLibNet.IO.Serializer.Serializer;
-namespace CwLibNet.Structs.Things.Components.Popit;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Things;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+namespace CwLibNet4Hub.Structs.Things.Components.Popit;
 
 public class PoppetShapeOverride: ISerializable
 {
@@ -16,7 +16,7 @@ public class PoppetShapeOverride: ISerializable
     public float Scale, Angle;
 
     public Matrix4x4? WorldMatrix;
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         if (!Serializer.IsWriting()) Polygon = new Vector3?[Serializer.GetCurrentSerializer().GetInput().I32()];
         else

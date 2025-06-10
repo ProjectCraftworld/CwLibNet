@@ -1,7 +1,7 @@
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-namespace CwLibNet.Enums;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+namespace CwLibNet4Hub.Enums;
 
 public sealed class ResourceFlags
 {

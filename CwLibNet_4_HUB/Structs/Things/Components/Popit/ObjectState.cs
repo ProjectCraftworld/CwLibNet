@@ -1,8 +1,8 @@
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Things;
-using static CwLibNet.IO.Serializer.Serializer;
-namespace CwLibNet.Structs.Things.Components.Popit;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Things;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+namespace CwLibNet4Hub.Structs.Things.Components.Popit;
 
 public class ObjectState: ISerializable
 {
@@ -12,7 +12,7 @@ public class ObjectState: ISerializable
     public int BackZ;
     public int FrontZ;
     public int Flags;
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         int temp_int = 0;
         bool temp_bool_true = true;

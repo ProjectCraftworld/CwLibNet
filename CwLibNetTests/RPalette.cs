@@ -1,7 +1,8 @@
-using CwLibNet.Enums;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Resources;
-using CwLibNet.Types.Data;
+using System;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Resources;
+using CwLibNet4Hub.Types.Data;
 
 namespace CwLibNetTests;
 

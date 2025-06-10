@@ -1,14 +1,14 @@
 using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.Structs.Things.Components.Shapes;
-using CwLibNet.Types.Data;
-using CwLibNet.Util;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Things;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Structs.Things.Components.Shapes;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.Util;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Things;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Things.Parts;
+namespace CwLibNet4Hub.Structs.Things.Parts;
 
 public class PShape: ISerializable
 {
@@ -143,7 +143,7 @@ public class PShape: ISerializable
     }
 
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         int temp_int = 0;
         bool temp_bool_true = true;

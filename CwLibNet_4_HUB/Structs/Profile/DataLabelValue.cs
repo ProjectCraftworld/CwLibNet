@@ -1,10 +1,10 @@
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.Types.Data;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Profile;
+namespace CwLibNet4Hub.Structs.Profile;
 
 public class DataLabelValue: ISerializable
 {
@@ -17,7 +17,7 @@ public class DataLabelValue: ISerializable
     public byte[]? Ternary;
 
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         var revision = Serializer.GetCurrentSerializer().GetRevision();
         var head = revision.GetVersion();

@@ -1,11 +1,11 @@
 using System.Xml.Linq;
-using CwLibNet.Types.Data;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Slot;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Slot;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Server;
+namespace CwLibNet4Hub.Structs.Server;
 
 public class SlotDescriptor 
 {

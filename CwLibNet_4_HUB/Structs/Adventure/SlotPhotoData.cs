@@ -1,14 +1,14 @@
-using CwLibNet.Types.Data;
-using CwLibNet.Enums;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.Enums;
 using System.Runtime.Serialization;
-using CwLibNet.Structs.Slot;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Structs.Slot;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Adventure;
+namespace CwLibNet4Hub.Structs.Adventure;
 
-public class SlotPhotoData : CwLibNet.IO.ISerializable
+public class SlotPhotoData : CwLibNet4Hub.IO.ISerializable
 {
     public const int BaseAllocationSize = 0x10; // for the SlotID
     public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -19,7 +19,7 @@ public class SlotPhotoData : CwLibNet.IO.ISerializable
     public SlotID? Id;
     public ResourceDescriptor?[]? Photos;
 
-    public virtual void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public virtual void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Id);
         var numPhotos = Photos?.Length ?? 0;

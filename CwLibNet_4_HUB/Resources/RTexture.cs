@@ -1,16 +1,16 @@
-using CwLibNet.Enums;
-using CwLibNet.EX;
-using CwLibNet.Extensions;
-using CwLibNet.External;
-using CwLibNet.Structs.Texture;
-using CwLibNet.Types;
-using CwLibNet.Util;
-using CwLibNet.IO;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.EX;
+using CwLibNet4Hub.Extensions;
+using CwLibNet4Hub.External;
+using CwLibNet4Hub.Structs.Texture;
+using CwLibNet4Hub.Types;
+using CwLibNet4Hub.Util;
+using CwLibNet4Hub.IO;
 using SkiaSharp;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Resources;
+namespace CwLibNet4Hub.Resources;
 
 public class RTexture
 {

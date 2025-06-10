@@ -1,9 +1,9 @@
-using CwLibNet.IO.Streams;
-using CwLibNet.EX;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Streams;
+using CwLibNet4Hub.EX;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Util;
+namespace CwLibNet4Hub.Util;
 
 public static class Compressor
 {

@@ -1,10 +1,10 @@
-﻿using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.Types.Data;
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO.Serializer;
+﻿using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Types.Data;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
 
-namespace CwLibNet.Resources;
+namespace CwLibNet4Hub.Resources;
 
 public class RMaterial: Resource
 {
@@ -53,7 +53,7 @@ public class RMaterial: Resource
     public bool circuitBoard, disableCSG;
 
 
-    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public override void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         int temp_int = 0;
         bool temp_bool_true = true;

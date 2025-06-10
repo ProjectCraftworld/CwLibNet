@@ -1,9 +1,9 @@
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Things;
-using static CwLibNet.IO.Serializer.Serializer;
-namespace CwLibNet.Structs.Things.Components.Script;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Things;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+namespace CwLibNet4Hub.Structs.Things.Components.Script;
 
 public class InstanceLayout: ISerializable
 {
@@ -22,7 +22,7 @@ public class InstanceLayout: ISerializable
     }
 
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref Fields);
         if (Serializer.GetCurrentSerializer().GetRevision().GetVersion() < 0x1ec)

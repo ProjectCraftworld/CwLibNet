@@ -1,8 +1,8 @@
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Types.Data;
-using static CwLibNet.IO.Serializer.Serializer;
-namespace CwLibNet.Structs.Profile 
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Types.Data;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+namespace CwLibNet4Hub.Structs.Profile 
 {
     public class DataLabel : ISerializable
     {
@@ -11,7 +11,7 @@ namespace CwLibNet.Structs.Profile
         public int LabelIndex;
         public string? Name;
 
-        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+        public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
         {
             Serializer.Serialize(ref LabelIndex);
             Serializer.Serialize(ref Name);

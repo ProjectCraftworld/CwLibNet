@@ -1,8 +1,8 @@
-using CwLibNet.Enums;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
-namespace CwLibNet.Structs.Profile 
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+namespace CwLibNet4Hub.Structs.Profile 
 {
     public class InventoryView : ISerializable
     {
@@ -16,7 +16,7 @@ namespace CwLibNet.Structs.Profile
         public InventorySortMode currentSortMode = InventorySortMode.INVALID;
         public InventorySortMode desiredSortMode = InventorySortMode.INVALID;
 
-        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+        public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
         {
             Serializer.Serialize(ref type);
             Serializer.Serialize(ref subType);

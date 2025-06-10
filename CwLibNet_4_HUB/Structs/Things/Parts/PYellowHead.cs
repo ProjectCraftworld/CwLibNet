@@ -1,14 +1,14 @@
 using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.EX;
-using CwLibNet.IO;
-using CwLibNet.Structs.Things.Components;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Things;
-using CwLibNet.Types.Data;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.EX;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Structs.Things.Components;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Things;
+using CwLibNet4Hub.Types.Data;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Structs.Things.Parts;
+namespace CwLibNet4Hub.Structs.Things.Parts;
 
 public class PYellowHead: ISerializable
 {
@@ -34,7 +34,7 @@ public class PYellowHead: ISerializable
     public int CreatureToSpawnAs;
     public bool SpawnAsAlternateForm;
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         var version = Serializer.GetCurrentSerializer().GetRevision().GetVersion();
         var subVersion = Serializer.GetCurrentSerializer().GetRevision().GetSubVersion();

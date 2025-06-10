@@ -1,11 +1,11 @@
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Profile;
-using CwLibNet.Structs.Slot;
-using CwLibNet.Structs.Things;
-using CwLibNet.Types.Data;
-﻿namespace CwLibNet.Enums;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Profile;
+using CwLibNet4Hub.Structs.Slot;
+using CwLibNet4Hub.Structs.Things;
+using CwLibNet4Hub.Types.Data;
+﻿namespace CwLibNet4Hub.Enums;
 
 public enum Revisions
 {

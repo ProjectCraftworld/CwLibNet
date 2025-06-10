@@ -1,11 +1,11 @@
-using CwLibNet.Structs.Joint;
-using CwLibNet.Types.Data;
-using CwLibNet.IO;
-using CwLibNet.Enums;
+using CwLibNet4Hub.Structs.Joint;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Enums;
 
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO.Serializer;
-namespace CwLibNet.Resources;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
+namespace CwLibNet4Hub.Resources;
 
 public class RJoint: Resource
 {
@@ -25,7 +25,7 @@ public class RJoint: Resource
     public ResourceDescriptor mesh;
 
     
-    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public override void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref allowExpand);
         Serializer.Serialize(ref allowContract);

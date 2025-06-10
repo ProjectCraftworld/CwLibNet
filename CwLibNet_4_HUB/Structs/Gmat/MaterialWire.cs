@@ -1,8 +1,8 @@
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Gmat;
-using static CwLibNet.IO.Serializer.Serializer;
-namespace CwLibNet.Structs.Gmat;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Gmat;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+namespace CwLibNet4Hub.Structs.Gmat;
 
 public class MaterialWire: ISerializable
 {
@@ -30,7 +30,7 @@ public class MaterialWire: ISerializable
     }
 
     
-    public void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         Serializer.Serialize(ref BoxFrom);
         Serializer.Serialize(ref BoxTo);

@@ -1,6 +1,6 @@
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO.Serializer;
-namespace CwLibNet.External;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
+namespace CwLibNet4Hub.External;
 
 public sealed class DdsReader
 {

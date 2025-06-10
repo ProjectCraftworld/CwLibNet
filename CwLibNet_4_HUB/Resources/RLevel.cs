@@ -1,18 +1,18 @@
-using CwLibNet.Structs.Level;
-using CwLibNet.Types.Data;
-using CwLibNet.IO;
-using CwLibNet.Enums;
-using CwLibNet.Structs.Things.Parts;
-using CwLibNet.EX;
-using CwLibNet.Structs.Inventory;
-using CwLibNet.Types;
+using CwLibNet4Hub.Structs.Level;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.Structs.Things.Parts;
+using CwLibNet4Hub.EX;
+using CwLibNet4Hub.Structs.Inventory;
+using CwLibNet4Hub.Types;
 using System.Numerics;
 
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Profile;
-using CwLibNet.Structs.Things;
-using CwLibNet.Resources;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Profile;
+using CwLibNet4Hub.Structs.Things;
+using CwLibNet4Hub.Resources;
 
 public class RLevel: Resource
 {
@@ -76,7 +76,7 @@ public class RLevel: Resource
     }
 
     
-    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public override void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         int temp_int = 0;
         bool temp_bool_true = true;

@@ -1,11 +1,11 @@
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Profile;
-using CwLibNet.Structs.Slot;
-using CwLibNet.Types.Data;
-using CwLibNet.Enums;
-using static CwLibNet.IO.Serializer.Serializer;
-namespace CwLibNet.Resources 
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Profile;
+using CwLibNet4Hub.Structs.Slot;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.Enums;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+namespace CwLibNet4Hub.Resources 
 {
     public class RBigProfile : Resource 
     {
@@ -30,7 +30,7 @@ namespace CwLibNet.Resources
         public ResourceDescriptor? PlanetDecorations;
 
 
-        public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer) 
+        public override void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer) 
         {
             Serializer.Serialize(ref Inventory);
 

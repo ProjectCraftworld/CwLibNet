@@ -1,11 +1,11 @@
-﻿using CwLibNet.Enums;
-using CwLibNet.Types.Data;
+﻿using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.Types.Data;
 using System.Numerics;
 using System.Text;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.IO.Streams;
+namespace CwLibNet4Hub.IO.Streams;
 
 public enum SeekMode
 {
@@ -81,6 +81,11 @@ public class MemoryInputStream
      */
     public byte[]? Bytes(int size)
     {
+        if (size < 0)
+            throw new ArgumentOutOfRangeException(nameof(size), $"Size cannot be negative (size={size}, offset={offset})");
+        if (offset + size > buffer.Length)
+            throw new ArgumentOutOfRangeException(nameof(size), $"Requested size exceeds buffer bounds (size={size}, offset={offset}, buffer.Length={buffer.Length})");
+        
         offset += size;
         var secondBuffer = buffer[(offset - size)..offset]; // buffer.Skip(offset - size).ToArray();
 //            Array.Resize(ref secondBuffer, size);
@@ -95,7 +100,17 @@ public class MemoryInputStream
      */
     public byte[]? Bytearray()
     {
+        var offsetBefore = offset;
         var size = I32();
+        Console.WriteLine($"🔍 Bytearray() - Size read: {size}, Offset before I32: {offsetBefore}, Offset after I32: {offset}, Total length: {length}");
+        if (size == 0) {
+            Console.WriteLine($"🚨 Zero size detected! Dumping next 20 bytes from current position:");
+            var remainingBytes = Math.Min(20, length - offset);
+            for (int i = 0; i < remainingBytes; i++) {
+                Console.Write($"{buffer[offset + i]:X2} ");
+            }
+            Console.WriteLine();
+        }
         return Bytes(size);
     }
 

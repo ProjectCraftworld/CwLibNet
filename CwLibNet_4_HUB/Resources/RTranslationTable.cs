@@ -1,13 +1,13 @@
 using System.Text;
-using CwLibNet.Extensions;
-using CwLibNet.IO;
-using CwLibNet.IO.Streams;
-using CwLibNet.Types.Data;
-using CwLibNet.Util;
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO.Serializer;
+using CwLibNet4Hub.Extensions;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Streams;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.Util;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
 
-namespace CwLibNet.Resources;
+namespace CwLibNet4Hub.Resources;
 
 public class RTranslationTable : Resource
 {
@@ -121,7 +121,7 @@ public class RTranslationTable : Resource
         throw new NotImplementedException();
     }
 
-    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public override void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         throw new NotImplementedException();
     }

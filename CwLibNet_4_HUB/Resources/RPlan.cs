@@ -1,16 +1,16 @@
-using CwLibNet.Structs.Inventory;
-using CwLibNet.Structs.Things.Parts;
-using CwLibNet.Types.Data;
-using CwLibNet.IO;
+using CwLibNet4Hub.Structs.Inventory;
+using CwLibNet4Hub.Structs.Things.Parts;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO;
 using System.Numerics;
-using CwLibNet.Enums;
-using CwLibNet.EX;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.EX;
 
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO.Serializer;
-using CwLibNet.Structs.Profile;
-using CwLibNet.Structs.Things;
-namespace CwLibNet.Resources;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
+using CwLibNet4Hub.Structs.Profile;
+using CwLibNet4Hub.Structs.Things;
+namespace CwLibNet4Hub.Resources;
 
 public class RPlan : Resource
 {
@@ -20,7 +20,7 @@ public class RPlan : Resource
     public Revision Revision = new(Revision.Lbp1FinalRevision, 0x4c44, 0x17);
     public byte[]? ThingData;
     public InventoryItemDetails InventoryData = new();
-    public byte CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_ALL_COMPRESSION;
+    public byte CompressionFlags = CwLibNet4Hub.Enums.CompressionFlags.USE_ALL_COMPRESSION;
     public RPlan()
     {
         ThingData = [];
@@ -62,7 +62,7 @@ public class RPlan : Resource
         ThingData = [];
     }
 
-    public override void Serialize(CwLibNet.IO.Serializer.Serializer serializer)
+    public override void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
         var revision = serializer.GetRevision();
         var head = revision.GetVersion();

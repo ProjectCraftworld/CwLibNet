@@ -1,6 +1,6 @@
-using CwLibNet.Types.Archives;
-using CwLibNet.Types.Data;
-using CwLibNet.Types.Databases;
+using CwLibNet4Hub.Types.Archives;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.Types.Databases;
 
 namespace CwLibNetTests;
 

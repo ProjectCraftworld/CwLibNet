@@ -1,8 +1,8 @@
 using System.Numerics;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Extensions;
+namespace CwLibNet4Hub.Extensions;
 
 public static class Matrices
 {

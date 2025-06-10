@@ -1,7 +1,7 @@
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
-namespace CwLibNet.Structs.Profile 
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+namespace CwLibNet4Hub.Structs.Profile 
 {
     public class LegacyInventoryCollection : ISerializable 
     {
@@ -12,7 +12,7 @@ namespace CwLibNet.Structs.Profile
         public int CollectionId;
         public int ActionOnItemSelect;
 
-        public void Serialize(CwLibNet.IO.Serializer.Serializer serializer) 
+        public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer) 
         {
             InventoryViews = Serializer.SerializeArray(InventoryViews, true) ?? []; // Ensure non-null assignment
             Serializer.Serialize(ref CurrentPageNumber);

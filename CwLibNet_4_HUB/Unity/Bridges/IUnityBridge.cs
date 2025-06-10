@@ -1,4 +1,4 @@
-using static CwLibNet.IO.Serializer.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 using System;
 using System.Numerics;
 
@@ -6,10 +6,10 @@ using System.Numerics;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
 using Quaternion = UnityEngine.Quaternion;
-using CwLibNet.IO.Serializer;
+using CwLibNet4Hub.IO.Serializer;
 #endif
 
-namespace CwLibNet.Unity.Bridges
+namespace CwLibNet4Hub.Unity.Bridges
 {
     /// <summary>
     /// Interface for Unity compatibility bridges.

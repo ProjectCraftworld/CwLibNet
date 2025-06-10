@@ -1,14 +1,14 @@
 using SkiaSharp;
-using CwLibNet.Enums;
-using CwLibNet.IO.Streams;
-using CwLibNet.Structs.Font;
-using CwLibNet.Types.Data;
-using CwLibNet.Util;
-using CwLibNet.IO;
-using CwLibNet.IO.Serializer;
-using static CwLibNet.IO.Serializer.Serializer;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.IO.Streams;
+using CwLibNet4Hub.Structs.Font;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.Util;
+using CwLibNet4Hub.IO;
+using CwLibNet4Hub.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
 
-namespace CwLibNet.Resources;
+namespace CwLibNet4Hub.Resources;
 
 public class RFontFace
 {

@@ -1,15 +1,15 @@
 using System.Text;
-using CwLibNet.Enums;
-using CwLibNet.Extensions;
-using CwLibNet.External;
-using CwLibNet.Structs.Texture;
-using CwLibNet.Types;
-using CwLibNet.IO;
+using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.Extensions;
+using CwLibNet4Hub.External;
+using CwLibNet4Hub.Structs.Texture;
+using CwLibNet4Hub.Types;
+using CwLibNet4Hub.IO;
 using SkiaSharp;
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO.Serializer;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
 
-namespace CwLibNet.Util;
+namespace CwLibNet4Hub.Util;
 
 public class Images
 {

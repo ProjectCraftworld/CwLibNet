@@ -1,12 +1,12 @@
-﻿using CwLibNet.Enums;
-using CwLibNet.Structs.StaticMesh;
-using CwLibNet.Structs.Texture;
-using CwLibNet.Types.Data;
-using CwLibNet.IO;
-using static CwLibNet.IO.Serializer.Serializer;
-using CwLibNet.IO.Serializer;
+﻿using CwLibNet4Hub.Enums;
+using CwLibNet4Hub.Structs.StaticMesh;
+using CwLibNet4Hub.Structs.Texture;
+using CwLibNet4Hub.Types.Data;
+using CwLibNet4Hub.IO;
+using static CwLibNet4Hub.IO.Serializer.Serializer;
+using CwLibNet4Hub.IO.Serializer;
 
-namespace CwLibNet.IO.Serializer;
+namespace CwLibNet4Hub.IO.Serializer;
 
 public class SerializationData
 {
@@ -46,7 +46,7 @@ public class SerializationData
     {
         Buffer = buffer;
         Revision = null;
-        CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_NO_COMPRESSION;
+        CompressionFlags = CwLibNet4Hub.Enums.CompressionFlags.USE_NO_COMPRESSION;
         Type = ResourceType.Texture;
         Method = SerializationType.COMPRESSED_TEXTURE;
         Dependencies = [];
@@ -64,7 +64,7 @@ public class SerializationData
     {
         Buffer = buffer;
         Revision = null;
-        CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_NO_COMPRESSION;
+        CompressionFlags = CwLibNet4Hub.Enums.CompressionFlags.USE_NO_COMPRESSION;
         Type = ResourceType.GtfTexture;
         Method = info.GetMethod();
         Dependencies = [];
@@ -83,7 +83,7 @@ public class SerializationData
     {
         Buffer = buffer;
         Revision = revision;
-        CompressionFlags = CwLibNet.Enums.CompressionFlags.USE_NO_COMPRESSION;
+        CompressionFlags = CwLibNet4Hub.Enums.CompressionFlags.USE_NO_COMPRESSION;
         Type = ResourceType.StaticMesh;
         Method = SerializationType.BINARY;
 
@@ -92,7 +92,7 @@ public class SerializationData
         // as to avoid serializing twice.
 
         Serializer serializer = new(info.GetAllocatedSize(), revision,
-            CwLibNet.Enums.CompressionFlags.USE_NO_COMPRESSION);
+            CwLibNet4Hub.Enums.CompressionFlags.USE_NO_COMPRESSION);
         Serializer.Serialize(ref info);
         Dependencies = Serializer.GetCurrentSerializer().GetDependencies();
 
