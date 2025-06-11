@@ -14,9 +14,9 @@ public class ImplicitEllipsoid: ISerializable
     
     public void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
-        Serializer.Serialize(ref Transform);
-        Serializer.Serialize(ref ParentBone);
-        Serializer.Serialize(ref AffectWorldOnly);
+        Transform = serializer.M44(Transform);
+        ParentBone = serializer.I32(ParentBone);
+        AffectWorldOnly = serializer.I32(AffectWorldOnly);
     }
 
     

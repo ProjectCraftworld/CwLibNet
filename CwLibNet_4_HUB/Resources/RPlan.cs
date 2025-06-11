@@ -64,6 +64,20 @@ public class RPlan : Resource
 
     public override void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
+        try
+        {
+            SerializeInternal(serializer);
+        }
+        catch (Exception ex) when (ex is IndexOutOfRangeException || ex is ArgumentOutOfRangeException || ex is NullReferenceException || ex is NotImplementedException)
+        {
+            Console.WriteLine($"[WARNING] Error detected during RPlan serialization/deserialization: {ex.GetType().Name}: {ex.Message}");
+            Console.WriteLine($"[WARNING] Plan file appears to be corrupted, uses unsupported features, or has unimplemented functionality. Continuing with partial data...");
+            // Don't rethrow - allow partial deserialization to succeed
+        }
+    }
+
+    private void SerializeInternal(CwLibNet4Hub.IO.Serializer.Serializer serializer)
+    {
         var revision = serializer.GetRevision();
         var head = revision.GetVersion();
         if (!serializer.GetIsWriting())

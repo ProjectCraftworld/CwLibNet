@@ -4,6 +4,7 @@ using System.Numerics;
 using System.Text;
 using CwLibNet4Hub.IO.Serializer;
 using static CwLibNet4Hub.IO.Serializer.Serializer;
+using System.IO;
 
 namespace CwLibNet4Hub.IO.Streams;
 
@@ -155,6 +156,13 @@ public class MemoryInputStream
      */
     public int U8()
     {
+        if (offset >= buffer.Length)
+        {
+            throw new IndexOutOfRangeException(
+                $"Cannot read byte: offset {offset} is at or beyond buffer length {buffer.Length}. " +
+                $"This indicates the file may be corrupted, truncated, or there's a mismatch between " +
+                $"the expected data format and the actual file contents.");
+        }
         return buffer[offset++] & 0xFF;
     }
 
@@ -232,64 +240,6 @@ public class MemoryInputStream
     }
 
     /**
-     * Reads a signed 32-bit integer from the stream, compressed depending on flags.
-     * This function modifies the value written to the stream to fit an unsigned value, prefer i32
-     *
-     * @return Signed integer read from the stream
-     */
-    public int S32()
-    {
-        if ((compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0)
-            return I32(true);
-        var v = (int)Uleb128();
-        return v >> 1 ^ -(v & 1);
-    }
-
-    /**
-     * Reads a long as an unsigned integer from the stream, compressed depending on flags.
-     *
-     * @param force64 Whether or not to read as a 32-bit integer, regardless of compression flags.
-     * @return Unsigned integer read from the stream
-     */
-    public long U32(bool force32 = false)
-    {
-        if (force32 || (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0)
-            return I32(true) & 0xFFFFFFFFL;
-        return Uleb128();
-    }
-
-    /**
-     * Reads a long from the stream, compressed depending on flags.
-     *
-     * @param force64 Whether to read as a 64-bit long, regardless of compression flags.
-     * @return Long read from the stream
-     */
-    public long U64(bool force64 = false)
-    {
-        if (!force64 && (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0) return Uleb128();
-        var b = Bytes(8);
-        if (isLittleEndian)
-        {
-            return (b[7] & 0xFF) << 56 |
-                   (b[6] & 0xFF) << 48 |
-                   (b[5] & 0xFF) << 40 |
-                   (b[4] & 0xFF) << 32 |
-                   (b[3] & 0xFF) << 24 |
-                   (b[2] & 0xFF) << 16 |
-                   (b[1] & 0xFF) << 8 |
-                   (b[0] & 0xFF) << 0;
-        }
-        return (b[0] & 0xFF) << 56 |
-               (b[1] & 0xFF) << 48 |
-               (b[2] & 0xFF) << 40 |
-               (b[3] & 0xFF) << 32 |
-               (b[4] & 0xFF) << 24 |
-               (b[5] & 0xFF) << 16 |
-               (b[6] & 0xFF) << 8 |
-               (b[7] & 0xFF) << 0;
-    }
-
-    /**
      * Reads a "signed" long from the stream, compressed depending on flags.
      *
      * @param force64 Whether to read as a 64-bit long, regardless of compression flags.
@@ -314,11 +264,28 @@ public class MemoryInputStream
         var i = 0;
         while (true)
         {
+            // Check if we can read another byte before attempting to read
+            if (offset >= buffer.Length)
+            {
+                throw new IndexOutOfRangeException(
+                    $"Incomplete Uleb128 sequence: expected continuation byte at offset {offset}, " +
+                    $"but reached end of buffer (length {buffer.Length}). " +
+                    $"This typically indicates a corrupted or truncated file.");
+            }
+            
             var b = U8() & 0xFFL;
             result |= (b & 0x7f) << 7 * i;
             if ((b & 0x80L) == 0L)
                 break;
             ++i;
+            
+            // Prevent infinite loops and overflow
+            if (i >= 10) // 10 bytes * 7 bits = 70 bits, more than enough for any reasonable integer
+            {
+                throw new InvalidDataException(
+                    $"Uleb128 sequence too long: more than 10 bytes read, " +
+                    $"this indicates corrupted data starting around offset {offset - i - 1}");
+            }
         }
         return result >>> 0;
     }
@@ -681,5 +648,62 @@ public class MemoryInputStream
     public void SetLittleEndian(bool value)
     {
         isLittleEndian = value;
+    }
+
+    /**
+     * Reads a signed integer from the stream, compressed depending on flags.
+     *
+     * @return Signed integer read from the stream
+     */
+    public int S32()
+    {
+        if ((compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0)
+            return I32(true);
+        var v = (int)Uleb128();
+        return v >> 1 ^ -(v & 1);
+    }
+
+    /**
+     * Reads a long as an unsigned integer from the stream, compressed depending on flags.
+     *
+     * @param force32 Whether or not to read as a 32-bit integer, regardless of compression flags.
+     * @return Unsigned integer read from the stream
+     */
+    public long U32(bool force32 = false)
+    {
+        if (force32 || (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) == 0)
+            return I32(true) & 0xFFFFFFFFL;
+        return Uleb128();
+    }
+
+    /**
+     * Reads a long from the stream, compressed depending on flags.
+     *
+     * @param force64 Whether to read as a 64-bit long, regardless of compression flags.
+     * @return Long read from the stream
+     */
+    public long U64(bool force64 = false)
+    {
+        if (!force64 && (compressionFlags & CompressionFlags.USE_COMPRESSED_INTEGERS) != 0) return Uleb128();
+        var b = Bytes(8);
+        if (isLittleEndian)
+        {
+            return (b[7] & 0xFF) << 56 |
+                   (b[6] & 0xFF) << 48 |
+                   (b[5] & 0xFF) << 40 |
+                   (b[4] & 0xFF) << 32 |
+                   (b[3] & 0xFF) << 24 |
+                   (b[2] & 0xFF) << 16 |
+                   (b[1] & 0xFF) << 8 |
+                   (b[0] & 0xFF) << 0;
+        }
+        return (b[0] & 0xFF) << 56 |
+               (b[1] & 0xFF) << 48 |
+               (b[2] & 0xFF) << 40 |
+               (b[3] & 0xFF) << 32 |
+               (b[4] & 0xFF) << 24 |
+               (b[5] & 0xFF) << 16 |
+               (b[6] & 0xFF) << 8 |
+               (b[7] & 0xFF) << 0;
     }
 }

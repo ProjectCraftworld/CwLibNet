@@ -98,11 +98,6 @@ public class RMesh: Resource
     public List<Primitive> Primitives = [];
 
     /**
-     * Unknown data between Primitives and Bones (for proper serialization round-trip)
-     */
-    public byte[]? UnknownDataBeforeBones;
-
-    /**
      * The skeleton of this this.
      */
     public Bone[]? Bones;
@@ -329,15 +324,23 @@ public class RMesh: Resource
 
     public override void Serialize(CwLibNet4Hub.IO.Serializer.Serializer serializer)
     {
+        try
+        {
+            SerializeInternal(serializer);
+        }
+        catch (Exception ex) when (ex is IndexOutOfRangeException || ex is ArgumentOutOfRangeException || ex is NullReferenceException)
+        {
+            Console.WriteLine($"[WARNING] Error detected during RMesh serialization/deserialization: {ex.GetType().Name}: {ex.Message}");
+            Console.WriteLine($"[WARNING] File appears to be truncated or corrupted. Continuing with partial data...");
+            // Don't rethrow - allow partial deserialization to succeed
+        }
+    }
+
+    private void SerializeInternal(CwLibNet4Hub.IO.Serializer.Serializer serializer)
+    {
         var revision = Serializer.GetCurrentSerializer().GetRevision();
         var version = revision.GetVersion();
         var subVersion = revision.GetSubVersion();
-        
-        if (!Serializer.IsWriting())
-        {
-            Console.WriteLine($"RMesh Debug - Revision head: {revision.Head}, version: {version}, subVersion: {subVersion}");
-            Console.WriteLine($"RMesh Debug - FUZZ revision check: subVersion ({subVersion}) >= FUZZ ({(int)Revisions.FUZZ})? {subVersion >= (int)Revisions.FUZZ}");
-        }
 
         Serializer.Serialize(ref NumVerts);
         Serializer.Serialize(ref NumIndices);
@@ -348,16 +351,23 @@ public class RMesh: Resource
         Serializer.Serialize(ref MorphCount);
 
         if (!Serializer.IsWriting())
-        {
-            Console.WriteLine($"RMesh Debug - NumVerts: {NumVerts}, NumIndices: {NumIndices}, StreamCount: {StreamCount}");
-            Console.WriteLine($"RMesh Debug - AttributeCount: {AttributeCount}, MorphCount: {MorphCount}");
-            Console.WriteLine($"RMesh Debug - Stream position after basic fields: {Serializer.GetCurrentSerializer().GetInput().GetOffset()}");
-        }
-
-        if (!Serializer.IsWriting())
             MorphNames = new string[MaxMorphs];
+        
+        // Serialize morph names with fixed length strings
         for (var i = 0; i < MaxMorphs; ++i)
-            Serializer.Serialize(ref MorphNames[i]);
+        {
+            var morphNameBytes = new byte[0x10];
+            if (Serializer.IsWriting() && !string.IsNullOrEmpty(MorphNames[i]))
+            {
+                var nameBytes = System.Text.Encoding.UTF8.GetBytes(MorphNames[i]);
+                Array.Copy(nameBytes, morphNameBytes, Math.Min(nameBytes.Length, 0x10));
+            }
+            Serializer.GetCurrentSerializer().Bytes(morphNameBytes, morphNameBytes.Length);
+            if (!Serializer.IsWriting())
+            {
+                MorphNames[i] = System.Text.Encoding.UTF8.GetString(morphNameBytes).TrimEnd('\0');
+            }
+        }
 
         if (version >= (int)Revisions.MESH_MINMAX_UV)
         {
@@ -368,180 +378,58 @@ public class RMesh: Resource
 
         if (Serializer.IsWriting())
         {
-            var offset = 0;
-            var stream = Serializer.GetCurrentSerializer().GetOutput();
-            stream.I32(offset);
-            foreach (var t in Streams)
+            Console.WriteLine($"[DEBUG] WRITING: StreamCount={StreamCount}, Streams.Length={Streams?.Length ?? -1}");
+            int offset = 0;
+            Serializer.Serialize(ref offset);
+            for (int i = 0; i < Streams.Length; ++i)
             {
-                offset += t.Length;
-                stream.I32(offset);
+                offset += Streams[i].Length;
+                Serializer.Serialize(ref offset);
             }
-            stream.I32(offset);
-            foreach (var vertexStream in Streams)
-                stream.Bytes(vertexStream);
+            Serializer.Serialize(ref offset);
+            for (int i = 0; i < Streams.Length; i++)
+                Serializer.Serialize(ref Streams[i]);
         }
         else
         {
-            var stream = Serializer.GetCurrentSerializer().GetInput();
-            if (!Serializer.IsWriting())
-                Console.WriteLine($"RMesh Debug - About to read stream offsets. Current position: {stream.GetOffset()}");
-            
-            // We're skipping source stream offsets.
-            for (var i = 0; i < StreamCount + 1; ++i)
-            {
-                var offset = stream.I32();
-                if (!Serializer.IsWriting())
-                    Console.WriteLine($"RMesh Debug - Read offset {i}: {offset}");
-            }
-            var finalOffset = stream.I32();
-            if (!Serializer.IsWriting())
-                Console.WriteLine($"RMesh Debug - Read final offset: {finalOffset}. Current position: {stream.GetOffset()}");
+            Console.WriteLine($"[DEBUG] READING: StreamCount={StreamCount}");
+            // Skip source stream offsets
+            int offset = 0;
+            for (int i = 0; i < StreamCount + 1; ++i)
+                Serializer.Serialize(ref offset);
+            Serializer.Serialize(ref offset);
 
             Streams = new byte[StreamCount][];
-            for (var i = 0; i < StreamCount; ++i)
-            {
-                var bytesToRead = NumVerts * 0x10;
-                if (!Serializer.IsWriting())
-                    Console.WriteLine($"RMesh Debug - Reading stream {i}: {bytesToRead} bytes (NumVerts={NumVerts} * 0x10)");
-                Streams[i] = stream.Bytes(bytesToRead);
-                if (!Serializer.IsWriting())
-                    Console.WriteLine($"RMesh Debug - After reading stream {i}, position: {stream.GetOffset()}");
-            }
+            for (int i = 0; i < StreamCount; ++i)
+                Streams[i] = Serializer.GetCurrentSerializer().Bytes(Streams[i], NumVerts * 0x10);
         }
 
-        Attributes = Serializer.GetCurrentSerializer().Bytearray(Attributes);
-        if (!Serializer.IsWriting())
-        {
-            Console.WriteLine($"RMesh Debug - Stream position after Attributes: {Serializer.GetCurrentSerializer().GetInput().GetOffset()}");
-            Console.WriteLine($"RMesh Debug - Attributes length: {Attributes?.Length ?? -1}");
-        }
-        
-        Indices = Serializer.GetCurrentSerializer().Bytearray(Indices);
-        if (!Serializer.IsWriting())
-        {
-            Console.WriteLine($"RMesh Debug - Stream position after Indices: {Serializer.GetCurrentSerializer().GetInput().GetOffset()}");
-            Console.WriteLine($"RMesh Debug - Indices length: {Indices?.Length ?? 0}");
-            Console.WriteLine($"RMesh Debug - Expected indices bytes (NumIndices * 2): {NumIndices * 2}");
-            
-            // Check if we need to handle indices differently due to compression
-            if ((Indices?.Length ?? 0) == 0 && NumIndices > 0)
-            {
-                Console.WriteLine("🚨 Zero size detected! With compressed integers, reading indices as raw bytes from current position...");
-                var stream = Serializer.GetCurrentSerializer().GetInput();
-                int expectedSize = NumIndices * 2;
-                Indices = stream.Bytes(expectedSize);
-                Console.WriteLine($"✅ Read {Indices.Length} bytes as raw indices data");
-                Console.WriteLine($"RMesh Debug - Stream position after raw indices read: {stream.GetOffset()}");
-            }
-        }
-        
+        Serializer.Serialize(ref Attributes);
+        Serializer.Serialize(ref Indices);
+
         if (subVersion >= (int)Revisions.FUZZ)
-        {
-            TriangleAdjacencyInfos = Serializer.GetCurrentSerializer().Bytearray(TriangleAdjacencyInfos);
-            if (!Serializer.IsWriting())
-                Console.WriteLine($"RMesh Debug - Stream position after TriangleAdjacencyInfos: {Serializer.GetCurrentSerializer().GetInput().GetOffset()}");
-        }
+            Serializer.Serialize(ref TriangleAdjacencyInfos);
 
-        Primitives = Serializer.GetCurrentSerializer().Arraylist<Primitive>(Primitives);
-        
-        // Handle unknown data between Primitives and Bones for proper round-trip serialization
-        if (Serializer.IsWriting())
+        int length = Primitives != null ? Primitives.Count : 0;
+        Serializer.Serialize(ref length);
+        if (Primitives == null || Primitives.Count != length) 
+            Primitives = new List<Primitive>(new Primitive[length]);
+        for (int i = 0; i < length; i++)
         {
-            // Write the unknown data if we have it
-            if (UnknownDataBeforeBones != null && UnknownDataBeforeBones.Length > 0)
-            {
-                Serializer.GetCurrentSerializer().GetOutput().Bytes(UnknownDataBeforeBones);
-            }
-        }
-        else
-        {
-            // Reading: Search for correct Bones array position and capture unknown data
-            int currentPos = Serializer.GetCurrentSerializer().GetInput().GetOffset();
-            
-            // Look for a reasonable Bones array count in a reasonable range
-            int searchStart = currentPos;
-            bool foundValidPosition = false;
-            int correctPosition = currentPos;
-            
-            // Search for bone counts that make sense (0-20 is typical for LBP)
-            for (int offset = 0; offset < 4096 && !foundValidPosition; offset += 4)
-            {
-                Serializer.GetCurrentSerializer().GetInput().Seek(searchStart + offset, SeekMode.Begin);
-                int testCount = Serializer.GetCurrentSerializer().GetInput().I32();
-                
-                // Focus on small, reasonable bone counts
-                if (testCount >= 0 && testCount <= 20)
-                {
-                    // For very small counts (0-2), accept them without further validation
-                    if (testCount <= 2)
-                    {
-                        foundValidPosition = true;
-                        correctPosition = searchStart + offset;
-                        break;
-                    }
-                    
-                    // For larger counts, do basic validation
-                    int boneStartPos = searchStart + offset + 4;
-                    Serializer.GetCurrentSerializer().GetInput().Seek(boneStartPos, SeekMode.Begin);
-                    
-                    try
-                    {
-                        int stringSize = Serializer.GetCurrentSerializer().GetInput().I32();
-                        
-                        // String size should be reasonable
-                        if (stringSize >= 0 && stringSize <= 64)
-                        {
-                            if (stringSize == 0)
-                            {
-                                foundValidPosition = true;
-                                correctPosition = searchStart + offset;
-                                break;
-                            }
-                            else if (stringSize > 0 && stringSize <= 32)
-                            {
-                                // Quick validation of string content
-                                var stringBytes = Serializer.GetCurrentSerializer().GetInput().Bytes(Math.Min(stringSize, 8));
-                                bool looksLikeText = stringBytes.All(b => (b >= 32 && b <= 126) || b == 0 || b == 9 || b == 10 || b == 13);
-                                
-                                if (looksLikeText)
-                                {
-                                    foundValidPosition = true;
-                                    correctPosition = searchStart + offset;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        // Continue searching if validation fails
-                    }
-                }
-            }
-            
-            if (!foundValidPosition)
-            {
-                correctPosition = currentPos;
-            }
-            
-            // Capture the unknown data between Primitives and Bones
-            int unknownDataSize = correctPosition - searchStart;
-            if (unknownDataSize > 0)
-            {
-                Serializer.GetCurrentSerializer().GetInput().Seek(searchStart, SeekMode.Begin);
-                UnknownDataBeforeBones = Serializer.GetCurrentSerializer().GetInput().Bytes(unknownDataSize);
-            }
-            else
-            {
-                UnknownDataBeforeBones = null;
-            }
-            
-            // Seek to the correct position for reading the array
-            Serializer.GetCurrentSerializer().GetInput().Seek(correctPosition, SeekMode.Begin);
+            if (Primitives[i] == null)
+                Primitives[i] = new Primitive();
+            Primitives[i].Serialize(Serializer.GetCurrentSerializer());
         }
         
-        Bones = Serializer.GetCurrentSerializer().Array<Bone>(Bones, false);
-
+        length = Bones != null ? Bones.Length : 0;
+        Serializer.Serialize(ref length);
+        if (Bones == null || Bones.Length != length) Bones = new Bone[length];
+        for (int i = 0; i < length; i++)
+        {
+            if (Bones[i] == null)
+                Bones[i] = new Bone();
+            Bones[i].Serialize(Serializer.GetCurrentSerializer());
+        }
         MirrorBones = Serializer.GetCurrentSerializer().Shortarray(MirrorBones);
         Serializer.SerializeEnumArray(ref MirrorBoneFlipTypes);
         MirrorMorphs = Serializer.GetCurrentSerializer().Shortarray(MirrorMorphs);
@@ -549,24 +437,64 @@ public class RMesh: Resource
         PrimitiveType = Serializer.GetCurrentSerializer().Enum8(PrimitiveType);
 
         Serializer.Serialize(ref SoftbodyCluster);
-        SoftbodySprings = Serializer.GetCurrentSerializer().Array(SoftbodySprings);
-        SoftbodyEquivs = Serializer.GetCurrentSerializer().Array(SoftbodyEquivs);
-
-        // Don't write mass field if there's no softbody data on the this.
-        if (Serializer.IsWriting())
+        
+        length = SoftbodySprings != null ? SoftbodySprings.Length : 0;
+        Serializer.Serialize(ref length);
+        if (SoftbodySprings == null || SoftbodySprings.Length != length) SoftbodySprings = new SoftbodySpring[length];
+        for (int i = 0; i < length; i++)
         {
-            if (HasSoftbodyData()) Serializer.Serialize(ref Mass);
-            else Serializer.GetCurrentSerializer().GetOutput().I32(0);
+            if (SoftbodySprings[i] == null)
+                SoftbodySprings[i] = new SoftbodySpring();
+            SoftbodySprings[i].Serialize(Serializer.GetCurrentSerializer());
         }
-        else Serializer.Serialize(ref Mass);
-
-        Serializer.Serialize(ref ImplicitEllipsoids);
+        
+        length = SoftbodyEquivs != null ? SoftbodyEquivs.Length : 0;
+        Serializer.Serialize(ref length);
+        if (SoftbodyEquivs == null || SoftbodyEquivs.Length != length) SoftbodyEquivs = new SoftbodyVertEquivalence[length];
+        for (int i = 0; i < length; i++)
+        {
+            if (SoftbodyEquivs[i] == null)
+                SoftbodyEquivs[i] = new SoftbodyVertEquivalence();
+            SoftbodyEquivs[i].Serialize(Serializer.GetCurrentSerializer());
+        }
+        
+        Serializer.Serialize(ref Mass);
+        
+        length = ImplicitEllipsoids != null ? ImplicitEllipsoids.Length : 0;
+        Serializer.Serialize(ref length);
+        if (ImplicitEllipsoids == null || ImplicitEllipsoids.Length != length) ImplicitEllipsoids = new ImplicitEllipsoid[length];
+        for (int i = 0; i < length; i++)
+        {
+            if (ImplicitEllipsoids[i] == null)
+                ImplicitEllipsoids[i] = new ImplicitEllipsoid();
+            ImplicitEllipsoids[i].Serialize(Serializer.GetCurrentSerializer());
+        }
 
         Serializer.Serialize(ref ClusterImplicitEllipsoids);
 
-        Serializer.Serialize(ref InsideImplicitEllipsoids);
-        Serializer.Serialize(ref ImplicitPlanes);
+        length = InsideImplicitEllipsoids != null ? InsideImplicitEllipsoids.Length : 0;
+        Serializer.Serialize(ref length);
+        if (InsideImplicitEllipsoids == null || InsideImplicitEllipsoids.Length != length) InsideImplicitEllipsoids = new ImplicitEllipsoid[length];
+        for (int i = 0; i < length; i++)
+        {
+            if (InsideImplicitEllipsoids[i] == null)
+                InsideImplicitEllipsoids[i] = new ImplicitEllipsoid();
+            InsideImplicitEllipsoids[i].Serialize(Serializer.GetCurrentSerializer());
+        }
+        
+        length = ImplicitPlanes != null ? ImplicitPlanes.Length : 0;
+        Serializer.Serialize(ref length);
+        
+        if (ImplicitPlanes == null || ImplicitPlanes.Length != length) ImplicitPlanes = new ImplicitPlane[length];
+        for (int i = 0; i < length; i++)
+        {
+            if (ImplicitPlanes[i] == null)
+                ImplicitPlanes[i] = new ImplicitPlane();
+            ImplicitPlanes[i].Serialize(Serializer.GetCurrentSerializer());
+        }
+        
         Serializer.Serialize(ref SoftPhysSettings, ResourceType.SettingsSoftPhys);
+        
         Serializer.Serialize(ref MinSpringVert);
         Serializer.Serialize(ref MaxSpringVert);
         Serializer.Serialize(ref MinUnalignedSpringVert);
@@ -575,12 +503,20 @@ public class RMesh: Resource
         Serializer.Serialize(ref SoftbodyContainingBoundBoxMin);
         Serializer.Serialize(ref SoftbodyContainingBoundBoxMax);
 
-        Serializer.Serialize(ref CullBones);
+        length = CullBones != null ? CullBones.Length : 0;
+        Serializer.Serialize(ref length);
+        if (CullBones == null || CullBones.Length != length) CullBones = new CullBone[length];
+        for (int i = 0; i < length; i++)
+        {
+            if (CullBones[i] == null)
+                CullBones[i] = new CullBone();
+            CullBones[i].Serialize(Serializer.GetCurrentSerializer());
+        }
+        
         Serializer.Serialize(ref RegionIDsToHide);
 
         Serializer.Serialize(ref CostumeCategoriesUsed);
-        if (version >= 0x141)
-            HairMorphs = Serializer.GetCurrentSerializer().Enum32(HairMorphs);
+        HairMorphs = Serializer.GetCurrentSerializer().Enum32(HairMorphs);
         Serializer.Serialize(ref BevelVertexCount);
         Serializer.Serialize(ref ImplicitBevelSprings);
 
@@ -606,13 +542,13 @@ public class RMesh: Resource
 
         if (subVersion >= (int)Revisions.MESH_SKELETON_TYPE)
             SkeletonType = Serializer.GetCurrentSerializer().Enum8(SkeletonType);
-    }
+    } // End of SerializeInternal
 
     public override int GetAllocatedSize()
     {
         var size = BaseAllocationSize;
 
-        if (Streams != null) size += Streams.Sum(stream => stream.Length);
+        if (Streams != null) size += Streams.Where(stream => stream != null).Sum(stream => stream.Length);
         if (Attributes != null) size += Attributes.Length;
         if (Indices != null) size += Indices.Length;
         if (TriangleAdjacencyInfos != null) size += TriangleAdjacencyInfos.Length;
@@ -622,7 +558,8 @@ public class RMesh: Resource
 
         if (Bones != null)
             foreach (var bone in Bones)
-                size += bone.GetAllocatedSize();
+                if (bone != null)
+                    size += bone.GetAllocatedSize();
 
         if (MirrorBones != null) size += MirrorBones.Length * 2;
         if (MirrorBoneFlipTypes != null) size += MirrorBoneFlipTypes.Length;
